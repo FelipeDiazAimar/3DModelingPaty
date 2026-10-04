@@ -1,0 +1,28 @@
+# dependencias y compilados
+node_modules/
+.next/
+out/
+dev.log
+__pycache__/
+*.pyc
+
+# FlexSim: copias de respaldo y temporales
+*.antes_*.fsm
+*.fsm!
+*.fsm.bak
+
+# experimentos grandes de Blender (STL de prueba, ~250 MB)
+picadora_3m*.stl
+mezcladora_3m*.stl
+
+# basura del sistema / drivers
+NVIDIA Corporation/
+.DS_Store
+Thumbs.db
+
+# datos crudos de la planta (proveedores, productos, tablero): confidenciales, no se publican
+datos_trazabilidad/*.json
+
+# variables locales
+.env
+.env.local

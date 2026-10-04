@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Editor de flujo â€” LÃ­nea 3 (arrastra, conecta y copia)</title>
+<style>
+  :root {
+    --bg:#0f1420; --panel:#171e2e; --line:#2a3550; --txt:#dfe6f5; --dim:#8fa0c0;
+    --src:#2e9e5b; --queue:#d98a2b; --proc:#3b82d0; --belt:#8fa0c0;
+    --rack:#c9a227; --sink:#d04545; --op:#e3b93b; --sel:#ffd54a;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; user-select:none; }
+  body { background:linear-gradient(180deg,#0f1420,#131a2a); color:var(--txt); font-family:'Segoe UI',system-ui,sans-serif; }
+  header { padding:14px 20px 8px; }
+  h1 { font-size:17px; }
+  .hint { color:var(--dim); font-size:12px; margin-top:4px; line-height:1.45; }
+  .hint b { color:var(--sel); }
+  .bar { padding:8px 20px; display:flex; gap:10px; align-items:center; }
+  button { background:#243050; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:7px 14px; font-size:12.5px; cursor:pointer; }
+  button:hover { background:#2e3d63; }
+  #status { color:var(--dim); font-size:12px; margin-left:8px; }
+  #canvas { position:relative; width:3500px; height:560px; margin:6px 20px 30px; background:
+      repeating-linear-gradient(0deg, transparent 0 39px, rgba(60,75,110,.25) 40px),
+      repeating-linear-gradient(90deg, transparent 0 39px, rgba(60,75,110,.25) 40px 41px);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  svg { position:absolute; left:0; top:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+  .nd { position:absolute; z-index:2; background:var(--panel); border:1.5px solid var(--line); border-radius:9px;
+        padding:7px 9px 6px; text-align:center; cursor:grab; min-width:104px; }
+  .nd .nm { font-weight:600; font-size:12.5px; }
+  .nd .cl { font-size:9.5px; color:var(--dim); margin-top:1px; }
+  .nd .t { font-size:9.5px; color:#9fd0ff; }
+  .nd.sel { border-color:var(--sel); box-shadow:0 0 0 2px rgba(255,213,74,.35); }
+  .nd.src { border-top:3px solid var(--src); } .nd.queue { border-top:3px solid var(--queue); }
+  .nd.proc { border-top:3px solid var(--proc); } .nd.rack { border-top:3px solid var(--rack); }
+  .nd.sink { border-top:3px solid var(--sink); } .nd.op, .nd.trans, .nd.desp { border-top:3px solid var(--op); }
+  .nd.op .cl, .nd.op .t { color:#c7a63a; }
+  .nd.belt { border-style:dashed; min-width:88px; padding:5px 7px 4px; }
+  .nd.belt .nm { font-size:11px; }
+  .overlay { position:fixed; inset:0; background:rgba(5,8,15,.72); display:none; align-items:center; justify-content:center; z-index:50; }
+  .box { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px; width:620px; max-width:92vw; }
+  .box h2 { font-size:14px; margin-bottom:8px; }
+  .box textarea { width:100%; height:320px; background:#0c1120; color:#cfe0ff; border:1px solid var(--line); border-radius:8px;
+                  font-family:Consolas,monospace; font-size:11px; padding:10px; }
+  .box .btns { display:flex; gap:10px; margin-top:10px; justify-content:flex-end; }
+  .box p { font-size:11.5px; color:var(--dim); margin-bottom:8px; line-height:1.4; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Editor de flujo â€” LÃ­nea 3 Â· planta_sanjorge_v1_8</h1>
+  <div class="hint">
+    <b>ArrastrÃ¡</b> cualquier tarjeta para reacomodar el boceto Â·
+    <b>hacÃ© clic</b> en un objeto y despuÃ©s en otro para <b>crear o quitar una conexiÃ³n</b> entre ellos Â·
+    clic en el fondo = deseleccionar Â· Cuando el diseÃ±o te quede, pulsÃ¡ <b>Copiar layout</b> y pegame el JSON en el chat.
+    Las conexiones punteadas amarillas = operador vinculado (attach). Yo reorganizo la lÃ³gica en FlexSim sin mover los objetos.
+  </div>
+</header>
+<div class="bar">
+  <button id="btnCopy">ðŸ“‹ Copiar layout</button>
+  <button id="btnReset">â†©ï¸ Restaurar diseÃ±o original</button>
+  <span id="status">listo</span>
+</div>
+<div id="canvas"><svg id="edges"></svg></div>
+
+<div class="overlay" id="ov">
+  <div class="box">
+    <h2>Layout para pegar en el chat</h2>
+    <p>Este JSON describe objetos (con posiciÃ³n del boceto) y las conexiones lÃ³gicas pedidas. PÃ©galo tal cual.</p>
+    <textarea id="ta" readonly></textarea>
+    <div class="btns">
+      <button id="btnClose">Cerrar</button>
+      <button id="btnDoCopy">ðŸ“‹ Copiar al portapapeles</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const NODES_INIT = [
+  // reception
+  {n:"SrcMP",   t:"source", x:40,   y:120},
+  {n:"QRecep",  t:"queue",  x:220,  y:120},
+  {n:"AlmMP",   t:"rack",   x:400,  y:120},
+  {n:"MONT1",   t:"op",     x:400,  y:20},
+  {n:"DSP1",    t:"desp",   x:560,  y:20},
+  {n:"QPalL3",  t:"queue",  x:560,  y:120},
+  {n:"DesL3",   t:"proc",   x:740,  y:120},
+  {n:"OpDesL3", t:"op",     x:740,  y:226},
+  {n:"BeltDL31",t:"belt",   x:920,  y:120},
+  {n:"PicL3",   t:"proc",   x:1100, y:120},
+  // fork
+  {n:"BeltPL3", t:"belt",   x:1280, y:120},
+  {n:"MixL3",   t:"proc",   x:1450, y:40},
+  {n:"MixL3B",  t:"proc",   x:1450, y:200},
+  {n:"BeltM1",  t:"belt",   x:1630, y:40},
+  {n:"BeltM2",  t:"belt",   x:1630, y:200},
+  {n:"FormL3A", t:"proc",   x:1810, y:40},
+  {n:"FormL3B", t:"proc",   x:1810, y:200},
+  {n:"OpL3A",   t:"op",     x:1810, y:-60},
+  {n:"OpL3B",   t:"op",     x:1810, y:300},
+  {n:"BeltL3A", t:"belt",   x:1990, y:40},
+  {n:"BeltL3B", t:"belt",   x:1990, y:200},
+  {n:"Tunel3",  t:"proc",   x:2170, y:120},
+  {n:"BeltE13A1",t:"belt",  x:2350, y:40},
+  {n:"BeltE13B1",t:"belt",  x:2350, y:200},
+  {n:"EstL3A",  t:"proc",   x:2530, y:40},
+  {n:"EstL3B",  t:"proc",   x:2530, y:200},
+  {n:"BeltE13A",t:"belt",   x:2530, y:120},
+  {n:"BeltE13B",t:"belt",   x:2530, y:280},
+  {n:"EnvL3A",  t:"proc",   x:2710, y:40},
+  {n:"EnvL3B",  t:"proc",   x:2710, y:200},
+  {n:"OpL4Env2",t:"op",     x:2710, y:-60},
+  {n:"OpL4Env1",t:"op",     x:2710, y:300},
+  {n:"AlmPT",   t:"rack",   x:2900, y:120},
+  {n:"MONT2",   t:"op",     x:2900, y:226},
+  {n:"OpMont",  t:"op",     x:3050, y:226},
+  {n:"SinkEXP", t:"sink",   x:3080, y:120},
+];
+const EDGES_INIT = [
+  {a:"SrcMP", b:"QRecep", k:"flow"},
+  {a:"QRecep", b:"AlmMP", k:"flow"},
+  {a:"AlmMP", b:"QPalL3", k:"flow"},
+  {a:"MONT1", b:"DSP1", k:"attach"},
+  {a:"QPalL3", b:"DesL3", k:"flow"},
+  {a:"OpDesL3", b:"DesL3", k:"attach"},
+  {a:"DesL3", b:"BeltDL31", k:"flow"},
+  {a:"BeltDL31", b:"PicL3", k:"flow"},
+  {a:"PicL3", b:"BeltPL3", k:"flow"},
+  {a:"BeltPL3", b:"MixL3", k:"flow"},
+  {a:"BeltPL3", b:"MixL3B", k:"flow"},
+  {a:"MixL3", b:"BeltM1", k:"flow"},
+  {a:"BeltM1", b:"FormL3A", k:"flow"},
+  {a:"OpL3A", b:"FormL3B", k:"attach"},
+  {a:"MixL3B", b:"BeltM2", k:"flow"},
+  {a:"BeltM2", b:"FormL3B", k:"flow"},
+  {a:"OpL3B", b:"FormL3A", k:"attach"},
+  {a:"FormL3A", b:"BeltL3A", k:"flow"},
+  {a:"BeltL3A", b:"Tunel3", k:"flow"},
+  {a:"FormL3B", b:"BeltL3B", k:"flow"},
+  {a:"BeltL3B", b:"Tunel3", k:"flow"},
+  {a:"Tunel3", b:"BeltE13A1", k:"flow"},
+  {a:"BeltE13A1", b:"EstL3A", k:"flow"},
+  {a:"Tunel3", b:"BeltE13B1", k:"flow"},
+  {a:"BeltE13B1", b:"EstL3B", k:"flow"},
+  {a:"EstL3A", b:"BeltE13A", k:"flow"},
+  {a:"BeltE13A", b:"EnvL3A", k:"flow"},
+  {a:"EstL3B", b:"BeltE13B", k:"flow"},
+  {a:"BeltE13B", b:"EnvL3B", k:"flow"},
+  {a:"OpL4Env2", b:"EnvL3B", k:"attach"},
+  {a:"OpL4Env1", b:"EnvL3A", k:"attach"},
+  {a:"EnvL3A", b:"AlmPT", k:"flow"},
+  {a:"EnvL3B", b:"AlmPT", k:"flow"},
+  {a:"OpMont", b:"MONT2", k:"attach"},
+  {a:"MONT2", b:"AlmPT", k:"attach"},
+  {a:"AlmPT", b:"SinkEXP", k:"flow"},
+];
+const TYPE_CL = {source:"Source", queue:"Queue", proc:"Processor", belt:"Cinta", rack:"Rack",
+                 sink:"Sink", op:"Operator", desp:"Dispatcher"};
+
+const cv = document.getElementById("canvas");
+const svg = document.getElementById("edges");
+const status = document.getElementById("status");
+let NODES = [], EDGES = [], sel = null;
+
+function loadState() {
+  try {
+    const s = localStorage.getItem("l3_layout_v2");
+    if (s) { const j = JSON.parse(s); NODES = j.nodes; EDGES = j.edges; return; }
+  } catch(e) {}
+  NODES = NODES_INIT.map(n => ({...n}));
+  EDGES = EDGES_INIT.map(e => ({...e}));
+}
+function saveState() { localStorage.setItem("l3_layout_v2", JSON.stringify({nodes:NODES, edges:EDGES})); }
+
+function nodeEl(n) {
+  const d = document.createElement("div");
+  d.className = "nd " + n.t;
+  d.style.left = n.x + "px"; d.style.top = n.y + "px";
+  d.dataset.name = n.n;
+  d.innerHTML = `<div class="nm">${n.n}</div><div class="cl">${TYPE_CL[n.t] || n.t}</div>`;
+  return d;
+}
+
+function center(n) {
+  const el = cv.querySelector(`[data-name="${n}"]`);
+  const w = el ? el.offsetWidth : 110, h = el ? el.offsetHeight : 46;
+  return {x: n.x + w/2, y: n.y + h/2};
+}
+
+function draw() {
+  // nodes
+  cv.querySelectorAll(".nd").forEach(e => e.remove());
+  for (const n of NODES) {
+    const el = nodeEl(n);
+    if (sel === n.n) el.classList.add("sel");
+    cv.appendChild(el);
+    attachDrag(el, n);
+  }
+  // edges
+  svg.innerHTML = `<defs><marker id="ah" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 9 3.5, 0 7" fill="#8fa0c0"/></marker>
+    <marker id="ahy" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0 9 3.5 0 7" fill="#e3b93b"/></marker></defs>`;
+  for (const e of EDGES) {
+    const a = NODES.find(n => n.n === e.a), b = NODES.find(n => n.n === e.b);
+    if (!a || !b) continue;
+    const ca = center(a), cb = center(b);
+    const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    l.setAttribute("x1", ca.x); l.setAttribute("y1", ca.y);
+    l.setAttribute("x2", cb.x); l.setAttribute("y2", cb.y);
+    l.setAttribute("stroke", e.k === "attach" ? "#e3b93b" : "#8fa0c0");
+    l.setAttribute("stroke-width", e.k === "attach" ? 1.5 : 2.2);
+    if (e.k === "attach") l.setAttribute("stroke-dasharray", "5 4");
+    l.setAttribute("marker-end", `url(#${e.k === "attach" ? "ahy" : "ah"})`);
+    svg.appendChild(l);
+  }
+  saveState();
+}
+
+function attachDrag(el, n) {
+  let sx=0, sy=0, ox=0, oy=0, moved=false;
+  el.addEventListener("pointerdown", ev => {
+    ev.preventDefault(); el.setPointerCapture(ev.pointerId);
+    sx = ev.clientX; sy = ev.clientY; ox = n.x; oy = n.y; moved = false;
+    const mm = e => {
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      n.x = ox + dx; n.y = oy + dy;
+      el.style.left = n.x + "px"; el.style.top = n.y + "px";
+      drawEdgesOnly();
+    };
+    const up = e => {
+      el.removeEventListener("pointermove", mm); el.removeEventListener("pointerup", up);
+      if (!moved) handleClick(n);
+      else drawEdgesOnly();
+    };
+    el.addEventListener("pointermove", mm);
+    el.addEventListener("pointerup", up);
+  });
+}
+
+function drawEdgesOnly() {
+  svg.querySelectorAll("line").forEach(l => l.remove());
+  const defs = svg.querySelector("defs");
+  svg.innerHTML = "";
+  if (defs) svg.appendChild(defs); else { /* redraw defs */ drawDefs(); }
+  for (const e of EDGES) {
+    const a = NODES.find(n => n.n === e.a), b = NODES.find(n => n.n === e.b);
+    if (!a || !b) continue;
+    const ca = center(a), cb = center(b);
+    const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    l.setAttribute("x1", ca.x); l.setAttribute("y1", ca.y);
+    l.setAttribute("x2", cb.x); l.setAttribute("y2", cb.y);
+    l.setAttribute("stroke", e.k === "attach" ? "#e3b93b" : "#8fa0c0");
+    l.setAttribute("stroke-width", e.k === "attach" ? 1.5 : 2.2);
+    if (e.k === "attach") l.setAttribute("stroke-dasharray", "5 4");
+    l.setAttribute("marker-end", `url(#${e.k === "attach" ? "ahy" : "ah"})`);
+    svg.appendChild(l);
+  }
+  saveState();
+}
+function drawDefs() {
+  svg.innerHTML = `<defs><marker id="ah" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0 9 3.5 0 7" fill="#8fa0c0"/></marker>
+    <marker id="ahy" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+    <polygon points="0 0 9 3.5 0 7" fill="#e3b93b"/></marker></defs>`;
+}
+
+function handleClick(n) {
+  if (sel === null) { sel = n.n; status.textContent = `seleccionado: ${n.n} â€” ahora clic en otro objeto para conectar/desconectar`; }
+  else if (sel === n.n) { sel = null; status.textContent = "selecciÃ³n cancelada"; }
+  else {
+    const a = sel, b = n.n;
+    const i = EDGES.findIndex(e => (e.a === a && e.b === b) || (e.a === b && e.b === a));
+    if (i >= 0) { const gone = EDGES.splice(i, 1)[0]; status.textContent = `âŒ quitada: ${gone.a} â†’ ${gone.b}`; }
+    else { EDGES.push({a, b, k: (NODES.find(x=>x.n===a).t === "op" || NODES.find(x=>x.n===b).t === "op" ? "attach" : "flow")}); status.textContent = `âœ… conectado: ${a} â†’ ${b}`; }
+    sel = null;
+  }
+  draw();
+}
+
+loadState();
+drawDefs();
+draw();
+
+document.getElementById("btnCopy").onclick = () => {
+  const j = {
+    model: "planta_sanjorge_v1_8",
+    nodes: NODES.map(n => ({name:n.n, type:n.t, x:n.x, y:n.y})),
+    edges: EDGES.map(e => ({from:e.a, to:e.b, kind:e.k}))
+  };
+  const ta = document.getElementById("ta");
+  ta.value = JSON.stringify(j, null, 1);
+  document.getElementById("ov").style.display = "flex";
+};
+document.getElementById("btnClose").onclick = () => document.getElementById("ov").style.display = "none";
+document.getElementById("btnDoCopy").onclick = () => {
+  const ta = document.getElementById("ta");
+  ta.select(); document.execCommand("copy");
+  document.getElementById("btnDoCopy").textContent = "âœ” copiado";
+  setTimeout(() => document.getElementById("btnDoCopy").textContent = "ðŸ“‹ Copiar al portapapeles", 1500);
+};
+document.getElementById("btnReset").onclick = () => {
+  NODES = NODES_INIT.map(n => ({...n}));
+  EDGES = EDGES_INIT.map(e => ({...e}));
+  sel = null; draw(); status.textContent = "diseÃ±o original restaurado";
+};
+cv.addEventListener("pointerdown", ev => { if (ev.target === cv || ev.target === svg) { sel = null; draw(); } });
+</script>
+</body>
+</html>
+

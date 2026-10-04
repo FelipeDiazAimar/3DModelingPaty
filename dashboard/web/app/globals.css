@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #e9eff7;
+  --bg2: #f6f9fd;
+  --ink: #0f1b2d;
+  --muted: #5a6b82;
+  --line: rgba(15, 27, 45, 0.09);
+  --glass: rgba(255, 255, 255, 0.78);
+  --brand: #d9293b;
+  --brand-ink: #a81a2a;
+  --ok: #16a37f;
+  --warn: #e08a1e;
+  --crit: #d5334b;
+  --shadow: 0 2px 4px rgba(15, 27, 45, 0.05), 0 18px 40px -14px rgba(40, 70, 140, 0.32);
+}
+
+@theme inline {
+  --font-sans: var(--font-ui);
+  --color-brand: var(--brand);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+}
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  background: radial-gradient(1200px 700px at 70% -10%, #ffffff 0%, var(--bg2) 40%, var(--bg) 100%);
+  color: var(--ink);
+  font-family: var(--font-ui), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+  border-radius: 26px;
+}
+.card { background: #fff; border: 1px solid var(--line); border-radius: 26px; box-shadow: var(--shadow); }
+.tnum { font-variant-numeric: tabular-nums; }
+
+.nav-link { white-space: nowrap; padding: 7px 13px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--muted); transition: background .15s, color .15s; }
+.nav-link:hover { background: rgba(15, 27, 45, 0.06); color: var(--ink); }
+.nav-link[aria-current="page"] { background: var(--ink); color: #fff; }
+
+/* Pines sobre el 3D */
+.pin { display: flex; align-items: center; gap: 6px; transform: translateY(-50%); cursor: pointer; }
+.pin-dot {
+  width: 16px; height: 16px; border-radius: 999px; background: var(--c, #8b97a8);
+  border: 3px solid #fff; box-shadow: 0 2px 8px rgba(15, 27, 45, .35);
+  transition: transform .15s;
+}
+.pin:hover .pin-dot, .pin-on .pin-dot { transform: scale(1.35); }
+.pin-fork .pin-dot { background: #ffb703; border-radius: 4px; }
+.pin-tag {
+  background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px;
+  white-space: nowrap; box-shadow: var(--shadow);
+}
+.pin-on .pin-dot { box-shadow: 0 0 0 6px color-mix(in srgb, var(--c, #ffb703) 30%, transparent), 0 2px 8px rgba(15,27,45,.35); }
+
+@keyframes pulse-live { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+.live-dot { animation: pulse-live 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } * { scroll-behavior: auto !important; } }
+
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Loaders */
+.skeleton { position: relative; overflow: hidden; background: #e3eaf4; border-radius: 12px; }
+.skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent); animation: shimmer 1.4s infinite; }
+@keyframes shimmer { to { transform: translateX(100%); } }
+.route-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 100; background: linear-gradient(90deg, var(--brand), #ff8a4c); opacity: 0; }
+.route-bar-on { width: 100%; opacity: 1; transition: width .6s cubic-bezier(.2,.8,.2,1), opacity .3s .45s; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { width: 34px; height: 34px; border-radius: 999px; border: 4px solid #dbe4f1; border-top-color: var(--brand); animation: spin .9s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .spinner, .skeleton::after { animation: none; } }
+
+/* Reproductor */
+.player-range { -webkit-appearance: none; appearance: none; height: 8px; border-radius: 999px; cursor: pointer;
+  background: linear-gradient(90deg, var(--brand) var(--p, 0%), #d5deeb var(--p, 0%)); }
+.player-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 999px; background: #fff;
+  border: 4px solid var(--brand); box-shadow: 0 2px 8px rgba(15,27,45,.3); }
+.player-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 999px; background: #fff; border: 4px solid var(--brand); }
+
+/* Pines: máquinas trabajando pulsan */
+.pin-proc .pin-dot::after { content: ""; position: absolute; inset: -6px; border-radius: 999px; border: 2px solid var(--c); opacity: 0; animation: ping 1.8s ease-out infinite; }
+.pin-dot { position: relative; }
+@keyframes ping { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(1.7); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pin-proc .pin-dot::after { animation: none; } }
+
+/* Scrollbar propio */
+.cscroll-inner { scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior: contain; }
+.cscroll-inner::-webkit-scrollbar { display: none; }
+.cscroll-track { position: absolute; top: 0; right: 3px; bottom: 0; width: 12px; pointer-events: none; z-index: 5; }
+.cscroll-thumb { position: absolute; right: 2px; width: 6px; border-radius: 999px; pointer-events: auto; cursor: grab;
+  background: linear-gradient(180deg, #ff6b78, var(--brand)); opacity: .55; transition: width .15s, opacity .15s, right .15s; }
+.cscroll:hover .cscroll-thumb { opacity: .9; }
+.cscroll-thumb:hover, .cscroll-drag .cscroll-thumb { width: 9px; right: 0; opacity: 1; }
+.cscroll-drag .cscroll-thumb { cursor: grabbing; }
+
+/* Menú propio */
+@keyframes pop { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+.menu-pop { animation: pop .14s ease-out; }
+@media (prefers-reduced-motion: reduce) { .menu-pop { animation: none; } }
+
+/* Tablas */
+.tbl-wrap { border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: #fff; }
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; text-align: left; }
+.tbl thead th { position: sticky; top: 0; z-index: 2; background: #f1f5fb; color: var(--muted); font-weight: 700; font-size: 12px; padding: 11px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.tbl tbody td { padding: 11px 16px; border-bottom: 1px solid rgba(15,27,45,.06); white-space: nowrap; }
+.tbl tbody tr:last-child td { border-bottom: 0; }
+.tbl tbody tr { transition: background .12s; }
+.tbl tbody tr:hover { background: #f6f9fe; }
+.tbl tbody tr.row-focus { background: #fff4e0; }
+.tbl td.num, .tbl th.text-right { text-align: right; font-variant-numeric: tabular-nums; }
+.tbl td.first { font-weight: 700; }
+.menu-pop { background: rgba(255,255,255,.97); }

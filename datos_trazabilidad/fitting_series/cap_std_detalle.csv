@@ -1,0 +1,60 @@
+linea,tipo,gramaje,n,kgh_max,kgh_mean,top_producto
+1,Estuche,69.0,1,993.6,993.6,Express by X4
+1,Estuche,85.0,2,612.0,612.0,Mila Soja x4 Goodmark
+1,Estuche,100.0,1,1008.0,1008.0,Paty Milanesa x4
+1,Estuche,120.0,1,1238.4,1238.4,Paty Grande X4
+1,Flow,69.0,3,993.6,993.6,Carrefour 69
+1,Flow,80.0,3,1152.0,1139.2,Paty Clasico C
+1,Flow,95.0,8,1048.8,1048.8,Veggie Calabaza x4
+1,Flow,100.0,4,1200.0,1152.0,Paty con queso
+1,Flow,110.0,1,1188.0,1188.0,Carny
+1,Flow,113.0,1,1193.28,1193.28,Patynesa
+1,Flow,120.0,2,1238.4,1238.4,Paty de Casa
+1,Flow,125.0,3,1260.0,1260.0,Paty Super C
+2,Estuche,69.0,4,1449.0,1449.0,Barfy x4
+2,Estuche,72.0,2,1512.0,1512.0,Paty te Quiero 4x24
+2,Estuche,80.0,7,1608.0,1570.29,Good Mark x4
+2,Estuche,120.0,1,1612.8,1612.8,Paty Grande X4
+2,Flow,55.0,1,990.0,990.0,Paty finitas
+2,Flow,69.0,3,1449.0,1449.0,Carrefour 69
+2,Flow,80.0,4,1608.0,1608.0,Food Service
+2,Flow,95.0,1,1071.6,1071.6,Veggie Lent.
+2,Flow,100.0,3,1296.0,1296.0,Paty con morron
+2,Flow,120.0,2,1612.8,1612.8,Paty Grande
+3,Estuche,69.0,7,1589.76,1589.76,Barfy x4
+3,Estuche,80.0,5,1843.2,1843.2,Paty te Quiero 4x24
+3,Flow,55.0,6,1782.0,1386.0,Tres cruces
+3,Flow,69.0,2,1589.76,1589.76,Carrefour 69
+3,Flow,80.0,4,1843.2,1836.0,Paty Clasico C
+4,Estuche,69.0,4,1428.3,1428.3,Barfy x4 69g N
+4,Estuche,72.0,2,1490.4,1490.4,Paty te Quiero 4x24
+4,Estuche,80.0,11,1656.0,1568.73,Paty te Quiero 4x24
+4,Flow,69.0,5,1664.28,1516.07,Barfy x72 N
+4,Flow,80.0,4,1656.0,1656.0,Paty Clasico C
+5,Estuche,80.0,1,1382.4,1382.4,Paty Clasicox4
+5,Flow,44.9,2,1131.48,1131.48,MCD 10:1
+5,Flow,55.0,8,1426.0,1425.65,Barfy 2+2
+5,Flow,69.0,3,1664.28,1664.28,Carrefour 69
+5,Flow,80.0,3,1785.6,1689.6,Paty Clasico C
+5,Flow,113.5,2,1021.5,1021.5,MCD 4:1 UY
+6,Estuche,80.0,1,1608.0,1608.0,Paty Light
+6,Flow,44.9,1,1131.48,1131.48,MCD 10:1
+6,Flow,55.0,8,1426.0,1425.65,Barfy 2+2
+6,Flow,69.0,3,1664.28,1606.32,Barfy x72 N
+6,Flow,80.0,3,1785.6,1689.6,Paty Clasico C
+6,Flow,113.5,3,1021.5,1021.5,MCD 4:1 UY
+6,Flow,125.0,4,1200.0,1200.0,Paty Super C
+7,Flow,55.0,3,1188.0,1188.0,Barfy 55
+7,Flow,69.0,2,1490.4,1415.88,Barfy x72 N
+7,Flow,80.0,4,1670.4,1670.4,Paty Clasico C
+7,Flow,110.0,2,1584.0,1584.0,Carny 110g
+7,Flow,120.0,1,1497.6,1497.6,Paty Grande
+7,Flow,125.0,4,1875.0,1828.12,Paty Super C
+8,Estuche,69.0,3,1341.36,1242.0,Barfy x4
+8,Estuche,80.0,6,1728.0,1560.0,Paty Clasico x20
+8,Estuche,125.0,1,1650.0,1650.0,Paty Cancha
+8,Flow,55.0,2,1188.0,1188.0,Barfy 55
+8,Flow,69.0,3,1490.4,1490.4,Carrefour 69
+8,Flow,80.0,3,1872.0,1737.6,Paty Clasico C
+8,Flow,110.0,1,1584.0,1584.0,Carny 110g
+8,Flow,125.0,5,1875.0,1800.0,Paty Super C

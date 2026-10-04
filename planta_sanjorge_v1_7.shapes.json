@@ -1,0 +1,7 @@
+{
+  "_note": "Formas 3D de planta_sanjorge_v1_7.fsm (solo Linea 3). Las asignaciones por script son POR SESIÓN (no sobreviven a guardar/reabrir, verificado 2026-09-27): reaplicar con flexsim_apply_shapes al abrir el modelo. La carne NO va en SrcMP: los items se pintan post-desencajado con flexsim_paint_meat.",
+  "shapes": [
+    {"object": "MixL3", "file": "mezcladora_3m_xm90n.stl", "shape_name": "MezMxm90n", "verified": "candidata x-90 normalizada"},
+    {"object": "PicL3", "file": "picadora_3m_x90n.stl", "shape_name": "PicX90n", "verified": "candidata x+90 normalizada"}
+  ]
+}

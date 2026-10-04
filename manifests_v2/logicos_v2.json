@@ -1,0 +1,497 @@
+{
+ "unidades": "metros, Z arriba, coordenadas de mundo de Blender",
+ "fijos": [
+  {
+   "name": "Desencajado_L7",
+   "cls": "Processor",
+   "cx": -48.3,
+   "cy": 12.0,
+   "z": 0.0,
+   "sx": 1.2,
+   "sy": 1.0,
+   "sz": 1.4,
+   "desc": "Puesto de desencajado: posición del pallet de MP junto a la mesada (el pallet se queda ahí mientras se consume)"
+  },
+  {
+   "name": "Picadora_L7",
+   "cls": "Processor",
+   "cx": -36.533,
+   "cy": 12.054,
+   "z": 0.0,
+   "sx": 3.597,
+   "sy": 2.371,
+   "sz": 3.025,
+   "desc": "Picadora"
+  },
+  {
+   "name": "MezA_L7",
+   "cls": "Processor",
+   "cx": -28.296,
+   "cy": 9.425,
+   "z": 0.0,
+   "sx": 3.127,
+   "sy": 3.75,
+   "sz": 3.425,
+   "desc": "Mezcladora A"
+  },
+  {
+   "name": "MezB_L7",
+   "cls": "Processor",
+   "cx": -28.296,
+   "cy": 14.575,
+   "z": 0.0,
+   "sx": 3.127,
+   "sy": 3.75,
+   "sz": 3.425,
+   "desc": "Mezcladora B"
+  },
+  {
+   "name": "FormA_L7",
+   "cls": "Processor",
+   "cx": -22.08,
+   "cy": 9.6,
+   "z": 0.05,
+   "sx": 3.161,
+   "sy": 2.121,
+   "sz": 2.575,
+   "desc": "Formadora A"
+  },
+  {
+   "name": "FormB_L7",
+   "cls": "Processor",
+   "cx": -22.08,
+   "cy": 14.4,
+   "z": 0.05,
+   "sx": 3.161,
+   "sy": 2.121,
+   "sz": 2.575,
+   "desc": "Formadora B"
+  },
+  {
+   "name": "Tunel_L7",
+   "cls": "Processor",
+   "cx": -3.0,
+   "cy": 12.0,
+   "z": 0.15,
+   "sx": 12.0,
+   "sy": 4.2,
+   "sz": 3.6,
+   "desc": "Tunel de congelado"
+  },
+  {
+   "name": "EnvA_L7",
+   "cls": "Processor",
+   "cx": 9.6,
+   "cy": 10.4,
+   "z": 0.025,
+   "sx": 4.0,
+   "sy": 1.0,
+   "sz": 2.3,
+   "desc": "Envasadora A"
+  },
+  {
+   "name": "EnvB_L7",
+   "cls": "Processor",
+   "cx": 9.6,
+   "cy": 13.6,
+   "z": 0.025,
+   "sx": 4.0,
+   "sy": 1.0,
+   "sz": 2.3,
+   "desc": "Envasadora B"
+  },
+  {
+   "name": "EncA_L7",
+   "cls": "Processor",
+   "cx": 13.8,
+   "cy": 10.4,
+   "z": 0.0,
+   "sx": 2.4,
+   "sy": 1.4,
+   "sz": 1.9,
+   "desc": "Encajonadora A"
+  },
+  {
+   "name": "EncB_L7",
+   "cls": "Processor",
+   "cx": 13.8,
+   "cy": 13.6,
+   "z": 0.0,
+   "sx": 2.4,
+   "sy": 1.4,
+   "sz": 1.9,
+   "desc": "Encajonadora B"
+  },
+  {
+   "name": "EstA_L7",
+   "cls": "Processor",
+   "cx": 28.477,
+   "cy": 9.75,
+   "z": 0.0,
+   "sx": 3.445,
+   "sy": 1.7,
+   "sz": 2.84,
+   "desc": "Robot estibador A"
+  },
+  {
+   "name": "Desencajado_L8",
+   "cls": "Processor",
+   "cx": -48.3,
+   "cy": -20.0,
+   "z": 0.0,
+   "sx": 1.2,
+   "sy": 1.0,
+   "sz": 1.4,
+   "desc": "Puesto de desencajado: posición del pallet de MP junto a la mesada (el pallet se queda ahí mientras se consume)"
+  },
+  {
+   "name": "Picadora_L8",
+   "cls": "Processor",
+   "cx": -36.533,
+   "cy": -20.054,
+   "z": 0.0,
+   "sx": 3.597,
+   "sy": 2.371,
+   "sz": 3.025,
+   "desc": "Picadora"
+  },
+  {
+   "name": "MezA_L8",
+   "cls": "Processor",
+   "cx": -28.296,
+   "cy": -22.575,
+   "z": 0.0,
+   "sx": 3.127,
+   "sy": 3.75,
+   "sz": 3.425,
+   "desc": "Mezcladora A"
+  },
+  {
+   "name": "MezB_L8",
+   "cls": "Processor",
+   "cx": -28.296,
+   "cy": -17.425,
+   "z": 0.0,
+   "sx": 3.127,
+   "sy": 3.75,
+   "sz": 3.425,
+   "desc": "Mezcladora B"
+  },
+  {
+   "name": "FormA_L8",
+   "cls": "Processor",
+   "cx": -22.08,
+   "cy": -22.4,
+   "z": 0.05,
+   "sx": 3.161,
+   "sy": 2.121,
+   "sz": 2.575,
+   "desc": "Formadora A"
+  },
+  {
+   "name": "FormB_L8",
+   "cls": "Processor",
+   "cx": -22.08,
+   "cy": -17.6,
+   "z": 0.05,
+   "sx": 3.161,
+   "sy": 2.121,
+   "sz": 2.575,
+   "desc": "Formadora B"
+  },
+  {
+   "name": "Tunel_L8",
+   "cls": "Processor",
+   "cx": -3.0,
+   "cy": -20.0,
+   "z": 0.15,
+   "sx": 12.0,
+   "sy": 4.2,
+   "sz": 3.6,
+   "desc": "Tunel de congelado"
+  },
+  {
+   "name": "EnvA_L8",
+   "cls": "Processor",
+   "cx": 9.6,
+   "cy": -21.6,
+   "z": 0.025,
+   "sx": 4.0,
+   "sy": 1.0,
+   "sz": 2.3,
+   "desc": "Envasadora A"
+  },
+  {
+   "name": "EnvB_L8",
+   "cls": "Processor",
+   "cx": 9.6,
+   "cy": -18.4,
+   "z": 0.025,
+   "sx": 4.0,
+   "sy": 1.0,
+   "sz": 2.3,
+   "desc": "Envasadora B"
+  },
+  {
+   "name": "EncA_L8",
+   "cls": "Processor",
+   "cx": 13.8,
+   "cy": -21.6,
+   "z": 0.0,
+   "sx": 2.4,
+   "sy": 1.4,
+   "sz": 1.9,
+   "desc": "Encajonadora A"
+  },
+  {
+   "name": "EncB_L8",
+   "cls": "Processor",
+   "cx": 13.8,
+   "cy": -18.4,
+   "z": 0.0,
+   "sx": 2.4,
+   "sy": 1.4,
+   "sz": 1.9,
+   "desc": "Encajonadora B"
+  },
+  {
+   "name": "EstA_L8",
+   "cls": "Processor",
+   "cx": 28.477,
+   "cy": -22.25,
+   "z": 0.0,
+   "sx": 3.445,
+   "sy": 1.7,
+   "sz": 2.84,
+   "desc": "Robot estibador A"
+  },
+  {
+   "name": "QRecepcion",
+   "cls": "Queue",
+   "cx": -68.3,
+   "cy": -32.25,
+   "z": 0.0,
+   "sx": 4.6,
+   "sy": 2.5,
+   "sz": 1.33,
+   "desc": "Playa de recepcion MP"
+  },
+  {
+   "name": "RackMPCongelado",
+   "cls": "Rack",
+   "cx": -67.55,
+   "cy": 22.0,
+   "z": 0.0,
+   "sx": 14.0,
+   "sy": 24.39,
+   "sz": 6.4,
+   "desc": "Camara MP congelado"
+  },
+  {
+   "name": "RackMPEnfriado",
+   "cls": "Rack",
+   "cx": -67.55,
+   "cy": -1.5,
+   "z": 0.0,
+   "sx": 14.0,
+   "sy": 19.79,
+   "sz": 6.4,
+   "desc": "Camara MP enfriado"
+  },
+  {
+   "name": "RackPTCongelado",
+   "cls": "Rack",
+   "cx": 67.55,
+   "cy": 22.0,
+   "z": 0.0,
+   "sx": 14.0,
+   "sy": 24.39,
+   "sz": 6.4,
+   "desc": "Camara PT congelado"
+  },
+  {
+   "name": "RackPTEnfriado",
+   "cls": "Rack",
+   "cx": 67.55,
+   "cy": -1.5,
+   "z": 0.0,
+   "sx": 14.0,
+   "sy": 19.79,
+   "sz": 6.4,
+   "desc": "Camara PT enfriado"
+  },
+  {
+   "name": "QExpedicion",
+   "cls": "Queue",
+   "cx": 68.3,
+   "cy": -32.25,
+   "z": 0.0,
+   "sx": 4.6,
+   "sy": 2.5,
+   "sz": 1.73,
+   "desc": "Playa de expedicion PT"
+  },
+  {
+   "name": "SrcCamionesMP",
+   "cls": "Source",
+   "cx": -85.25,
+   "cy": -25.0,
+   "z": 0.0,
+   "sx": 4,
+   "sy": 4,
+   "sz": 1,
+   "desc": "Camiones MP (muelles oeste)"
+  },
+  {
+   "name": "SinkExpedicion",
+   "cls": "Sink",
+   "cx": 85.25,
+   "cy": -25.0,
+   "z": 0.0,
+   "sx": 4,
+   "sy": 4,
+   "sz": 1,
+   "desc": "Camiones PT (muelles este)"
+  }
+ ],
+ "cintas": [
+  {
+   "name": "CintaFormA_L7",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": -20.5,
+   "y1": 9.6,
+   "x2": -12.0,
+   "y2": 9.6,
+   "z": 0.9,
+   "width": 0.7
+  },
+  {
+   "name": "CintaFormB_L7",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": -20.5,
+   "y1": 14.4,
+   "x2": -12.0,
+   "y2": 14.4,
+   "z": 0.9,
+   "width": 0.7
+  },
+  {
+   "name": "CintaTunel_L7",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": 2.6,
+   "y1": 12.0,
+   "x2": 6.4,
+   "y2": 12.0,
+   "z": 0.9,
+   "width": 1.1
+  },
+  {
+   "name": "Rodillos_L7",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": 19.1,
+   "y1": 12.0,
+   "x2": 25.753,
+   "y2": 12.0,
+   "z": 0.9,
+   "width": 0.6
+  },
+  {
+   "name": "CintaFormA_L8",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": -20.5,
+   "y1": -22.4,
+   "x2": -12.0,
+   "y2": -22.4,
+   "z": 0.9,
+   "width": 0.7
+  },
+  {
+   "name": "CintaFormB_L8",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": -20.5,
+   "y1": -17.6,
+   "x2": -12.0,
+   "y2": -17.6,
+   "z": 0.9,
+   "width": 0.7
+  },
+  {
+   "name": "CintaTunel_L8",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": 2.6,
+   "y1": -20.0,
+   "x2": 6.4,
+   "y2": -20.0,
+   "z": 0.9,
+   "width": 1.1
+  },
+  {
+   "name": "Rodillos_L8",
+   "cls": "Conveyor::StraightConveyor",
+   "x1": 19.1,
+   "y1": -20.0,
+   "x2": 25.753,
+   "y2": -20.0,
+   "z": 0.9,
+   "width": 0.6
+  }
+ ],
+ "moviles": [
+  {
+   "name": "MontacargasRecep",
+   "cls": "Transporter",
+   "cx": -63.5,
+   "cy": -18.5,
+   "z": 0
+  },
+  {
+   "name": "MontacargasExped",
+   "cls": "Transporter",
+   "cx": 60.0,
+   "cy": -20.0,
+   "z": 0
+  },
+  {
+   "name": "OpDesencajado_L7",
+   "cls": "Operator",
+   "cx": -44.0,
+   "cy": 9.4,
+   "z": 0
+  },
+  {
+   "name": "OpDesencajado_L8",
+   "cls": "Operator",
+   "cx": -44.0,
+   "cy": -17.4,
+   "z": 0
+  },
+  {
+   "name": "OpEnvasado_L7",
+   "cls": "Operator",
+   "cx": 9.8,
+   "cy": 9.15,
+   "z": 0
+  },
+  {
+   "name": "OpEnvasado_L8",
+   "cls": "Operator",
+   "cx": 9.8,
+   "cy": -17.15,
+   "z": 0
+  },
+  {
+   "name": "MontacargasAlmacenMP",
+   "cls": "Transporter",
+   "cx": -53.0,
+   "cy": 4.0,
+   "z": 0
+  },
+  {
+   "name": "MontacargasLineaPT",
+   "cls": "Transporter",
+   "cx": 33.0,
+   "cy": 4.0,
+   "z": 0
+  }
+ ]
+}
