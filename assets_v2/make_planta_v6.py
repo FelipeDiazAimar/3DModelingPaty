@@ -29,6 +29,44 @@ STACKER_MATS = {"M_Amarillo_Seg", "M_Metal_Estructura", "M_Negro_Cinta", "M_Caja
 REGIONS = [(STACKER_MATS, 26.0, 33.0, cz - 2.15, cz + 2.15) for cz in (-14.25, 17.75)]
 
 
+# Cerco compartido de los dos estibadores: x 25.6..31.2 ; ejes de línea z=-12 (L7) y z=20 (L8) en coord. glTF.
+# Se saca todo el cerco original y se arma uno solo para el estibador A (de zc-0.6 a zc+4.2).
+FENCE_X0, FENCE_X1 = 25.6, 31.2
+FENCE_AXES = (-12.0, 20.0)
+POST_GRID_X = (25.6, 27.47, 29.33, 31.2)
+
+
+def fence_geometry():
+    """Devuelve (postes, paneles) como listas de cajas (x0,x1,y0,y1,z0,z1) del cerco nuevo."""
+    posts, panels = [], []
+    ph, t = 2.1, 0.03
+    for zc in FENCE_AXES:
+        zs, zn = zc - 0.6, zc + 4.2
+        # paneles: norte, sur, oeste (con hueco para los rodillos) y este (con hueco para el pallet)
+        panels.append((FENCE_X0, FENCE_X1, 0.2, 2.0, zn - t, zn + t))
+        panels.append((FENCE_X0, FENCE_X1, 0.2, 2.0, zs - t, zs + t))
+        panels.append((FENCE_X0 - t, FENCE_X0 + t, 0.2, 2.0, zc + 0.6, zn))
+        panels.append((FENCE_X1 - t, FENCE_X1 + t, 0.2, 2.0, zs, zc + 1.7))
+        panels.append((FENCE_X1 - t, FENCE_X1 + t, 0.2, 2.0, zc + 3.5, zn))
+        pts = [(x, z) for x in POST_GRID_X for z in (zs, zn)]
+        pts += [(FENCE_X0, zc + 0.6), (FENCE_X0, zc + 2.4), (FENCE_X1, zc + 1.7), (FENCE_X1, zc + 3.5)]
+        for x, z in pts:
+            posts.append((x - 0.03, x + 0.03, 0.0, ph, z - 0.03, z + 0.03))
+    return posts, panels
+
+
+def box_mesh(boxes):
+    pos, nor, idx = [], [], []
+    for x0, x1, y0, y1, z0, z1 in boxes:
+        for n, quad in (((1, 0, 0), [(x1, y0, z0), (x1, y1, z0), (x1, y1, z1), (x1, y0, z1)]), ((-1, 0, 0), [(x0, y0, z1), (x0, y1, z1), (x0, y1, z0), (x0, y0, z0)]),
+                        ((0, 1, 0), [(x0, y1, z0), (x0, y1, z1), (x1, y1, z1), (x1, y1, z0)]), ((0, -1, 0), [(x0, y0, z1), (x0, y0, z0), (x1, y0, z0), (x1, y0, z1)]),
+                        ((0, 0, 1), [(x1, y0, z1), (x1, y1, z1), (x0, y1, z1), (x0, y0, z1)]), ((0, 0, -1), [(x0, y0, z0), (x0, y1, z0), (x1, y1, z0), (x1, y0, z0)])):
+            b = len(pos)
+            pos += quad; nor += [n] * 4
+            idx += [b, b + 1, b + 2, b, b + 2, b + 3]
+    return np.array(pos, np.float32), np.array(nor, np.float32), np.array(idx, np.uint32)
+
+
 def rgb(h):
     h = h.lstrip("#")
     return [int(h[i:i + 2], 16) / 255 for i in (0, 2, 4)]
@@ -227,13 +265,25 @@ def main(web=False):
         if nm in DROP:
             continue
         regs = [r for r in REGIONS if nm in r[0]]
-        if regs:
+        if regs or nm in ("M_Alambrado", "M_Amarillo_Seg"):
             pos, idx = read(p["attributes"]["POSITION"]), read(p["indices"])
             tri = idx.reshape(-1, 3).astype(np.uint32)
             c = pos[tri].mean(axis=1)
             inside = np.zeros(len(tri), bool)
             for _, x0, x1, z0, z1 in regs:
                 inside |= (c[:, 0] > x0) & (c[:, 0] < x1) & (c[:, 2] > z0) & (c[:, 2] < z1)
+            if nm in ("M_Alambrado", "M_Amarillo_Seg"):
+                vp = pos[tri]                                   # (n, 3 vértices, xyz)
+                ext = vp.max(1) - vp.min(1)
+                for zc in FENCE_AXES:
+                    area = (c[:, 0] > FENCE_X0 - 0.3) & (c[:, 0] < FENCE_X1 + 0.3) & (c[:, 2] > zc - 4.5) & (c[:, 2] < zc + 4.5)
+                    if nm == "M_Alambrado":
+                        inside |= area                          # todos los paneles del cerco original
+                    else:                                       # postes: caras finas sobre la grilla de postes
+                        near = np.zeros(len(tri), bool)
+                        for gx in POST_GRID_X:
+                            near |= (abs(c[:, 0] - gx) < 0.08)
+                        inside |= area & near & (ext[:, 0] < 0.1) & (ext[:, 2] < 0.1) & (vp[:, :, 1].max(1) <= 2.2)
             removed_tris += int(inside.sum())
             if inside.any():
                 new = tri[~inside].ravel()
@@ -242,6 +292,16 @@ def main(web=False):
                 acc.append(ia); p["indices"] = len(acc) - 1
         kept.append(p)
     j["meshes"][0]["primitives"] = kept
+
+    # 2b) cerco nuevo, ajustado al estibador que queda (mismos materiales que el original)
+    posts, panels = fence_geometry()
+    for mat_name, boxes in (("M_Amarillo_Seg", posts), ("M_Alambrado", panels)):
+        pos, nor, idx = box_mesh(boxes)
+        pi = len(acc); acc.append({"bufferView": append(pos, 34962), "componentType": 5126, "count": len(pos), "type": "VEC3",
+                                   "min": pos.min(0).tolist(), "max": pos.max(0).tolist()})
+        ni = len(acc); acc.append({"bufferView": append(nor, 34962), "componentType": 5126, "count": len(nor), "type": "VEC3"})
+        ii = len(acc); acc.append({"bufferView": append(idx, 34963), "componentType": 5125, "count": len(idx), "type": "SCALAR"})
+        j["meshes"][0]["primitives"].append({"attributes": {"POSITION": pi, "NORMAL": ni}, "indices": ii, "material": names.index(mat_name)})
 
     # 3) isla + vegetación
     for color, a in ({} if web else build_scene()).items():
