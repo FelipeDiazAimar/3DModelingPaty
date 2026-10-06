@@ -23,20 +23,21 @@ export function useLive() {
     let stop = false;
     let demoId: ReturnType<typeof setInterval> | undefined;
 
-    let demoT = 0, demoSample = 0;
+    let demoT = 0, demoSample = 0, lastDemoWall = performance.now();
+    const stepDemo = (nowMs: number) => {
+      const dtD = Math.min(0.5, Math.max(0, (nowMs - lastDemoWall) / 1000));
+      lastDemoWall = nowMs;
+      const q = st();
+      if (q.playT !== null && !q.playing) return; // en pausa el demo se frena
+      demoT += q.speed * dtD;
+      while (demoSample + 10 <= demoT) { demoSample += 10; buf.push(demoSnapshot(demoSample)); }
+      if (q.playT === null) clock.t = demoT;
+    };
     if (demo) {
       st().setConnected(true);
-      // el generador del demo corre por temporizador (no depende de los cuadros de animación)
-      let prevDemo = performance.now();
-      demoId = setInterval(() => {
-        const nowD = performance.now(), dtD = Math.min(0.5, (nowD - prevDemo) / 1000);
-        prevDemo = nowD;
-        const q = st();
-        if (q.playT !== null && !q.playing) return; // en pausa se frena
-        demoT += q.speed * dtD;
-        while (demoSample + 10 <= demoT) { demoSample += 10; buf.push(demoSnapshot(demoSample)); }
-        if (q.playT === null) clock.t = demoT;
-      }, 50);
+      // el tiempo del demo se integra en cada cuadro de animación (movimiento parejo a cualquier velocidad);
+      // el temporizador solo lo sostiene si la pestaña no recibe cuadros (segundo plano)
+      demoId = setInterval(() => stepDemo(performance.now()), 50);
     } else {
       const connect = async () => {
         try {
@@ -57,6 +58,7 @@ export function useLive() {
     const loop = (now: number) => {
       const dt = Math.min(0.25, (now - prev) / 1000);
       prev = now;
+      if (demo) stepDemo(now);
       const { history, playT, playing, speed, setPlayT } = st();
       const end = history[history.length - 1]?.t ?? 0;
       if (playT === null) {
