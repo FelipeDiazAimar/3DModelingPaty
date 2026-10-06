@@ -9,7 +9,7 @@ import { FLEET, MACHINES, STAGES, STAGE_LABEL, STATE_COLOR, STATE_LABEL, byId } 
 import { compliance, insights, ratePalletsHour, series, utilization } from "@/lib/derive";
 import { useHist, useLatest, useStore } from "@/lib/store";
 
-export function KpiChips() {
+export function KpiChips({ compact = false }: { compact?: boolean }) {
   const h = useHist();
   const last = useLatest();
   const rate = ratePalletsHour(h);
@@ -17,11 +17,11 @@ export function KpiChips() {
   const procs = MACHINES.filter((m) => m.kind === "machine" && /(Form[AB]|Tunel)/.test(m.id));
   const active = last ? procs.filter((m) => last.machines[m.id]?.state === "proc").length : 0;
   return (
-    <div className="pointer-events-auto flex items-center gap-2">
-      <KpiMini icon="pallet" accent="brand" label="Pallets PT" value={last ? String(last.kpi.palletsPT) : "—"} hint={`${rate.toFixed(2)} pal/h (últimas 4 h)`} />
-      <KpiMini icon="target" accent="green" label="Cumplimiento" value={last ? `${(comp * 100).toFixed(0)}` : "—"} unit="%" tone={comp >= 0.95 ? "ok" : comp >= 0.8 ? "warn" : "crit"} hint="Meta: 36 pal/día por línea" />
-      <KpiMini icon="truck" accent="blue" label="MP recibida" value={last ? String(last.kpi.palletsMP) : "—"} hint="Pallets de camiones a cámaras" />
-      <KpiMini icon="cog" accent="violet" label="Activas" value={last ? `${active}/${procs.length}` : "—"} hint="Formadoras y túneles trabajando" />
+    <div className={compact ? "pointer-events-auto grid w-fit max-w-full grid-cols-2 gap-1.5" : "pointer-events-auto flex items-center gap-2"}>
+      <KpiMini compact={compact} icon="pallet" accent="brand" label="Pallets PT" value={last ? String(last.kpi.palletsPT) : "—"} hint={`${rate.toFixed(2)} pal/h (últimas 4 h)`} />
+      <KpiMini compact={compact} icon="target" accent="green" label="Cumplimiento" value={last ? `${(comp * 100).toFixed(0)}` : "—"} unit="%" tone={comp >= 0.95 ? "ok" : comp >= 0.8 ? "warn" : "crit"} hint="Meta: 36 pal/día por línea" />
+      <KpiMini compact={compact} icon="truck" accent="blue" label="MP recibida" value={last ? String(last.kpi.palletsMP) : "—"} hint="Pallets de camiones a cámaras" />
+      <KpiMini compact={compact} icon="cog" accent="violet" label="Activas" value={last ? `${active}/${procs.length}` : "—"} hint="Formadoras y túneles trabajando" />
     </div>
   );
 }

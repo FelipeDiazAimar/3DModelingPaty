@@ -116,3 +116,8 @@ body {
 .tbl td.num, .tbl th.text-right { text-align: right; font-variant-numeric: tabular-nums; }
 .tbl td.first { font-weight: 700; }
 .menu-pop { background: rgba(255,255,255,.97); }
+
+/* Táctil: zona de toque más grande para los puntos del 3D */
+@media (pointer: coarse) {
+  .pin { padding: 9px; margin: -9px; }
+}

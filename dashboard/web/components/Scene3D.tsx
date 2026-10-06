@@ -7,6 +7,7 @@ import type { OrbitControls as OC } from "three-stdlib";
 import { FLEET, MACHINES, STATE_COLOR, byId } from "@/lib/layout";
 import { clock, indexAt, snapshotAt, useLatest, useStore } from "@/lib/store";
 import { demoFleetAt } from "@/lib/demo";
+import { fleetAt } from "@/lib/fleetPath";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -266,7 +267,7 @@ function Projector() {
       const c = ground.get(f.id)!;
       let tgt: THREE.Vector3 | null = null;
       if (st.demo) { const d = demoFleetAt(f.id, clock.t); tgt = P(d.x, d.y, 0); }
-      else if (l) tgt = P(l.x, l.y, 0);
+      else if (l) { const fp = fleetAt(h, f.id, clock.t) ?? l; tgt = P(fp.x, fp.y, 0); }
       if (tgt) {
         const prev = c.clone();
         if (st.demo) c.copy(tgt); else c.lerp(tgt, k);
@@ -401,40 +402,47 @@ function Highlight() {
   );
 }
 
-/** Al elegir un objeto: la cámara se centra en él y se acerca (conserva el ángulo de vista). */
+/** Al elegir un objeto: la cámara se centra y se acerca con una transición suave de duración fija (igual en PC y celular). */
 function Rig() {
   const selected = useStore((s) => s.selected);
   const controls = useThree((s) => s.controls) as unknown as OC | null;
   const cam = useThree((s) => s.camera);
-  const goal = useRef<{ target: THREE.Vector3; dist: number } | null>(null);
+  const tween = useRef<{ t0: number; fromT: THREE.Vector3; toT: THREE.Vector3; fromD: number; toD: number; dir: THREE.Vector3 } | null>(null);
+  const pending = useRef<{ target: THREE.Vector3; dist: number } | null>(null);
   useEffect(() => {
-    if (!selected) { goal.current = null; return; }
+    if (!selected) { pending.current = null; return; }
     const m = byId(selected);
-    if (m) goal.current = { target: P(m.x, m.y, m.sz / 2), dist: Math.max(9, Math.max(m.sx, m.sy, m.sz) * 2.2 + 6) };
+    if (m) pending.current = { target: P(m.x, m.y, m.sz / 2), dist: Math.max(9, Math.max(m.sx, m.sy, m.sz) * 2.2 + 6) };
     else if (FLEET.some((f) => f.id === selected)) {
       const g = ground.get(selected);
-      goal.current = { target: (g ?? new THREE.Vector3()).clone().setY(1), dist: 12 };
+      pending.current = { target: (g ?? new THREE.Vector3()).clone().setY(1), dist: 12 };
     }
   }, [selected]);
   useEffect(() => {
     if (!controls) return;
-    const stop = () => { goal.current = null; }; // si el usuario toma la cámara, se deja de animar
-    (controls as unknown as THREE.EventDispatcher<{ start: object }>).addEventListener("start", stop);
-    return () => (controls as unknown as THREE.EventDispatcher<{ start: object }>).removeEventListener("start", stop);
+    const ctl = controls as unknown as THREE.EventDispatcher<{ start: object }>;
+    const stop = () => { if (tween.current && performance.now() - tween.current.t0 > 350) tween.current = null; }; // el usuario toma la cámara
+    ctl.addEventListener("start", stop);
+    return () => ctl.removeEventListener("start", stop);
   }, [controls]);
-  useFrame((_, dt) => {
-    const g = goal.current;
-    if (!controls || !g) return;
-    const k = Math.min(1, dt * 3.2);
-    const dir = cam.position.clone().sub(controls.target);
-    const dist = dir.length() || 1;
-    dir.divideScalar(dist);
-    const dTarget = g.target.clone().sub(controls.target);
-    controls.target.addScaledVector(dTarget, k);
-    const nd = dist + (g.dist - dist) * k;
-    cam.position.copy(controls.target).addScaledVector(dir, nd);
+  useFrame(() => {
+    if (!controls) return;
+    if (pending.current) {
+      const g = pending.current;
+      pending.current = null;
+      const dir = cam.position.clone().sub(controls.target);
+      const dist = dir.length() || 1;
+      tween.current = { t0: performance.now(), fromT: controls.target.clone(), toT: g.target.clone(), fromD: dist, toD: g.dist, dir: dir.divideScalar(dist) };
+    }
+    const tw = tween.current;
+    if (!tw) return;
+    const u = Math.min(1, (performance.now() - tw.t0) / 900);
+    const e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; // easeInOutCubic
+    controls.target.copy(tw.fromT).lerp(tw.toT, e);
+    const nd = tw.fromD + (tw.toD - tw.fromD) * e;
+    cam.position.copy(controls.target).addScaledVector(tw.dir, nd);
     controls.update();
-    if (dTarget.length() < 0.05 && Math.abs(g.dist - nd) < 0.05) goal.current = null;
+    if (u >= 1) tween.current = null;
   });
   return null;
 }

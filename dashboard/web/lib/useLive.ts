@@ -26,6 +26,17 @@ export function useLive() {
     let demoT = 0, demoSample = 0;
     if (demo) {
       st().setConnected(true);
+      // el generador del demo corre por temporizador (no depende de los cuadros de animación)
+      let prevDemo = performance.now();
+      demoId = setInterval(() => {
+        const nowD = performance.now(), dtD = Math.min(0.5, (nowD - prevDemo) / 1000);
+        prevDemo = nowD;
+        const q = st();
+        if (q.playT !== null && !q.playing) return; // en pausa se frena
+        demoT += q.speed * dtD;
+        while (demoSample + 10 <= demoT) { demoSample += 10; buf.push(demoSnapshot(demoSample)); }
+        if (q.playT === null) clock.t = demoT;
+      }, 50);
     } else {
       const connect = async () => {
         try {
@@ -47,10 +58,6 @@ export function useLive() {
       const dt = Math.min(0.25, (now - prev) / 1000);
       prev = now;
       const { history, playT, playing, speed, setPlayT } = st();
-      if (demo && !(playT !== null && !playing)) { // el demo avanza a la velocidad elegida y en pausa se frena
-        demoT += speed * dt;
-        while (demoSample + 10 <= demoT) { demoSample += 10; buf.push(demoSnapshot(demoSample)); }
-      }
       const end = history[history.length - 1]?.t ?? 0;
       if (playT === null) {
         clock.live = true;

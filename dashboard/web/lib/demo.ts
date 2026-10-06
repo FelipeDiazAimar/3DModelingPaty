@@ -1,12 +1,13 @@
 import type { MachineLive, MState, Snapshot } from "./types";
 import { FLEET, MACHINES } from "./layout";
+import { routeThrough } from "./network";
 
 /** Recorridos rígidos (rectas con giros a 90°, como los nodos de ruta de FlexSim). Coordenadas de Blender. */
 const ROUTES: Record<string, [number, number][]> = {
-  MontacargasRecep: [[-67, -28], [-53.2, -28], [-53.2, -1.5], [-62, -1.5]],
-  MontacargasAlmacenMP: [[-53.2, -0.8], [-53.2, 12], [-48.3, 12]],
-  MontacargasLineaPT: [[31.8, 12.7], [40, 12.7], [40, -1.5], [62, -1.5]],
-  MontacargasExped: [[64.8, -28.3], [64.8, -1.5], [62, -1.5]],
+  MontacargasRecep: routeThrough(["NN_Recepcion", "NN_W_Pasillo", "NN_W_PuertaEnfr", "NN_MPEnfr"]),
+  MontacargasAlmacenMP: routeThrough(["NN_MPEnfr", "NN_W_PuertaEnfr", "J_Des_L7", "D_Des_L7"]),
+  MontacargasLineaPT: routeThrough(["NN_Est_L7", "NN_E_PuertaEnfr", "NN_PTEnfr"]),
+  MontacargasExped: routeThrough(["NN_PTEnfr", "NN_E_PuertaEnfr", "NN_E_Pasillo", "NN_Expedicion"]),
 };
 const SPEED = 3; // m/s
 

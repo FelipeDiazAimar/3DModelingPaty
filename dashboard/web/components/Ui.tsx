@@ -22,34 +22,35 @@ export function Kpi({ label, value, unit, delta, tone = "ink", hint, icon = "cub
 }) {
   const c = { ink: "text-ink", ok: "text-[var(--ok)]", warn: "text-[var(--warn)]", crit: "text-[var(--crit)]" }[tone];
   return (
-    <div className="glass flex min-w-[190px] items-center gap-3.5 px-4 py-3.5">
-      <IconChip name={icon} accent={accent} />
+    <div className="glass flex min-w-0 items-center gap-2.5 px-3 py-3 md:min-w-[190px] md:gap-3.5 md:px-4 md:py-3.5">
+      <span className="hidden md:block"><IconChip name={icon} accent={accent} /></span>
+      <span className="md:hidden"><IconChip name={icon} accent={accent} size={34} /></span>
       <div className="min-w-0">
-        <div className="truncate text-[12px] font-semibold text-muted">{label}</div>
+        <div className="text-[11.5px] font-semibold leading-tight text-muted md:truncate md:text-[12px]">{label}</div>
         <div className="mt-0.5 flex items-baseline gap-1.5">
-          <span className={`tnum text-[28px] font-extrabold leading-none tracking-tight ${c}`}>{value}</span>
+          <span className={`tnum text-[22px] font-extrabold leading-none tracking-tight md:text-[28px] ${c}`}>{value}</span>
           {unit && <span className="text-[12px] font-bold text-muted">{unit}</span>}
           {delta !== undefined && delta !== 0 && (
             <span className={`tnum ml-1 text-[12px] font-bold ${delta > 0 ? "text-[var(--ok)]" : "text-[var(--crit)]"}`}>{delta > 0 ? "▲" : "▼"} {Math.abs(delta)}</span>
           )}
         </div>
-        {hint && <div className="mt-1 truncate text-[11px] text-muted">{hint}</div>}
+        {hint && <div className="mt-1 text-[10.5px] leading-tight text-muted md:truncate md:text-[11px]">{hint}</div>}
       </div>
     </div>
   );
 }
 
 /** KPI compacto para el header: ícono, valor y rótulo corto. */
-export function KpiMini({ label, value, unit, tone = "ink", hint, icon, accent = "blue" }: {
-  label: string; value: string; unit?: string; tone?: "ink" | "ok" | "warn" | "crit"; hint?: string; icon: IconName; accent?: Accent;
+export function KpiMini({ label, value, unit, tone = "ink", hint, icon, accent = "blue", compact = false }: {
+  label: string; value: string; unit?: string; tone?: "ink" | "ok" | "warn" | "crit"; hint?: string; icon: IconName; accent?: Accent; compact?: boolean;
 }) {
   const c = { ink: "text-ink", ok: "text-[var(--ok)]", warn: "text-[var(--warn)]", crit: "text-[var(--crit)]" }[tone];
   return (
-    <div className="glass flex shrink-0 items-center gap-2.5 py-1.5 pl-2 pr-3.5" title={hint ? `${label} · ${hint}` : label}>
-      <IconChip name={icon} accent={accent} size={34} />
+    <div className={`glass flex min-w-0 items-center ${compact ? "gap-1.5 py-1 pl-1.5 pr-2" : "shrink-0 gap-2.5 py-1.5 pl-2 pr-3.5"}`} title={hint ? `${label} · ${hint}` : label}>
+      <IconChip name={icon} accent={accent} size={compact ? 26 : 34} />
       <div className="leading-tight">
-        <div className="flex items-baseline gap-1"><span className={`tnum text-[18px] font-extrabold tracking-tight ${c}`}>{value}</span>{unit && <span className="text-[11px] font-bold text-muted">{unit}</span>}</div>
-        <div className="whitespace-nowrap text-[10.5px] font-semibold text-muted">{label}</div>
+        <div className="flex items-baseline gap-1"><span className={`tnum font-extrabold tracking-tight ${compact ? "text-[14px]" : "text-[18px]"} ${c}`}>{value}</span>{unit && <span className="text-[11px] font-bold text-muted">{unit}</span>}</div>
+        <div className={`whitespace-nowrap font-semibold text-muted ${compact ? "text-[9.5px]" : "text-[10.5px]"}`}>{label}</div>
       </div>
     </div>
   );
@@ -130,7 +131,7 @@ export function Empty() {
   return (
     <div className="card grid place-items-center gap-3 p-12 text-center">
       <div className="spinner" aria-hidden />
-      <p className="max-w-[44ch] text-[14px] text-muted">Esperando datos de la simulación. Corré PLANTASJ.fsm en FlexSim o activá el demo arriba a la derecha.</p>
+      <p className="max-w-[44ch] text-[14px] text-muted">Esperando datos de la simulación. Corré PLANTASJ.fsm en FlexSim o activá el demo (botón Demo del encabezado o del menú).</p>
     </div>
   );
 }
