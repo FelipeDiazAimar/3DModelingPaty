@@ -189,19 +189,54 @@ function Clouds() {
 
 /* ---------- montacargas 3D ---------- */
 function ForkliftModel({ id }: { id: string }) {
+  const steel = "#5f6f8d", dark = "#252d40";
   return (
-    <group ref={(g) => { if (g) fk.set(id, g); else fk.delete(id); }} scale={1.5}>
-      <RoundedBox args={[1.3, 0.8, 2.2]} radius={0.22} position={[0, 0.85, -0.2]}><meshLambertMaterial color="#ff9a1f" /></RoundedBox>
-      <RoundedBox args={[1.2, 0.5, 1.0]} radius={0.15} position={[0, 1.55, -0.55]}><meshLambertMaterial color="#2b3550" /></RoundedBox>
-      <RoundedBox args={[1.3, 0.5, 0.6]} radius={0.2} position={[0, 1.0, -1.35]}><meshLambertMaterial color="#ffd23f" /></RoundedBox>
-      <mesh position={[-0.45, 1.5, 0.45]}><boxGeometry args={[0.08, 1.3, 0.08]} /><meshLambertMaterial color="#6c7a99" /></mesh>
-      <mesh position={[0.45, 1.5, 0.45]}><boxGeometry args={[0.08, 1.3, 0.08]} /><meshLambertMaterial color="#6c7a99" /></mesh>
-      <mesh position={[0, 1.4, 1.05]}><boxGeometry args={[0.9, 1.5, 0.12]} /><meshLambertMaterial color="#7e8cab" /></mesh>
-      <mesh position={[-0.3, 0.12, 1.55]}><boxGeometry args={[0.16, 0.08, 1.1]} /><meshLambertMaterial color="#5d6a88" /></mesh>
-      <mesh position={[0.3, 0.12, 1.55]}><boxGeometry args={[0.16, 0.08, 1.1]} /><meshLambertMaterial color="#5d6a88" /></mesh>
-      {[[-0.62, 0.3, 0.45], [0.62, 0.3, 0.45], [-0.62, 0.3, -0.85], [0.62, 0.3, -0.85]].map((p, i) => (
-        <mesh key={i} position={[p[0], p[1], p[2]]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.3, 0.3, 0.22, 14]} /><meshLambertMaterial color="#2b3550" /></mesh>
+    <group ref={(g) => { if (g) fk.set(id, g); else fk.delete(id); }} scale={1.35}>
+      {/* ruedas (motrices adelante, directrices atrás) */}
+      {[[-0.62, 0.55, 0.36], [0.62, 0.55, 0.36], [-0.6, -0.85, 0.3], [0.6, -0.85, 0.3]].map(([x, z, r], i) => (
+        <group key={i} position={[x, r, z]} rotation={[0, 0, Math.PI / 2]}>
+          <mesh><cylinderGeometry args={[r, r, 0.3, 20]} /><meshLambertMaterial color={dark} /></mesh>
+          <mesh position={[0, x > 0 ? 0.16 : -0.16, 0]}><cylinderGeometry args={[r * 0.5, r * 0.5, 0.04, 16]} /><meshLambertMaterial color="#aeb9d0" /></mesh>
+        </group>
       ))}
+      {/* chasis y contrapeso */}
+      <RoundedBox args={[1.24, 0.62, 2.2]} radius={0.14} smoothness={4} position={[0, 0.66, -0.1]}><meshLambertMaterial color="#ff9a1f" /></RoundedBox>
+      <RoundedBox args={[1.2, 0.8, 0.62]} radius={0.2} smoothness={4} position={[0, 0.82, -1.18]}><meshLambertMaterial color="#f07d00" /></RoundedBox>
+      <RoundedBox args={[1.0, 0.12, 0.5]} radius={0.04} position={[0, 1.04, 0.62]}><meshLambertMaterial color="#e08800" /></RoundedBox>
+      {/* asiento */}
+      <RoundedBox args={[0.7, 0.14, 0.6]} radius={0.05} position={[0, 1.04, -0.4]}><meshLambertMaterial color={dark} /></RoundedBox>
+      <RoundedBox args={[0.7, 0.5, 0.12]} radius={0.05} position={[0, 1.3, -0.72]}><meshLambertMaterial color={dark} /></RoundedBox>
+      {/* volante */}
+      <mesh position={[0, 1.32, 0.12]} rotation={[0.9, 0, 0]}><torusGeometry args={[0.16, 0.025, 8, 20]} /><meshLambertMaterial color={dark} /></mesh>
+      {/* techo de protección */}
+      {[[-0.52, 0.55], [0.52, 0.55], [-0.52, -0.82], [0.52, -0.82]].map(([x, z], i) => (
+        <mesh key={i} position={[x, 1.55, z]}><boxGeometry args={[0.06, 1.0, 0.06]} /><meshLambertMaterial color={dark} /></mesh>
+      ))}
+      <RoundedBox args={[1.22, 0.07, 1.5]} radius={0.03} position={[0, 2.06, -0.14]}><meshLambertMaterial color="#3a4560" /></RoundedBox>
+      <mesh position={[0, 2.16, -0.1]}><cylinderGeometry args={[0.07, 0.09, 0.12, 12]} /><meshLambertMaterial color="#ffd23f" /></mesh>
+      {/* mástil, carro y horquillas */}
+      {[-0.42, 0.42].map((x) => (
+        <mesh key={x} position={[x, 1.02, 1.12]}><boxGeometry args={[0.1, 2.0, 0.12]} /><meshLambertMaterial color={steel} /></mesh>
+      ))}
+      <mesh position={[0, 1.95, 1.12]}><boxGeometry args={[0.94, 0.08, 0.1]} /><meshLambertMaterial color={steel} /></mesh>
+      <mesh position={[0, 0.2, 1.12]}><boxGeometry args={[0.94, 0.1, 0.1]} /><meshLambertMaterial color={steel} /></mesh>
+      <mesh position={[0, 0.48, 1.22]}><boxGeometry args={[0.9, 0.46, 0.06]} /><meshLambertMaterial color="#7c8bab" /></mesh>
+      {[-0.3, 0.3].map((x) => (
+        <group key={x}>
+          <mesh position={[x, 0.18, 1.82]}><boxGeometry args={[0.12, 0.06, 1.2]} /><meshLambertMaterial color="#4a5670" /></mesh>
+          <mesh position={[x, 0.42, 1.27]}><boxGeometry args={[0.12, 0.54, 0.05]} /><meshLambertMaterial color="#4a5670" /></mesh>
+        </group>
+      ))}
+      {/* pallet con cajas: se muestra solo cuando va cargado */}
+      <group visible={false} ref={(g) => { if (g) pal.set(id, g); else pal.delete(id); }}>
+        <mesh position={[0, 0.27, 1.85]}><boxGeometry args={[1.0, 0.14, 1.2]} /><meshLambertMaterial color="#e2a35f" /></mesh>
+        {[[-0.25, -0.3], [0.25, -0.3], [-0.25, 0.3], [0.25, 0.3]].map(([x, z], i) => (
+          <RoundedBox key={i} args={[0.46, 0.5, 0.56]} radius={0.03} position={[x, 0.59, 1.85 + z]}><meshLambertMaterial color="#f6efe0" /></RoundedBox>
+        ))}
+        {[[-0.25, 0], [0.25, 0]].map(([x, z], i) => (
+          <RoundedBox key={i} args={[0.46, 0.5, 1.12]} radius={0.03} position={[x, 1.09, 1.85 + z]}><meshLambertMaterial color="#efe5cf" /></RoundedBox>
+        ))}
+      </group>
     </group>
   );
 }
@@ -211,6 +246,7 @@ const world = new Map<string, THREE.Vector3>(); // posición del pin
 const ground = new Map<string, THREE.Vector3>(); // montacargas: posición en el piso (suavizada)
 const els = new Map<string, HTMLElement>();
 const fk = new Map<string, THREE.Group>();
+const pal = new Map<string, THREE.Group>(); // pallet sobre las horquillas
 MACHINES.forEach((m) => world.set(m.id, P(m.x, m.y, Math.max(m.sz, 1.2) + 1.6)));
 FLEET.forEach((f) => ground.set(f.id, P(f.x, f.y, 0)));
 
@@ -246,6 +282,8 @@ function Projector() {
           g.position.copy(c);
         }
       } else if (g) g.position.copy(c);
+      const pg = pal.get(f.id);
+      if (pg) pg.visible = st.demo ? !!(tgt && demoFleetAt(f.id, clock.t).forward) : !!l?.carrying;
       world.set(f.id, c.clone().setY(3.4));
     });
     els.forEach((el, id) => {
@@ -424,7 +462,7 @@ function LoaderOverlay() {
 export default function Scene3D() {
   return (
     <div className="absolute inset-0" style={{ isolation: "isolate", zIndex: 0, background: "linear-gradient(180deg, #a9dcff 0%, #cfe9ff 40%, #dcefff 100%)" }}>
-      <Canvas dpr={[1, 1.75]} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}>
+      <Canvas dpr={[1, 1.5]} performance={{ min: 0.6 }} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}>
         <fog attach="fog" args={["#dcefff", 500, 2800]} />
         <hemisphereLight args={["#ffffff", "#9be37a", 1.55]} />
         <directionalLight position={[80, 150, 60]} intensity={2.1} color="#fffdf6" />

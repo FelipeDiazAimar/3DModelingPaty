@@ -1,5 +1,5 @@
 "use client";
-import { useStore } from "@/lib/store";
+import { clock, useStore } from "@/lib/store";
 import { simClock } from "./Shell";
 
 const SPEEDS: [number, string, string][] = [
@@ -34,7 +34,7 @@ export function Player() {
   const running = live || playing;
 
   const toggle = () => {
-    if (live) { setPlayT(end); setPlaying(false); }
+    if (live) { setPlayT(Math.max(first, clock.t)); setPlaying(false); }
     else if (playing) setPlaying(false);
     else { if (playT >= end - 1) setPlayT(first); setPlaying(true); }
   };
