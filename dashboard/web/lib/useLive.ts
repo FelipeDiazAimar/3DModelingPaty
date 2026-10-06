@@ -18,9 +18,15 @@ export function useLive() {
     let demoId: ReturnType<typeof setInterval> | undefined;
 
     if (demo) {
-      let t = 0;
+      let t = 0, lastSample = 0;
       st().setConnected(true);
-      demoId = setInterval(() => { const q = st(); if (q.playT !== null && !q.playing) return; for (let k = 0; k < 6; k++) { t += 10; buf.push(demoSnapshot(t)); } }, 250); // en pausa el demo no sigue generando: la barra no se corre
+      // el demo avanza a la velocidad elegida en el reproductor; en pausa no genera (la barra no se corre)
+      demoId = setInterval(() => {
+        const q = st();
+        if (q.playT !== null && !q.playing) return;
+        t += q.speed * 0.1;
+        while (lastSample + 10 <= t) { lastSample += 10; buf.push(demoSnapshot(lastSample)); }
+      }, 100);
     } else {
       const connect = async () => {
         try {
@@ -37,19 +43,27 @@ export function useLive() {
 
     // reloj: avanza el cabezal y avisa a React ~5 veces por segundo
     let raf = 0, prev = performance.now(), lastPush = 0;
+    let rate = 0, rateE0 = 0, rateW0 = performance.now(); // ritmo de llegada de datos (s simulados / s real)
     const loop = (now: number) => {
       const dt = Math.min(0.25, (now - prev) / 1000);
       prev = now;
       const { history, playT, playing, speed, setPlayT } = st();
       const end = history[history.length - 1]?.t ?? 0;
       if (playT === null) {
-        // en vivo: el cabezal persigue la última muestra (una atrás mientras llegan datos) para que el movimiento sea continuo
+        // en vivo: el cabezal avanza al mismo ritmo en que llegan los datos (medido), una muestra y media atrás,
+        // y se corrige despacio hacia ese objetivo: movimiento parejo en vez de saltos
         clock.live = true;
         const first = history[0]?.t ?? 0;
-        const target = now - lastIn < 1500 ? Math.max(first, end - 10) : end;
-        if (clock.t > end) clock.t = end;
-        clock.t += (target - clock.t) * (1 - Math.exp(-dt / 0.35));
-        if (Math.abs(target - clock.t) < 0.01) clock.t = target;
+        if (now - rateW0 > 400) {
+          const r = Math.max(0, (end - rateE0) / ((now - rateW0) / 1000));
+          rate += (r - rate) * 0.4;
+          rateE0 = end; rateW0 = now;
+        }
+        const target = Math.max(first, end - 15);
+        if (clock.t > end || clock.t < first - 1) clock.t = Math.max(first, Math.min(end, clock.t));
+        if (Math.abs(target - clock.t) > 600) clock.t = target; // salto grande (corrida nueva o recarga)
+        else clock.t += (rate + (target - clock.t) * 0.7) * dt;
+        clock.t = Math.max(first, Math.min(end, clock.t));
       }
       else {
         clock.live = false;

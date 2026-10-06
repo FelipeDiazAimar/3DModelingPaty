@@ -29,7 +29,7 @@ interface S {
 
 export const useStore = create<S>((set) => ({
   history: [], connected: false, demo: process.env.NEXT_PUBLIC_DEMO === "1", selected: null, line: "Todas",
-  playT: null, playing: true, speed: 60,
+  playT: null, playing: true, speed: 5,
   setHistory: (history) => set({ history }),
   addMany: (batch) =>
     set((st) => {

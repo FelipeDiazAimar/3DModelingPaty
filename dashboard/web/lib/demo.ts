@@ -10,7 +10,7 @@ const ROUTES: Record<string, [number, number][]> = {
 };
 const SPEED = 3; // m/s
 
-function routePos(id: string, t: number, k: number) {
+export function routePos(id: string, t: number, k: number) {
   const pts = ROUTES[id];
   if (!pts) return { x: 0, y: 0, forward: false };
   const lens = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
@@ -45,4 +45,10 @@ export function demoSnapshot(t: number): Snapshot {
   });
   const pt = Math.floor(t / 1450);
   return { t, machines, fleet, kpi: { palletsMP: Math.floor(t / 1800), palletsPT: pt, cajasL7: Math.floor(t / 19), cajasL8: Math.floor(t / 20) }, demo: true };
+}
+
+/** Posición continua (no muestreada) de un montacargas del demo: así el movimiento es exacto y sin saltos. */
+export function demoFleetAt(id: string, t: number) {
+  const i = Math.max(0, FLEET.findIndex((f) => f.id === id));
+  return routePos(id, t, i);
 }

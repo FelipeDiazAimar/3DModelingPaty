@@ -193,7 +193,7 @@ export function BatchTrack() {
   const select = useStore((s) => s.select);
   const l = line === "L8" ? "L8" : "L7";
   return (
-    <div className="glass pointer-events-auto w-[clamp(430px,calc(100vw-890px),760px)] px-5 py-4">
+    <div className="glass pointer-events-auto w-[clamp(430px,calc(100vw-960px),760px)] px-5 py-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h3 className="text-[14px] font-bold">Recorrido del batch · Línea {l.slice(1)}</h3>
         <span className="text-[11px] text-muted">Batch de 1500 kg → 10 cargas → 300 cajas de 5 kg</span>

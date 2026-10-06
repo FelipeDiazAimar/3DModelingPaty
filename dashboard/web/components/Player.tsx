@@ -3,7 +3,9 @@ import { useStore } from "@/lib/store";
 import { simClock } from "./Shell";
 
 const SPEEDS: [number, string, string][] = [
-  [10, "×10", "10 s simulados por segundo"],
+  [1, "×1", "tiempo real"],
+  [5, "×5", "5 s simulados por segundo"],
+  [20, "×20", "20 s simulados por segundo"],
   [60, "×60", "1 minuto simulado por segundo"],
   [300, "×300", "5 minutos simulados por segundo"],
   [1200, "×1200", "20 minutos simulados por segundo"],

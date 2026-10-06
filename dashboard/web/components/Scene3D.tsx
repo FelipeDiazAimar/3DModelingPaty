@@ -6,6 +6,7 @@ import * as THREE from "three";
 import type { OrbitControls as OC } from "three-stdlib";
 import { FLEET, MACHINES, STATE_COLOR, byId } from "@/lib/layout";
 import { clock, indexAt, snapshotAt, useLatest, useStore } from "@/lib/store";
+import { demoFleetAt } from "@/lib/demo";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -226,13 +227,24 @@ function Projector() {
     FLEET.forEach((f) => {
       const l = snap?.fleet[f.id];
       const g = fk.get(f.id);
-      let c = ground.get(f.id)!;
-      if (l) {
-        const tgt = P(l.x, l.y, 0);
+      const c = ground.get(f.id)!;
+      let tgt: THREE.Vector3 | null = null;
+      if (st.demo) { const d = demoFleetAt(f.id, clock.t); tgt = P(d.x, d.y, 0); }
+      else if (l) tgt = P(l.x, l.y, 0);
+      if (tgt) {
         const prev = c.clone();
-        c.lerp(tgt, k);
+        if (st.demo) c.copy(tgt); else c.lerp(tgt, k);
         const dx = c.x - prev.x, dz = c.z - prev.z;
-        if (g) { if (dx * dx + dz * dz > 1e-5) g.rotation.y = Math.atan2(dx, dz); g.position.copy(c); }
+        if (g) {
+          // rumbo: solo si se movió de verdad, y girando de a poco por el camino más corto (sin remolinos)
+          if (dx * dx + dz * dz > 4e-4) {
+            const want = Math.atan2(dx, dz);
+            let da = want - g.rotation.y;
+            da = Math.atan2(Math.sin(da), Math.cos(da));
+            g.rotation.y += da * Math.min(1, dt * 6);
+          }
+          g.position.copy(c);
+        }
       } else if (g) g.position.copy(c);
       world.set(f.id, c.clone().setY(3.4));
     });
