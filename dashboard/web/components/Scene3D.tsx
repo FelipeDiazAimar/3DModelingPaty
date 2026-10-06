@@ -8,6 +8,7 @@ import { FLEET, MACHINES, STATE_COLOR, byId } from "@/lib/layout";
 import { clock, indexAt, snapshotAt, useLatest, useStore } from "@/lib/store";
 import { demoFleetAt } from "@/lib/demo";
 import { fleetAt } from "@/lib/fleetPath";
+import { alongPath, pathBetween } from "@/lib/network";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -248,6 +249,8 @@ const ground = new Map<string, THREE.Vector3>(); // montacargas: posición en el
 const els = new Map<string, HTMLElement>();
 const fk = new Map<string, THREE.Group>();
 const pal = new Map<string, THREE.Group>(); // pallet sobre las horquillas
+const visFleet = new Map<string, { x: number; y: number }>(); // posición mostrada (Blender)
+const VIS_MAX_SPEED = 14; // m/s: velocidad visual máxima de un montacargas
 MACHINES.forEach((m) => world.set(m.id, P(m.x, m.y, Math.max(m.sz, 1.2) + 1.6)));
 FLEET.forEach((f) => ground.set(f.id, P(f.x, f.y, 0)));
 
@@ -265,12 +268,27 @@ function Projector() {
       const l = snap?.fleet[f.id];
       const g = fk.get(f.id);
       const c = ground.get(f.id)!;
-      let tgt: THREE.Vector3 | null = null;
-      if (st.demo) { const d = demoFleetAt(f.id, clock.t); tgt = P(d.x, d.y, 0); }
-      else if (l) { const fp = fleetAt(h, f.id, clock.t) ?? l; tgt = P(fp.x, fp.y, 0); }
-      if (tgt) {
+      let tb: { x: number; y: number } | null = null; // posición objetivo (coordenadas de Blender)
+      if (st.demo) { const dd = demoFleetAt(f.id, clock.t); tb = { x: dd.x, y: dd.y }; }
+      else if (l) tb = fleetAt(h, f.id, clock.t) ?? { x: l.x, y: l.y };
+      if (tb) {
+        // el montacargas se mueve por la red hacia su objetivo con un tope de velocidad visual (si la simulación
+        // va muy rápida no se teletransporta: se ve avanzando fluido, un poco atrasado)
+        const vis = visFleet.get(f.id);
+        let nx = tb.x, ny = tb.y;
+        if (vis) {
+          const dist = Math.hypot(tb.x - vis.x, tb.y - vis.y);
+          if (dist > 0.02) {
+            const path = pathBetween([vis.x, vis.y], [tb.x, tb.y]);
+            let total = 0;
+            for (let i = 1; i < path.length; i++) total += Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
+            const step = VIS_MAX_SPEED * dt;
+            if (total > step) { const q = alongPath(path, step / total); nx = q.x; ny = q.y; }
+          }
+        }
+        visFleet.set(f.id, { x: nx, y: ny });
         const prev = c.clone();
-        if (st.demo) c.copy(tgt); else c.lerp(tgt, k);
+        c.copy(P(nx, ny, 0));
         const dx = c.x - prev.x, dz = c.z - prev.z;
         if (g) {
           // rumbo: solo si se movió de verdad, y girando de a poco por el camino más corto (sin remolinos)
@@ -283,8 +301,9 @@ function Projector() {
           g.position.copy(c);
         }
       } else if (g) g.position.copy(c);
+      world.set(f.id, c.clone().setY(3.4));
       const pg = pal.get(f.id);
-      if (pg) pg.visible = st.demo ? !!(tgt && demoFleetAt(f.id, clock.t).forward) : !!l?.carrying;
+      if (pg) pg.visible = st.demo ? !!(tb && demoFleetAt(f.id, clock.t).forward) : !!l?.carrying;
       world.set(f.id, c.clone().setY(3.4));
     });
     els.forEach((el, id) => {
