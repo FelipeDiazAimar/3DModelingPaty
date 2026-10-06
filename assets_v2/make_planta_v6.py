@@ -210,9 +210,22 @@ def build_scene():
     for _ in range(520):
         x, z = at()
         acc(pick(flower_c)).add(sph0, 0.3, 0.3, 0.3, x, 0.3, z)
-    # isla: tierra (más abajo) y pasto encima, ambas con esquinas redondeadas
-    acc("#c58a52").add(rounded_slab(312, 216, 34, -10.0, -1.2), 1, 1, 1, 0, 0, 0)
-    acc("#79d957").add(rounded_slab(310, 214, 33, -1.2, -0.3), 1, 1, 1, 0, 0, 0)
+    # bosque lejano (cada vez más ralo hacia el horizonte)
+    FAR = [(-900, -160, -900, 900), (160, 900, -900, 900), (-160, 160, -900, -115), (-160, 160, 110, 900)]
+
+    def atfar():
+        z = FAR[int(r() * len(FAR))]
+        return z[0] + r() * (z[1] - z[0]), z[2] + r() * (z[3] - z[2])
+    for _ in range(260):
+        x, z = atfar(); sc = 1.1 + r() * 1.3
+        acc("#9a6238").add(trunk, sc, sc, sc, x, 0, z)
+        acc(pick(blossom) if r() < 0.12 else pick(greens)).add(sph1, 2.3 * sc, 2.1 * sc, 2.3 * sc, x, 3.9 * sc, z)
+    for _ in range(160):
+        x, z = atfar(); sc = 1.1 + r() * 1.2
+        acc("#9a6238").add(trunk, sc, sc, sc, x, 0, z)
+        acc(pick(pines_c)).add(cn, 1.9 * sc, 6 * sc, 1.9 * sc, x, 1.2 * sc, z)
+    # pasto hasta el horizonte (una losa enorme)
+    acc("#79d957").add(rounded_slab(9000, 9000, 50, -1.2, -0.3, seg=2), 1, 1, 1, 0, 0, 0)
     return mats
 
 

@@ -20,7 +20,7 @@ export function useLive() {
     if (demo) {
       let t = 0;
       st().setConnected(true);
-      demoId = setInterval(() => { for (let k = 0; k < 6; k++) { t += 10; buf.push(demoSnapshot(t)); } }, 250);
+      demoId = setInterval(() => { const q = st(); if (q.playT !== null && !q.playing) return; for (let k = 0; k < 6; k++) { t += 10; buf.push(demoSnapshot(t)); } }, 250); // en pausa el demo no sigue generando: la barra no se corre
     } else {
       const connect = async () => {
         try {

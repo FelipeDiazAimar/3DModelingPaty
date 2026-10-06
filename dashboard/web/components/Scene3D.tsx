@@ -66,14 +66,13 @@ function roundedRect(w: number, d: number, r: number) {
 
 const ISLE_W = 310, ISLE_D = 214;
 
+/** Pasto que se extiende hasta el horizonte (la niebla lo funde con el cielo). */
 function Island() {
-  const soil = useMemo(() => new THREE.ExtrudeGeometry(roundedRect(ISLE_W, ISLE_D, 34), { depth: 6, bevelEnabled: true, bevelSize: 2.5, bevelThickness: 2.5, bevelSegments: 5, curveSegments: 14 }), []);
-  const grass = useMemo(() => new THREE.ExtrudeGeometry(roundedRect(ISLE_W - 3, ISLE_D - 3, 32), { depth: 1.2, bevelEnabled: true, bevelSize: 2.2, bevelThickness: 2.2, bevelSegments: 6, curveSegments: 14 }), []);
   return (
-    <group rotation={[-Math.PI / 2, 0, 0]}>
-      <mesh geometry={soil} position={[0, 0, -10.2]}><meshLambertMaterial color="#c58a52" /></mesh>
-      <mesh geometry={grass} position={[0, 0, -3.5]}><meshLambertMaterial color="#79d957" /></mesh>
-    </group>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.3, 0]}>
+      <planeGeometry args={[9000, 9000]} />
+      <meshLambertMaterial color="#79d957" />
+    </mesh>
   );
 }
 
@@ -84,12 +83,16 @@ function rng(seed: number) {
 const ZONES: [number, number, number, number][] = [ // x0, x1, z0, z1 (coordenadas three)
   [-146, 146, -100, -58], [-146, 146, 93, 103], [133, 148, -100, 103], [-148, -133, -100, 103],
 ];
+const FAR: [number, number, number, number][] = [ // bosque lejano alrededor de la planta
+  [-900, -160, -900, 900], [160, 900, -900, 900], [-160, 160, -900, -115], [-160, 160, 110, 900],
+];
 const pick = <T,>(r: () => number, a: T[]) => a[Math.floor(r() * a.length)];
 
 function Vegetation() {
   const data = useMemo(() => {
     const r = rng(7);
     const at = (): [number, number] => { const z = pick(r, ZONES); return [z[0] + r() * (z[1] - z[0]), z[2] + r() * (z[3] - z[2])]; };
+    const atFar = (): [number, number] => { const z = pick(r, FAR); return [z[0] + r() * (z[1] - z[0]), z[2] + r() * (z[3] - z[2])]; };
     const round: { x: number; z: number; s: number; c: string }[] = [];
     const pines: { x: number; z: number; s: number; c: string }[] = [];
     const bushes: { x: number; z: number; s: number; c: string }[] = [];
@@ -99,6 +102,9 @@ function Vegetation() {
     for (let i = 0; i < 95; i++) { const [x, z] = at(); round.push({ x, z, s: 0.8 + r() * 0.9, c: r() < 0.16 ? pick(r, blossom) : pick(r, greens) }); }
     for (let i = 0; i < 55; i++) { const [x, z] = at(); pines.push({ x, z, s: 0.8 + r() * 0.8, c: pick(r, ["#1f9d5a", "#16864b", "#2db36a", "#35c277"]) }); }
     for (let i = 0; i < 90; i++) { const [x, z] = at(); bushes.push({ x, z, s: 0.7 + r() * 0.9, c: pick(r, [...greens, "#a6e35a"]) }); }
+    for (let i = 0; i < 260; i++) { const [x, z] = atFar(); round.push({ x, z, s: 1.1 + r() * 1.3, c: r() < 0.12 ? pick(r, blossom) : pick(r, greens) }); }
+    for (let i = 0; i < 160; i++) { const [x, z] = atFar(); pines.push({ x, z, s: 1.1 + r() * 1.2, c: pick(r, ["#1f9d5a", "#16864b", "#2db36a", "#35c277"]) }); }
+    for (let i = 0; i < 150; i++) { const [x, z] = atFar(); bushes.push({ x, z, s: 1 + r() * 1.4, c: pick(r, [...greens, "#a6e35a"]) }); }
     for (let i = 0; i < 520; i++) { const [x, z] = at(); flowers.push({ x, z, c: pick(r, ["#ff5d8f", "#ffd23f", "#ffffff", "#b388ff", "#ff8a3d", "#5ec8ff"]) }); }
     return { round, pines, bushes, flowers };
   }, []);
@@ -405,8 +411,9 @@ function LoaderOverlay() {
 
 export default function Scene3D() {
   return (
-    <div className="absolute inset-0" style={{ isolation: "isolate", zIndex: 0, background: "linear-gradient(180deg, #a9dcff 0%, #d4eeff 38%, #f2f9ff 100%)" }}>
+    <div className="absolute inset-0" style={{ isolation: "isolate", zIndex: 0, background: "linear-gradient(180deg, #a9dcff 0%, #cfe9ff 40%, #dcefff 100%)" }}>
       <Canvas dpr={[1, 1.75]} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}>
+        <fog attach="fog" args={["#dcefff", 500, 2800]} />
         <hemisphereLight args={["#ffffff", "#9be37a", 1.55]} />
         <directionalLight position={[80, 150, 60]} intensity={2.1} color="#fffdf6" />
         <Suspense fallback={null}>
