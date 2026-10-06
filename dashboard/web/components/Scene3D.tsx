@@ -345,22 +345,40 @@ function Highlight() {
   );
 }
 
+/** Al elegir un objeto: la cámara se centra en él y se acerca (conserva el ángulo de vista). */
 function Rig() {
   const selected = useStore((s) => s.selected);
   const controls = useThree((s) => s.controls) as unknown as OC | null;
   const cam = useThree((s) => s.camera);
-  const goal = useRef<THREE.Vector3 | null>(null);
+  const goal = useRef<{ target: THREE.Vector3; dist: number } | null>(null);
   useEffect(() => {
-    const m = selected ? byId(selected) : undefined;
-    goal.current = m ? P(m.x, m.y, 0) : null;
+    if (!selected) { goal.current = null; return; }
+    const m = byId(selected);
+    if (m) goal.current = { target: P(m.x, m.y, m.sz / 2), dist: Math.max(9, Math.max(m.sx, m.sy, m.sz) * 2.2 + 6) };
+    else if (FLEET.some((f) => f.id === selected)) {
+      const g = ground.get(selected);
+      goal.current = { target: (g ?? new THREE.Vector3()).clone().setY(1), dist: 12 };
+    }
   }, [selected]);
+  useEffect(() => {
+    if (!controls) return;
+    const stop = () => { goal.current = null; }; // si el usuario toma la cámara, se deja de animar
+    (controls as unknown as THREE.EventDispatcher<{ start: object }>).addEventListener("start", stop);
+    return () => (controls as unknown as THREE.EventDispatcher<{ start: object }>).removeEventListener("start", stop);
+  }, [controls]);
   useFrame((_, dt) => {
-    if (!controls || !goal.current) return;
-    const delta = goal.current.clone().sub(controls.target).multiplyScalar(Math.min(1, dt * 3));
-    controls.target.add(delta);
-    cam.position.add(delta);
+    const g = goal.current;
+    if (!controls || !g) return;
+    const k = Math.min(1, dt * 3.2);
+    const dir = cam.position.clone().sub(controls.target);
+    const dist = dir.length() || 1;
+    dir.divideScalar(dist);
+    const dTarget = g.target.clone().sub(controls.target);
+    controls.target.addScaledVector(dTarget, k);
+    const nd = dist + (g.dist - dist) * k;
+    cam.position.copy(controls.target).addScaledVector(dir, nd);
     controls.update();
-    if (delta.length() < 0.01) goal.current = null;
+    if (dTarget.length() < 0.05 && Math.abs(g.dist - nd) < 0.05) goal.current = null;
   });
   return null;
 }
@@ -388,7 +406,7 @@ function LoaderOverlay() {
 export default function Scene3D() {
   return (
     <div className="absolute inset-0" style={{ isolation: "isolate", zIndex: 0, background: "linear-gradient(180deg, #a9dcff 0%, #d4eeff 38%, #f2f9ff 100%)" }}>
-      <Canvas dpr={[1, 1.75]} camera={{ position: [86, 66, 86], fov: 32, near: 1, far: 900 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}>
+      <Canvas dpr={[1, 1.75]} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}>
         <hemisphereLight args={["#ffffff", "#9be37a", 1.55]} />
         <directionalLight position={[80, 150, 60]} intensity={2.1} color="#fffdf6" />
         <Suspense fallback={null}>
@@ -400,7 +418,7 @@ export default function Scene3D() {
         <Flow />
         {FLEET.map((f) => <ForkliftModel key={f.id} id={f.id} />)}
         <Highlight />
-        <OrbitControls makeDefault enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2.15} minDistance={12} maxDistance={230} target={[0, 0, 0]} />
+        <OrbitControls makeDefault enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2.15} minDistance={0.05} maxDistance={Infinity} zoomToCursor target={[0, 0, 0]} />
         <Rig />
         <Projector />
       </Canvas>
