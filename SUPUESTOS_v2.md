@@ -103,3 +103,10 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 ## V&V L3 (ET4 p.17-19)
 - V: determinístico (T1=const, S2=const) cálculo a mano; traza 1 entidad; conservación por turno `SrcMP.out = SinkEXP.in + WIP`; extremos λ=0, MTBF=∞/0; revisión cruzada.
 - V: 1 día simulado (3T, semilla fija, ≥10 réplicas streams separados) vs tablero: 36,0 pal/día L3 ±IC95% y 1843 kg/h std como techo (no media). Desvío >15% → recalibrar S1-S4/T5 antes de escenarios.
+
+## Fallas aleatorias y réplicas (E1)
+- Módulo `Tools/Fallas` + relay `Tools/ArrancaFallas` (código en `dashboard/flexsim/fallas.fls` y `arranca_fallas.fls`; no consumen objetos de licencia: siguen 96/100). Se registra en `Tools/OnOpenDashboard` y arranca solo una vez por corrida (OnExit de `SrcCamionesMP`).
+- Tiempo a la falla **exponencial** y reparación **lognormal** (σ = 0,9, media = MTTR) por equipo. MTBF y MTTR del tablero Sep–Oct (línea 3, MTBF bajo supuesto de 3 turnos continuos 33 d = 47520 min): formadoras 709,3 / 6,15 min, túneles 2795,3 / 8,65, envasadoras 4752 / 5,0, estibadores 1827,7 / 13,0; picadoras con el dato de planta (880 / 11,3, la línea 3 tiene un solo evento). Se aplican a los 14 equipos de L7 y L8 (formadoras A y B, túneles, envasadoras A y B, estibadores A, picadoras).
+- Las máquinas paradas pasan a estado "en falla" (se ve en la web). `Tools/fallOn = 0` apaga las fallas; `Tools/repId` elige la réplica (streams 60–87, desplazados `12·repId` números).
+- Las fallas bajan la producción menos de 1 % por día (los acumuladores las absorben): referencia nueva de 24 h = 89,4 ± 0,6 pallets en la planta (antes 90 sin fallas). Ver `datos_trazabilidad/e1_final/E1_FINAL.md`.
+- El publicador al dashboard usa el puerto de `Tools/pubPort` (3000 por defecto); `Tools/pubOff = 1` lo apaga para correr réplicas.

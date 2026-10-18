@@ -7,6 +7,7 @@ import { utilization } from "@/lib/derive";
 import { useHist, useLatest, useStore } from "@/lib/store";
 import { ecdf, boxplotStats, chi2Table, ksTable, expCDF, phi } from "@/lib/stats";
 import { formatES } from "@/lib/format";
+import { IntervaloConfianzaE1 } from "@/components/E1";
 
 const WARMUP_H = 2.5; // informe: estado estable desde 2,5 h
 const META_PLANTA_PAL_H = 3; // 36 pallets/día por línea, para dos líneas
@@ -408,11 +409,7 @@ export default function Estadistica() {
             })) }} />
           </Card>
 
-          <Card title="Intervalo de Confianza del 95 %" sub="Throughput esperado por réplica (E.T.6)" right={<Tag kind="sinCorrida" />}>
-            <p className="text-[14px] leading-relaxed text-muted">
-              Requiere la ejecución de 10 réplicas independientes con números aleatorios comunes en el Experimenter de FlexSim. El objetivo del informe es acotar el semiancho del intervalo al <i>h ≤ 2%</i> de la media muestral para validar la precisión del estimador.
-            </p>
-          </Card>
+          <IntervaloConfianzaE1 />
 
           {/* Uso detallado de máquinas en simulación */}
           <Card className="lg:col-span-2" title="Distribución de Estados en Simulación" sub={`Porcentaje de tiempo por estado operativo · ${line === "Todas" ? "Todas las líneas" : `Línea ${line.slice(1)}`}`} right={<ChartGuide title="Distribución de estados en simulación" shows="Para cada máquina, indica qué porcentaje de las muestras estuvo procesando, bloqueada, sin material, en falla o inactiva." watch="Compará el tiempo procesando con las esperas: mucho bloqueo puede señalar una limitación aguas abajo; mucha falta de material, un problema de abastecimiento. Los porcentajes se calculan con las muestras disponibles de esta corrida." />}>

@@ -21,6 +21,9 @@ FlexSim publica cada 10 s simulados (JSON compacto); el puente guarda hasta 40.0
 ## Componentes propios
 Scrollbar (`CScroll`), selector de sección (`NavMenu`), íconos (`Icons`), tablas (`Table`, `StatePill`, `MiniBar`) y reproductor (`Player`). Sin librerías de UI externas.
 
+## Puerto
+FlexSim publica en el puerto de `Tools/pubPort` (3000 por defecto). Si el 3000 está ocupado: `npm run dev -- -p 3010` y en FlexSim `model().find("Tools/pubPort").value = 3010;`.
+
 ## Notas
 - Si cambia el visual de Blender, copiar el nuevo .glb a `web/public/models/planta.glb`.
 - Las partes sin dato en el modelo (fallas MTBF/MTTR, mermas, IC 95 %, escenarios) se muestran como `Supuesto` o `Sin corrida`, como pide el informe.

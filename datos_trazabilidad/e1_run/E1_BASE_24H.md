@@ -1,3 +1,5 @@
+> **REEMPLAZADO:** este E1 se hizo sobre una copia vieja de la línea 3 (`planta_sanjorge_v1_8.fsm`). El E1 vigente, sobre el modelo final `PLANTASJ.fsm` y con 10 réplicas, está en `../e1_final/E1_FINAL.md`.
+
 # E1 base 24 h — corrida real headless (1 réplica, semilla default)
 
 Fecha: 2026-10-17. Modelo: copia de `planta_sanjorge_v1_8.fsm` (65 objetos).

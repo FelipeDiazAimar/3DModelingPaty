@@ -5,6 +5,7 @@
 // kpi: [palletsMP, palletsPT, cajasL7, cajasL8]
 treenode self = model().find("Tools/Publicar");
 treenode lastN = model().find("Tools/pubLast");
+if (model().find("Tools/pubOff").value == 1) return 0; // apagado durante las réplicas
 lastN.value = Model.time;
 
 string ids = "Desencajado_L7,Picadora_L7,MezA_L7,MezB_L7,FormA_L7,FormB_L7,Tunel_L7,EnvA_L7,EnvB_L7,EncA_L7,EncB_L7,EstA_L7,Desencajado_L8,Picadora_L8,MezA_L8,MezB_L8,FormA_L8,FormB_L8,Tunel_L8,EnvA_L8,EnvB_L8,EncA_L8,EncB_L8,EstA_L8,QRecepcion,RackMPCongelado,RackMPEnfriado,RackPTCongelado,RackPTEnfriado,QExpedicion,SrcCamionesMP,SinkExpedicion";
@@ -46,7 +47,9 @@ js = js + "\"k\":[" + string.fromNum(pmp) + "," + string.fromNum(ppt) + "," + st
 
 Http.Request req;
 req.host = "127.0.0.1";
-req.port = 3000;
+int pport = model().find("Tools/pubPort").value;
+if (pport <= 0) pport = 3000;
+req.port = pport; // puerto de la web (Tools/pubPort; 3000 si no se definió)
 req.path = "/api/ingest";
 req.method = Http.Method.Post;
 req.headers = "Content-Type: application/json";

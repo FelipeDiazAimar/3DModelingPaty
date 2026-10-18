@@ -1,0 +1,53 @@
+// Tools/Fallas: paros aleatorios por equipo (MTBF exponencial, MTTR lognormal) + muestreo horario de producción.
+// Datos: tablero Sep-Oct 2026 (FITTING_EVIDENCIA.md §B), MTBF bajo supuesto 3 turnos continuo. Ver SUPUESTOS_v2.md "Fallas".
+// Parámetro: p = idx*2 + fase (fase 0 = falla, 1 = reparación) ; p = 9999 = muestreo horario.
+treenode self = model().find("Tools/Fallas");
+treenode lastN = model().find("Tools/fallLast");
+int p = param(1);
+if (model().find("Tools/fallOn").value == 0) return 0;
+
+string ids  = "FormA_L7,FormB_L7,FormA_L8,FormB_L8,Tunel_L7,Tunel_L8,EnvA_L7,EnvB_L7,EnvA_L8,EnvB_L8,EstA_L7,EstA_L8,Picadora_L7,Picadora_L8";
+string mtbf = "709.3,709.3,709.3,709.3,2795.3,2795.3,4752,4752,4752,4752,1827.7,1827.7,880,880";
+string mttr = "6.15,6.15,6.15,6.15,8.65,8.65,5.0,5.0,5.0,5.0,13.0,13.0,11.3,11.3";
+Array a = ids.split(",");
+Array b = mtbf.split(",");
+Array c = mttr.split(",");
+int n = a.length;
+// streams 60-73 (tiempo a la falla) y 74-87 (reparación): FlexSim usa solo 0-99; cada réplica desplaza su posición en el stream (ver ArrancaFallas)
+double sg = 0.9; // forma lognormal de la reparación (cola pesada: máx 987 min en el tablero)
+
+if (p == 9999) {
+	// muestreo horario: pallets PT terminados por línea (entrada a QPaletizado) y cajas por línea, acumulados
+	treenode mu = model().find("Tools/muestras");
+	string row = string.fromNum(Model.time / 3600, 2) + "," + string.fromNum(getinput(Model.find("QPaletizado_L7"))) + "," + string.fromNum(getinput(Model.find("QPaletizado_L8"))) + ","
+		+ string.fromNum(getoutput(Model.find("EncA_L7")) + getoutput(Model.find("EncB_L7"))) + "," + string.fromNum(getoutput(Model.find("EncA_L8")) + getoutput(Model.find("EncB_L8"))) + "\n";
+	string old = mu.value;
+	mu.value = old + row;
+	lastN.value = Model.time;
+	delayednodefunction(self, 3600, 9999);
+	return 0;
+}
+
+int idx = p / 2;
+int phase = p - idx * 2;
+Object o = Model.find(a[idx + 1]);
+if (!objectexists(o)) return 0;
+treenode lg = model().find("Tools/fallLog");
+
+if (phase == 0) {
+	o.stop(STATE_DOWN, 900 + idx);
+	double z = normal(0, 1, 74 + idx);
+	double mu2 = log(stringtonum(c[idx + 1])) - sg * sg / 2; // media de la lognormal = MTTR del tablero
+	double ttr = exp(mu2 + sg * z) * 60;
+	treenode dn = assertsubnode(lg, "d" + string.fromNum(idx));
+	dn.value = dn.value + ttr;
+	treenode en = assertsubnode(lg, "n" + string.fromNum(idx));
+	en.value = en.value + 1;
+	lastN.value = Model.time;
+	delayednodefunction(self, ttr, idx * 2 + 1);
+} else {
+	o.resume(900 + idx);
+	double ttf = exponential(0, stringtonum(b[idx + 1]) * 60, 60 + idx);
+	delayednodefunction(self, ttf, idx * 2);
+}
+return 0;

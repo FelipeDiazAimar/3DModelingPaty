@@ -1,0 +1,24 @@
+// Relay (OnExit de SrcCamionesMP): una vez por corrida programa la primera falla de cada equipo y el muestreo horario.
+// Detecta corrida nueva porque el tiempo vuelve a ser menor que el de la última falla registrada (fallLast).
+treenode lastN = model().find("Tools/fallLast");
+double last = lastN.value;
+if (Model.time < last) {
+	lastN.value = Model.time + 5; // margen: otras salidas del mismo arranque no reinician
+	treenode lg = model().find("Tools/fallLog");
+	while (lg.subnodes.length > 0) lg.subnodes[1].destroy();
+	model().find("Tools/muestras").value = "";
+	string ids = "FormA_L7,FormB_L7,FormA_L8,FormB_L8,Tunel_L7,Tunel_L8,EnvA_L7,EnvB_L7,EnvA_L8,EnvB_L8,EstA_L7,EstA_L8,Picadora_L7,Picadora_L8";
+	string mtbf = "709.3,709.3,709.3,709.3,2795.3,2795.3,4752,4752,4752,4752,1827.7,1827.7,880,880";
+	Array b = mtbf.split(",");
+	int rep = model().find("Tools/repId").value;
+	// cada réplica salta 12*rep números de cada stream (60-87) para que las réplicas sean independientes
+	for (int j = 60; j <= 87; j++) { for (int k = 0; k < 12 * rep; k++) { uniform(0, 1, j); } }
+	treenode self = model().find("Tools/Fallas");
+	if (model().find("Tools/fallOn").value != 0) {
+		for (int i = 0; i < b.length; i++) {
+			delayednodefunction(self, exponential(0, stringtonum(b[i + 1]) * 60, 60 + i), i * 2);
+		}
+	}
+	delayednodefunction(self, 3600, 9999);
+}
+return 0;
