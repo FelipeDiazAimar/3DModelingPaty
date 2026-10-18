@@ -1,0 +1,123 @@
+{
+ "replicas": 10,
+ "metodo": "mismas 10 réplicas (streams 60-87 desplazados por réplica) en los tres escenarios; diferencias pareadas con t(0,975; 9 gl)",
+ "escenarios": {
+  "E1": {
+   "nombre": "Base",
+   "cambio": "Fallas del tablero, formadoras a 982 kg/h",
+   "pallets": {
+    "media": 89.4,
+    "desv": 0.8432740427115678,
+    "h": 0.6032,
+    "ic_inf": 88.7968,
+    "ic_sup": 90.0032
+   },
+   "cajas": {
+    "media": 13096.3,
+    "desv": 126.44019227374744,
+    "h": 90.44358075374946,
+    "ic_inf": 13005.856419246249,
+    "ic_sup": 13186.74358075375
+   },
+   "ton": {
+    "media": 65.4815,
+    "desv": 0.6322009613687359,
+    "h": 0.4522179037687464,
+    "ic_inf": 65.02928209623126,
+    "ic_sup": 65.93371790376874
+   }
+  },
+  "E2": {
+   "nombre": "Más dotación",
+   "cambio": "Formadoras a 1843 kg/h (separación entre bandejas 3,27 → 1,554 m)",
+   "pallets": {
+    "media": 91.9,
+    "desv": 0.31622776601683794,
+    "h": 0.22619999999999998,
+    "ic_inf": 91.6738,
+    "ic_sup": 92.12620000000001
+   },
+   "cajas": {
+    "media": 13394.2,
+    "desv": 38.08119979435755,
+    "h": 27.239756653832277,
+    "ic_inf": 13366.960243346168,
+    "ic_sup": 13421.439756653834
+   },
+   "ton": {
+    "media": 66.971,
+    "desv": 0.1904059989717846,
+    "h": 0.13619878326915913,
+    "ic_inf": 66.83480121673084,
+    "ic_sup": 67.10719878326917
+   },
+   "dif_pallets": {
+    "media": 2.5,
+    "desv": 0.8498365855987975,
+    "h": 0.6078942342217106,
+    "ic_inf": 1.8921057657782894,
+    "ic_sup": 3.1078942342217104,
+    "cero_en_ic": false
+   },
+   "dif_cajas": {
+    "media": 297.9,
+    "desv": 130.562415895404,
+    "h": 93.39223701807339,
+    "ic_inf": 204.5077629819266,
+    "ic_sup": 391.29223701807337,
+    "cero_en_ic": false
+   },
+   "dif_cajas_pct": 2.2746882707329554,
+   "dif_pallets_pct": 2.796420581655481
+  },
+  "E3": {
+   "nombre": "Estrés por fallas",
+   "cambio": "MTTR ×1,25 en formadoras y túneles",
+   "pallets": {
+    "media": 89.4,
+    "desv": 0.8432740427115678,
+    "h": 0.6032,
+    "ic_inf": 88.7968,
+    "ic_sup": 90.0032
+   },
+   "cajas": {
+    "media": 13089.8,
+    "desv": 131.4101298310835,
+    "h": 93.99861290551047,
+    "ic_inf": 12995.801387094489,
+    "ic_sup": 13183.79861290551
+   },
+   "ton": {
+    "media": 65.449,
+    "desv": 0.6570506491554173,
+    "h": 0.46999306452755224,
+    "ic_inf": 64.97900693547244,
+    "ic_sup": 65.91899306452756
+   },
+   "dif_pallets": {
+    "media": 0,
+    "desv": 0.0,
+    "h": 0.0,
+    "ic_inf": 0.0,
+    "ic_sup": 0.0,
+    "cero_en_ic": true
+   },
+   "dif_cajas": {
+    "media": -6.5,
+    "desv": 12.213380640374174,
+    "h": 8.736319190597376,
+    "ic_inf": -15.236319190597376,
+    "ic_sup": 2.236319190597376,
+    "cero_en_ic": true
+   },
+   "dif_cajas_pct": -0.04963233890488153,
+   "dif_pallets_pct": 0.0
+  }
+ },
+ "tope_mp": {
+  "pallets_mp_dia": 48,
+  "kg_dia": 72000,
+  "cajas_dia": 14400,
+  "texto": "La materia prima entra a 16 pallets de 1500 kg cada 8 h: 72 t/día = 14.400 cajas de 5 kg por día para las dos líneas"
+ }
+}

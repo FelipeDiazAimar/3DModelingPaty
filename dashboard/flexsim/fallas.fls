@@ -16,6 +16,7 @@ int n = a.length;
 // streams 60-73 (tiempo a la falla) y 74-87 (reparación): FlexSim usa solo 0-99; cada réplica desplaza su posición en el stream (ver ArrancaFallas)
 double sg = 0.9; // forma lognormal de la reparación (cola pesada: máx 987 min en el tablero)
 
+if (p == 9998) { lastN.value = Model.time; return 0; }
 if (p == 9999) {
 	// muestreo horario: pallets PT terminados por línea (entrada a QPaletizado) y cajas por línea, acumulados
 	treenode mu = model().find("Tools/muestras");
@@ -39,6 +40,7 @@ if (phase == 0) {
 	double z = normal(0, 1, 74 + idx);
 	double mu2 = log(stringtonum(c[idx + 1])) - sg * sg / 2; // media de la lognormal = MTTR del tablero
 	double ttr = exp(mu2 + sg * z) * 60;
+	if (idx <= 5) ttr = ttr * model().find("Tools/mttrK").value; // escenario E3: factor sobre el MTTR de formadoras y túneles (1 = base)
 	treenode dn = assertsubnode(lg, "d" + string.fromNum(idx));
 	dn.value = dn.value + ttr;
 	treenode en = assertsubnode(lg, "n" + string.fromNum(idx));

@@ -3,7 +3,7 @@
 treenode lastN = model().find("Tools/fallLast");
 double last = lastN.value;
 if (Model.time < last) {
-	lastN.value = Model.time + 5; // margen: otras salidas del mismo arranque no reinician
+	lastN.value = Model.time; // una segunda llamada en el mismo instante (relay registrado dos veces) ya no cumple time < last
 	treenode lg = model().find("Tools/fallLog");
 	while (lg.subnodes.length > 0) lg.subnodes[1].destroy();
 	model().find("Tools/muestras").value = "";
@@ -20,5 +20,6 @@ if (Model.time < last) {
 		}
 	}
 	delayednodefunction(self, 3600, 9999);
+	delayednodefunction(self, 1, 9998); // marca t = 1 s para que la corrida siguiente detecte el reinicio aunque dure poco
 }
 return 0;

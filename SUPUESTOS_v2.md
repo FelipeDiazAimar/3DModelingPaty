@@ -110,3 +110,4 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 - Las máquinas paradas pasan a estado "en falla" (se ve en la web). `Tools/fallOn = 0` apaga las fallas; `Tools/repId` elige la réplica (streams 60–87, desplazados `12·repId` números).
 - Las fallas bajan la producción menos de 1 % por día (los acumuladores las absorben): referencia nueva de 24 h = 89,4 ± 0,6 pallets en la planta (antes 90 sin fallas). Ver `datos_trazabilidad/e1_final/E1_FINAL.md`.
 - El publicador al dashboard usa el puerto de `Tools/pubPort` (3000 por defecto); `Tools/pubOff = 1` lo apaga para correr réplicas.
+- Escenarios: `Tools/mttrK` (factor sobre el MTTR de formadoras y túneles, 1 = base) para E3; E2 se corre cambiando `entrySpacePadding` de `CintaFormA/B_Lx` (3,27 → 1,554 m) y se restaura a 3,27. Resultados en `datos_trazabilidad/e1_final/E1_FINAL.md`.

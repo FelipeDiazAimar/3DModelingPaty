@@ -41,7 +41,18 @@ Con la producción de cajas por hora (promedio de las 10 réplicas, ventana 3) e
 ## Verificación del módulo de fallas
 Paros simulados contra lo que implican las entradas (min/día, media de 10 réplicas): formadoras 37,7 (esperado 49,5), túneles 16,6 (8,9), envasadoras 6,7 (6,1), estibadores 17,1 (20,3), picadoras 26,1 (36,5). La dispersión entre réplicas es grande (pocos eventos por día), así que las diferencias están dentro del ruido.
 
+## Escenarios E2 y E3 (mismas 10 réplicas, diferencias pareadas; `analizar_escenarios.py`, `summary_escenarios.json`)
+| Escenario | Cambio | Pallets/día planta | Diferencia contra E1 (IC 95 %) |
+|---|---|---|---|
+| E1 base | — | 89,4 ± 0,6 | — |
+| E2 más dotación | Formadoras a 1843 kg/h (separación entre bandejas 3,27 → 1,554 m) | 91,9 ± 0,2 | **+2,5** [+1,9 ; +3,1] (+2,8 %) |
+| E3 estrés por fallas | MTTR ×1,25 en formadoras y túneles (`Tools/mttrK` = 1,25) | 89,4 ± 0,6 | 0,0 (cajas −6,5 [−15,2 ; +2,2]) → sin efecto |
+
+- **E2:** la mejora es real pero chica porque el techo pasa a ser la materia prima: entran 16 pallets de 1500 kg cada 8 h = 72 t/día = 14.400 cajas/día y las cámaras de MP quedan en cero. Para aprovechar una formadora más rápida hay que traer más materia prima.
+- **E3:** el sistema resiste reparaciones 25 % más largas porque los acumuladores absorben paros de 10–20 min.
+- **E4 (batch 1200 → 1500 kg):** sin correr; el modelo ya usa 1500 kg y comparar contra 1200 exige cambiar la estructura de mezcladora/formadora y modelar cambios de formato y lavado.
+- Antes de correr los escenarios se comprobó que con `mttrK = 1` el modelo reproduce exactamente la réplica 1 de E1 (mismas fallas y 6594/6602 cajas). En esa verificación apareció y se corrigió un arranque duplicado de las fallas cuando el modelo se reabría (el relay quedaba registrado dos veces); las corridas E1 no estaban afectadas.
+
 ## Pendiente
-- E2, E3 y E4 con los mismos números aleatorios (el módulo ya lo permite: `Tools/repId` y `Tools/fallOn`).
 - Conciliar el tamaño de pallet (144 contra ~172 cajas de 5 kg) y la demanda de la línea 7 con planta.
 - Llegadas de materia prima por hora (hoy 16 pallets cada 8 h con descarga fija) y ruido en los tiempos de máquina: hoy el modelo es determinista salvo las fallas.
