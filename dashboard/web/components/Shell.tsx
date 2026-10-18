@@ -103,7 +103,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <RouteBar />
       <MobileMenu open={menu} onClose={() => setMenu(false)} />
       <div className={home ? "pointer-events-none absolute inset-x-0 top-0 z-30" : "z-30"}>
-        <header className={`flex items-start gap-2 px-3 py-2 md:items-center md:gap-3 md:px-4 md:py-3 ${home ? "[&>*]:pointer-events-auto" : ""}`}>
+        <header className={`flex items-start gap-2 px-3 py-2 md:items-center md:gap-3 md:px-4 md:py-3 ${home ? "flex-wrap [&>*]:pointer-events-auto" : ""}`}>
           <Link href="/" className={`shrink-0 items-center gap-2.5 pr-1 ${home ? "hidden md:flex" : "flex"}`}>
             <span className="grid h-9 w-9 place-items-center rounded-2xl bg-brand text-base font-extrabold text-white shadow-[0_8px_18px_-6px_rgba(217,41,59,.7)] md:h-10 md:w-10">P</span>
             <span className="hidden whitespace-nowrap leading-tight md:block">
@@ -111,7 +111,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <span className="block text-[11px] font-medium text-muted">Gemelo digital</span>
             </span>
           </Link>
-          {home && <div className="min-w-0 md:hidden"><KpiChips compact /></div>}
+          {home && <div style={{ pointerEvents: "none" }} className="order-2 flex min-w-0 basis-full justify-center md:hidden"><KpiChips compact /></div>}
           {/* escritorio */}
           <nav className="glass hidden min-w-0 items-center gap-0.5 overflow-x-auto p-1 min-[1800px]:flex" aria-label="Secciones">
             {NAV.map((n) => (
@@ -119,8 +119,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="hidden md:block min-[1800px]:hidden"><NavMenu /></div>
-          {home && <div className="hidden min-w-0 md:block"><KpiChips /></div>}
-          <div className="ml-auto hidden items-center gap-2 md:flex">
+          {home && <div style={{ pointerEvents: "none" }} className="order-last hidden min-w-0 basis-full justify-center md:flex min-[1800px]:hidden"><KpiChips compact /></div>}
+          {home && <div className="hidden min-w-0 min-[1800px]:block"><KpiChips /></div>}
+          <div className={`ml-auto hidden items-center gap-2 md:flex ${home ? "order-1 min-[1800px]:order-none" : ""}`}>
             <LineSelector className="flex" />
             <div className="glass flex items-center gap-2 whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold">
               <span className={`live-dot h-2.5 w-2.5 rounded-full ${ok ? "bg-[var(--ok)]" : "bg-[var(--warn)]"}`} />
@@ -130,7 +131,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <button onClick={() => setDemo(!demo)} className="glass whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold hover:bg-white">{demo ? "Salir del demo" : "Demo"}</button>
           </div>
           {/* teléfono: estado a la izquierda de la hamburguesa, ambos a la derecha */}
-          <div className="ml-auto flex shrink-0 items-center gap-2 md:hidden">
+          <div className={`ml-auto flex shrink-0 items-center gap-2 md:hidden ${home ? "order-1" : ""}`}>
             <div className="glass flex h-10 items-center gap-1.5 whitespace-nowrap px-3 text-[11px] font-bold" title={statusText} aria-label={statusText}>
               <span className={`live-dot h-2.5 w-2.5 rounded-full ${ok ? "bg-[var(--ok)]" : "bg-[var(--warn)]"}`} />
               {demo && "DEMO"}
