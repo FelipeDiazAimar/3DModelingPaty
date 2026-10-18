@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { Chart, axisT, axisV } from "@/components/Chart";
-import { Card, Empty, Page, PageHead, Tag } from "@/components/Ui";
+import { Card, Empty, Page, PageHead, Tag, Table } from "@/components/Ui";
 import { MACHINES, STATE_COLOR } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
 import { useHist, useLatest, useStore } from "@/lib/store";
+import { ecdf, boxplotStats, chi2Table, ksTable, expCDF, phi } from "@/lib/stats";
+import { formatES } from "@/lib/format";
 
 const WARMUP_H = 2.5; // informe: estado estable desde 2,5 h
 const META_PLANTA_PAL_H = 3; // 36 pallets/día por línea, para dos líneas
@@ -132,6 +134,83 @@ function ChartGuide({ title, shows, watch }: { title: string; shows: string; wat
   );
 }
 
+const FIT_SRC: Record<string, { file: string; cdf: (x: number) => number; cdfLabel: string; unit: string }> = {
+  iat: { file: "iat", cdf: (x) => expCDF(x, 2.62), cdfLabel: "Exp(λ=1/2,62)", unit: "min" },
+  paros: { file: "paros", cdf: (x) => expCDF(x, 10.0), cdfLabel: "Exp(media 10) referencial", unit: "min" },
+  pesos: { file: "pesos", cdf: (x) => phi((x - 862.5) / 153.4), cdfLabel: "Normal(862,5; 153,4)", unit: "kg" },
+};
+
+function FittingDetail({ tab, obs, esp, categories }: { tab: string; obs: number[]; esp: number[]; categories: string[] }) {
+  const [vals, setVals] = useState<number[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch(`/fitting/${FIT_SRC[tab].file}.json`).then((r) => r.json()).then((v: number[]) => { if (alive) setVals(v); }).catch(() => { if (alive) setVals([]); });
+    return () => { alive = false; };
+  }, [tab]);
+  const detail = useMemo(() => {
+    if (!vals || vals.length === 0) return null;
+    const cdf = FIT_SRC[tab].cdf;
+    const ks = ksTable(vals, cdf);
+    const box = boxplotStats(vals);
+    const chi = chi2Table(obs, esp);
+    const idx = ks.rows.findIndex((r) => Math.abs(r.dAfter) === ks.dmax || Math.abs(r.dBefore) === ks.dmax);
+    const c = idx < 0 ? 0 : idx;
+    const lo = Math.max(0, c - 7);
+    const rows = ks.rows.slice(lo, lo + 15);
+    const ec = ecdf(vals);
+    return { ks, box, chi, rows, ec, xStar: ks.rows[c]?.x ?? 0 };
+  }, [vals, tab, obs, esp]);
+  if (!vals) return <p className="text-[12px] text-muted">Cargando muestra…</p>;
+  if (!detail) return <p className="text-[12px] text-muted">Sin muestra disponible.</p>;
+  const { ks, box, chi, rows, ec } = detail;
+  const svals = [...vals].sort((a, b) => a - b);
+  const F = FIT_SRC[tab].cdf;
+  const dmaxPt = (() => {
+    const r = ks.rows.reduce((m, x) => (Math.max(x.dAfter, x.dBefore) > Math.max(m.dAfter, m.dBefore) ? x : m), ks.rows[0]);
+    return [[r.x, r.teo], [r.x, r.emp]] as [number, number][];
+  })();
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <Card title={`ECDF vs teórica — ${FIT_SRC[tab].cdfLabel}`} sub={`Escalera %≤x vs F(x), flecha Dmax=${formatES(ks.dmax, 4)} (ET6 p.15)`}>
+        <Chart height={260} option={{
+          legend: { top: 0, right: 16 },
+          xAxis: { type: "value", name: `x [${FIT_SRC[tab].unit}]` },
+          yAxis: { type: "value", min: 0, max: 1, name: "F" },
+          series: [
+            { name: "ECDF", type: "line", step: "end", showSymbol: false, lineStyle: { width: 2 }, data: ec.filter((_, i) => i % Math.ceil(ec.length / 400) === 0) },
+            { name: "F teórica", type: "line", smooth: true, showSymbol: false, lineStyle: { width: 2, color: "#d9293b" }, data: svals.filter((_, i) => i % Math.ceil(svals.length / 400) === 0).map((x) => [x, F(x)] as [number, number]) },
+            { name: "Dmax", type: "line", showSymbol: true, symbolSize: 8, lineStyle: { width: 2, type: "dashed", color: "#d9293b" }, data: dmaxPt },
+          ],
+        }} />
+      </Card>
+      <Card title="Boxplot — Q1/mediana/Q3, bigotes 1,5·RIC" sub={`n=${vals.length} · RIC=${formatES(box.ric, 2)} · outliers=${box.outliers.length} (ET6 p.6)`}>
+        <Chart height={260} option={{
+          xAxis: { type: "category", data: [tab] },
+          yAxis: { type: "value", name: `x [${FIT_SRC[tab].unit}]` },
+          series: [
+            { name: "boxplot", type: "boxplot", data: [[box.low, box.q1, box.med, box.q3, box.high]] },
+            { name: "outliers", type: "scatter", data: box.outliers.slice(0, 200).map((v) => [0, v]) },
+          ],
+        }} />
+        <p className="mt-2 text-[12px] text-muted">Q1={formatES(box.q1, 2)} · Med={formatES(box.med, 2)} · Q3={formatES(box.q3, 2)} · bigotes [{formatES(box.low, 2)}, {formatES(box.high, 2)}].</p>
+      </Card>
+      <Card className="lg:col-span-2" title="Bondad de ajuste — Chi² (O,E) + K-S bilateral" sub="Chi² Σ(O−E)²/E, gl=k−1−p (ET6 p.16,21) · K-S D± bilateral (ET6 p.15, tabla p.18-19)">
+        <Table head={[{ label: "Intervalo" }, { label: "O", right: true }, { label: "E", right: true }, { label: "(O−E)²/E", right: true }]}>
+          {chi.rows.map((r, i) => (
+            <tr key={r.i}><td className="first">{categories[i] ?? r.i}</td><td className="num">{r.obs}</td><td className="num">{formatES(r.esp, 1)}</td><td className="num">{formatES(r.aporte, 3)}</td></tr>
+          ))}
+        </Table>
+        <p className="mt-2 text-[12px] text-muted">χ²={formatES(chi.chi2, 3)} (comparar con χ²crit(gl;α=0,05)). K-S Dmax={formatES(ks.dmax, 4)} (ventana ±7 en torno a Dmax, n={vals.length}).</p>
+        <Table maxH={300} head={[{ label: "i", right: true }, { label: "x(i)", right: true }, { label: "i/n", right: true }, { label: "F", right: true }, { label: "D+", right: true }, { label: "D−", right: true }]}>
+          {rows.map((r) => (
+            <tr key={r.i}><td className="num">{r.i}</td><td className="num">{formatES(r.x, 2)}</td><td className="num">{formatES(r.emp, 4)}</td><td className="num">{formatES(r.teo, 4)}</td><td className="num">{formatES(r.dAfter, 4)}</td><td className="num">{formatES(r.dBefore, 4)}</td></tr>
+          ))}
+        </Table>
+      </Card>
+    </div>
+  );
+}
+
 export default function Estadistica() {
   const h = useHist();
   const last = useLatest();
@@ -246,6 +325,10 @@ export default function Estadistica() {
               Dcrit=0,0382).
             </p>
           </Card>
+
+          <div className="lg:col-span-2">
+            <FittingDetail tab={tabFit} obs={curFit.obs} esp={curFit.teo} categories={curFit.categories} />
+          </div>
 
           {/* Gráfico 3: Perfil de Utilización y Cuello de Botella */}
           <Card

@@ -41,3 +41,10 @@ export function Chart({ option, height = 260 }: { option: EChartsOption; height?
 
 export const axisT = { type: "value" as const, name: "h", nameTextStyle: { color: "#8b97a8" }, axisLine: { lineStyle: { color: "#d5dce8" } }, splitLine: { show: false } };
 export const axisV = { type: "value" as const, splitLine: { lineStyle: { color: "rgba(15,27,45,.07)" } } };
+// Ejes con unidad estilo cátedra ET5/ET6 (no borrar axisT/axisV: compat con imports existentes).
+export const axisTiempoH = { ...axisT, name: "Tiempo [h]" };
+export const axisTiempoMin = { type: "value" as const, name: "Tiempo [min]", nameTextStyle: { color: "#8b97a8" } };
+export const axisWIP = { type: "value" as const, name: "WIP [cajas]", splitLine: { lineStyle: { color: "rgba(15,27,45,.07)" } } };
+export const axisThroughput = { type: "value" as const, name: "Throughput [pal/h]", splitLine: { lineStyle: { color: "rgba(15,27,45,.07)" } } };
+export const axisEspera = { type: "value" as const, name: "Espera [min]", splitLine: { lineStyle: { color: "rgba(15,27,45,.07)" } } };
+export const axisFrec = { type: "value" as const, name: "Frecuencia [n]", splitLine: { lineStyle: { color: "rgba(15,27,45,.07)" } } };

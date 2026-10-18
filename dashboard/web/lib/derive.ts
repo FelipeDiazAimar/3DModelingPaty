@@ -16,6 +16,53 @@ export function series(h: Snapshot[], pick: (s: Snapshot) => number) {
   return h.map((s) => [s.t / 3600, pick(s)] as [number, number]);
 }
 
+/** Warm-up cátedra ET6 p.27 (Welch): se corre pero no se mide. */
+export const WARMUP_H = 2.5;
+export const WARMUP_S = WARMUP_H * 3600;
+
+/** Estado ocupado B(t)∈{0,1}: proc o blocked cuentan como recurso tomado (ET5 p.12-13). */
+export const busyOf = (s: Snapshot, id: string): number => {
+  const st = s.machines[id]?.state;
+  return st === "proc" || st === "blocked" ? 1 : 0;
+};
+/** N(t): contenido del equipo. Q(t) se deriva (ver Opción B en colas: FlexSim debería emitir queue_<id> explícita). */
+export const nOf = (s: Snapshot, id: string): number => s.machines[id]?.content ?? 0;
+export const qOf = (s: Snapshot, id: string): number => Math.max(0, nOf(s, id) - busyOf(s, id));
+
+/** Área bajo pick solo para t≥t0 (rectángulo izquierdo = escalón, ET5 p.12). */
+export function areaUnderT0(h: Snapshot[], pick: (s: Snapshot) => number, t0: number = WARMUP_S): number {
+  let a = 0;
+  for (let i = 0; i < h.length - 1; i++) {
+    if (h[i + 1].t <= t0) continue;
+    const ts = Math.max(h[i].t, t0);
+    a += pick(h[i]) * (h[i + 1].t - ts);
+  }
+  return a;
+}
+
+/** Promedios temporales L/Lq/ρ sobre t≥warm-up + check L=Lq+ρ (ET5 p.12-13). */
+export function timeAverages(h: Snapshot[], id: string, t0: number = WARMUP_S) {
+  const T = Math.max(1, h[h.length - 1].t - t0);
+  const AB = areaUnderT0(h, (s) => busyOf(s, id), t0);
+  const AQ = areaUnderT0(h, (s) => qOf(s, id), t0);
+  const AN = areaUnderT0(h, (s) => nOf(s, id), t0);
+  const rho = AB / T;
+  const Lq = AQ / T;
+  const L = AN / T;
+  return { T, AB, AQ, AN, rho, Lq, L, check_L: Math.abs(L - (Lq + rho)) };
+}
+
+/** λ = Δinp/ΔT sobre t≥warm-up (vía clientes, no áreas — ET5 p.15). */
+export function lambdaArrivals(h: Snapshot[], id: string, t0: number = WARMUP_S): number {
+  if (h.length < 2) return 0;
+  const a = h.find((s) => s.t >= t0) ?? h[0];
+  const b = h[h.length - 1];
+  const inpA = a.machines[id]?.inp ?? 0;
+  const inpB = b.machines[id]?.inp ?? 0;
+  const dt = b.t - a.t;
+  return dt > 0 ? (inpB - inpA) / dt : 0;
+}
+
 /** Pallets PT por hora en ventana móvil (por defecto 4 h). */
 export function ratePalletsHour(h: Snapshot[], windowH = 4) {
   if (h.length < 2) return 0;

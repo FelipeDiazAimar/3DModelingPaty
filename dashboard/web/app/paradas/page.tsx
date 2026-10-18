@@ -59,7 +59,7 @@ export default function Paradas() {
                 const line = arr.find((p: { seriesType: string }) => p.seriesType === "line");
                 const item = PARETO_DATA[bar?.dataIndex ?? 0];
                 return `<div style="font-weight:700;margin-bottom:4px;">${item?.eq}</div>
-                  <div>Tiempo total: <b>${item?.min.toLocaleString()} min</b> (${item?.pct}%)</div>
+                  <div>Tiempo total: <b>${item?.min.toLocaleString("es-AR")} min</b> (${item?.pct}%)</div>
                   <div>Acumulado: <b>${line?.data}%</b></div>
                   <div>Fallas registradas: <b>${item?.eventos}</b></div>
                   <div>MTTR promedio: <b>${item?.mttr} min</b></div>
@@ -74,13 +74,13 @@ export default function Paradas() {
             yAxis: [
               {
                 type: "value",
-                name: "Minutos",
+                name: "Tiempo parado [min]",
                 nameTextStyle: { color: "#8b97a8" },
                 splitLine: { lineStyle: { color: "rgba(15,27,45,.07)" } },
               },
               {
                 type: "value",
-                name: "% Acumulado",
+                name: "% acumulado [%]",
                 nameTextStyle: { color: "#8b97a8" },
                 min: 0,
                 max: 100,
