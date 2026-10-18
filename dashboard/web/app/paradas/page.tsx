@@ -5,8 +5,10 @@ import { MACHINES } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
 import { useHist, useLatest } from "@/lib/store";
 
-// Datos reales del tablero de planta Sep–Oct 2026 (FITTING_EVIDENCIA.md - 12.610 min, 1.267 eventos válidos de 1.278 filas)
-// MTBF = 47520 min (33 días) / eventos. EST/BL combinado = 392.7; APS/CTA combinado = 495.0.
+// Tablero Sep–Oct 2026: 12.610 min, 1.267 eventos válidos de 1.278 filas (11 vacíos).
+// SUPUESTO declarado (FITTING §B): operación continua 3 turnos 33d Sep01-Oct03 → 33*24*60=47520 min; MTBF=47520/eventos por equipo.
+// MTTR lognormal por equipo (ET6 p.12; estadística/tab paros: lognormal D=0,1399 mejor que exponencial D=0,2097, ambas rechazadas n=1267 por cola pesada máx 987min).
+// EST/BL combinado 121ev/2081min MTBF 392.7; APS/CTA 96ev/740min MTBF 495.0.
 const PARETO_DATA = [
   { eq: "Formadoras (FOR)", min: 3812, eventos: 364, mttr: 10.5, mtbf: 130.5, pct: 30.2 },
   { eq: "Estuchadoras (EST/BL)", min: 2081, eventos: 121, mttr: 17.2, mtbf: 392.7, pct: 16.5 },
@@ -42,8 +44,8 @@ export default function Paradas() {
     <Page>
       <PageHead title="Paradas y tiempo perdido" sub="Dónde se pierde tiempo: Diagrama de Pareto de paradas no programadas, MTBF/MTTR y bloqueos en simulación." />
 
-      {/* Gráfico 1: Diagrama de Pareto */}
-      <Card title="Diagrama de Pareto de Paradas No Programadas" sub="Minutos de parada acumulados y regla 80/20 (Tablero de gestión Sep–Oct 2026, 12.610 min)" right={<Tag kind="real">Tablero Planta</Tag>}>
+      {/* Gráfico 1: Diagrama de Pareto — exploratorio web, no criterio de cátedra */}
+      <Card title="Diagrama de Pareto de Paradas No Programadas — exploratorio web" sub="Ordenamiento descriptivo tablero Sep–Oct 2026, 12.610 min. No es criterio de cátedra: validación según ET6 §5 (p.34-38)." right={<><Tag kind="real">Tablero Planta</Tag><Tag kind="supuesto">Exploratorio web</Tag></>}>
         <Chart
           height={340}
           option={{
@@ -106,14 +108,14 @@ export default function Paradas() {
                   silent: true,
                   symbol: "none",
                   lineStyle: { type: "dashed", color: "#e08a1e", width: 2 },
-                  data: [{ yAxis: 80, label: { formatter: "80% de paros", position: "insideEndTop" } }],
+                  data: [{ yAxis: 80, label: { formatter: "80% ref. visual (no criterio)", position: "insideEndTop" } }],
                 },
               },
             ],
           }}
         />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--line)] pt-3 text-[12px] text-muted">
-          <span><b>Regla 80/20 confirmada:</b> El 70,8% de los minutos perdidos se concentra en 4 equipos críticos —Formación, Estuchado, Flowpack y Frío— (bolsa «Servicios y Otros» excluida del ranking).</span>
+          <span><b>Lectura exploratoria (no 80/20):</b> orden descriptivo; el 70,8% en 4 equipos (FOR/EST-FLW/TUN) es solo visual — «Servicios y Otros» excluida del ranking. No reemplaza validación ET6 §5.2-5.5 ni prueba de hipótesis.</span>
           <span className="font-semibold text-ink">Total Planta: 12.610 min (1.267 eventos válidos de 1.278 filas)</span>
         </div>
       </Card>
@@ -132,6 +134,15 @@ export default function Paradas() {
             </tr>
           ))}
         </Table>
+        <p className="mt-2 text-[12px] text-muted">MTBF bajo supuesto 3 turnos continuo (47520/eventos). Si el régimen real no fue continuo, recalcular ventana. MTTR a FlexSim como lognormal por equipo (ET6 p.12,22).</p>
+      </Card>
+
+      <Card className="mt-4" title="Validación campo vs. modelo (ET6 §5.5 p.36 / TP Parte D)" sub="Error relativo=(sim−real)/real×100 · ¿real∈IC95%? · Media + P95. Completar con 10 réplicas Experimenter." right={<Tag kind="sinCorrida">Sin réplicas</Tag>}>
+        <Table maxH={300} head={[{label:"Indicador"},{label:"Real", right:true},{label:"Sim media", right:true},{label:"P95 sim", right:true},{label:"IC95%", right:true},{label:"Error rel.%", right:true},{label:"¿Real∈IC?", right:true}]}>
+          <tr><td className="first font-semibold">Pallets L3/día</td><td className="num">36.0</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td></tr>
+          <tr><td className="first font-semibold">Atendidos/h (pal/h)</td><td className="num">1.50</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td></tr>
+        </Table>
+        <p className="mt-2 text-[12px] text-muted">Criterio TP-D p.4: si real∉IC o |error| grande en medida clave → revisar distribuciones/prioridades antes de recomendar. No basta media: informar P95 (ET6 p.36). Significancia ≠ importancia práctica (ET6 p.35).</p>
       </Card>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -145,7 +156,7 @@ export default function Paradas() {
               { name: "Planta Total", type: "bar", itemStyle: { color: "#d9293b" }, data: TABLERO_L3.map((t) => t.planta) },
             ],
           }} />
-          <p className="mt-2 text-[12px] text-muted">Línea 3 concentró 1.324 min de paro (gráfico: 5 equipos = 1.026 min; resto incl. APS 155 min no graficado). EST solo; EST BL (L3: 1 ev/60 min) no graficado; Pareto combina ambos (2.081).</p>
+          <p className="mt-2 text-[12px] text-muted">L3 total 1.324 min (FITTING §B). Gráfico: 5 equipos = 1.026 min (412+338+147+79+50); resto 298 min no graficado —incl. APS 13ev/155min—. Barra EST = solo EST (26ev/338min); EST BL L3 (1ev/60min) excluido del gráfico. Pareto planta combina EST+EST BL = 121ev/2.081min.</p>
         </Card>
 
         <Card title="Pérdidas por Espera y Bloqueo en Simulación" sub="Máquinas con mayor inactividad por desbalance o falta de material" right={<Tag kind="supuesto">Dinámico</Tag>}>

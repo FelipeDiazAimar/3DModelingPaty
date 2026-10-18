@@ -18,17 +18,18 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 ## Tiempos y capacidades
 | # | Estación | Valor | Estado |
 |---|---|---|---|
-| T1 | Llegadas MP | 1 camión de **16 pallets cada 8 h** (48/día), descargados de a uno cada 150 s; calibrado a lo que consumen las líneas (≈26 batches/línea/día) para que no se acumulen batches en el elevador | 🔴 |
+| T1 | Llegadas MP `SrcMP` empírica por hora desde `datos_trazabilidad/fitting_series/iat_cdf.csv` (49 pts) + `iat_empirica_hora.csv` (9h/10h/11h). Media global 2,62 min/mediana 1,03/CV 3,42; K-S rechaza exponencial (ET3 p.10-13: usar tabla `F⁻¹(u)`). Determinístico 16 pal/8h + 150 s solo para test ET4 p.17. Re-ajustar con 125k paginados, n=49 chico | 🔶 |
 | T2 | Desencajado (mesada) | **3500 s por pallet** (se consume al ritmo de la línea; una caja cada 77,8 s), **2 operarios** | 🔴 |
 | T3 | Picadora | 900 s por batch (≈6 t/h) | 🔴 |
 | T4 | Mezcladora | 1200 s de mezcla por batch de 1500 kg | ✅ (20 min) |
-| T5 | Formadora | 18,33 s por caja de 5 kg = **982 kg/h** | ✅ (CLASICO/PATY CASA) |
-| T6 | Túnel | 300 s de residencia, capacidad **60 cajas** | 🔶 (5 min ✅ por ficha; capacidad supuesta) |
+| T5 | Formadora L3 por SKU (`cap_std_detalle.csv`): 69 g 1589,76 / 80 g 1843,2 kg/h por LÍNEA → 1/2 por FormL3A/B (795/922 kg/h, 48/56 golpes/min a 4 cav, ficha 25-90 ✅). R1 SKU por `mezcla_pesos_sku.csv`, cajas por `cajas_PT_pmf.csv` empírica (ET3 p.8-9 composición). Pallet E4 = 91×6,62 kg (602 kg), NO 144×5 kg (ese es SUP L7/L8). 18,33 s/caja = 982 kg/h es nominal formadora, NO tasa operario | ✅/🔶 |
+| T6 | Túnel `Tunel3` como StraightConveyor `t=L/v` (ficha Advantec, L por módulos, v receta). Cap = L/paso calculada; validar WIP=λW (≈23 cajas a 1843 kg/h E4, W=5 min) vs cap 60. Downtime aparte: 147 min/17 ev/33d (MTBF 2795, MTTR 8,6) como breakdown, no como W | 🔶 |
 | T7 | Detector de metales | **no modelado** (se quitó para liberar objetos de la licencia) | — |
 | T8 | Envasadora | 4 s por caja (≈10 paquetes/caja a 150 paq/min) | 🔶 |
 | T9 | Encajonadora | 5 s por caja | 🔶 |
 | T10 | Control de peso | **no modelado** (se quitó para liberar objetos de la licencia) | — |
-| T11 | Robot estibador | 60 s de cierre de pallet (film/etiqueta) tras 144 cajas | 🔶 |
+| T11 | Robot estibador | 60 s de cierre de pallet (film/etiqueta) tras 144 cajas (SUP L7/L8; E4 = 91 cajas, ver T5) | 🔶 |
+| T12 | Paros por equipo-turno `turno_paros.csv` + `paros_eventos.csv`. MTTR empírica por (línea,equipo,turno TM/TT); fallback lognormal μ,σ de `ln(dur)`. MTBF = min operativos/eventos bajo SUPUESTO explícito 33d continuo 3T (47520 min/eventos). Ej L3 FOR 709 / EST 1828 / TUN 2795 min. Streams separados + semilla fija (ET4 p.19). Changeover 30-60 min sigue no modelado | 🔶 |
 
 ## Personal y recursos
 | # | Supuesto | Estado |
@@ -98,3 +99,7 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 - **Pallets en los montacargas:** los 4 montacargas tenían el contenido oculto (`hidecontents`); ahora se muestra (lo fija `Tools/OnOpenDashboard`). El pallet se dibuja delante del vehículo, sobre las horquillas.
 - Se probó un camión animado (objeto `CamionMP`) y se descartó: no aporta al análisis. Licencia de nuevo en **96/100**.
 - Producción de referencia sin cambios: 16 pallets PT a las 6 h, 190 en 48 h.
+
+## V&V L3 (ET4 p.17-19)
+- V: determinístico (T1=const, S2=const) cálculo a mano; traza 1 entidad; conservación por turno `SrcMP.out = SinkEXP.in + WIP`; extremos λ=0, MTBF=∞/0; revisión cruzada.
+- V: 1 día simulado (3T, semilla fija, ≥10 réplicas streams separados) vs tablero: 36,0 pal/día L3 ±IC95% y 1843 kg/h std como techo (no media). Desvío >15% → recalibrar S1-S4/T5 antes de escenarios.

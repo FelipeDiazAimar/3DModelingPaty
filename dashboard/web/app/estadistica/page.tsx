@@ -17,39 +17,46 @@ const MACHINE_STATES = [
   { key: "idle", label: "Inactiva", color: STATE_COLOR.idle },
 ] as const;
 
-// Datos de ajuste y bondad de ajuste (Chi² y K-S, FITTING_EVIDENCIA.md)
-// Fuente: datos_trazabilidad/FITTING_EVIDENCIA.md §A/B/C + fitting_series/*.csv
-// IAT n=49 | Paros n=1267 válidos de 1278 filas (11 vacíos) | Pesos n=500
+// Tests estilo cátedra 2026 - E.T. 2 - Teoría.pdf p.15-24 + 2026_-_E_T__6_-_Teoría.pdf p.15-16,21-24 (H0/H1, α=0,05, n/k/p, gl=k-1-p, estadístico vs crítico, decisión no se rechaza/se rechaza).
+// Fuente: datos_trazabilidad/FITTING_EVIDENCIA.md §A/B/C + fitting_series/*.csv (IAT n=49 | Paros n=1267 válidos de 1278 filas−11 vacíos | Pesos n=500).
+// Chi² exige E≥5 por clase (ET2 p.20 / ET6 p.16): display IAT agrupa cola en ≥5 min (E=7,3); test formal IAT k=8 equiprobables E=6,1 y Pesos k=8 E≥21,7.
+// K-S bilateral ET6 p.15 (máx de i/n−F y F−(i−1)/n) vs simplificada ET2 p.24 (solo |i/n−x(i)|, Coss Bu).
 const FITTING_TABS = {
   iat: {
     label: "Arribos MP (IAT)",
-    sub: "Frecuencia de tiempo entre arribos de camiones de carne (minutos)",
-    categories: ["0–1 min", "1–2 min", "2–3 min", "3–5 min", "5–10 min", ">10 min"],
-    obs: [24, 21, 1, 0, 1, 2],
-    teo: [15.5, 10.6, 7.2, 8.3, 6.2, 1.1],
-    ks: "D = 0,4126 > Dcrit = 0,1943 (RECHAZADA)",
-    metric: "n = 49 · Media 2,62 min · Mediana 1,03 min · CV = 3,42",
-    concl: "Rechazo de exponencial por K-S: los camiones llegan en ráfagas u oleadas matutinas (el 92% en < 2 min). Se calibra con tabla empírica horaria.",
+    sub: "Frecuencia de tiempo entre arribos de camiones de carne (minutos) — display 5 clases E≥5; test formal k=8 equiprobables",
+    categories: ["0–1 min", "1–2 min", "2–3 min", "3–5 min", "≥5 min"],
+    obs: [24, 21, 1, 0, 3],
+    teo: [15.5, 10.6, 7.2, 8.3, 7.3],
+    ks: "con α=0,05 se rechaza H0; muestra no compatible; se adopta empírica (K-S D=0,4126 > Dcrit=0,1943)",
+    metric: "n = 49 · Media 2,62 min · Mediana 1,03 min · CV = 3,42 · λ̂ = 1/2,62",
+    test: "H0: IAT ∼ Exp(λ=1/2,62) vs H1: no exponencial · α=0,05 · Chi² k=8 p=1 gl=6: χ²₀=0,143 < crit 12,592 → no se rechaza H0 (pasa) | K-S bilateral n=49: D=0,4126 > Dcrit=0,1943 (=1,36/√49) → se rechaza H0. Veredicto: exponencial no compatible (CV=3,42≠1, 92% <2 min); prima K-S sin agrupar.",
+    concl: "Con α=0,05 se rechaza H0 por K-S; muestra no compatible con exponencial simple (ráfagas/oleadas matutinas, 92% en <2 min). Se adopta empírica horaria (iat_empirica_hora.csv).",
+    ficha: "Variable: IAT arribos MP (min) · Fuente: iat_recepcion_min.csv · Período: mañana 2026-10-03 · Descriptivas: n=49 media 2,62 mediana 1,03 CV 3,42 · Candidatas: exponencial λ̂=1/2,62 · Elegida: empírica por hora · Prueba: Chi² k=8 gl=6 + K-S bilateral D=0,4126 vs 0,1943 · Interpretación: ráfagas, no exponencial simple.",
   },
   paros: {
     label: "Duración de Paradas",
-    sub: "Frecuencia de duración de paradas no programadas (minutos)",
+    sub: "Frecuencia de duración de paradas no programadas (minutos) — display 6 clases E≥5; K-S no agrupa (ET6 p.15)",
     categories: ["0–5 min", "5–10 min", "10–15 min", "15–20 min", "20–30 min", ">30 min"],
     obs: [587, 438, 107, 46, 43, 46],
     teo: [508, 304, 182, 109, 98, 66],
-    ks: "Lognormal D = 0,1399 / Exponencial D = 0,2097 > Dcrit = 0,0382 (AMBAS RECHAZADAS)",
-    metric: "n = 1.267 · Media 10,0 min · Mediana 6,0 min",
-    concl: "Rechazo de exponencial (D=0,2097) y lognormal (D=0,1399, mejor ajuste) por cola pesada (máx 987 min). Curva roja = exponencial media 10. El 80,9% dura ≤ 10 min (46,3% ≤ 5 min) con 3,6% > 30 min. Usar MTTR lognormal por equipo.",
+    ks: "con α=0,05 se rechaza H0 en ambas; muestra no compatible; se adopta empírica/lognormal por equipo (lognormal D=0,1399 / exp D=0,2097 > Dcrit=0,0382)",
+    metric: "n = 1.267 válidos (1.278 filas−11 vacíos) · Media 10,0 min · Mediana 6,0 min",
+    test: "H0: paros ∼ Lognormal vs H1: no lognormal (y H0′: ∼Exp media 10) · α=0,05 · K-S bilateral n=1267: Dlog=0,1399 > Dcrit=0,0382 (=1,36/√1267) → se rechaza H0; Dexp=0,2097 > 0,0382 → se rechaza H0′. Mejor candidato lognormal pero rechazado por cola pesada (máx 987 min).",
+    concl: "Con α=0,05 se rechaza H0 (lognormal) y H0′ (exponencial); muestra no compatible. Curva roja = exponencial media 10 solo referencial. El 80,9% dura ≤10 min (46,3% ≤5 min), 3,6% >30 min. Se adopta MTTR lognormal por equipo + empírica.",
+    ficha: "Variable: duración paros no programadas (min) · Fuente: paros_eventos.csv · Período: 01-sep al 03-oct-2026 (33 días) · Descriptivas: n=1267 media 10,0 mediana 6,0 máx 987 · Candidatas: lognormal y exponencial media 10 · Elegida: lognormal por equipo / empírica (ninguna pasa) · Prueba: K-S bilateral D=0,1399/0,2097 vs 0,0382 · Interpretación: cola pesada, 80,9% ≤10 min.",
   },
   pesos: {
     label: "Pesos Pallet PT",
-    sub: "Distribución de peso neto por pallet final de producto terminado (kg)",
+    sub: "Distribución de peso neto por pallet final de producto terminado (kg) — display 6 clases E≥5; test formal k=8",
     categories: ["<600 kg", "600–700", "700–800", "800–900", "900–1000", ">1000 kg"],
     obs: [22, 1, 109, 218, 96, 54],
     teo: [21.8, 50.6, 98.6, 127.4, 109.2, 92.5],
-    ks: "D = 0,1460 > Dcrit = 0,0608 (RECHAZADA)",
-    metric: "n = 500 · Media 862,5 kg · Desv. Est. 153,4 kg",
-    concl: "Rechazo de normal univariada por mezcla (K-S D=0,1460): hueco en 600–700 (n=1 vs 50,6 esperados) entre parciales <600 (n=22) y cuerpo 700–1000, más picos deterministas >1000 (18×1250 kg fam.724/50 cajas). Usar empírica cajas_PT_pmf + mezcla por SKU/familia.",
+    ks: "con α=0,05 se rechaza H0; muestra no compatible; se adopta empírica (K-S D=0,146 > Dcrit=0,0608)",
+    metric: "n = 500 · Media 862,5 kg · Desv. Est. 153,4 kg · μ̂=862,5 σ̂=153,4",
+    test: "H0: pesos ∼ Normal(μ=862,5; σ=153,4) vs H1: no normal · α=0,05 · Chi² k=8 p=2 gl=5: χ²₀=243,465 > crit 11,07 → se rechaza H0 | K-S bilateral n=500: D=0,146 > Dcrit=0,0608 (=1,36/√500) → se rechaza H0. Mezcla por SKU (hueco 600–700: 1 vs 50,6 esp.; picos 1250 kg fam.724).",
+    concl: "Con α=0,05 se rechaza H0 normal; muestra no compatible (mezcla/bimodal + picos deterministas >1000 kg, 18×1250 kg). Se adopta empírica cajas_PT_pmf + mezcla por SKU/familia.",
+    ficha: "Variable: peso neto pallet PT (kg) · Fuente: pesos_PT_kg.csv · Período: trazabilidad sep–oct 2026 · Descriptivas: n=500 media 862,5 σ 153,4 · Candidatas: normal μ̂=862,5 σ̂=153,4 · Elegida: empírica + mezcla SKU · Prueba: Chi² k=8 gl=5 χ²=243,465 vs 11,07 + K-S D=0,146 vs 0,0608 · Interpretación: mezcla, no normal única.",
   },
 };
 
@@ -224,7 +231,19 @@ export default function Estadistica() {
               }}
             />
             <p className="mt-3 text-[12px] leading-relaxed text-muted">
+              <b>Test cátedra (ET2 p.19/22 · ET6 p.15-16,18-21):</b> {curFit.test}
+            </p>
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">
               <b>Diagnóstico estadístico:</b> {curFit.concl}
+            </p>
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">
+              <b>Ficha ET6 p.24:</b> {curFit.ficha}
+            </p>
+            <p className="mt-2 text-[11px] leading-relaxed text-muted">
+              <b>Nota metodológica:</b> Chi² con E≥5 por clase (ET2 p.20 / ET6 p.16, agrupando cola si E&lt;5) y gl=k−1−p;
+              K-S bilateral ET6 p.15 (máx antes/después del salto) vs versión simplificada ET2 p.24. Curva roja paros =
+              exponencial media 10 solo referencial (mejor candidato lognormal D=0,1399 pero también rechazado vs
+              Dcrit=0,0382).
             </p>
           </Card>
 

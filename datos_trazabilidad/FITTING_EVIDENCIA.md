@@ -22,3 +22,17 @@ Generado 2026-10-03. Fuentes: `datos_trazabilidad/*.json` (API planta + tablero 
 ## D. Capacidades estándar kg/h máx por línea: {1: 1260.0, 2: 1613.0, 3: 1843.0, 4: 1664.0, 5: 1786.0, 6: 1786.0, 7: 1875.0, 8: 1875.0}
 ## E. Pallets/día medios por línea: {1: 18.5, 2: 23.2, 3: 36.0, 4: 36.8, 5: 20.4, 6: 19.5, 7: 25.8, 8: 39.1}
 Validación modelo: correr 1 día simulado y comparar pallets L3 vs este benchmark + paradas vs tablero.
+
+## F. Notas metodológicas cátedra (ET2 p.20 / ET6 p.15-16,21-24)
+- Chi²: `χ²₀=Σ(Oi-Ei)²/Ei`, `gl=k-1-p` cuando λ,μ,σ se estiman de la muestra (ET6 p.16). ET2 puro usa `gl=k-1`.
+  IAT exp: k=8 p=1 gl=6 crit=12.592 (fila ET2 pura: gl=7 crit=14.067, χ²₀=0.143 pasa igual).
+  Pesos normal: k=8 p=2 gl=5 crit=11.07 (fila ET2 pura: gl=7 crit=14.067, χ²₀=243.465 rechaza igual).
+- Regla E≥5 por clase (ET2 p.20, ET6 p.16): si falla, agrupar. Los 6 cortes del dashboard son SOLO visualización;
+  el test validado usa k=8 equiprobables. IAT teo=1.1<5 en display no es prueba Chi².
+- K-S bilateral ET6 p.15 (máx de i/n−F y F−(i−1)/n) vs simplificada ET2 p.24. Dcrit=1.36/√n (α=0.05).
+- Muestra IAT chica: n=49 (50 pallets de total:125810, mañana 2026-10-03 09:11–11:19Z). Estratos hora
+  (9h n=25 media 1.46 / 10h n=11 media 6.56 / 11h n=13 media 1.51): re-estratificar y paginar 125k antes de Empirical definitiva.
+- Independencia (Corridas ET2 p.24-25, |Z₀|<1.96): IAT vs media Z₀=0.16 no rechaza (n1=4 débil por outliers);
+  pesos vs media Z rechaza por orden agrupado SKU (no temporal) → refuerza mezcla estratificada, pendiente re-test temporal.
+- Fichas ET6 p.24: IAT→empírica por hora (iat_empirica_hora.csv); paros→MTTR lognormal por equipo + MTBF=min operativos/eventos
+  (supuesto 3 turnos continuo 33d=47520min); pesos→empírica cajas_PT_pmf + mezcla mezcla_pesos_sku (NO normal única).
