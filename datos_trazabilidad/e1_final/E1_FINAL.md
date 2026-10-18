@@ -50,7 +50,15 @@ Paros simulados contra lo que implican las entradas (min/día, media de 10 répl
 
 - **E2:** la mejora es real pero chica porque el techo pasa a ser la materia prima: entran 16 pallets de 1500 kg cada 8 h = 72 t/día = 14.400 cajas/día y las cámaras de MP quedan en cero. Para aprovechar una formadora más rápida hay que traer más materia prima.
 - **E3:** el sistema resiste reparaciones 25 % más largas porque los acumuladores absorben paros de 10–20 min.
-- **E4 (batch 1200 → 1500 kg):** sin correr; el modelo ya usa 1500 kg y comparar contra 1200 exige cambiar la estructura de mezcladora/formadora y modelar cambios de formato y lavado.
+- **E4 (batch 1200 contra 1500 kg, `analizar_e4.py`, `summary_e4.json`):** 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 20 pallets de 1200 kg por turno de recepción (mismas 72 t/día). El lavado de la mezcladora por batch entra como tiempo de preparación (`setuptime`); **no hay dato**, así que se prueba con 0, 15 y 30 min.
+
+| Lavado | Cajas/día 1500 kg | Cajas/día 1200 kg | 1200 contra 1500 |
+|---|---|---|---|
+| 0 min | 13.196 | 13.361 | +1,3 % |
+| 15 min | 12.476 | 12.004 | −3,8 % |
+| 30 min | 11.140 | 10.501 | −5,7 % |
+
+  Con lavado, el batch grande rinde más (menos lavados por tonelada). Con 15 min las 10 réplicas dan el mismo valor en ambas variantes: el cuello son las mezcladoras y las fallas no pasan por ahí. Con 0 y 30 min es una réplica. La ventaja del 1200 kg sin lavado es un efecto del arranque desde vacío.
 - Antes de correr los escenarios se comprobó que con `mttrK = 1` el modelo reproduce exactamente la réplica 1 de E1 (mismas fallas y 6594/6602 cajas). En esa verificación apareció y se corrigió un arranque duplicado de las fallas cuando el modelo se reabría (el relay quedaba registrado dos veces); las corridas E1 no estaban afectadas.
 
 ## Pendiente

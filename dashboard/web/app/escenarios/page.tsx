@@ -8,6 +8,9 @@ interface Stat { media: number; desv: number; h: number; ic_inf: number; ic_sup:
 interface Esc { nombre: string; cambio: string; pallets: Stat; cajas: Stat; ton: Stat; dif_pallets?: Stat; dif_cajas?: Stat; dif_pallets_pct?: number; dif_cajas_pct?: number }
 interface EscData { replicas: number; metodo: string; escenarios: Record<string, Esc>; tope_mp: { texto: string } }
 
+interface E4Row { lavado_min: number; pal_1500: number; pal_1200: number; cajas_1500: number; cajas_1200: number; dif_cajas_pct: number; ton_1500: number; ton_1200: number }
+interface E4Data { descripcion: string; nota: string; filas: E4Row[] }
+
 const f = (v: number, d = 1) => formatES(v, d);
 const sg = (v: number, d = 1) => (v > 0 ? "+" : "") + f(v, d);
 
@@ -19,6 +22,8 @@ const LECTURA: Record<string, string> = {
 export default function Escenarios() {
   const d1 = useE1();
   const [d, setD] = useState<EscData | null>(null);
+  const [e4, setE4] = useState<E4Data | null>(null);
+  useEffect(() => { fetch("/e1/e4.json").then((r) => r.json()).then(setE4).catch(() => setE4(null)); }, []);
   useEffect(() => { fetch("/e1/escenarios.json").then((r) => r.json()).then(setD).catch(() => setD(null)); }, []);
   const t = d1?.metricas.pal_total, v = d1?.validacion;
   const esc = d?.escenarios;
@@ -58,8 +63,25 @@ export default function Escenarios() {
         })}
       </div>
 
-      <Card className="mt-4" title="E4 · Tamaño de batch" sub="Batch de 1200 a 1500 kg" right={<Tag kind="sinCorrida" />}>
-        <p className="text-[13px] leading-relaxed text-muted">Falta correrlo. El modelo ya trabaja con batches de 1500 kg, así que comparar contra 1200 kg exige cambiar la estructura de mezcladora y formadora (cargas por batch) y los tiempos de cambio y lavado, que hoy no están modelados.</p>
+      <Card className="mt-4" title="E4 · Tamaño de batch" sub="Batch de 1200 contra 1500 kg, con lavado de la mezcladora entre batches" right={<><Tag kind="real">Corrido</Tag><Tag kind="supuesto">Lavado supuesto</Tag></>}>
+        {!e4 ? <div className="skeleton h-24 w-full" /> : (
+          <>
+            <Table maxH={260} head={[{ label: "Lavado por batch" }, { label: "Pallets/día 1500 kg", right: true }, { label: "Pallets/día 1200 kg", right: true }, { label: "Cajas/día 1500 kg", right: true }, { label: "Cajas/día 1200 kg", right: true }, { label: "1200 contra 1500", right: true }]}>
+              {e4.filas.map((r) => (
+                <tr key={r.lavado_min}>
+                  <td className="first font-semibold">{r.lavado_min === 0 ? "Sin lavado (modelo base)" : `${r.lavado_min} min`}</td>
+                  <td className="num">{f(r.pal_1500, 0)}</td><td className="num">{f(r.pal_1200, 0)}</td>
+                  <td className="num">{f(r.cajas_1500, 0)}</td><td className="num">{f(r.cajas_1200, 0)}</td>
+                  <td className="num font-bold">{sg(r.dif_cajas_pct, 1)} %</td>
+                </tr>
+              ))}
+            </Table>
+            <div className="mt-3 space-y-2 text-[12px] leading-relaxed text-muted">
+              <p><b>Lectura:</b> el batch de 1500 kg rinde más en cuanto hay lavado entre batches: con 15 min produce 3,8 % más cajas que el de 1200 kg y con 30 min, 5,7 % más, porque se lava menos veces por tonelada. Sin lavado la diferencia casi desaparece (el de 1200 kg hasta queda 1,3 % arriba, un efecto del arranque de las 24 h desde vacío, no de régimen).</p>
+              <p><b>Cómo se armó:</b> 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 20 pallets de 1200 kg por turno de recepción, para mantener las 72 t/día de materia prima. El lavado entra como tiempo de preparación de la mezcladora; <b>no hay dato real</b> de su duración, por eso se muestran tres valores. Con 15 min las 10 réplicas dan lo mismo: el cuello son las mezcladoras y las fallas no pasan por ahí. El informe supone 30–60 min de cambio de formato y lavado, pero no por batch.</p>
+            </div>
+          </>
+        )}
       </Card>
 
       <Card className="mt-4" title="Comparación entre escenarios" sub="Pallets por día de la planta: media e IC 95 % de las 10 réplicas">
