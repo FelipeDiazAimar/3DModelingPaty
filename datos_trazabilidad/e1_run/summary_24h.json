@@ -1,0 +1,17 @@
+{
+ "model": "C:\\Users\\Asus\\AppData\\Local\\Temp\\opencode\\E1\\planta_e1_test.fsm",
+ "target": 86400.0,
+ "step": 1800.0,
+ "objects": [
+  "SrcMP",
+  "AlmMP",
+  "DesL3",
+  "PicL3",
+  "MixL3",
+  "Tunel3",
+  "EnvL3A",
+  "AlmPT",
+  "SinkEXP"
+ ],
+ "rows": 2160
+}

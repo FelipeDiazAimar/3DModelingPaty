@@ -139,9 +139,10 @@ export default function Paradas() {
 
       <Card className="mt-4" title="Validación campo vs. modelo (ET6 §5.5 p.36 / TP Parte D)" sub="Error relativo=(sim−real)/real×100 · ¿real∈IC95%? · Media + P95. Completar con 10 réplicas Experimenter." right={<Tag kind="sinCorrida">Sin réplicas</Tag>}>
         <Table maxH={300} head={[{label:"Indicador"},{label:"Real", right:true},{label:"Sim media", right:true},{label:"P95 sim", right:true},{label:"IC95%", right:true},{label:"Error rel.%", right:true},{label:"¿Real∈IC?", right:true}]}>
-          <tr><td className="first font-semibold">Pallets L3/día</td><td className="num">36.0</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td></tr>
-          <tr><td className="first font-semibold">Atendidos/h (pal/h)</td><td className="num">1.50</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td><td className="num">—</td></tr>
+          <tr><td className="first font-semibold">Pallets L3/día</td><td className="num">36.0</td><td className="num">285 (n=1)</td><td className="num">—</td><td className="num">sin IC</td><td className="num">+691,7 %</td><td className="num">No</td></tr>
+          <tr><td className="first font-semibold">Atendidos/h (pal/h)</td><td className="num">1.50</td><td className="num">11.88 (n=1)</td><td className="num">—</td><td className="num">sin IC</td><td className="num">+691,7 %</td><td className="num">No</td></tr>
         </Table>
+        <p className="mt-2 text-[12px] text-muted">E1 base 24 h real headless (1 réplica, `datos_trazabilidad/e1_run/`): NO VALIDA — sobra 7,9×. Causas: T1 overfeed, Split/Unpack pendiente, rama B ociosa. Detalle en `E1_BASE_24H.md`. IC95% requiere 10 réplicas con ventana (bloqueador §5).</p>
         <p className="mt-2 text-[12px] text-muted">Criterio TP-D p.4: si real∉IC o |error| grande en medida clave → revisar distribuciones/prioridades antes de recomendar. No basta media: informar P95 (ET6 p.36). Significancia ≠ importancia práctica (ET6 p.35).</p>
       </Card>
 
