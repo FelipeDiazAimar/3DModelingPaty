@@ -111,7 +111,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <span className="block text-[11px] font-medium text-muted">Gemelo digital</span>
             </span>
           </Link>
-          {home && <div className="order-2 flex min-w-0 basis-full justify-center md:hidden"><KpiChips compact /></div>}
+          {home && <div style={{ pointerEvents: "none" }} className="order-2 flex min-w-0 basis-full justify-center md:hidden"><KpiChips compact /></div>}
           {/* escritorio */}
           <nav className="glass hidden min-w-0 items-center gap-0.5 overflow-x-auto p-1 min-[1800px]:flex" aria-label="Secciones">
             {NAV.map((n) => (
@@ -119,7 +119,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="hidden md:block min-[1800px]:hidden"><NavMenu /></div>
-          {home && <div className="order-last hidden min-w-0 basis-full justify-center md:flex min-[1800px]:hidden"><KpiChips compact /></div>}
+          {home && <div style={{ pointerEvents: "none" }} className="order-last hidden min-w-0 basis-full justify-center md:flex min-[1800px]:hidden"><KpiChips compact /></div>}
           {home && <div className="hidden min-w-0 min-[1800px]:block"><KpiChips /></div>}
           <div className={`ml-auto hidden items-center gap-2 md:flex ${home ? "order-1 min-[1800px]:order-none" : ""}`}>
             <LineSelector className="flex" />

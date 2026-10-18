@@ -15,7 +15,7 @@ export default function Colas() {
   if (!last) return <Page><PageHead title="Colas y trabajo en proceso" sub="Cuánto material está esperando y dónde se acumula." /><Empty /></Page>;
 
   const wip = inLine.reduce((a, m) => a + (last.machines[m.id]?.content ?? 0), 0);
-  const peakQ = Math.max(...stores.map((m) => last.machines[m.id]?.content ?? 0));
+  const peakQ = Math.max(0, ...stores.map((m) => last.machines[m.id]?.content ?? 0));
 
   // Serie temporal de WIP total en máquinas de línea
   const wipSeries = series(h, (s) => inLine.reduce((a, m) => a + (s.machines[m.id]?.content ?? 0), 0));
@@ -36,8 +36,8 @@ export default function Colas() {
       <Card
         className="mb-4"
         title="Evolución Temporal del WIP y Producción Acumulada (Dinámica 24 h)"
-        sub="Comportamiento del inventario en proceso en relación con los pallets de producto terminado entregados"
-        right={<Tag kind="real">Dinámica de Línea</Tag>}
+        sub="WIP instantáneo en cajas (eje izq.) vs. pallets PT acumulados desde inicio de corrida (eje der.). Doble escala: no comparar magnitudes. WIP filtra por línea; Pallets PT es total planta."
+        right={<Tag kind="supuesto">Dinámica de Línea</Tag>}
       >
         <Chart
           height={320}

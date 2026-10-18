@@ -5,15 +5,16 @@ import { MACHINES } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
 import { useHist, useLatest } from "@/lib/store";
 
-// Datos reales del tablero de planta Sep–Oct 2026 (FITTING_EVIDENCIA.md - 12.610 min en 1.278 eventos)
+// Datos reales del tablero de planta Sep–Oct 2026 (FITTING_EVIDENCIA.md - 12.610 min, 1.267 eventos válidos de 1.278 filas)
+// MTBF = 47520 min (33 días) / eventos. EST/BL combinado = 392.7; APS/CTA combinado = 495.0.
 const PARETO_DATA = [
-  { eq: "Formadoras (FOR)", min: 3812, eventos: 365, mttr: 10.5, mtbf: 130.2, pct: 30.2 },
-  { eq: "Estuchadoras (EST/BL)", min: 2081, eventos: 121, mttr: 17.2, mtbf: 785.0, pct: 16.5 },
+  { eq: "Formadoras (FOR)", min: 3812, eventos: 364, mttr: 10.5, mtbf: 130.5, pct: 30.2 },
+  { eq: "Estuchadoras (EST/BL)", min: 2081, eventos: 121, mttr: 17.2, mtbf: 392.7, pct: 16.5 },
   { eq: "Flowpack (FLW)", min: 1969, eventos: 295, mttr: 6.7, mtbf: 161.1, pct: 15.6 },
   { eq: "Túneles de Frío (TUN)", min: 1065, eventos: 107, mttr: 10.0, mtbf: 444.1, pct: 8.4 },
-  { eq: "Cintas / Alim. (APS/CTA)", min: 740, eventos: 96, mttr: 7.7, mtbf: 540.0, pct: 5.9 },
-  { eq: "Picadoras (PIC)", min: 609, eventos: 55, mttr: 11.3, mtbf: 864.0, pct: 4.8 },
-  { eq: "Servicios y Otros", min: 2334, eventos: 239, mttr: 9.8, mtbf: 1980.0, pct: 18.6 },
+  { eq: "Cintas / Alim. (APS/CTA)", min: 740, eventos: 96, mttr: 7.7, mtbf: 495.0, pct: 5.9 },
+  { eq: "Picadoras (PIC)", min: 609, eventos: 54, mttr: 11.3, mtbf: 880.0, pct: 4.8 },
+  { eq: "Servicios y Otros", min: 2334, eventos: 230, mttr: 10.1, mtbf: 206.6, pct: 18.5 },
 ];
 
 const totalMin = PARETO_DATA.reduce((acc, item) => acc + item.min, 0);
@@ -112,8 +113,8 @@ export default function Paradas() {
           }}
         />
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--line)] pt-3 text-[12px] text-muted">
-          <span><b>Regla 80/20 confirmada:</b> El 70,8% de las horas perdidas proviene de sólo 4 equipos críticos (Formación, Estuchado, Flowpack y Frío).</span>
-          <span className="font-semibold text-ink">Total Planta: 12.610 min (1.278 eventos)</span>
+          <span><b>Regla 80/20 confirmada:</b> El 70,8% de los minutos perdidos se concentra en 4 equipos críticos —Formación, Estuchado, Flowpack y Frío— (bolsa «Servicios y Otros» excluida del ranking).</span>
+          <span className="font-semibold text-ink">Total Planta: 12.610 min (1.267 eventos válidos de 1.278 filas)</span>
         </div>
       </Card>
 
@@ -144,7 +145,7 @@ export default function Paradas() {
               { name: "Planta Total", type: "bar", itemStyle: { color: "#d9293b" }, data: TABLERO_L3.map((t) => t.planta) },
             ],
           }} />
-          <p className="mt-2 text-[12px] text-muted">Línea 3 concentró 1.324 min de paro durante el período analizado.</p>
+          <p className="mt-2 text-[12px] text-muted">Línea 3 concentró 1.324 min de paro (gráfico: 5 equipos = 1.026 min; resto incl. APS 155 min no graficado). EST solo; EST BL (L3: 1 ev/60 min) no graficado; Pareto combina ambos (2.081).</p>
         </Card>
 
         <Card title="Pérdidas por Espera y Bloqueo en Simulación" sub="Máquinas con mayor inactividad por desbalance o falta de material" right={<Tag kind="supuesto">Dinámico</Tag>}>

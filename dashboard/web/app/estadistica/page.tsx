@@ -18,13 +18,15 @@ const MACHINE_STATES = [
 ] as const;
 
 // Datos de ajuste y bondad de ajuste (Chi² y K-S, FITTING_EVIDENCIA.md)
+// Fuente: datos_trazabilidad/FITTING_EVIDENCIA.md §A/B/C + fitting_series/*.csv
+// IAT n=49 | Paros n=1267 válidos de 1278 filas (11 vacíos) | Pesos n=500
 const FITTING_TABS = {
   iat: {
     label: "Arribos MP (IAT)",
     sub: "Frecuencia de tiempo entre arribos de camiones de carne (minutos)",
     categories: ["0–1 min", "1–2 min", "2–3 min", "3–5 min", "5–10 min", ">10 min"],
     obs: [24, 21, 1, 0, 1, 2],
-    teo: [15.5, 10.6, 7.2, 7.8, 5.1, 2.8],
+    teo: [15.5, 10.6, 7.2, 8.3, 6.2, 1.1],
     ks: "D = 0,4126 > Dcrit = 0,1943 (RECHAZADA)",
     metric: "n = 49 · Media 2,62 min · Mediana 1,03 min · CV = 3,42",
     concl: "Rechazo de exponencial por K-S: los camiones llegan en ráfagas u oleadas matutinas (el 92% en < 2 min). Se calibra con tabla empírica horaria.",
@@ -33,21 +35,21 @@ const FITTING_TABS = {
     label: "Duración de Paradas",
     sub: "Frecuencia de duración de paradas no programadas (minutos)",
     categories: ["0–5 min", "5–10 min", "10–15 min", "15–20 min", "20–30 min", ">30 min"],
-    obs: [742, 310, 115, 45, 35, 20],
+    obs: [587, 438, 107, 46, 43, 46],
     teo: [508, 304, 182, 109, 98, 66],
-    ks: "D = 0,1399 > Dcrit = 0,0382 (RECHAZADA)",
+    ks: "Lognormal D = 0,1399 / Exponencial D = 0,2097 > Dcrit = 0,0382 (AMBAS RECHAZADAS)",
     metric: "n = 1.267 · Media 10,0 min · Mediana 6,0 min",
-    concl: "Rechazo de exponencial y lognormal por cola pesada. Predominio masivo de microparadas cortas (< 5 min) con eventos esporádicos de desarme mecánico.",
+    concl: "Rechazo de exponencial (D=0,2097) y lognormal (D=0,1399, mejor ajuste) por cola pesada (máx 987 min). Curva roja = exponencial media 10. El 80,9% dura ≤ 10 min (46,3% ≤ 5 min) con 3,6% > 30 min. Usar MTTR lognormal por equipo.",
   },
   pesos: {
     label: "Pesos Pallet PT",
     sub: "Distribución de peso neto por pallet final de producto terminado (kg)",
     categories: ["<600 kg", "600–700", "700–800", "800–900", "900–1000", ">1000 kg"],
-    obs: [15, 28, 95, 235, 92, 35],
-    teo: [21, 57, 122, 154, 103, 43],
+    obs: [22, 1, 109, 218, 96, 54],
+    teo: [21.8, 50.6, 98.6, 127.4, 109.2, 92.5],
     ks: "D = 0,1460 > Dcrit = 0,0608 (RECHAZADA)",
     metric: "n = 500 · Media 862,5 kg · Desv. Est. 153,4 kg",
-    concl: "Rechazo de distribución normal univariada por mezcla de SKUs: bimodalidad entre formatos de 35-45 cajas vs. estándar SUP de 144 cajas de 5 kg.",
+    concl: "Rechazo de normal univariada por mezcla (K-S D=0,1460): hueco en 600–700 (n=1 vs 50,6 esperados) entre parciales <600 (n=22) y cuerpo 700–1000, más picos deterministas >1000 (18×1250 kg fam.724/50 cajas). Usar empírica cajas_PT_pmf + mezcla por SKU/familia.",
   },
 };
 
@@ -123,7 +125,7 @@ function ChartGuide({ title, shows, watch }: { title: string; shows: string; wat
   );
 }
 
-export default function Metricas() {
+export default function Estadistica() {
   const h = useHist();
   const last = useLatest();
   const line = useStore((s) => s.line);
@@ -230,8 +232,8 @@ export default function Metricas() {
           <Card
             className="lg:col-span-2"
             title="Perfil de Utilización Comparativa por Estación (Diagnóstico del Cuello de Botella)"
-            sub="Porcentaje de tiempo efectivo de procesamiento a lo largo de la línea productiva"
-            right={<div className="flex items-center gap-2"><Tag kind="real">Restricción de Flujo</Tag><ChartGuide title="Utilización comparativa por estación" shows="Compara el porcentaje de tiempo efectivo de procesamiento de las etapas productivas." watch="La etapa con utilización más alta se acerca a su capacidad y puede limitar el ritmo de toda la línea. También observá las estaciones con menor uso: podrían estar esperando producto del cuello de botella." /></div>}
+            sub="Estimación estática ilustrativa, no medición de esta corrida — ver Distribución de Estados para utilización en vivo"
+            right={<div className="flex items-center gap-2"><Tag kind="supuesto">Estimación estática</Tag><ChartGuide title="Utilización comparativa por estación" shows="Compara el porcentaje de tiempo efectivo de procesamiento de las etapas productivas." watch="La etapa con utilización más alta se acerca a su capacidad y puede limitar el ritmo de toda la línea. También observá las estaciones con menor uso: podrían estar esperando producto del cuello de botella." /></div>}
           >
             <Chart
               height={260}
@@ -277,7 +279,7 @@ export default function Metricas() {
               }}
             />
             <div className="mt-2 rounded-xl bg-amber-50/70 p-3 text-[12px] leading-relaxed text-[#8a520a]">
-              <b>Efecto Restricción:</b> La <b>Formadora F26</b> opera con una utilización promedio del <b>89%</b> (982 kg/h nominales), dictando el throughput máximo posible del sistema. Las etapas aguas arriba (mezcladoras y picadora) sufren bloqueos periódicos por contrapresión al llenarse los pulmones, mientras que el envasado y robot estibador operan con capacidad ociosa (44% y 38%), desabastecidos de material.
+              <b>Efecto Restricción:</b> <b>Dato:</b> Formadora 18,33 s/caja = 982 kg/h nominales (SUPUESTOS T5). <b>Supuesto ilustrativo:</b> perfil 89% formadora vs resto — estimación estática, no medición de esta corrida. El bloqueo aguas arriba y la ociosidad de envasado/robot son el efecto esperado si la formadora restringe el flujo; contrastar con Distribución de Estados en vivo.
             </div>
           </Card>
 

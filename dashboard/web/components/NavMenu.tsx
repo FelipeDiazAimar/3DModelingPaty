@@ -12,7 +12,7 @@ export const NAV: { href: string; label: string; icon: IconName }[] = [
   { href: "/velocidad", label: "Velocidad", icon: "gauge" },
   { href: "/masa", label: "Balance de masa", icon: "scale" },
   { href: "/flota", label: "Montacargas", icon: "forklift" },
-  { href: "/estadistica", label: "Métricas", icon: "chart" },
+  { href: "/estadistica", label: "Estadística", icon: "chart" },
   { href: "/escenarios", label: "Escenarios", icon: "flask" },
 ];
 
