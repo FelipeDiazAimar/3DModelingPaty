@@ -32,7 +32,7 @@ En régimen (horas 3–23) el modelo produce ≈ 50 pallets/día por línea; las
 
 **El modelo no valida en pallets** (criterio TP-D p.4: revisar supuestos antes de recomendar). Causas identificadas:
 1. **Unidad:** el modelo arma pallets de 144 cajas × 5 kg = 720 kg; el pallet real pesa 862,5 kg de media (FITTING §C). En toneladas la línea 8 queda a −2,7 %.
-2. **Línea 7:** el tablero muestra una línea 7 mucho menos cargada que la 8 (25,8 contra 39,1); el modelo trabaja a capacidad en las dos. Hay que modelar la demanda/disponibilidad de la línea 7 o confirmar en planta por qué produce menos.
+2. **Diferencia entre líneas del tablero:** las dos líneas trabajan por igual (dato del usuario), así que la brecha 25,8 contra 39,1 no la explica la planta; hay que revisar cómo se asignan los pallets por línea en el tablero. La comparación válida es contra las dos líneas juntas: 89,4 contra 64,9 pallets/día (+37,8 %) y, en toneladas, 65,5 contra 56,0 (+17 %).
 3. **Las fallas casi no cambian la producción** (pérdida < 1 % diario): los acumuladores entre estaciones amortiguan paros de 5–15 min. El cuello real es la formadora a 982 kg/h; la brecha 982 contra 1843 kg/h sigue sin conciliarse (SUPUESTOS T5).
 
 ## Welch
@@ -62,5 +62,6 @@ Paros simulados contra lo que implican las entradas (min/día, media de 10 répl
 - Antes de correr los escenarios se comprobó que con `mttrK = 1` el modelo reproduce exactamente la réplica 1 de E1 (mismas fallas y 6594/6602 cajas). En esa verificación apareció y se corrigió un arranque duplicado de las fallas cuando el modelo se reabría (el relay quedaba registrado dos veces); las corridas E1 no estaban afectadas.
 
 ## Pendiente
-- Conciliar el tamaño de pallet (144 contra ~172 cajas de 5 kg) y la demanda de la línea 7 con planta.
+- Confirmar en planta si hay lavado o cambio de formato por batch: con un lavado supuesto de 30 min por batch el modelo da 55,7 t/día contra 56,0 del tablero (hipótesis, no calibración).
+- Revisar cómo asigna el tablero los pallets a cada línea (25,8 contra 39,1 con líneas iguales).
 - Llegadas de materia prima por hora (hoy 16 pallets cada 8 h con descarga fija) y ruido en los tiempos de máquina: hoy el modelo es determinista salvo las fallas.
