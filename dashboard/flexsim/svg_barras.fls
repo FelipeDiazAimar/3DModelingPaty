@@ -1,0 +1,30 @@
+// Tools/svgBarras(titulo, unidad, nombres, valores, color, ordenar, nota): barras horizontales en HTML/CSS.
+// ordenar = 1 las ordena de mayor a menor (Pareto, con % acumulado).
+string tit = param(1);
+string uni = param(2);
+Array nom = param(3);
+Array val = param(4);
+string color = param(5);
+int ordenar = param(6);
+string nota = param(7);
+int n = nom.length;
+Array idx = [];
+for (int i = 1; i <= n; i++) idx.push(i);
+if (ordenar) {
+	for (int i = 1; i <= n; i++) for (int j = i + 1; j <= n; j++) if (val[idx[j]] > val[idx[i]]) { int t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
+}
+double vmax = 0; double tot = 0;
+for (int i = 1; i <= n; i++) { vmax = Math.max(vmax, val[i]); tot += val[i]; }
+string s = "<div class='card'><div class='ct'>" + tit + " <span class='u'>" + uni + "</span></div><div class='bars'>";
+double acum = 0;
+for (int k = 1; k <= n; k++) {
+	int i = idx[k];
+	double w = vmax > 0 ? 100 * val[i] / vmax : 0;
+	acum += val[i];
+	string extra = "";
+	if (ordenar && tot > 0) extra = " <em>" + string.fromNum(100 * acum / tot, 0) + " % acum.</em>";
+	s = s + "<div class='br'><span class='bn'>" + nom[i] + "</span><span class='bt'><span style='width:" + string.fromNum(w, 1) + "%;background:" + color + "'></span></span><span class='bv'>" + string.fromNum(val[i], Math.fmod(val[i], 1) != 0 && val[i] < 10 ? 1 : 0) + extra + "</span></div>";
+}
+s = s + "</div>";
+if (nota.length > 0) s = s + "<div class='nota'>" + nota + "</div>";
+return s + "</div>";

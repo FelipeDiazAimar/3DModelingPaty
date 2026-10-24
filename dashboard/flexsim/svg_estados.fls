@@ -1,0 +1,28 @@
+// Tools/svgEstados(titulo, ids, categorias, colores, nota): barras 100 % apiladas con el tiempo en cada estado,
+// a partir de los muestreos de Tools/indEst (Tools/Indicadores, cada 60 s).
+string tit = param(1);
+Array ids = param(2);
+Array cat = param(3);
+Array col = param(4);
+string nota = param(5);
+treenode en = model().find("Tools/indEst");
+string s = "<div class='card'><div class='ct'>" + tit + " <span class='u'>% del tiempo</span></div><div class='lg'>";
+for (int k = 1; k <= cat.length; k++) s = s + "<span><i style='background:" + col[k] + "'></i>" + cat[k] + "</span>";
+s = s + "</div><div class='bars'>";
+for (int i = 1; i <= ids.length; i++) {
+	treenode c5 = en.find(ids[i]);
+	Array k5 = [0, 0, 0, 0, 0];
+	if (objectexists(c5)) k5 = c5.value;
+	double tot = 0;
+	for (int k = 1; k <= 5; k++) tot += k5[k];
+	s = s + "<div class='br'><span class='bn'>" + ids[i] + "</span><span class='bt st'>";
+	for (int k = 1; k <= cat.length; k++) {
+		double w = tot > 0 ? 100 * k5[k] / tot : 0;
+		if (w > 0) s = s + "<span style='width:" + string.fromNum(w, 2) + "%;background:" + col[k] + "' title='" + cat[k] + " " + string.fromNum(w, 1) + " %'></span>";
+	}
+	double us = tot > 0 ? 100 * k5[2] / tot : 0;
+	s = s + "</span><span class='bv'>" + string.fromNum(us, 0) + " %</span></div>";
+}
+s = s + "</div>";
+if (nota.length > 0) s = s + "<div class='nota'>" + nota + "</div>";
+return s + "</div>";

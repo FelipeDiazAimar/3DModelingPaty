@@ -29,6 +29,12 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
 Barra inferior: play/pausa, volver al inicio, línea de tiempo y velocidad (×10 a ×3600 segundos simulados por segundo real). "En vivo" sigue la última muestra de FlexSim; al pausar o mover la barra se reproduce el historial (3D, montacargas, indicadores y gráficos siguen al cabezal). Controla la reproducción en la web, no la ejecución de FlexSim.
 FlexSim publica cada 10 s simulados (JSON compacto); el puente guarda hasta 40.000 muestras.
 
+## Dashboard en FlexSim
+Las gráficas de la web también están dentro del modelo en un solo dashboard, `PATY_Tablero` (menú Dashboards), con un único widget HTML y 7 hojas: Producción, Colas y WIP, Paradas, Velocidad, Balance de masa, Montacargas y Estadística, más los KPIs arriba. Es un solo navegador embebido (los gráficos nativos usan uno cada uno y frenaban la corrida) y no consume objetos de licencia (96/100).
+- `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 60 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
+- `Tools/TableroHTML` (`tablero.fls`) arma el HTML con los gráficos en SVG (`svg_lineas.fls`, `svg_barras.fls`, `svg_estados.fls`); el estilo y el cambio de hoja están en `tablero_head.html` (`Tools/tableroHead`).
+- Escenarios E1–E4 no tiene hoja: sus resultados salen del Experimenter.
+
 ## Componentes propios
 Scrollbar (`CScroll`), selector de sección (`NavMenu`), íconos (`Icons`), tablas (`Table`, `StatePill`, `MiniBar`) y reproductor (`Player`). Sin librerías de UI externas.
 

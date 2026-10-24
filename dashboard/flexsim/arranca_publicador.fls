@@ -1,7 +1,7 @@
 // Relay (OnExit de SrcCamionesMP): arranca el publicador si no está corriendo (primera corrida o tras un reset).
 treenode lastN = model().find("Tools/pubLast");
 double last = lastN.value;
-if (Model.time - last > 25 || Model.time <= last) {
+if (Model.time - last > 25 || Model.time < last) {
 	lastN.value = Model.time;
 	treenode runN = model().find("Tools/pubRun");
 	runN.value = runN.value + 1;

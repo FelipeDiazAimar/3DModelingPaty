@@ -1,0 +1,107 @@
+// Tools/TableroHTML: arma el HTML del dashboard único PATY_Tablero (un solo widget HTML con 7 hojas).
+// Usa el historial y los estados que guarda Tools/Indicadores; las hojas se cambian con el script del encabezado.
+treenode tl = model().find("Tools");
+treenode fL = tl.find("svgLineas");
+treenode fB = tl.find("svgBarras");
+treenode fE = tl.find("svgEstados");
+Array H = tl.find("indHist").value;
+int n = H.length;
+Array ult = n > 0 ? H[n] : [Model.time / 3600, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 982, 1843];
+string AZ = "#1f6feb"; string VI = "#8250df"; string VE = "#1a7f37"; string AM = "#d4a72c"; string RO = "#cf222e"; string CE = "#0598bc"; string NA = "#e16f24"; string GR = "#8b97a8";
+Array CAT = ["Inactiva", "Procesando", "Bloqueada", "Sin material", "Falla"];
+Array CCAT = ["#c3cad5", "#22a06b", "#e8a317", "#8aa4c8", "#d64545"];
+string et = "Desencajado,Picadora,MezA,MezB,FormA,FormB,Tunel,EnvA,EnvB,EncA,EncB,EstA";
+Array e = et.split(",");
+Array M7 = []; Array M8 = []; Array MT = [];
+for (int i = 1; i <= e.length; i++) { M7.push(e[i] + "_L7"); M8.push(e[i] + "_L8"); }
+for (int i = 1; i <= e.length; i++) MT.push(M7[i]);
+for (int i = 1; i <= e.length; i++) MT.push(M8[i]);
+string sFALLA = "FormA_L7,FormB_L7,FormA_L8,FormB_L8,Tunel_L7,Tunel_L8,EnvA_L7,EnvB_L7,EnvA_L8,EnvB_L8,EstA_L7,EstA_L8,Picadora_L7,Picadora_L8";
+Array FALLA = sFALLA.split(",");
+string sCOLAS = "QRecepcion,RackMPCongelado,RackMPEnfriado,QPaletizado_L7,QPaletizado_L8,RackPTCongelado,RackPTEnfriado,QExpedicion";
+Array COLAS = sCOLAS.split(",");
+string sFLOTA = "MontacargasRecep,MontacargasAlmacenMP,MontacargasLineaPT,MontacargasExped";
+Array FLOTA = sFLOTA.split(",");
+
+// encabezado con KPIs (siempre visible)
+double horas = Model.time / 3600;
+double meta = 72 * horas / 24; // 36 pallets PT por día y por línea (tablero)
+double cumpl = meta > 0 ? 100 * ult[3] / meta : 0;
+string S = getnodestr(tl.find("tableroHead")) + "<div class='pt'><div class='top'><div class='tt'>PATY San Jorge · Elaborados L7 y L8 <span>" + string.fromNum(horas, 1) + " h simuladas</span></div><div class='kpis'>";
+S = S + "<div class='k'><b>" + string.fromNum(ult[3], 0) + "</b><span>Pallets PT expedidos</span></div>";
+S = S + "<div class='k'><b>" + string.fromNum(cumpl, 0) + " %</b><span>Cumplimiento (meta 36 pal/día/línea)</span></div>";
+S = S + "<div class='k'><b>" + string.fromNum(ult[2], 0) + "</b><span>Pallets MP recibidos</span></div>";
+S = S + "<div class='k'><b>" + string.fromNum(ult[6], 0) + " / " + string.fromNum(ult[7], 0) + "</b><span>kg/h L7 / L8</span></div>";
+S = S + "<div class='k'><b>" + string.fromNum(ult[12] + ult[13], 0) + "</b><span>Ítems en proceso</span></div></div></div>";
+S = S + "<div class='tabs'><span class='tab' data-hoja='prod' onclick=\"patyVer('prod')\">Producción</span><span class='tab' data-hoja='colas' onclick=\"patyVer('colas')\">Colas y WIP</span><span class='tab' data-hoja='paradas' onclick=\"patyVer('paradas')\">Paradas</span><span class='tab' data-hoja='vel' onclick=\"patyVer('vel')\">Velocidad</span><span class='tab' data-hoja='masa' onclick=\"patyVer('masa')\">Balance de masa</span><span class='tab' data-hoja='flota' onclick=\"patyVer('flota')\">Montacargas</span><span class='tab' data-hoja='est' onclick=\"patyVer('est')\">Estadística</span></div>";
+
+// Producción
+Array prodN = []; Array prodV = [];
+for (int i = 1; i <= MT.length; i++) { prodN.push(MT[i]); prodV.push(getoutput(Model.find(MT[i]))); }
+S = S + "<div class='hoja on' data-hoja='prod'><div class='grid'>";
+S = S + nodefunction(fL, "Pallets acumulados", "pallets", H, [2, 3], ["MP recibidos", "PT expedidos"], [AZ, VE], "");
+S = S + nodefunction(fL, "Cajas de 5 kg por línea", "cajas", H, [4, 5], ["Línea 7", "Línea 8"], [AZ, VI], "");
+S = S + nodefunction(fB, "Producción por máquina", "salidas", prodN, prodV, AZ, 0, "Unidades de cada etapa: batches, cargas, bandejas, paquetes y cajas.");
+S = S + "</div></div>";
+
+// Colas y WIP
+Array colN = []; Array colV = [];
+for (int i = 1; i <= MT.length; i++) { colN.push(MT[i]); colV.push(content(Model.find(MT[i]))); }
+S = S + "<div class='hoja' data-hoja='colas'><div class='grid'>";
+S = S + nodefunction(fL, "Cámaras y colas en el tiempo", "pallets", H, [14, 15, 16, 17, 18, 19, 20, 21], COLAS, [AZ, CE, VI, AM, NA, VE, RO, GR], "");
+S = S + nodefunction(fL, "Trabajo en proceso por línea", "ítems", H, [12, 13], ["Línea 7", "Línea 8"], [AZ, VI], "");
+S = S + nodefunction(fB, "Trabajo en proceso por etapa (ahora)", "ítems", colN, colV, CE, 0, "");
+S = S + "</div></div>";
+
+// Paradas
+treenode lg = tl.find("fallLog");
+Array pmin = []; Array pcnt = [];
+for (int i = 1; i <= FALLA.length; i++) {
+	treenode d = lg.find("d" + string.fromNum(i - 1));
+	treenode c2 = lg.find("n" + string.fromNum(i - 1));
+	pmin.push(objectexists(d) ? d.value / 60 : 0);
+	pcnt.push(objectexists(c2) ? c2.value : 0);
+}
+S = S + "<div class='hoja' data-hoja='paradas'><div class='grid'>";
+S = S + nodefunction(fB, "Pareto de paradas no programadas", "minutos de paro", FALLA, pmin, RO, 1, "MTBF exponencial y MTTR lognormal del tablero Sep–Oct (supuesto: 3 turnos continuos).");
+S = S + nodefunction(fB, "Cantidad de paradas por equipo", "paradas", FALLA, pcnt, NA, 1, "");
+S = S + nodefunction(fE, "Estados por equipo: espera, bloqueo y falla", FALLA, CAT, CCAT, "");
+S = S + "</div></div>";
+
+// Velocidad
+S = S + "<div class='hoja' data-hoja='vel'><div class='grid'>";
+S = S + nodefunction(fL, "Kilos por hora (ventana móvil de 1 h)", "kg/h", H, [6, 7, 26, 27], ["Línea 7", "Línea 8", "Nominal formadora", "Estándar de línea"], [AZ, VI, GR, AM], "La brecha entre 982 (nominal de la formadora) y 1843 kg/h (estándar) debe conciliarse en planta.");
+S = S + "</div></div>";
+
+// Balance de masa
+S = S + "<div class='hoja' data-hoja='masa'><div class='grid'>";
+S = S + nodefunction(fL, "Entra y sale", "kg", H, [8, 9, 10, 11], ["MP recibida", "Producto en cajas", "En pallets PT", "En proceso (diferencia)"], [AZ, VE, VI, AM], "1 pallet de MP = 1 batch de 1500 kg; caja = 5 kg; pallet PT = 144 cajas.");
+S = S + nodefunction(fB, "Balance actual", "kg", ["MP recibida", "Producto en cajas", "En pallets PT", "En proceso"], [ult[8], ult[9], ult[10], ult[11]], VE, 0, "Merma de proceso 3 % y regalía por sobrepeso: supuestos del informe, el modelo no los descuenta.");
+S = S + "</div></div>";
+
+// Montacargas
+S = S + "<div class='hoja' data-hoja='flota'><div class='grid'>";
+S = S + nodefunction(fL, "Traslados acumulados", "traslados", H, [22, 23, 24, 25], FLOTA, [AZ, VI, VE, AM], "");
+S = S + nodefunction(fE, "Estados de los montacargas", FLOTA, ["Esperando", "Viajando", "Cargando"], ["#c3cad5", "#1f6feb", "#22a06b"], "");
+S = S + "</div></div>";
+
+// Estadística
+treenode en = tl.find("indEst");
+Array utN = []; Array utV = [];
+for (int i = 1; i <= MT.length; i++) {
+	treenode c5 = en.find(MT[i]);
+	double u = 0;
+	if (objectexists(c5)) { Array k5 = c5.value; double t = k5[1] + k5[2] + k5[3] + k5[4] + k5[5]; if (t > 0) u = 100 * k5[2] / t; }
+	utN.push(MT[i]); utV.push(u);
+}
+S = S + "<div class='hoja' data-hoja='est'><div class='grid'>";
+S = S + nodefunction(fL, "Período de calentamiento: pallets recibidos y terminados", "pallets", H, [2, 3], ["MP recibidos", "PT expedidos"], [AZ, VE], "");
+S = S + nodefunction(fB, "Utilización comparativa por estación", "% procesando", utN, utV, VE, 1, "");
+S = S + nodefunction(fE, "Distribución de estados en la simulación", MT, CAT, CCAT, "Estados muestreados cada 60 s simulados.");
+S = S + "</div></div>";
+S = S + "</div>";
+// acentos como entidades: el widget no declara UTF-8
+Array A = ["á", "é", "í", "ó", "ú", "ñ", "Á", "É", "Í", "Ó", "Ú", "Ñ", "·", "–", "≈"];
+Array B = ["&aacute;", "&eacute;", "&iacute;", "&oacute;", "&uacute;", "&ntilde;", "&Aacute;", "&Eacute;", "&Iacute;", "&Oacute;", "&Uacute;", "&Ntilde;", "&middot;", "&ndash;", "&asymp;"];
+for (int i = 1; i <= A.length; i++) S = stringreplace(S, A[i], B[i]);
+return S;
