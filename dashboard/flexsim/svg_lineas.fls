@@ -23,7 +23,7 @@ if (m <= 1) nm = 1; else if (m <= 2) nm = 2; else if (m <= 5) nm = 5;
 vmax = nm * p;
 double W = 600; double HH = 230; double L = 56; double R = 14; double T = 12; double B = 26;
 double pw = W - L - R; double ph = HH - T - B;
-s = s + "<svg viewBox='0 0 600 230' preserveAspectRatio='none'>";
+s = s + "<svg viewBox='0 0 600 230'>";
 for (int g = 0; g <= 4; g++) {
 	double y = T + ph - ph * g / 4;
 	s = s + "<line x1='" + string.fromNum(L) + "' x2='" + string.fromNum(W - R) + "' y1='" + string.fromNum(y, 1) + "' y2='" + string.fromNum(y, 1) + "' class='gr'/>";
