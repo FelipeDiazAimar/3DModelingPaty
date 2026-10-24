@@ -9,6 +9,7 @@ import { clock, indexAt, snapshotAt, useLatest, useStore } from "@/lib/store";
 import { demoFleetAt } from "@/lib/demo";
 import { fleetAt } from "@/lib/fleetPath";
 import { alongPath, pathBetween } from "@/lib/network";
+import { trucksAt } from "@/lib/trucks";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -26,12 +27,15 @@ const COLORS: Record<string, string> = {
   M_Gris_Puerta: "#8fa2c4", M_Alambrado: "#9fb0cc", M_Junta: "#8a98b3", M_Panel_Junta: "#e2eaf8",
 };
 const HIDE = new Set(["M_Campo", "M_Pasto"]); // las reemplaza la isla de pasto
+// camiones fijos que reemplazan los animados (muelles de MP y PT de la nave original y los de la báscula)
+const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula)/;
 
 function Plant() {
   const { scene } = useGLTF("/models/planta_v10.glb");
   useMemo(() => {
     const seen = new Set<THREE.Material>();
     scene.traverse((o) => {
+      if (TRUCK_HIDE.test(o.name)) { o.visible = false; return; }
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
       const mats = Array.isArray(m.material) ? m.material : [m.material];
@@ -54,6 +58,38 @@ function Plant() {
     });
   }, [scene]);
   return <primitive object={scene} />;
+}
+
+/* ---------- camiones animados (MP a Elaborados y expedición de PT; horarios de lib/trucks.ts) ---------- */
+function Trucks() {
+  const { scene } = useGLTF("/models/planta_v10.glb");
+  // el mismo camión del modelo (el de la báscula), apoyado en el piso: cabina hacia +x local
+  const slots = useMemo(() => {
+    const src = scene.getObjectByName("Camion_Bascula_Ingreso");
+    if (!src) return [] as THREE.Group[];
+    return [0, 1, 2, 3].map(() => {
+      const c = src.clone(true);
+      c.position.set(0, 0, 0); c.rotation.set(0, 0, 0); c.scale.set(1, 1, 1);
+      c.traverse((o) => { o.visible = true; });
+      const g = new THREE.Group();
+      g.add(c);
+      g.visible = false;
+      return g;
+    });
+  }, [scene]);
+  useFrame(() => {
+    const h = useStore.getState().history;
+    const poses = trucksAt(h, clock.t);
+    slots.forEach((g) => { g.visible = false; });
+    for (const p of poses) {
+      const g = slots[p.slot];
+      if (!g) continue;
+      g.visible = true;
+      g.position.copy(P(p.x, p.y, 0));
+      g.rotation.set(0, p.h, 0);
+    }
+  });
+  return <>{slots.map((g, i) => <primitive key={i} object={g} />)}</>;
 }
 
 /* ---------- isla de pasto con bordes redondeados ---------- */
@@ -498,6 +534,7 @@ export default function Scene3D() {
         <directionalLight position={[80, 150, 60]} intensity={2.1} color="#fffdf6" />
         <Suspense fallback={null}>
           <Plant />
+          <Trucks />
         </Suspense>
         <Island />
         <Vegetation />

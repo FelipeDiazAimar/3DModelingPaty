@@ -1,4 +1,9 @@
-@import "tailwindcss";
+/* Tailwind revisa solo el código: con la detección automática leía también los GLB de public/ (40+ MB)
+   y el build de Vercel se quedaba sin memoria. */
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
+@source "../lib";
 
 :root {
   --bg: #e9eff7;

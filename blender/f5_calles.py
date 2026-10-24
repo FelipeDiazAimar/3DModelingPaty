@@ -342,11 +342,28 @@ def limpiar_arboles():
     print("árboles originales retirados de patios y calles:", n)
 
 
+def nivelar_camiones_muelles():
+    """Los 4 camiones fijos de los muelles originales (MP oeste, PT este) estaban a -1,12 m sin foso debajo:
+    quedaban hundidos en el pasto. Se suben a nivel 0, como los camiones de los muelles nuevos (una sola vez)."""
+    from mathutils import Vector
+    n = 0
+    for o in bpy.data.collections["07_VEHICULOS"].all_objects:
+        if not o.name.startswith(("Camion_Descarga_MP_", "Camion_Carga_PT_")) or o.get("nivelado"):
+            continue
+        if o.parent is not None:  # las piezas cuelgan de un objeto raíz por camión: se mueve solo la raíz
+            continue
+        o.location.z += 1.12
+        o["nivelado"] = True
+        n += 1
+    print("piezas de camión niveladas:", n)
+
+
 def f5_calles():
     raiz = coleccion("F5_CALLES_REALES")
     vaciar(raiz)
     kits_calles()
     limpiar_arboles()
+    nivelar_camiones_muelles()
     # patios de maniobra de hormigón con juntas (antes asfalto)
     pa = coleccion("F5_Patios_Hormigon", raiz)
     for o in bpy.data.collections["F1_PATIOS_Y_CALLES"].objects:
