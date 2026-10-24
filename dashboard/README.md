@@ -9,7 +9,7 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
    Sin FlexSim, el botón **Ver demo** carga datos sintéticos (marcados como DEMO).
 
 ## Piezas
-- `web/` — la web. Home = planta 3D (`public/models/planta.glb`, copia de `assets_v2/PATY_Planta_v5.glb`) con pines por máquina; clic en un pin abre el panel con estadísticas. Secciones: Producción, Paradas, Colas y WIP, Velocidad, Balance de masa, Montacargas, Estadística, Escenarios.
+- `web/` — la web. Home = planta 3D completa (`public/models/planta_v10.glb`, la exporta `blender/exportar_glb.py`: Ciclo 1, Ciclo 2 y Elaborados L1–L8; ver `PLAN_MODELO_3D.md`) con pines por máquina; clic en un pin abre el panel con estadísticas. Secciones: Producción, Paradas, Colas y WIP, Velocidad, Balance de masa, Montacargas, Estadística, Escenarios.
 - `web/app/api/ingest` recibe de FlexSim; `/api/stream` (SSE) y `/api/state` entregan al navegador.
 - `web/lib/layout.json` — posiciones de cada máquina (generado de `manifests_v2/logicos_v2.json`, coordenadas Blender).
 - `flexsim/publicador.fls` y `flexsim/arranca_publicador.fls` — código de los nodos `Tools/Publicar` y `Tools/ArrancaPublicador` del modelo (se cargan con `fileopen/filereadline`; `Tools/OnOpenDashboard` los compila y registra el listener al abrir).
@@ -25,6 +25,6 @@ Scrollbar (`CScroll`), selector de sección (`NavMenu`), íconos (`Icons`), tabl
 FlexSim publica en el puerto de `Tools/pubPort` (3000 por defecto). Si el 3000 está ocupado: `npm run dev -- -p 3010` y en FlexSim `model().find("Tools/pubPort").value = 3010;`.
 
 ## Notas
-- Si cambia el visual de Blender, copiar el nuevo .glb a `web/public/models/planta.glb`.
+- Si cambia el visual de Blender, correr `exportar()` de `blender/exportar_glb.py`: escribe `web/public/models/planta_v10.glb` (mallas compartidas, colores lineales). El `planta.glb` viejo (solo L7/L8) ya no se usa.
 - Las partes sin dato en el modelo (fallas MTBF/MTTR, mermas, IC 95 %, escenarios) se muestran como `Supuesto` o `Sin corrida`, como pide el informe.
 - Puerto/host del puente: constantes `req.host/req.port` en `publicador.fls`.

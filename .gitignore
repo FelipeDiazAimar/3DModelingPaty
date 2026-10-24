@@ -26,3 +26,9 @@ datos_trazabilidad/*.json
 # variables locales
 .env
 .env.local
+
+# escenas de Blender (78 MB+): se versionan los scripts, no los .blend
+blender/*.blend
+blender/*.blend1
+# variante de mallas compartidas: FlexSim usa la unida (v10u); se regenera con blender/exportar_glb.py
+assets_v2/PATY_Planta_v10.glb

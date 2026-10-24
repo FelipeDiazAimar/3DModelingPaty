@@ -28,7 +28,7 @@ const COLORS: Record<string, string> = {
 const HIDE = new Set(["M_Campo", "M_Pasto"]); // las reemplaza la isla de pasto
 
 function Plant() {
-  const { scene } = useGLTF("/models/planta.glb");
+  const { scene } = useGLTF("/models/planta_v10.glb");
   useMemo(() => {
     const seen = new Set<THREE.Material>();
     scene.traverse((o) => {
@@ -86,9 +86,11 @@ function rng(seed: number) {
 const ZONES: [number, number, number, number][] = [ // x0, x1, z0, z1 (coordenadas three)
   [-146, 146, -100, -58], [-146, 146, 93, 103], [133, 148, -100, 103], [-148, -133, -100, 103],
 ];
-const FAR: [number, number, number, number][] = [ // bosque lejano alrededor de la planta
-  [-900, -160, -900, 900], [160, 900, -900, 900], [-160, 160, -900, -115], [-160, 160, 110, 900],
+// bosque lejano: afuera del campo y los lotes del modelo de planta completa (±620 m); el modelo trae sus árboles
+const FAR: [number, number, number, number][] = [
+  [-1500, -650, -1500, 1500], [650, 1500, -1500, 1500], [-650, 650, -1500, -650], [-650, 650, 650, 1500],
 ];
+const CERCA = false; // vegetación procedural dentro del predio: apagada (el modelo v10 ya la tiene)
 const pick = <T,>(r: () => number, a: T[]) => a[Math.floor(r() * a.length)];
 
 function Vegetation() {
@@ -102,13 +104,14 @@ function Vegetation() {
     const flowers: { x: number; z: number; c: string }[] = [];
     const greens = ["#4cc957", "#35b95b", "#72d84c", "#27a85f", "#8be04e"];
     const blossom = ["#ff8fb1", "#ffb347", "#ffd84d", "#ff7aa8"];
-    for (let i = 0; i < 95; i++) { const [x, z] = at(); round.push({ x, z, s: 0.8 + r() * 0.9, c: r() < 0.16 ? pick(r, blossom) : pick(r, greens) }); }
-    for (let i = 0; i < 55; i++) { const [x, z] = at(); pines.push({ x, z, s: 0.8 + r() * 0.8, c: pick(r, ["#1f9d5a", "#16864b", "#2db36a", "#35c277"]) }); }
-    for (let i = 0; i < 90; i++) { const [x, z] = at(); bushes.push({ x, z, s: 0.7 + r() * 0.9, c: pick(r, [...greens, "#a6e35a"]) }); }
+    const nC = CERCA ? 1 : 0;
+    for (let i = 0; i < 95 * nC; i++) { const [x, z] = at(); round.push({ x, z, s: 0.8 + r() * 0.9, c: r() < 0.16 ? pick(r, blossom) : pick(r, greens) }); }
+    for (let i = 0; i < 55 * nC; i++) { const [x, z] = at(); pines.push({ x, z, s: 0.8 + r() * 0.8, c: pick(r, ["#1f9d5a", "#16864b", "#2db36a", "#35c277"]) }); }
+    for (let i = 0; i < 90 * nC; i++) { const [x, z] = at(); bushes.push({ x, z, s: 0.7 + r() * 0.9, c: pick(r, [...greens, "#a6e35a"]) }); }
     for (let i = 0; i < 260; i++) { const [x, z] = atFar(); round.push({ x, z, s: 1.1 + r() * 1.3, c: r() < 0.12 ? pick(r, blossom) : pick(r, greens) }); }
     for (let i = 0; i < 160; i++) { const [x, z] = atFar(); pines.push({ x, z, s: 1.1 + r() * 1.2, c: pick(r, ["#1f9d5a", "#16864b", "#2db36a", "#35c277"]) }); }
     for (let i = 0; i < 150; i++) { const [x, z] = atFar(); bushes.push({ x, z, s: 1 + r() * 1.4, c: pick(r, [...greens, "#a6e35a"]) }); }
-    for (let i = 0; i < 520; i++) { const [x, z] = at(); flowers.push({ x, z, c: pick(r, ["#ff5d8f", "#ffd23f", "#ffffff", "#b388ff", "#ff8a3d", "#5ec8ff"]) }); }
+    for (let i = 0; i < 520 * nC; i++) { const [x, z] = at(); flowers.push({ x, z, c: pick(r, ["#ff5d8f", "#ffd23f", "#ffffff", "#b388ff", "#ff8a3d", "#5ec8ff"]) }); }
     return { round, pines, bushes, flowers };
   }, []);
 
@@ -511,4 +514,4 @@ export default function Scene3D() {
     </div>
   );
 }
-useGLTF.preload("/models/planta.glb");
+useGLTF.preload("/models/planta_v10.glb");
