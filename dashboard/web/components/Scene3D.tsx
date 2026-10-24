@@ -10,6 +10,8 @@ import { demoFleetAt } from "@/lib/demo";
 import { fleetAt } from "@/lib/fleetPath";
 import { alongPath, pathBetween } from "@/lib/network";
 import { trucksAt } from "@/lib/trucks";
+import { fleetGround } from "@/lib/live3d";
+import { CineRig } from "@/components/Cinematics";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -77,19 +79,20 @@ function Trucks() {
       return g;
     });
   }, [scene]);
-  useFrame(() => {
-    const h = useStore.getState().history;
-    const poses = trucksAt(h, clock.t);
-    slots.forEach((g) => { g.visible = false; });
-    for (const p of poses) {
-      const g = slots[p.slot];
-      if (!g) continue;
-      g.visible = true;
-      g.position.copy(P(p.x, p.y, 0));
-      g.rotation.set(0, p.h, 0);
-    }
-  });
+  useFrame(() => ubicarCamiones(slots, trucksAt(useStore.getState().history, clock.t)));
   return <>{slots.map((g, i) => <primitive key={i} object={g} />)}</>;
+}
+
+/** Ubica cada camión en su lugar (o lo oculta si no está en viaje). */
+function ubicarCamiones(slots: THREE.Group[], poses: ReturnType<typeof trucksAt>) {
+  slots.forEach((g) => { g.visible = false; });
+  for (const p of poses) {
+    const g = slots[p.slot];
+    if (!g) continue;
+    g.visible = true;
+    g.position.copy(P(p.x, p.y, 0));
+    g.rotation.set(0, p.h, 0);
+  }
 }
 
 /* ---------- isla de pasto con bordes redondeados ---------- */
@@ -284,7 +287,7 @@ function ForkliftModel({ id }: { id: string }) {
 
 /* ---------- registro de objetos animados por cuadro ---------- */
 const world = new Map<string, THREE.Vector3>(); // posición del pin
-const ground = new Map<string, THREE.Vector3>(); // montacargas: posición en el piso (suavizada)
+const ground = fleetGround; // montacargas: posición en el piso (suavizada); la leen también las cinemáticas
 const els = new Map<string, HTMLElement>();
 const fk = new Map<string, THREE.Group>();
 const pal = new Map<string, THREE.Group>(); // pallet sobre las horquillas
@@ -528,7 +531,7 @@ function LoaderOverlay() {
 export default function Scene3D() {
   return (
     <div className="absolute inset-0" style={{ isolation: "isolate", zIndex: 0, background: "linear-gradient(180deg, #a9dcff 0%, #cfe9ff 40%, #dcefff 100%)" }}>
-      <Canvas dpr={[1, 1.5]} performance={{ min: 0.6 }} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping }}>
+      <Canvas dpr={[1, 1.5]} performance={{ min: 0.6 }} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
         <fog attach="fog" args={["#dcefff", 500, 2800]} />
         <hemisphereLight args={["#ffffff", "#9be37a", 1.55]} />
         <directionalLight position={[80, 150, 60]} intensity={2.1} color="#fffdf6" />
@@ -544,6 +547,7 @@ export default function Scene3D() {
         <Highlight />
         <OrbitControls makeDefault enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2.15} minDistance={0.05} maxDistance={Infinity} zoomToCursor target={[0, 0, 0]} />
         <Rig />
+        <CineRig />
         <Projector />
       </Canvas>
       <PinLayer />
