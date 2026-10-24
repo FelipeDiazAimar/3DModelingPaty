@@ -194,3 +194,21 @@ export function trucksAt(h: Snapshot[], t: number): TruckPose[] {
   }
   return out;
 }
+
+/* ---------- camión de la cinemática (no sale de los datos: lo maneja la cinemática) ---------- */
+/** Pose del camión de PT en el muelle `dock` (0 o 1). */
+export function muellePT(dock: number) {
+  const p = PISTAS.PT[dock].in;
+  const s = p[p.length - 1];
+  return { x: s.x, y: s.y, h: s.h };
+}
+/** Duración del recorrido de salida del muelle `dock` hasta la ruta (s, a la velocidad real). */
+export function duracionSalidaPT(dock: number) {
+  const p = PISTAS.PT[dock].out;
+  return p[p.length - 1].t;
+}
+/** Pose a los `t` segundos de salir del muelle `dock`. */
+export function poseSalidaPT(dock: number, t: number) {
+  const s = enPista(PISTAS.PT[dock].out, t);
+  return { x: s.x, y: s.y, h: s.h };
+}

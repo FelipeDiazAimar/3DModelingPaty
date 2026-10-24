@@ -91,8 +91,24 @@ def _post(path_in, path_out, colores, srgb):
     return j
 
 
+# Piezas que FlexSim anima como ítems (cajas y bandejas de hamburguesas): fijas en el GLB se ven quietas
+# encima de los ítems que se mueven. No se exportan (siguen en Blender). El camión de la cinemática solo va a la web.
+NO_EXPORTAR = ("Caja_PATY_", "Hamburguesas_")
+SOLO_WEB = ("CamionCine",)
+
+
+def _ocultar(prefijos):
+    ocultos = []
+    for o in bpy.context.view_layer.objects:
+        if o.name.startswith(prefijos) and o.visible_get():
+            o.hide_set(True)
+            ocultos.append(o)
+    return ocultos
+
+
 def exportar():
     bpy.context.view_layer.update()
+    ocultos = _ocultar(NO_EXPORTAR)
     for o in bpy.context.selected_objects:
         o.select_set(False)
     tmp = os.path.join(REPO, "assets_v2", "_tmp_export.glb")
@@ -103,6 +119,9 @@ def exportar():
         bpy.ops.export_scene.gltf(export_image_format="NONE", **kw)
     except TypeError:
         bpy.ops.export_scene.gltf(**kw)
+    finally:
+        for o in ocultos:
+            o.hide_set(False)
     colores = {m.name: _color_material(m) for m in bpy.data.materials}
     j = _post(tmp, SALIDA_FLEXSIM, colores, srgb=True)
     os.makedirs(os.path.dirname(SALIDA_WEB), exist_ok=True)
@@ -122,7 +141,7 @@ def exportar():
 SALIDA_FLEXSIM_UNIDO = os.path.join(REPO, "assets_v2", "PATY_Planta_v10u.glb")
 
 
-def exportar_flexsim_unido(salida=SALIDA_FLEXSIM_UNIDO, excluir=()):
+def exportar_flexsim_unido(salida=SALIDA_FLEXSIM_UNIDO, excluir=NO_EXPORTAR + SOLO_WEB):
     """Versión para FlexSim en UNA malla con un grupo por material (como el v9): FlexSim dibuja lento un GLB
     con miles de nodos (1 FPS con 17.500); unida son ~100 llamadas de dibujo. `excluir` = prefijos de
     nombre que no van (para una versión más liviana si hiciera falta)."""
@@ -134,6 +153,8 @@ def exportar_flexsim_unido(salida=SALIDA_FLEXSIM_UNIDO, excluir=()):
     mats, n = [], 0
     for o in bpy.context.scene.objects:
         if o.type not in ("MESH", "FONT", "CURVE") or not o.visible_get() or o.name.startswith(tuple(excluir)):
+            continue
+        if o.parent is not None and o.parent.name.startswith(tuple(excluir)):
             continue
         me = bpy.data.meshes.new_from_object(o.evaluated_get(dg)) if o.type != "MESH" else o.data.copy()
         me.transform(o.matrix_world)

@@ -5,7 +5,7 @@
  * Cada toma: la cámara viaja `viaje` segundos desde donde estaba hasta su punto de vista (curva suave con una
  * subida en el medio para pasar por encima de los edificios) y se queda `pausa` segundos girando despacio
  * alrededor del objetivo. Una toma puede mirar un punto fijo, una máquina (vista automática + ficha en vivo)
- * o seguir a un camión o a un montacargas.
+ * o seguir al camión de la cinemática. `escena` activa la animación del camión que se abre y del que parte.
  */
 import { create } from "zustand";
 import { byId, MACHINES, STATE_LABEL } from "./layout";
@@ -13,14 +13,15 @@ import { utilization } from "./derive";
 import type { Snapshot } from "./types";
 
 export type V3 = [number, number, number];
-export type CineId = "planta" | "l7" | "paradas" | "logistica" | "cuello";
-export type Seguir = { kind: "truck"; tipo: "MP" | "PT" } | { kind: "fleet"; id: string };
+export type CineId = "planta" | "elaborados" | "l7" | "paradas" | "cuello";
+export type Escena = "camion_abre" | "camion_sale";
 
 export interface Shot {
   pos?: V3;
   target?: V3;
   maquina?: string;     // id de layout: vista automática y ficha con sus números en vivo
-  seguir?: Seguir;
+  seguirCamion?: boolean; // la cámara sigue al camión de la cinemática
+  escena?: Escena;
   viaje: number;
   pausa: number;
   titulo: string;
@@ -28,11 +29,11 @@ export interface Shot {
   graficas?: boolean;   // abre las gráficas de la máquina
 }
 
-export const CINES: { id: CineId; label: string; sub: string; icon: "factory" | "meat" | "chart" | "truck" | "target" }[] = [
+export const CINES: { id: CineId; label: string; sub: string; icon: "factory" | "meat" | "chart" | "layers" | "target" }[] = [
   { id: "planta", label: "Toda la planta", sub: "Ciclo 1, Ciclo 2 y Elaborados", icon: "factory" },
+  { id: "elaborados", label: "Elaborados", sub: "Presentación del sector", icon: "layers" },
   { id: "l7", label: "Del pallet a la caja", sub: "Proceso completo de L7", icon: "meat" },
   { id: "paradas", label: "Paradas y gráficas", sub: "Cada máquina con sus gráficas", icon: "chart" },
-  { id: "logistica", label: "Logística", sub: "Camiones y montacargas", icon: "truck" },
   { id: "cuello", label: "Cuello de botella", sub: "Dónde se frena la línea", icon: "target" },
 ];
 
@@ -46,38 +47,41 @@ const PLANTA: Shot[] = [
   { pos: [-158, -18, 24], target: [-165, 25, 1], viaje: 5, pausa: 4, titulo: "Ciclo 2 · Desposte y encajado", texto: "Cuarteo, dos líneas de desposte, encajado y charqueo." },
   { pos: [-168, -100, 22], target: [-172, -52, 2], viaje: 5, pausa: 3, titulo: "Túneles y despacho de cajas", texto: "Congelado de cajas, cámara de producto y muelles." },
   { pos: [45, 55, 48], target: [-10, 100, 0], viaje: 7, pausa: 4, titulo: "Elaborados · L1 a L6", texto: "Trenes de picado compartidos, carritos de pasta y seis líneas." },
-  { pos: [62, -62, 44], target: [-5, -2, 0], viaje: 6, pausa: 5, titulo: "Elaborados · L7 y L8", texto: "Las dos líneas que simula FlexSim, de la materia prima al pallet terminado." },
+  { pos: [62, -62, 44], target: [-5, -2, 0], viaje: 6, pausa: 4, titulo: "Elaborados · L7 y L8", texto: "Las dos líneas que simula FlexSim, de la materia prima al pallet terminado." },
+  { pos: [98, 4, 10], target: [84, -20, 1.6], escena: "camion_abre", viaje: 5, pausa: 9, titulo: "Camión de expedición", texto: "Cargado con 22 pallets de producto terminado: 144 cajas de 5 kg por pallet." },
+  { seguirCamion: true, escena: "camion_sale", viaje: 3, pausa: 33, titulo: "Partida", texto: "Sale del muelle, se pesa en la báscula de egreso y toma la ruta." },
   { pos: [-150, -330, 230], target: [-170, 40, 0], viaje: 7, pausa: 2, titulo: "Planta San Jorge" },
+];
+
+const ELABORADOS: Shot[] = [
+  { pos: [115, -95, 80], target: [0, 60, 0], viaje: 4, pausa: 4, titulo: "Elaborados", texto: "Ocho líneas de hamburguesas: L1 a L6 en la ampliación y L7–L8, las que simula FlexSim." },
+  { pos: [-92, 38, 38], target: [-57, 92, 1], viaje: 6, pausa: 5, titulo: "Trenes de picado", texto: "Dos trenes compartidos (picadora y dos mezcladoras) abastecen con carritos a L1, L2, L4, L5 y L6." },
+  { pos: [-42, 84, 24], target: [-10, 103, 1], viaje: 5, pausa: 5, titulo: "Línea 3", texto: "Bloque propio con descarga directa: picadora, dos mezcladoras, dos formadoras y dos estuchadoras." },
+  { pos: [22, 152, 32], target: [0, 120, 0], viaje: 5, pausa: 5, titulo: "Líneas 1 a 6", texto: "Formadora, túnel de congelado, envasado, encajonado y robot estibador." },
+  { pos: [96, 58, 30], target: [56, 100, 2], viaje: 5, pausa: 5, titulo: "Cámara de PT y supercongelados", texto: "Racks de producto terminado y tres muelles de despacho." },
+  { pos: [-62, -8, 22], target: [-45, 4, 1], viaje: 6, pausa: 5, titulo: "Recepción y desencajado", texto: "Cámaras de MP congelada y enfriada y los puestos de desencajado de L7 y L8." },
+  { pos: [40, -44, 26], target: [0, -4, 1], viaje: 5, pausa: 5, titulo: "Líneas 7 y 8", texto: "Picado, mezclado, formado, túnel, envasado, encajonado y estibado." },
+  { pos: [130, -130, 110], target: [0, 40, 0], viaje: 6, pausa: 3, titulo: "Elaborados" },
 ];
 
 const L7: Shot[] = [
   { maquina: "SrcCamionesMP", viaje: 4, pausa: 5, titulo: "1 · Llegan los camiones de MP", texto: "Pallets de carne congelada y enfriada." },
   { maquina: "QRecepcion", viaje: 3, pausa: 5, titulo: "2 · Recepción", texto: "Los pallets esperan a que el montacargas los lleve a cámara." },
   { maquina: "RackMPCongelado", viaje: 3, pausa: 5, titulo: "3 · Cámara de MP", texto: "Stock de materia prima congelada." },
-  { maquina: "Desencajado_L7", viaje: 3, pausa: 6, titulo: "4 · Desencajado", texto: "Se sacan los bloques de carne de las cajas." },
+  { maquina: "Desencajado_L7", viaje: 3, pausa: 6, titulo: "4 · Desencajado", texto: "Se consume el pallet caja a caja: un batch de 1500 kg." },
   { maquina: "Picadora_L7", viaje: 3, pausa: 6, titulo: "5 · Picado", texto: "La carne se pica por batch." },
-  { maquina: "MezA_L7", viaje: 3, pausa: 6, titulo: "6 · Mezclado", texto: "Se agregan los aditivos de la fórmula." },
-  { maquina: "FormA_L7", viaje: 3, pausa: 6, titulo: "7 · Formado", texto: "La formadora da forma a las hamburguesas." },
-  { maquina: "Tunel_L7", viaje: 3, pausa: 6, titulo: "8 · Túnel de congelado", texto: "Las hamburguesas se congelan en continuo." },
-  { maquina: "EnvA_L7", viaje: 3, pausa: 6, titulo: "9 · Envasado", texto: "Detector de metales y envasado." },
+  { maquina: "MezA_L7", viaje: 3, pausa: 6, titulo: "6 · Mezclado", texto: "Se agregan los aditivos y el batch se divide en 10 cargas de 150 kg." },
+  { maquina: "FormA_L7", viaje: 3, pausa: 6, titulo: "7 · Formado", texto: "Cada carga sale como 30 bandejas de hamburguesas de 5 kg." },
+  { maquina: "Tunel_L7", viaje: 3, pausa: 6, titulo: "8 · Túnel de congelado", texto: "Las bandejas se congelan en continuo." },
+  { maquina: "EnvA_L7", viaje: 3, pausa: 6, titulo: "9 · Envasado", texto: "Detector de metales y envasado en paquetes." },
   { maquina: "EncA_L7", viaje: 3, pausa: 6, titulo: "10 · Encajonado", texto: "Cajas de 5 kg con control de peso." },
-  { maquina: "EstA_L7", viaje: 3, pausa: 6, titulo: "11 · Estibado", texto: "El robot arma el pallet de producto terminado." },
+  { maquina: "EstA_L7", viaje: 3, pausa: 6, titulo: "11 · Estibado", texto: "El robot arma el pallet de 144 cajas." },
   { maquina: "RackPTCongelado", viaje: 3, pausa: 5, titulo: "12 · Cámara de PT", texto: "Pallets terminados esperando despacho." },
   { maquina: "QExpedicion", viaje: 3, pausa: 5, titulo: "13 · Expedición", texto: "Los pallets salen en camión." },
 ];
 
 const PARADAS: Shot[] = ["Desencajado_L7", "Picadora_L7", "MezA_L7", "FormA_L7", "FormB_L7", "Tunel_L7", "EnvA_L7", "EncA_L7", "EstA_L7"]
   .map((id) => ({ maquina: id, viaje: 3, pausa: 10, titulo: `${byId(id)?.label ?? id} · L7`, graficas: true }));
-
-const LOGISTICA: Shot[] = [
-  { seguir: { kind: "truck", tipo: "MP" }, viaje: 4, pausa: 14, titulo: "Camión de materia prima", texto: "Entra por la báscula, retrocede al muelle de recepción y descarga." },
-  { seguir: { kind: "fleet", id: "MontacargasRecep" }, viaje: 3, pausa: 9, titulo: "Montacargas de recepción", texto: "Del muelle a las cámaras de materia prima." },
-  { seguir: { kind: "fleet", id: "MontacargasAlmacenMP" }, viaje: 3, pausa: 9, titulo: "Montacargas de cámara a línea", texto: "Lleva los pallets de MP a los puestos de desencajado." },
-  { seguir: { kind: "fleet", id: "MontacargasLineaPT" }, viaje: 3, pausa: 9, titulo: "Montacargas de PT", texto: "Retira los pallets terminados de los robots estibadores." },
-  { seguir: { kind: "fleet", id: "MontacargasExped" }, viaje: 3, pausa: 9, titulo: "Montacargas de expedición", texto: "De la cámara de PT al camión." },
-  { seguir: { kind: "truck", tipo: "PT" }, viaje: 4, pausa: 14, titulo: "Camión de expedición", texto: "Se carga en el muelle y sale pesándose en la báscula." },
-  { pos: [40, -110, 70], target: [0, -10, 0], viaje: 6, pausa: 3, titulo: "Logística de Elaborados" },
-];
 
 const pct = (v: number) => `${Math.round(v * 100)} %`;
 
@@ -114,36 +118,68 @@ function cuello(h: Snapshot[]): Shot[] {
 export function armarCine(id: CineId, h: Snapshot[]): Shot[] {
   switch (id) {
     case "planta": return PLANTA;
+    case "elaborados": return ELABORADOS;
     case "l7": return L7;
     case "paradas": return PARADAS;
-    case "logistica": return LOGISTICA;
     case "cuello": return cuello(h);
   }
 }
 
-/** Vista automática de una máquina: alrededor de ella, cada toma desde un ángulo distinto. */
+/** Vista automática de una máquina, desde arriba de las paredes (7 m) y del lado de adentro de la nave,
+ *  para que ninguna pared quede entre la cámara y la máquina. */
+const NAVE = { x0: -72, x1: 72, y0: -32, y1: 32 };
 export function vistaMaquina(id: string, i: number): { pos: V3; target: V3 } | null {
   const m = byId(id);
   if (!m) return null;
-  const r = Math.max(9, Math.max(m.sx, m.sy, m.sz) * 2.4 + 6);
-  const a = (-115 + i * 37) * (Math.PI / 180);
-  return { target: [m.x, m.y, m.sz * 0.55], pos: [m.x + r * Math.cos(a), m.y + r * Math.sin(a), m.sz * 0.55 + r * 0.6] };
+  const r = Math.max(10, Math.max(m.sx, m.sy, m.sz) * 2.2 + 7);
+  const target: V3 = [m.x, m.y, m.sz * 0.5];
+  const adentro = m.x > NAVE.x0 && m.x < NAVE.x1 && m.y > NAVE.y0 && m.y < NAVE.y1;
+  const base = -115 + i * 37;
+  for (let k = 0; k < 12; k++) {
+    const a = ((base + k * 30) * Math.PI) / 180;
+    const x = m.x + r * Math.cos(a), y = m.y + r * Math.sin(a);
+    if (!adentro || (x > NAVE.x0 + 2 && x < NAVE.x1 - 2 && y > NAVE.y0 + 2 && y < NAVE.y1 - 2)) {
+      return { target, pos: [x, y, Math.max(10, target[2] + r * 0.75)] };
+    }
+  }
+  return { target, pos: [m.x, m.y - r, Math.max(10, target[2] + r * 0.75)] };
 }
 
-/* ---------- estado compartido (lo maneja CineRig y lo lee el overlay) ---------- */
+/* ---------- unidades de cada máquina (qué ítem entra, qué sale; ver SUPUESTOS_v2.md, unidades de carga) ---------- */
+export interface Unidad { entra: string; sale: string; adentro: string }
+const U = (entra: string, sale = entra, adentro = entra): Unidad => ({ entra, sale, adentro });
+export function unidades(id: string): Unidad {
+  const base = id.replace(/_L[78]$/, "");
+  switch (base) {
+    case "SrcCamionesMP": case "QRecepcion": case "RackMPCongelado": case "RackMPEnfriado": return U("pallets de MP");
+    case "Desencajado": return U("pallets de MP", "batches", "pallets de MP");
+    case "Picadora": return U("batches");
+    case "MezA": case "MezB": return U("batches", "cargas", "batches");
+    case "FormA": case "FormB": return U("cargas", "bandejas", "bandejas");
+    case "Tunel": return U("bandejas");
+    case "EnvA": case "EnvB": return U("bandejas", "paquetes", "paquetes");
+    case "EncA": case "EncB": return U("paquetes", "cajas", "cajas");
+    case "EstA": case "EstB": return U("cajas");
+    case "RackPTCongelado": case "RackPTEnfriado": case "QExpedicion": case "SinkExpedicion": return U("pallets de PT");
+    default: return U("ítems");
+  }
+}
+
+/* ---------- estado compartido (lo maneja CineRig y lo leen el overlay y el camión de la cinemática) ---------- */
 interface CineState {
   id: CineId | null;
   shots: Shot[];
   idx: number;
+  t0: number;          // performance.now() del comienzo de la toma actual
   play: (id: CineId, h: Snapshot[]) => void;
   stop: () => void;
-  setIdx: (i: number) => void;
+  setIdx: (i: number, t0: number) => void;
 }
 export const useCine = create<CineState>((set) => ({
-  id: null, shots: [], idx: 0,
-  play: (id, h) => set({ id, shots: armarCine(id, h), idx: 0 }),
+  id: null, shots: [], idx: 0, t0: 0,
+  play: (id, h) => set({ id, shots: armarCine(id, h), idx: 0, t0: performance.now() }),
   stop: () => set({ id: null, shots: [], idx: 0 }),
-  setIdx: (idx) => set({ idx }),
+  setIdx: (idx, t0) => set({ idx, t0 }),
 }));
 
 /* ---------- números de una máquina para la ficha y las gráficas ---------- */
@@ -160,7 +196,7 @@ export function fichaMaquina(h: Snapshot[], id: string) {
   const ritmo = dt > 0.05 ? (m.out - (a.machines[id]?.out ?? 0)) / dt : 0;
   return {
     estado: STATE_LABEL[m.state] ?? m.state, state: m.state, dentro: m.content, entradas: m.inp, salidas: m.out,
-    ritmo, entreSalidas: ritmo > 0 ? 3600 / ritmo : null, u,
+    ritmo, entreSalidas: ritmo > 0 ? 3600 / ritmo : null, u, unidad: unidades(id),
   };
 }
 

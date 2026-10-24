@@ -11,7 +11,8 @@ import { fleetAt } from "@/lib/fleetPath";
 import { alongPath, pathBetween } from "@/lib/network";
 import { trucksAt } from "@/lib/trucks";
 import { fleetGround } from "@/lib/live3d";
-import { CineRig } from "@/components/Cinematics";
+import { CineRig, CineTruck } from "@/components/Cinematics";
+import { useCine } from "@/lib/cine";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -30,7 +31,8 @@ const COLORS: Record<string, string> = {
 };
 const HIDE = new Set(["M_Campo", "M_Pasto"]); // las reemplaza la isla de pasto
 // camiones fijos que reemplazan los animados (muelles de MP y PT de la nave original y los de la báscula)
-const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula)/;
+// (también la plantilla del camión de la cinemática, y cajas y bandejas fijas: en la web se mueven)
+const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula|CamionCine|Caja_PATY_|Hamburguesas_)/;
 
 function Plant() {
   const { scene } = useGLTF("/models/planta_v10.glb");
@@ -79,7 +81,12 @@ function Trucks() {
       return g;
     });
   }, [scene]);
-  useFrame(() => ubicarCamiones(slots, trucksAt(useStore.getState().history, clock.t)));
+  useFrame(() => {
+    // durante las escenas del camión de la cinemática no se dibujan los camiones de los datos
+    const c = useCine.getState();
+    const escena = c.id ? c.shots[c.idx]?.escena : undefined;
+    ubicarCamiones(slots, escena ? [] : trucksAt(useStore.getState().history, clock.t));
+  });
   return <>{slots.map((g, i) => <primitive key={i} object={g} />)}</>;
 }
 
@@ -361,54 +368,79 @@ function Projector() {
 }
 
 /* ---------- cajas sobre las cintas reales (posición = reloj de simulación, así avanzan fluido y se frenan al pausar) ---------- */
-interface Belt { x1: number; y1: number; x2: number; y2: number; spacing: number; speed: number; src: string[]; color: string; size: [number, number, number]; n: number; len: number; vis: number }
+// kind: "hamb" = hamburguesas (discos de 11 cm en dos carriles) · "caja" = cajas de 5 kg
+interface Belt { kind: "hamb" | "caja"; x1: number; y1: number; x2: number; y2: number; spacing: number; speed: number; src: string[]; color: string; size: [number, number, number]; lanes: number[]; n: number; len: number; vis: number }
 const mkBelts = (): Belt[] => (["L7", "L8"] as const).flatMap((L) => {
   const y = L === "L7" ? { a: 9.6, b: 14.4, c: 12 } : { a: -22.4, b: -17.6, c: -20 };
-  const def = (x1: number, y1: number, x2: number, y2: number, spacing: number, speed: number, src: string[], color: string, size: [number, number, number]): Belt => {
+  const def = (kind: Belt["kind"], x1: number, y1: number, x2: number, y2: number, spacing: number, speed: number, src: string[], color: string, size: [number, number, number], lanes: number[] = [0]): Belt => {
     const len = Math.hypot(x2 - x1, y2 - y1);
-    return { x1, y1, x2, y2, spacing, speed, src, color, size, len, n: Math.max(1, Math.floor(len / spacing)), vis: 0 };
+    return { kind, x1, y1, x2, y2, spacing, speed, src, color, size, lanes, len, n: Math.max(1, Math.floor(len / spacing)), vis: 0 };
   };
+  const HAMB: [number, number, number] = [0.11, 0.016, 0.11];
   return [
-    def(-20.5, y.a, -12, y.a, 1.4, 0.25, [`FormA_${L}`], "#b5613a", [0.55, 0.16, 0.5]),
-    def(-20.5, y.b, -12, y.b, 1.4, 0.25, [`FormB_${L}`], "#b5613a", [0.55, 0.16, 0.5]),
-    def(2.6, y.c, 6.4, y.c, 1.0, 0.2, [`Tunel_${L}`], "#e9eef7", [0.5, 0.14, 0.4]),
-    def(19.1, y.c, 25.75, y.c, 1.2, 0.25, [`EncA_${L}`, `EncB_${L}`], "#d9a35c", [0.5, 0.35, 0.4]),
+    def("hamb", -20.5, y.a, -12, y.a, 0.3, 0.25, [`FormA_${L}`], "#a5503d", HAMB, [-0.14, 0.14]),
+    def("hamb", -20.5, y.b, -12, y.b, 0.3, 0.25, [`FormB_${L}`], "#a5503d", HAMB, [-0.14, 0.14]),
+    def("hamb", 2.6, y.c, 6.4, y.c, 0.3, 0.2, [`Tunel_${L}`], "#c99a8c", HAMB, [-0.14, 0.14]),   // escarchadas
+    def("caja", 19.1, y.c, 25.75, y.c, 1.2, 0.25, [`EncA_${L}`, `EncB_${L}`], "#d9a35c", [0.5, 0.35, 0.4]),
   ];
 });
 
+const BELTS = mkBelts();
+const TOT_FLOW = {
+  hamb: BELTS.filter((b) => b.kind === "hamb").reduce((a, b) => a + b.n * b.lanes.length, 0),
+  caja: BELTS.filter((b) => b.kind === "caja").reduce((a, b) => a + b.n * b.lanes.length, 0),
+};
+const flowD = new THREE.Object3D();
+const flowCol = new THREE.Color();
+
 function Flow() {
-  const mesh = useRef<THREE.InstancedMesh>(null!);
-  const belts = useMemo(mkBelts, []);
-  const total = useMemo(() => belts.reduce((a, b) => a + b.n, 0), [belts]);
-  const d = useMemo(() => new THREE.Object3D(), []);
-  const col = useMemo(() => new THREE.Color(), []);
-  useFrame((_, dt) => {
+  const hamb = useRef<THREE.InstancedMesh>(null!);
+  const caja = useRef<THREE.InstancedMesh>(null!);
+  useFrame((_, dt) => animarFlow(hamb.current, caja.current, dt));
+  return (
+    <>
+      <instancedMesh ref={hamb} args={[undefined, undefined, TOT_FLOW.hamb]} frustumCulled={false}>
+        <cylinderGeometry args={[0.5, 0.5, 1, 14]} /><meshLambertMaterial color="#ffffff" />
+      </instancedMesh>
+      <instancedMesh ref={caja} args={[undefined, undefined, TOT_FLOW.caja]} frustumCulled={false}>
+        <boxGeometry args={[1, 1, 1]} /><meshLambertMaterial color="#ffffff" />
+      </instancedMesh>
+    </>
+  );
+}
+
+/** Un cuadro de las hamburguesas y cajas sobre las cintas (posición = reloj de simulación). */
+function animarFlow(hambMesh: THREE.InstancedMesh, cajaMesh: THREE.InstancedMesh, dt: number) {
+  const d = flowD, col = flowCol;
+  {
     const st = useStore.getState();
     const h = st.history;
     const snap = h.length ? h[indexAt(h, clock.t)] : undefined;
-    let i = 0;
-    for (const b of belts) {
+    const idx = { hamb: 0, caja: 0 };
+    for (const b of BELTS) {
       const on = !!snap && b.src.some((id) => { const m = snap.machines[id]; return !!m && (m.state === "proc" || m.content > 0); });
       b.vis += ((on ? 1 : 0) - b.vis) * Math.min(1, dt * 4);
-      for (let k = 0; k < b.n; k++, i++) {
+      const mesh = b.kind === "hamb" ? hambMesh : cajaMesh;
+      const top = b.kind === "hamb" ? 0.985 : 1.2;   // apoyadas sobre la banda
+      for (let k = 0; k < b.n; k++) {
         const dist = (((clock.t * b.speed + k * b.spacing) % b.len) + b.len) % b.len;
         const f = dist / b.len;
-        const fade = Math.min(1, dist / 0.7, (b.len - dist) / 0.7) * b.vis;
-        d.position.set(b.x1 + (b.x2 - b.x1) * f, 1.2, -(b.y1 + (b.y2 - b.y1) * f));
-        d.scale.set(b.size[0] * Math.max(fade, 0.0001), b.size[1] * Math.max(fade, 0.0001), b.size[2] * Math.max(fade, 0.0001));
-        d.updateMatrix();
-        mesh.current.setMatrixAt(i, d.matrix);
-        mesh.current.setColorAt(i, col.set(b.color));
+        const fade = Math.max(Math.min(1, dist / 0.5, (b.len - dist) / 0.5) * b.vis, 0.0001);
+        for (const off of b.lanes) {
+          d.position.set(b.x1 + (b.x2 - b.x1) * f, top, -(b.y1 + (b.y2 - b.y1) * f + off));
+          d.scale.set(b.size[0] * fade, b.size[1] * fade, b.size[2] * fade);
+          d.updateMatrix();
+          const i = idx[b.kind]++;
+          mesh.setMatrixAt(i, d.matrix);
+          mesh.setColorAt(i, col.set(b.color));
+        }
       }
     }
-    mesh.current.instanceMatrix.needsUpdate = true;
-    if (mesh.current.instanceColor) mesh.current.instanceColor.needsUpdate = true;
-  });
-  return (
-    <instancedMesh ref={mesh} args={[undefined, undefined, total]} frustumCulled={false}>
-      <boxGeometry args={[1, 1, 1]} /><meshLambertMaterial color="#ffffff" />
-    </instancedMesh>
-  );
+    for (const m of [hambMesh, cajaMesh]) {
+      m.instanceMatrix.needsUpdate = true;
+      if (m.instanceColor) m.instanceColor.needsUpdate = true;
+    }
+  }
 }
 
 /* ---------- pines clicables (DOM sobre el canvas) ---------- */
@@ -538,6 +570,7 @@ export default function Scene3D() {
         <Suspense fallback={null}>
           <Plant />
           <Trucks />
+          <CineTruck />
         </Suspense>
         <Island />
         <Vegetation />

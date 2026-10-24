@@ -346,6 +346,108 @@ def nivelar_camion(o):
 ADELANTO_SEMI = 2.0
 
 
+def camion_cine(col):
+    """Camión de la cinemática (web): el camión en viaje con la caja del semi armada en piezas separadas
+    (piso, paredes, techo, frente, puertas) y 22 pallets de PT adentro, para que la web pueda sacarle una
+    pared y el techo. Todo cuelga de un vacío `CamionCine`, guardado bajo tierra (no se ve en el modelo)."""
+    import math
+    from mathutils import Matrix, Vector
+    todas = [p for p in bpy.data.objects if p.type == "MESH" and p.name.startswith("Camion_Carga_PT_1_")
+             and not any(c.name.startswith(("F1_", "F2_", "F3_", "F4_", "F5_", KIT)) for c in p.users_collection)]
+    ws = [p.matrix_world @ Vector(v) for p in todas for v in p.bound_box]
+    M0 = Matrix.Translation((-(min(w.x for w in ws) + max(w.x for w in ws)) / 2,
+                             -(min(w.y for w in ws) + max(w.y for w in ws)) / 2, -min(w.z for w in ws)))
+    S = Matrix.Translation((ADELANTO_SEMI, 0, 0))
+    de_parte = lambda p: (S if "Semi_" in p.name else Matrix.Identity(4)) @ M0 @ p.matrix_world
+    # mismo nivelado que nivelar_camion: ruedas de atrás y de adelante en el piso
+    pts = [de_parte(p) @ v.co for p in todas if "Semi_Pata" not in p.name for v in p.data.vertices]
+    x0, x1 = min(v.x for v in pts), max(v.x for v in pts)
+    atras = min((v for v in pts if v.x < x0 + 4), key=lambda v: v.z)
+    adelante = min((v for v in pts if v.x > x1 - 3), key=lambda v: v.z)
+    R = Matrix.Rotation(math.atan2(adelante.z - atras.z, adelante.x - atras.x), 4, "Y")
+    pts = [R @ v for v in pts]
+    F = Matrix.Translation((-(min(v.x for v in pts) + max(v.x for v in pts)) / 2,
+                            -(min(v.y for v in pts) + max(v.y for v in pts)) / 2, -min(v.z for v in pts))) @ R
+
+    raiz = bpy.data.objects.new("CamionCine", None)
+    col.objects.link(raiz)
+    raiz.location = (0, -520, -40)   # guardado bajo tierra: solo lo usa la web en la cinemática
+
+    def objeto(nombre, bm, mats):
+        o = _nuevo_en(col, nombre, bm, mats)
+        o.parent = raiz
+        return o
+
+    # base: tractor, chasis del semi, ruedas y paragolpes (sin la caja ni las patas)
+    bm = bmesh.new()
+    mats = []
+    for p in todas:
+        if any(k in p.name for k in ("Semi_Caja", "Semi_Franja", "Semi_Pata")):
+            continue
+        me = p.data.copy()
+        me.transform(F @ de_parte(p))
+        mp = []
+        for m in me.materials:
+            nm = m.name if m else "M_Metal_Estructura"
+            if nm not in mats:
+                mats.append(nm)
+            mp.append(mats.index(nm))
+        for f in me.polygons:
+            f.material_index = mp[f.material_index] if mp else 0
+        bm.from_mesh(me)
+        bpy.data.meshes.remove(me)
+    objeto("CamionCine_Base", bm, mats)
+
+    # caja del semi en piezas, con la medida de la caja original nivelada
+    caja = next(p for p in todas if "Semi_Caja" in p.name)
+    cw = [F @ de_parte(caja) @ Vector(v) for v in caja.bound_box]
+    a0, a1 = min(w.x for w in cw), max(w.x for w in cw)
+    b0, b1 = min(w.y for w in cw), max(w.y for w in cw)
+    c0, c1 = min(w.z for w in cw), max(w.z for w in cw)
+    mat_caja = caja.data.materials[0].name if caja.data.materials else "M_Camion_Blanco"
+    t = 0.06
+    piezas = {
+        "Piso": (a0, a1, b0, b1, c0, c0 + 0.1, "M_Metal_Estructura"),
+        "Pared_Izq": (a0, a1, b0, b0 + t, c0, c1, mat_caja),
+        "Pared_Der": (a0, a1, b1 - t, b1, c0, c1, mat_caja),
+        "Techo": (a0, a1, b0, b1, c1 - t, c1, mat_caja),
+        "Frente": (a1 - t, a1, b0, b1, c0, c1, mat_caja),
+        "Puertas": (a0, a0 + t, b0, b1, c0, c1, "M_Gris_Puerta"),
+    }
+    for nm, (x_0, x_1, y_0, y_1, z_0, z_1, m) in piezas.items():
+        bm = bmesh.new()
+        caja_bm(bm, x_0, x_1, y_0, y_1, z_0, z_1, 0)
+        mats = [m]
+        if nm in ("Pared_Izq", "Pared_Der"):  # franja roja de la marca en cada lado
+            y_f = y_0 - 0.01 if nm == "Pared_Izq" else y_1
+            caja_bm(bm, x_0 + 0.1, x_1 - 0.1, y_f, y_f + 0.01, c0 + 0.6, c0 + 1.1, 1)
+            mats.append("M_Rojo_PATY")
+        objeto("CamionCine_" + nm, bm, mats)
+    # 22 pallets de PT (2 a lo ancho x 11 a lo largo) sobre el piso
+    pal = bpy.data.objects.get("KIT_Pallet_PT")
+    k = 0
+    for i in range(11):
+        for s in (-1, 1):
+            o = bpy.data.objects.new(f"CamionCine_Pallet_{k:02d}", pal.data)
+            o.location = (a0 + 0.75 + i * 1.22, (b0 + b1) / 2 + s * 0.55, c0 + 0.1)
+            col.objects.link(o)
+            o.parent = raiz
+            k += 1
+    print("camión de cinemática:", k, "pallets; caja", round(a1 - a0, 2), "x", round(b1 - b0, 2), "x", round(c1 - c0, 2))
+    return raiz
+
+
+def _nuevo_en(col, name, bm, mats):
+    me = bpy.data.meshes.new(name)
+    bm.to_mesh(me)
+    bm.free()
+    for m in mats:
+        me.materials.append(bpy.data.materials[m])
+    o = bpy.data.objects.new(name, me)
+    col.objects.link(o)
+    return o
+
+
 def kit_camion_viaje():
     """Camión en viaje: el mismo semi enganchado, con las patas de apoyo levantadas (en el muelle van bajas)."""
     from mathutils import Vector

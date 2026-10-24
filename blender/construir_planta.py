@@ -24,6 +24,9 @@ f5()                 # apliques, salidas, alumbrado, árboles del cerco, estacio
 f5_servicios()       # vestuarios/comedor/oficinas, calderas, sala de máquinas
 f5_calles()          # báscula, cordones, hormigón, demarcación, señales, parada
 f5_exterior()        # pasto, lotes, calles exteriores, árboles (al final: recorta con todo lo anterior)
+_cc = coleccion("F5_CAMION_CINE")   # camión de la cinemática de la web (bajo tierra)
+vaciar(_cc)
+camion_cine(_cc)
 quitar_techos()
 for _cu in bpy.data.curves:          # letras con 2 pasos por curva (con 12 los rótulos eran el 14 % de lo dibujado)
     if _cu.bl_rna.identifier == "TextCurve":
