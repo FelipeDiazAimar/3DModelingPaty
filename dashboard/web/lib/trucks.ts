@@ -212,3 +212,9 @@ export function poseSalidaPT(dock: number, t: number) {
   const s = enPista(PISTAS.PT[dock].out, t);
   return { x: s.x, y: s.y, h: s.h };
 }
+/** Pose del camión de MP en el muelle `dock` (0 o 1). */
+export function muelleMP(dock: number) {
+  const p = PISTAS.MP[dock].in;
+  const s = p[p.length - 1];
+  return { x: s.x, y: s.y, h: s.h };
+}

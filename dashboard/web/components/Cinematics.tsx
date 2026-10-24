@@ -7,7 +7,7 @@ import type { OrbitControls as OC } from "three-stdlib";
 import type { EChartsOption } from "echarts";
 import { CINES, fichaMaquina, gemela, useCine, vistaMaquina, type Shot } from "@/lib/cine";
 import { useStore } from "@/lib/store";
-import { duracionSalidaPT, muellePT, poseSalidaPT } from "@/lib/trucks";
+import { duracionSalidaPT, muelleMP, muellePT, poseSalidaPT } from "@/lib/trucks";
 import { camionCine } from "@/lib/live3d";
 import { byId, STATE_COLOR, STATE_LABEL } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
@@ -23,10 +23,10 @@ const DOCK_CINE = 1;          // muelle de expedición que usa el camión de la 
 const VEL_SALIDA = 6;         // la partida se ve a 6 veces la velocidad real (205 s -> 34 s, con el pesaje)
 
 /** Punto de vista de una toma (en coordenadas three). La que sigue al camión se recalcula cada cuadro. */
-function vistaToma(shot: Shot, i: number): { p: THREE.Vector3; t: THREE.Vector3 } | null {
+function vistaToma(shot: Shot): { p: THREE.Vector3; t: THREE.Vector3 } | null {
   if (shot.pos && shot.target) return { p: P(...shot.pos), t: P(...shot.target) };
   if (shot.maquina) {
-    const v = vistaMaquina(shot.maquina, i);
+    const v = vistaMaquina(shot.maquina);
     return v ? { p: P(...v.pos), t: P(...v.target) } : null;
   }
   if (shot.seguirCamion && camionCine.visible) {
@@ -70,7 +70,7 @@ export function CineRig() {
     if (!c.id || !s || !controls) return;
     const shot = c.shots[s.i];
     if (!shot) { c.stop(); return; }
-    const v = vistaToma(shot, s.i);
+    const v = vistaToma(shot);
     // seguimiento suave: el objetivo se acerca de a poco a la vista calculada (no tiembla en las curvas)
     if (v) {
       if (!s.goal) s.goal = { p: v.p.clone(), t: v.t.clone() };
@@ -137,7 +137,7 @@ export function CineTruck() {
     const raiz = new THREE.Group();
     raiz.add(g);
     raiz.visible = false;
-    return { raiz, pared: pieza("CamionCine_Pared_Der"), techo: pieza("CamionCine_Techo") };
+    return { raiz, der: pieza("CamionCine_Pared_Der"), izq: pieza("CamionCine_Pared_Izq"), techo: pieza("CamionCine_Techo") };
   }, [scene]);
 
   useFrame(() => animarCamionCine(t));
@@ -153,17 +153,20 @@ function abrir(pz: Pieza, u: number, subir: number, costado: number) {
   pz.mats.forEach((m) => { m.opacity = 1 - u; m.depthWrite = u < 0.05; });
 }
 
-function animarCamionCine(t: { raiz: THREE.Group; pared: Pieza; techo: Pieza } | null) {
+function animarCamionCine(t: { raiz: THREE.Group; der: Pieza; izq: Pieza; techo: Pieza } | null) {
   if (!t) return;
   const c = useCine.getState();
   const shot = c.id ? c.shots[c.idx] : undefined;
   const el = (performance.now() - c.t0) / 1000;
   if (!shot?.escena) { t.raiz.visible = false; camionCine.visible = false; return; }
-  let pose = muellePT(DOCK_CINE);
+  const mp = shot.camion === "MP";
+  let pose = mp ? muelleMP(DOCK_CINE) : muellePT(DOCK_CINE);
   let u = 0;
   if (shot.escena === "camion_abre") u = smoother((el - shot.viaje - 1) / 3);   // se abre al llegar la cámara
   else pose = poseSalidaPT(DOCK_CINE, Math.min(duracionSalidaPT(DOCK_CINE), el * VEL_SALIDA));
-  abrir(t.pared, u, 3.2, 2.2);
+  // se abre la pared que mira al norte (hacia la cámara): la derecha con la cabina al este (PT), la izquierda al oeste (MP)
+  abrir(mp ? t.izq : t.der, u, 3.2, mp ? -2.2 : 2.2);
+  abrir(mp ? t.der : t.izq, 0, 0, 0);
   abrir(t.techo, u, 4.5, 0);
   t.raiz.visible = true;
   t.raiz.position.copy(P(pose.x, pose.y, 0));
@@ -312,15 +315,16 @@ export function CineOverlay() {
   if (!shot || !c) return null;
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
-      <div className="absolute left-1/2 top-[86px] flex -translate-x-1/2 items-center gap-3 rounded-full bg-ink/85 px-4 py-1.5 text-white shadow-lg">
-        <span className="text-[12px] font-bold">{c.label}</span>
-        <span className="tnum text-[11px] opacity-75">{idx + 1} / {shots.length}</span>
-        <button onClick={stop} className="pointer-events-auto rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-bold hover:bg-white/25">Detener</button>
-      </div>
-      <div className="absolute bottom-6 left-1/2 w-[min(620px,92vw)] -translate-x-1/2">
-        <div key={idx} className="glass cine-in px-5 py-3 text-center">
-          <div className="text-[17px] font-extrabold tracking-tight">{shot.titulo}</div>
-          {shot.texto && <div className="mt-0.5 text-[13px] text-muted">{shot.texto}</div>}
+      {/* relato abajo a la izquierda (arriba del reproductor en pantallas angostas), con el paso y Detener */}
+      <div className="absolute bottom-[132px] left-3 right-3 md:right-auto md:w-[min(520px,46vw)] md:left-4 md:bottom-[96px] min-[1460px]:bottom-6">
+        <div key={idx} className="glass cine-in px-4 py-3">
+          <div className="mb-1 flex items-center gap-2 text-[11px] font-bold text-muted">
+            <span className="text-brand">{c.label}</span>
+            <span className="tnum">{idx + 1} / {shots.length}</span>
+            <button onClick={stop} className="pointer-events-auto ml-auto rounded-full bg-ink px-2.5 py-0.5 text-[11px] font-bold text-white hover:opacity-90">Detener</button>
+          </div>
+          <div className="text-[16px] font-extrabold leading-tight tracking-tight">{shot.titulo}</div>
+          {shot.texto && <div className="mt-0.5 text-[13px] leading-snug text-muted">{shot.texto}</div>}
         </div>
       </div>
       {shot.maquina && (

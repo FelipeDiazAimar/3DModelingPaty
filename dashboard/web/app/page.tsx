@@ -18,7 +18,7 @@ export default function Home() {
     <div className="absolute inset-0">
       <Scene3D />
       <div className="pointer-events-none absolute inset-0 z-10">
-        <div className="absolute left-2 right-2 top-[150px] md:left-4 md:right-auto md:top-[96px]">
+        <div className="absolute left-4 top-[96px] hidden md:block">
           <CineButtons />
         </div>
         {!cine && (

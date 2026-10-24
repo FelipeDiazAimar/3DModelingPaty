@@ -8,6 +8,8 @@ import { Player } from "./Player";
 import { NAV, NavMenu } from "./NavMenu";
 import { KpiChips } from "./Console";
 import { Icon } from "./Icons";
+import { useRouter } from "next/navigation";
+import { CINES, useCine } from "@/lib/cine";
 
 export function simClock(t: number) {
   const d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600), m = Math.floor((t % 3600) / 60);
@@ -72,6 +74,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
             </Link>
           ))}
         </nav>
+        <CinesMenu onClose={onClose} />
         <div className="mt-3 space-y-3 border-t border-[var(--line)] pt-3">
           <div>
             <div className="mb-1.5 text-[12px] font-semibold text-muted">Mostrar</div>
@@ -82,6 +85,38 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           </button>
         </div>
       </aside>
+    </div>
+  );
+}
+
+/** Cinemáticas en el menú del teléfono (en la vista 3D de escritorio van como botones a la izquierda). */
+function CinesMenu({ onClose }: { onClose: () => void }) {
+  const path = usePathname();
+  const router = useRouter();
+  const id = useCine((s) => s.id);
+  const play = useCine((s) => s.play);
+  const stop = useCine((s) => s.stop);
+  return (
+    <div className="mt-3 border-t border-[var(--line)] pt-3">
+      <div className="mb-1.5 text-[12px] font-semibold text-muted">Cinemáticas</div>
+      <div className="space-y-1">
+        {CINES.map((c) => {
+          const on = id === c.id;
+          return (
+            <button key={c.id} onClick={() => {
+              if (on) stop();
+              else { if (path !== "/") router.push("/"); play(c.id, useStore.getState().history); }
+              onClose();
+            }} className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left ${on ? "bg-brand text-white" : "hover:bg-[#eef3fb]"}`}>
+              <span className={`grid h-8 w-8 place-items-center rounded-xl ${on ? "bg-white/15" : "bg-[#eaf0fa] text-ink"}`}><Icon name={on ? "pause" : c.icon} size={16} /></span>
+              <span className="leading-tight">
+                <span className="block text-[14px] font-semibold">{c.label}</span>
+                <span className={`block text-[11px] ${on ? "text-white/80" : "text-muted"}`}>{on ? "Tocá para detener" : c.sub}</span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -111,7 +146,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <span className="block text-[11px] font-medium text-muted">Gemelo digital</span>
             </span>
           </Link>
-          {home && <div style={{ pointerEvents: "none" }} className="order-2 flex min-w-0 basis-full justify-center md:hidden"><KpiChips compact /></div>}
           {/* escritorio */}
           <nav className="glass hidden min-w-0 items-center gap-0.5 overflow-x-auto p-1 min-[1800px]:flex" aria-label="Secciones">
             {NAV.map((n) => (
@@ -119,8 +153,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="hidden md:block min-[1800px]:hidden"><NavMenu /></div>
-          {home && <div style={{ pointerEvents: "none" }} className="order-last hidden min-w-0 basis-full justify-center md:flex min-[1800px]:hidden"><KpiChips compact /></div>}
-          {home && <div className="hidden min-w-0 min-[1800px]:block"><KpiChips /></div>}
+          {home && <div className="hidden min-w-0 md:block min-[1600px]:hidden"><KpiChips compact fila /></div>}
+          {home && <div className="hidden min-w-0 min-[1600px]:block"><KpiChips /></div>}
           <div className={`ml-auto hidden items-center gap-2 md:flex ${home ? "order-1 min-[1800px]:order-none" : ""}`}>
             <LineSelector className="flex" />
             <div className="glass flex items-center gap-2 whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold">
@@ -131,7 +165,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <button onClick={() => setDemo(!demo)} className="glass whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold hover:bg-white">{demo ? "Salir del demo" : "Demo"}</button>
           </div>
           {/* teléfono: estado a la izquierda de la hamburguesa, ambos a la derecha */}
-          <div className={`ml-auto flex shrink-0 items-center gap-2 md:hidden ${home ? "order-1" : ""}`}>
+          <div className={`ml-auto flex shrink-0 items-start gap-2 md:hidden ${home ? "order-1" : ""}`}>
+            {home && <KpiChips compact />}
             <div className="glass flex h-10 items-center gap-1.5 whitespace-nowrap px-3 text-[11px] font-bold" title={statusText} aria-label={statusText}>
               <span className={`live-dot h-2.5 w-2.5 rounded-full ${ok ? "bg-[var(--ok)]" : "bg-[var(--warn)]"}`} />
               {demo && "DEMO"}

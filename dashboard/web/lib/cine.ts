@@ -22,6 +22,7 @@ export interface Shot {
   maquina?: string;     // id de layout: vista automática y ficha con sus números en vivo
   seguirCamion?: boolean; // la cámara sigue al camión de la cinemática
   escena?: Escena;
+  camion?: "MP" | "PT";   // muelle donde se abre el camión de la cinemática (PT por defecto)
   viaje: number;
   pausa: number;
   titulo: string;
@@ -65,7 +66,7 @@ const ELABORADOS: Shot[] = [
 ];
 
 const L7: Shot[] = [
-  { maquina: "SrcCamionesMP", viaje: 4, pausa: 5, titulo: "1 · Llegan los camiones de MP", texto: "Pallets de carne congelada y enfriada." },
+  { maquina: "SrcCamionesMP", pos: [-99, -3, 10], target: [-84, -20, 1.6], escena: "camion_abre", camion: "MP", viaje: 4, pausa: 9, titulo: "1 · Llegan los camiones de MP", texto: "Cada camión trae pallets de carne congelada y enfriada." },
   { maquina: "QRecepcion", viaje: 3, pausa: 5, titulo: "2 · Recepción", texto: "Los pallets esperan a que el montacargas los lleve a cámara." },
   { maquina: "RackMPCongelado", viaje: 3, pausa: 5, titulo: "3 · Cámara de MP", texto: "Stock de materia prima congelada." },
   { maquina: "Desencajado_L7", viaje: 3, pausa: 6, titulo: "4 · Desencajado", texto: "Se consume el pallet caja a caja: un batch de 1500 kg." },
@@ -125,24 +126,39 @@ export function armarCine(id: CineId, h: Snapshot[]): Shot[] {
   }
 }
 
-/** Vista automática de una máquina, desde arriba de las paredes (7 m) y del lado de adentro de la nave,
- *  para que ninguna pared quede entre la cámara y la máquina. */
-const NAVE = { x0: -72, x1: 72, y0: -32, y1: 32 };
-export function vistaMaquina(id: string, i: number): { pos: V3; target: V3 } | null {
+/** Puntos de vista elegidos a mano (desde el pasillo central y por encima de las paredes de 7 m, mirando hacia
+ *  la máquina; las cámaras de MP y PT desde arriba). El objetivo es el centro visible de cada equipo. */
+const VISTAS: Record<string, { pos: V3; target: V3 }> = {
+  QRecepcion: { pos: [-59, -17, 11], target: [-68.3, -32, 0.8] },
+  RackMPCongelado: { pos: [-50, 5, 21], target: [-66, 22, 2] },
+  RackMPEnfriado: { pos: [-50, -14, 20], target: [-66, -1.5, 2] },
+  Desencajado_L7: { pos: [-41, -1, 9], target: [-45.5, 12, 1] },
+  Picadora_L7: { pos: [-31, -1, 10], target: [-36.5, 12, 1.8] },
+  MezA_L7: { pos: [-22, -3, 11], target: [-28.3, 9.4, 2] },
+  MezB_L7: { pos: [-22, 27, 11], target: [-28.3, 14.6, 2] },
+  FormA_L7: { pos: [-15, -1, 9], target: [-21.5, 9.8, 1.4] },
+  FormB_L7: { pos: [-15, 26, 9], target: [-21.5, 14.4, 1.4] },
+  Tunel_L7: { pos: [-3, -8, 13], target: [-3, 12, 1.8] },
+  EnvA_L7: { pos: [13.5, 0, 8], target: [10, 10.6, 1.2] },
+  EnvB_L7: { pos: [13.5, 25, 8], target: [10, 13.4, 1.2] },
+  EncA_L7: { pos: [18.5, 1, 8], target: [14.3, 10.6, 1.0] },
+  EncB_L7: { pos: [18.5, 24, 8], target: [14.3, 13.4, 1.0] },
+  EstA_L7: { pos: [35, 0, 10], target: [28.5, 11, 1.5] },
+  RackPTCongelado: { pos: [50, 5, 21], target: [66, 22, 2] },
+  RackPTEnfriado: { pos: [50, -14, 20], target: [66, -1.5, 2] },
+  QExpedicion: { pos: [59, -17, 11], target: [68.3, -32, 0.8] },
+};
+
+/** Vista de una máquina: la elegida a mano o, si no hay, desde el pasillo central (y ≈ 0) mirando hacia su
+ *  lado de la nave, por encima de las paredes. */
+export function vistaMaquina(id: string): { pos: V3; target: V3 } | null {
+  if (VISTAS[id]) return VISTAS[id];
   const m = byId(id);
   if (!m) return null;
-  const r = Math.max(10, Math.max(m.sx, m.sy, m.sz) * 2.2 + 7);
-  const target: V3 = [m.x, m.y, m.sz * 0.5];
-  const adentro = m.x > NAVE.x0 && m.x < NAVE.x1 && m.y > NAVE.y0 && m.y < NAVE.y1;
-  const base = -115 + i * 37;
-  for (let k = 0; k < 12; k++) {
-    const a = ((base + k * 30) * Math.PI) / 180;
-    const x = m.x + r * Math.cos(a), y = m.y + r * Math.sin(a);
-    if (!adentro || (x > NAVE.x0 + 2 && x < NAVE.x1 - 2 && y > NAVE.y0 + 2 && y < NAVE.y1 - 2)) {
-      return { target, pos: [x, y, Math.max(10, target[2] + r * 0.75)] };
-    }
-  }
-  return { target, pos: [m.x, m.y - r, Math.max(10, target[2] + r * 0.75)] };
+  const target: V3 = [m.x, m.y, Math.min(2, m.sz * 0.5)];
+  const r = Math.max(11, Math.max(m.sx, m.sy) * 1.6 + 8);
+  const lado = m.y >= 0 ? -1 : 1;   // L7 al norte del pasillo, L8 al sur
+  return { target, pos: [m.x + 5, m.y + lado * r, Math.max(9, r * 0.75)] };
 }
 
 /* ---------- unidades de cada máquina (qué ítem entra, qué sale; ver SUPUESTOS_v2.md, unidades de carga) ---------- */
