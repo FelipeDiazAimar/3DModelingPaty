@@ -238,9 +238,9 @@ def bascula(col):
         o = texto(col, f"Visor_Peso_{lado}_Txt", "38.420 kg" if sur else "14.960 kg", xv, yv + (0.12 if sur else -0.12), 2.9, 0.3, "M_LED_Blanco")
         o.rotation_euler = (math.pi / 2, 0, math.pi if sur else 0.0)
     # camiones: uno pesándose al entrar, otro al salir y uno esperando en la calle norte
-    poner("KIT_Camion", col, (PUENTES["Ingreso"], 141.0, 0.09), -math.pi / 2, "Camion_Bascula_Ingreso")
-    poner("KIT_Camion", col, (PUENTES["Egreso"], 141.0, 0.09), math.pi / 2, "Camion_Bascula_Egreso")
-    poner("KIT_Camion", col, (-112.0, 172.5, 0), math.pi, "Camion_Espera_Bascula")
+    poner("KIT_Camion_Viaje", col, (PUENTES["Ingreso"], 141.0, 0.09), -math.pi / 2, "Camion_Bascula_Ingreso")
+    poner("KIT_Camion_Viaje", col, (PUENTES["Egreso"], 141.0, 0.09), math.pi / 2, "Camion_Bascula_Egreso")
+    poner("KIT_Camion_Viaje", col, (-112.0, 172.5, 0), math.pi, "Camion_Espera_Bascula")
     poner("KIT_Senal_Bascula", col, (-137.5, 166.0, 0), 0.0, "Senal_Bascula")
     poner("KIT_Senal_Vel20", col, (-124.0, 183.0, 0), 0.0, "Senal_Vel20_Ingreso")
     # garita de vigilancia en el portón de ingreso
@@ -356,6 +356,38 @@ def nivelar_camiones_muelles():
         o["nivelado"] = True
         n += 1
     print("piezas de camión niveladas:", n)
+    aplomar_camiones_muelles()
+
+
+def aplomar_camiones_muelles():
+    """Además de hundidos, los 4 camiones estaban inclinados ~3,4° (apoyaban en una rampa que no existe): el
+    tractor quedaba en el aire. Se gira cada camión sobre el punto de apoyo de las ruedas de atrás hasta que las
+    de adelante toquen el piso (una sola vez)."""
+    import math
+    from mathutils import Matrix, Vector
+    for raiz in ("Camion_Descarga_MP_1", "Camion_Descarga_MP_2", "Camion_Carga_PT_1", "Camion_Carga_PT_2"):
+        r = bpy.data.objects.get(raiz)
+        if r is None or r.get("aplomado"):
+            continue
+        hijos = [o for o in r.children_recursive if o.type == "MESH"]
+
+        def apoyo(nombre):
+            ps = [o.matrix_world @ Vector(v) for o in hijos if nombre in o.name for v in o.bound_box]
+            return min(ps, key=lambda p: p.z)
+        atras, adelante = apoyo("Semi_Rueda_0"), apoyo("Tractor_Rueda_0")
+        a = math.atan2(adelante.z - atras.z, abs(adelante.x - atras.x))
+        mejor = None
+        for s in (1, -1):
+            M = Matrix.Translation(atras) @ Matrix.Rotation(s * a, 4, "Y") @ Matrix.Translation(-atras)
+            dz = abs((M @ adelante).z - (M @ atras).z)
+            if mejor is None or dz < mejor[0]:
+                mejor = (dz, M)
+        r.matrix_world = mejor[1] @ r.matrix_world
+        bpy.context.view_layer.update()
+        zmin = min((o.matrix_world @ Vector(v)).z for o in hijos for v in o.bound_box)
+        r.location.z -= zmin
+        r["aplomado"] = True
+        print(f"  {raiz}: girado {math.degrees(a):.2f}°")
 
 
 def f5_calles():

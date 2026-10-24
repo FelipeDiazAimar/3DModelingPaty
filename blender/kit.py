@@ -285,7 +285,7 @@ def poner(kit_name, col, loc, rot_z=0.0, nombre=None, escala=1.0):
 
 
 # --------------------------------------------------------------------------- piezas tomadas de la escena (F3)
-def kit_desde_escena(name, prefijo, excluir=(), origen="base"):
+def kit_desde_escena(name, prefijo, excluir=(), origen="base", desplazar=None):
     """Une en una malla las piezas cuyo nombre empieza con `prefijo` (sin moverlas ni borrarlas).
     El kit queda con el centro xy del conjunto en el origen y el punto más bajo en z = 0."""
     from mathutils import Matrix, Vector
@@ -304,6 +304,9 @@ def kit_desde_escena(name, prefijo, excluir=(), origen="base"):
     for o in piezas:
         me = o.data.copy()
         me.transform(Matrix.Translation((-cx, -cy, -z0)) @ o.matrix_world)
+        for clave, d in (desplazar or {}).items():   # mover algunas piezas (p. ej. el semi sobre la quinta rueda)
+            if clave in o.name:
+                me.transform(Matrix.Translation(d))
         mp = []
         for m in me.materials:
             nm = m.name if m else "M_Metal_Estructura"
@@ -317,6 +320,57 @@ def kit_desde_escena(name, prefijo, excluir=(), origen="base"):
     o = _nuevo(name, bm, mats)
     for p in o.data.polygons:
         p.use_smooth = False
+    return o
+
+
+def nivelar_camion(o):
+    """El camión tomado de la escena estaba inclinado ~3,4° (los originales apoyaban sobre una rampa de muelle):
+    con la cola en el piso, el tractor quedaba ~1 m en el aire y parecía desenganchado. Se gira la malla hasta
+    que las ruedas de atrás y las de adelante toquen el piso, y se vuelve a centrar con la base en z = 0."""
+    import math
+    from mathutils import Matrix
+    vs = [v.co.copy() for v in o.data.vertices]
+    x0, x1 = min(v.x for v in vs), max(v.x for v in vs)
+    atras = min((v for v in vs if v.x < x0 + 4), key=lambda v: v.z)
+    adelante = min((v for v in vs if v.x > x1 - 3), key=lambda v: v.z)
+    a = math.atan2(adelante.z - atras.z, adelante.x - atras.x)
+    o.data.transform(Matrix.Rotation(a, 4, "Y"))
+    vs = [v.co for v in o.data.vertices]
+    cx = (min(v.x for v in vs) + max(v.x for v in vs)) / 2
+    cy = (min(v.y for v in vs) + max(v.y for v in vs)) / 2
+    o.data.transform(Matrix.Translation((-cx, -cy, -min(v.z for v in vs))))
+    o.data.update()
+    return math.degrees(a)
+
+
+ADELANTO_SEMI = 2.0
+
+
+def kit_camion_viaje():
+    """Camión en viaje: el mismo semi enganchado, con las patas de apoyo levantadas (en el muelle van bajas)."""
+    from mathutils import Vector
+    # enganchado: el semi va 2 m más adelante, con su frente montado sobre la quinta rueda del tractor
+    # (en el camión de la escena termina antes del tractor y la quinta rueda queda a la vista)
+    o = kit_desde_escena("KIT_Camion_Viaje", "Camion_Carga_PT_1_", excluir=("Semi_Pata",),
+                         desplazar={"Semi_": (ADELANTO_SEMI, 0, 0)})
+    todas = [p for p in bpy.data.objects if p.type == "MESH" and p.name.startswith("Camion_Carga_PT_1_")
+             and not any(c.name.startswith(("F1_", "F2_", "F3_", "F4_", "F5_", KIT)) for c in p.users_collection)]
+    ws = [p.matrix_world @ Vector(v) for p in todas for v in p.bound_box]
+    cx = (min(w.x for w in ws) + max(w.x for w in ws)) / 2
+    cy = (min(w.y for w in ws) + max(w.y for w in ws)) / 2
+    z0 = min(w.z for w in ws)
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    for p in todas:
+        if "Semi_Pata" not in p.name:
+            continue
+        pw = [p.matrix_world @ Vector(v) for v in p.bound_box]
+        a0, a1 = min(w.x for w in pw) - cx + ADELANTO_SEMI, max(w.x for w in pw) - cx + ADELANTO_SEMI
+        b0, b1 = min(w.y for w in pw) - cy, max(w.y for w in pw) - cy
+        top = max(w.z for w in pw) - z0
+        caja_bm(bm, a0, a1, b0, b1, top - 0.4, top, o.data.materials.find("M_Metal_Estructura") if "M_Metal_Estructura" in o.data.materials else 0)
+    bm.to_mesh(o.data)
+    bm.free()
     return o
 
 
@@ -407,7 +461,8 @@ def kit_ciclo2():
     bpy.data.meshes.remove(ops)
     _nuevo("KIT_Puesto_Encajado", bm, nm)
     # de la escena (L7/L8 y entorno; los originales no se tocan)
-    kit_desde_escena("KIT_Camion", "Camion_Carga_PT_1_")
+    print("camión nivelado (°):", round(nivelar_camion(kit_desde_escena("KIT_Camion", "Camion_Carga_PT_1_")), 2),
+          round(nivelar_camion(kit_camion_viaje()), 2))
     kit_desde_escena("KIT_Autoelevador", "Autoelevador_", excluir=("Camara_MP",))
     kit_desde_escena("KIT_Rack", "Rack_Congelado_PT_01_")
     kit_desde_escena("KIT_Muelle", "Muelle_Expedicion_1_")

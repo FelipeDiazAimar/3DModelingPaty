@@ -17,7 +17,8 @@ interface Sample { t: number; x: number; y: number; h: number }  // h: rumbo de 
 export type TruckKind = "MP" | "PT";
 export const CAPACIDAD: Record<TruckKind, number> = { MP: 8, PT: 24 };   // pallets por camión
 const DOCKS_Y = [-30, -20];                                              // dos muelles por lado (eje y)
-const DOCK_X: Record<TruckKind, number> = { MP: -85.05, PT: 85.05 };     // centro del camión en el muelle
+// centro del camión en el muelle: cola contra el andén (x = ±75); el camión enganchado mide 18,1 m
+const DOCK_X: Record<TruckKind, number> = { MP: -84.05, PT: 84.05 };
 const SALIDA_EXTRA = 300;  // s simulados que el camión espera en el muelle después del último pallet
 
 const V_RUTA = 14, V_CALLE = 6, V_LENTO = 3, V_REVERSA = 1.5, PESAJE = 45;
