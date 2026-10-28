@@ -36,6 +36,19 @@ uv run python utility/doctor.py --live
 
 Con eso se puede abrir `PLANTASJ.fsm` sin ventana, contar los objetos y leer `OnModelOpen` sin modificarlo.
 
+### Problema conocido: dos servidores en el puerto 8765
+
+La ventana de FlexSim habla con el servidor MCP por `127.0.0.1:8765`, y solo un servidor puede atenderla. Si quedó
+vivo un servidor de otra sesión (de Claude Code u OpenCode), FlexSim se conecta a ese y `flexsim_gui_status`
+dice *Not connected* aunque la ventana esté abierta. Para ver quién tiene el puerto:
+
+```
+Get-NetTCPConnection -LocalPort 8765 | Select-Object State, OwningProcess
+```
+
+Si es un proceso viejo, cerrarlo (si corre como administrador, desde una terminal de administrador):
+`taskkill /F /PID <pid>`. Después, en Claude Code, `/mcp` → `flexsim` → *Reconnect*, y volver a abrir el modelo.
+
 ## Pendiente: operarios en el publicador
 
 `dashboard/flexsim/publicador.fls` ahora manda también `OpDesencajado_L7/L8` y `OpEnvasado_L7/L8` en `fleet`.
