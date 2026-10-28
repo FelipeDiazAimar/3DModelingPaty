@@ -25,7 +25,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 /* ---------- estado del recorrido (persiste entre entradas y salidas del modo) ---------- */
 const keys = new Set<string>();
 // teclas de un toque: se atienden en el próximo cuadro aunque se suelten antes; ir / punto = viaje pedido (punto de interés o clic en el plano)
-const press = { e: false, jump: false, gesto: null as string | null, ir: null as string | null, punto: null as THREE.Vector3 | null };
+const press = { e: false, jump: false, gesto: null as string | null, ir: null as string | null, punto: null as THREE.Vector3 | null, traer: null as "montacargas" | "camion" | null };
 
 /** Gestos del operario (como los "emotes" del robot de webgl_animation_skinning_morph de three.js): clip del GLB, etiqueta y tecla. */
 export const GESTOS = [
@@ -35,6 +35,26 @@ export const GESTOS = [
   { clip: "Dance", label: "Bailar", key: "4" },
 ] as const;
 export const hacerGesto = (clip: string) => { press.gesto = clip; };
+/** Pide un vehículo: aparece al lado del operario y lo sube a manejar. */
+export const traerVehiculo = (t: "montacargas" | "camion") => { press.traer = t; };
+
+/* ---------- sonidos sintetizados (sin archivos): bocina y pitido de marcha atrás ---------- */
+let audio: AudioContext | null = null;
+/** El navegador solo deja crear el audio después de un gesto del usuario: se llama desde teclas y botones. */
+function prenderAudio() {
+  try { audio ??= new AudioContext(); if (audio.state === "suspended") void audio.resume(); } catch { audio = null; }
+}
+function tono(freq: number, dur: number, tipo: OscillatorType = "square", vol = 0.06) {
+  if (!audio) return;
+  const o = audio.createOscillator(), g = audio.createGain(), t = audio.currentTime;
+  o.type = tipo; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(audio.destination);
+  o.start(t); o.stop(t + dur);
+}
+const bocina = () => { tono(311, 0.55, "sawtooth"); tono(392, 0.55, "sawtooth"); };
+const pitido = { t: 0 }; // cuánto falta para el próximo "bip" de marcha atrás
 export const irAMaquina = (id: string) => { press.ir = id; };
 
 /** Puntos de interés (como los de Shapespark): las etapas de una línea, cada una con su primera máquina. */
@@ -151,10 +171,21 @@ function montacargas(id: string): Veh | null {
   if (!obj) return null;
   let v = vehs.get(id);
   // modelo de Scene3D (escala 1,35, frente +z): asiento en (0, 1,04, -0,4)
-  if (!v) vehs.set(id, v = { id, label: FLEET.find((f) => f.id === id)?.label ?? id, obj, fwd: new THREE.Vector3(0, 0, 1), cx: 0, half: 1.9, side: 1.4, vmax: 4, speed: 0,
+  if (!v) vehs.set(id, v = { id, label: FLEET.find((f) => f.id === id)?.label ?? "montacargas", obj, fwd: new THREE.Vector3(0, 0, 1), cx: 0, half: 1.9, side: 1.4, vmax: 4, speed: 0,
     eye: new THREE.Vector3(0, 1.6, -0.3), seat: new THREE.Vector3(0, 0.47, -0.4), dist: 6 });
   v.obj = obj;
   return v;
+}
+
+/** Montacargas propio para pedir con F: copia de uno de los de la simulación, que siguen en sus rutas. */
+let propio: THREE.Object3D | null = null;
+function montacargasPropio(scene: THREE.Object3D) {
+  const molde = forklifts.get(FLEET[0].id);
+  if (!propio && molde) propio = molde.clone(true);
+  if (!propio) return null;
+  if (!propio.parent) scene.add(propio);
+  forklifts.set("propio", propio as THREE.Group);
+  return montacargas("propio");
 }
 
 /** Camión manejable: el mismo del modelo (cabina hacia +x local), estacionado donde la planta tiene el que espera la báscula. */
@@ -245,6 +276,10 @@ export default function Walk() {
       if (g) press.gesto = g.clip;
       if (e.code === "KeyV" || e.code === "KeyC") st.setView(st.view === "1p" ? "3p" : "1p");
       if (e.code === "KeyM") abrirPlano(!st.plan);
+      prenderAudio();
+      if (e.code === "KeyF") press.traer = "montacargas";
+      if (e.code === "KeyG") press.traer = "camion";
+      if (e.code === "KeyH" && st.driving) bocina();
       if (e.code === "Escape" && !document.pointerLockElement) { if (st.plan) abrirPlano(false); else st.setMode("orbit"); }
     };
     const ku = (e: KeyboardEvent) => keys.delete(e.code);
@@ -266,10 +301,11 @@ export default function Walk() {
       if (document.pointerLockElement === el) document.exitPointerLock();
       cam.fov = 32; cam.updateProjectionMatrix();
       cam.position.set(86, 66, 86);
+      if (propio) { propio.removeFromParent(); forklifts.delete("propio"); }
     };
   }, [get, all]);
 
-  useFrame(({ camera: cam }, rawDt) => {
+  useFrame(({ camera: cam, scene }, rawDt) => {
     const cam3 = truck;
     const dt = Math.min(rawDt, 0.25); // los rayos cubren el paso entero: aguanta cuadros lentos sin atravesar paredes
     const st = useStore.getState();
@@ -286,6 +322,31 @@ export default function Walk() {
       press.ir = null; press.punto = null;
       lastNear.current = -1;
       plano.c.set(viaje.b.x, 0, viaje.b.z); // si el plano está abierto, que muestre el destino
+    }
+    if (press.traer) {
+      const tipo = press.traer;
+      press.traer = null;
+      const v = tipo === "camion" ? cam3 : montacargasPropio(scene);
+      if (v && v !== veh) {
+        if (veh) veh.speed = 0;
+        const yaw = yawCamara();
+        const fwd = new THREE.Vector3(-Math.sin(yaw), 0, -Math.cos(yaw));
+        const der = new THREE.Vector3(-fwd.z, 0, fwd.x);
+        // alineado con la dirección elegida; su centro, a 1,5 m del operario más medio largo del vehículo
+        const c = 1.5 + v.half;
+        const libre = [fwd, der, der.clone().negate(), fwd.clone().negate()].find((d) => !choca(me.pos, d, c + v.half + 0.5, [0.8]));
+        if (libre || tipo === "montacargas") { // el camión, si no entra en ningún lado, se lo maneja donde está
+          const d = libre ?? fwd;
+          v.obj.position.copy(me.pos).addScaledVector(d, c);
+          v.obj.position.y = piso(v.obj.position);
+          v.obj.rotation.y = Math.atan2(d.x, d.z) - Math.atan2(v.fwd.x, v.fwd.z);
+        }
+        v.speed = 0;
+        look.yaw = 0;
+        st.setDriving(v.id);
+        veh = v;
+        lastNear.current = -1;
+      }
     }
     live.veh = veh;
     const enPlano = useStore.getState().plan;
@@ -312,6 +373,8 @@ export default function Walk() {
       if (Math.abs(paso) > 1e-4 && choca(centro, sentido, veh.half + Math.abs(paso) + 0.2, [0.6, 1.4])) veh.speed = 0;
       else veh.obj.position.addScaledVector(dir, paso);
       veh.obj.position.y = piso(veh.obj.position);
+      if (veh.speed < -0.2) { pitido.t -= dt; if (pitido.t <= 0) { tono(1050, 0.22); pitido.t = 0.9; } }
+      else pitido.t = 0;
       // el operario va sentado en el montacargas (en el camión queda adentro de la cabina)
       if (veh.seat) { me.pos.copy(veh.obj.localToWorld(veh.seat.clone())); me.ry = veh.obj.rotation.y; }
       else me.pos.copy(veh.obj.position);
@@ -388,7 +451,7 @@ export default function Walk() {
     /* ----- qué hay a mano para la tecla E ----- */
     let target: { kind: "veh"; v: Veh } | { kind: "maq"; id: string; label: string } | null = null;
     if (!veh) {
-      const cands = [...FLEET.map((fl) => montacargas(fl.id)), cam3].filter((v): v is Veh => !!v);
+      const cands = [...FLEET.map((fl) => montacargas(fl.id)), propio?.parent ? montacargas("propio") : null, cam3].filter((v): v is Veh => !!v);
       let best = 2.6;
       for (const v of cands) {
         const dir = tmp.copy(v.fwd).applyAxisAngle(UP, v.obj.rotation.y);
@@ -648,6 +711,15 @@ export function WalkHud() {
             {!driving && <span className="flex items-center gap-1"><Key k="Espacio" /> saltar</span>}
             <span className="flex items-center gap-1"><Key k="C" /> cámara</span>
             <span className="flex items-center gap-1"><Key k="M" /> plano</span>
+            {driving && <span className="flex items-center gap-1"><Key k="H" /> bocina</span>}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-1">
+            <span className="mr-0.5 font-bold text-ink">Pedir:</span>
+            {([["montacargas", "F", "Montacargas"], ["camion", "G", "Camión"]] as const).map(([t, k, l]) => (
+              <button key={t} onClick={() => { prenderAudio(); traerVehiculo(t); }} className="flex items-center gap-1 rounded-full bg-[#ffe8cc] py-0.5 pl-0.5 pr-2 font-bold hover:opacity-80">
+                <Key k={k} /> {l}
+              </button>
+            ))}
           </div>
           {!driving && (
             <div className="mt-2 flex flex-wrap items-center gap-1">

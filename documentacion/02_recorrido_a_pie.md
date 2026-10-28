@@ -14,6 +14,9 @@ simulación corriendo. Se arranca en el pasillo central entre L7 y L8, fuera de 
 | E | ver la ficha de la máquina cercana; subir a un vehículo | bajarse |
 | C o V | 1ª / 3ª persona | igual |
 | M | vista de plano | igual |
+| F | pedir el montacargas propio (aparece al lado y te sube) | igual |
+| G | pedir el camión | igual |
+| H | — | bocina |
 | 1 2 3 4 | saludar, sí, no, bailar | — |
 | Esc | suelta el mouse; otro Esc vuelve a la vista orbital (o cierra el plano) | igual |
 
@@ -28,6 +31,11 @@ simulación corriendo. Se arranca en el pasillo central entre L7 y L8, fuera de 
 - **Montacargas:** los mismos de la simulación (`lib/live3d.ts → forklifts`). Mientras se maneja uno, `Scene3D`
   deja de moverlo desde los datos; al bajarse vuelve solo por la red de rutas a su posición simulada.
   El operario va sentado al volante.
+- **Pedir un vehículo** (botones "Pedir" o teclas F y G): el montacargas propio es una copia aparte, así los de la
+  simulación siguen en sus rutas; el camión es el de la báscula. Aparecen alineados con la mirada, en el primer
+  lado libre (adelante, a los costados o atrás, comprobado con rayos). Si el camión no entra en ningún lado, se lo
+  maneja donde está. El montacargas propio desaparece al salir del modo a pie.
+- **Sonido:** bocina (H) y pitido de marcha atrás, sintetizados con Web Audio (sin archivos).
 - **Camión:** una copia del camión del modelo (`Camion_Bascula_Ingreso`), estacionada donde el modelo tiene el
   que espera la báscula. En 1ª persona el ojo va delante del parabrisas (la cabina del modelo es maciza).
 - **Interfaz:** minimapa girado según el rumbo (máquinas por estado, rutas, montacargas, camión, norte), nombre
