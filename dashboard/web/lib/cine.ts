@@ -8,12 +8,13 @@
  * o seguir al camión de la cinemática. `escena` activa la animación del camión que se abre y del que parte.
  */
 import { create } from "zustand";
-import { byId, MACHINES, STATE_LABEL } from "./layout";
-import { utilization } from "./derive";
+import { byId, MACHINES, STAGES, STAGE_LABEL, STATE_LABEL } from "./layout";
+import { lambdaArrivals, timeAverages, utilization, WARMUP_S } from "./derive";
+import { useStore } from "./store";
 import type { Snapshot } from "./types";
 
 export type V3 = [number, number, number];
-export type CineId = "planta" | "elaborados" | "l7" | "paradas" | "cuello";
+export type CineId = "planta" | "elaborados" | "l7" | "lote" | "paradas" | "cuello";
 export type Escena = "camion_abre" | "camion_sale";
 
 export interface Shot {
@@ -34,6 +35,7 @@ export const CINES: { id: CineId; label: string; sub: string; icon: "factory" | 
   { id: "planta", label: "Toda la planta", sub: "Ciclo 1, Ciclo 2 y Elaborados", icon: "factory" },
   { id: "elaborados", label: "Elaborados", sub: "Presentación del sector", icon: "layers" },
   { id: "l7", label: "Del pallet a la caja", sub: "Proceso completo de L7", icon: "meat" },
+  { id: "lote", label: "Seguir un lote", sub: "Tiempo en cada etapa (Little)", icon: "layers" },
   { id: "paradas", label: "Paradas y gráficas", sub: "Cada máquina con sus gráficas", icon: "chart" },
   { id: "cuello", label: "Cuello de botella", sub: "Dónde se frena la línea", icon: "target" },
 ];
@@ -87,6 +89,32 @@ const PARADAS: Shot[] = ["Desencajado_L7", "Picadora_L7", "MezA_L7", "FormA_L7",
 const pct = (v: number) => `${Math.round(v * 100)} %`;
 
 /** El cuello de botella se arma con los datos del momento: las más ocupadas, las que esperan y las bloqueadas. */
+/** Tiempo medio de una unidad en la máquina, por la ley de Little (W = L / λ) después del calentamiento; null sin datos. */
+export function tiempoEnEtapa(h: Snapshot[], id: string): number | null {
+  if (h.length < 2 || h[h.length - 1].t <= WARMUP_S) return null;
+  const lam = lambdaArrivals(h, id);
+  return lam > 0 ? timeAverages(h, id).L / lam : null;
+}
+const durTxt = (s: number) =>
+  s < 90 ? `${Math.round(s)} s` : s < 5400 ? `${(s / 60).toLocaleString("es-AR", { maximumFractionDigits: 1 })} min` : `${(s / 3600).toLocaleString("es-AR", { maximumFractionDigits: 2 })} h`;
+
+/** Seguir un lote por las 8 etapas de la línea elegida (L7 si se ven las dos), con su tiempo en cada una. */
+function lote(h: Snapshot[]): Shot[] {
+  const l = useStore.getState().line === "L8" ? "L8" : "L7";
+  const etapas = STAGES.map((st) => MACHINES.find((m) => m.line === l && m.stage === st)).filter((m) => !!m);
+  let acum = 0;
+  return [
+    { maquina: etapas[0].id, viaje: 3, pausa: 4, titulo: `Seguir un lote · Línea ${l.slice(1)}`,
+      texto: "Un batch de 1500 kg recorre las 8 etapas. En cada una: el tiempo medio que pasa una unidad ahí según la simulación (ley de Little, W = L/λ, después del calentamiento de 2,5 h)." },
+    ...etapas.map((m, i): Shot => {
+      const w = tiempoEnEtapa(h, m.id);
+      if (w !== null) acum += w;
+      return { maquina: m.id, viaje: 3, pausa: 5, titulo: `${i + 1} · ${STAGE_LABEL[m.stage]}`,
+        texto: w === null ? "Todavía no hay datos suficientes: hace falta pasar el calentamiento de 2,5 h simuladas." : `Tiempo medio en la etapa: ${durTxt(w)} · acumulado desde el desencajado: ${durTxt(acum)}.` };
+    }),
+  ];
+}
+
 function cuello(h: Snapshot[]): Shot[] {
   const maq = MACHINES.filter((m) => m.kind === "machine");
   if (h.length < 10) {
@@ -121,6 +149,7 @@ export function armarCine(id: CineId, h: Snapshot[]): Shot[] {
     case "planta": return PLANTA;
     case "elaborados": return ELABORADOS;
     case "l7": return L7;
+    case "lote": return lote(h);
     case "paradas": return PARADAS;
     case "cuello": return cuello(h);
   }

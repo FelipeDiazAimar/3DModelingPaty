@@ -16,6 +16,17 @@ interface S {
   playT: number | null;
   playing: boolean;
   speed: number; // segundos simulados por segundo real
+  /** "walk" = recorrido a pie con el operario (Walk.tsx); "orbit" = cámara orbital */
+  mode: "orbit" | "walk";
+  view: "1p" | "3p";
+  /** vehículo que maneja el operario (id de montacargas o "camion") */
+  driving: string | null;
+  hint: string | null; // acción disponible con la tecla E (la escribe Walk)
+  plan: boolean; // a pie: vista de plano desde arriba
+  luz: boolean; // iluminación horneada sobre los pisos (planta_luz.jpg)
+  rend: boolean; // modo rendimiento: planta fundida en pocas mallas y menos resolución
+  calor: boolean; // mapa de calor de utilización en el piso
+  escenario: "E2" | "E3" | "E4" | null; // escenario comparado contra E1 en el 3D
   setHistory: (h: Snapshot[]) => void;
   addMany: (s: Snapshot[]) => void;
   setConnected: (b: boolean) => void;
@@ -25,11 +36,20 @@ interface S {
   setPlayT: (t: number | null) => void;
   setPlaying: (b: boolean) => void;
   setSpeed: (n: number) => void;
+  setMode: (m: S["mode"]) => void;
+  setView: (v: S["view"]) => void;
+  setPlan: (b: boolean) => void;
+  setLuz: (b: boolean) => void;
+  setRend: (b: boolean) => void;
+  setCalor: (b: boolean) => void;
+  setEscenario: (e: S["escenario"]) => void;
+  setDriving: (id: string | null) => void;
+  setHint: (h: string | null) => void;
 }
 
 export const useStore = create<S>((set) => ({
   history: [], connected: false, demo: process.env.NEXT_PUBLIC_DEMO === "1", selected: null, line: "Todas",
-  playT: null, playing: true, speed: 5,
+  playT: null, playing: true, speed: 5, mode: "orbit", view: "3p", driving: null, hint: null, plan: false, luz: false, rend: false, calor: false, escenario: null,
   setHistory: (history) => set({ history }),
   addMany: (batch) =>
     set((st) => {
@@ -48,6 +68,15 @@ export const useStore = create<S>((set) => ({
   setPlayT: (playT) => set({ playT }),
   setPlaying: (playing) => set({ playing }),
   setSpeed: (speed) => set({ speed }),
+  setMode: (mode) => set({ mode, driving: null, hint: null, selected: null, plan: false }),
+  setView: (view) => set({ view }),
+  setPlan: (plan) => set({ plan }),
+  setLuz: (luz) => set({ luz }),
+  setRend: (rend) => set({ rend }),
+  setCalor: (calor) => set({ calor }),
+  setEscenario: (escenario) => set({ escenario }),
+  setDriving: (driving) => set({ driving }),
+  setHint: (hint) => set({ hint }),
 }));
 
 /** Índice de la última muestra con t <= pedido. */
