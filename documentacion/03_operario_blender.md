@@ -1,33 +1,34 @@
 # Operario 3D (Blender)
 
-Archivo: `dashboard/web/public/models/operario.glb` (774 KB). Fuente: `blender/operario.blend`, que **no se
-versiona** (los `.blend` están en `.gitignore`); solo existe en la PC donde se hizo.
+Archivo: `dashboard/web/public/models/operario.glb` (1,1 MB). Se genera con `blender/operario_worker.py`
+(Blender 5.2, headless) a partir de `operario_worker.glb` del proyecto de Tecnologías para la Automatización
+(modelo "Worker", CC0). El operario anterior (11 huesos, procedural) fue reemplazado; su `.blend` queda en
+`blender/operario.blend` sin uso.
 
-## Cómo se hizo
+```
+blender -b --python blender/operario_worker.py -- <operario_worker.glb> dashboard/web/public/models/operario.glb [salida.blend]
+```
 
-Con el MCP de Blender (Blender 5.2), en una escena aparte llamada "Operario":
+## Qué hace el script
 
-- **Cuerpo:** el torso es un "loft" de anillos superelípticos con perfil humano (cadera, cintura, pecho, hombros,
-  cuello). Brazos y piernas usan el modificador Skin sobre un grafo de articulaciones (hombro, codo, muñeca,
-  cadera, rodilla, tobillo) con radios uniformes calibrados y subdivisión. El Skin no sirvió para el tronco porque
-  cruza los radios X/Y según la orientación de cada articulación.
-- **Cabeza:** cráneo y mandíbula, nariz, orejas, ojos, barbijo celeste y casco de seguridad.
-- **Ropa por zonas de material:** mameluco azul, chaleco verde reflectivo con dos cintas, cinturón, guantes y botas
-  blancas de PVC (planta de alimentos).
-- **Esqueleto:** 11 huesos (`hips`, `spine`, `head`, `upper_arm.L/R`, `forearm.L/R`, `thigh.L/R`, `shin.L/R`),
-  pesos automáticos; todo lo que está por encima del cuello va 100 % con `head`.
-- **Animaciones (10):** `Idle`, `Walk`, `Run`, `Jump`, `Sit` (manejar), `Interact`, `Wave`, `Yes`, `No`, `Dance`.
-  Cada acción anima todos los huesos (los que no usa, en reposo) para que no herede poses de otra.
-
-Exportado como GLB con animaciones en modo `ACTIONS`, eje Y arriba, frente hacia +Z de three.
+- **Base:** malla y rig del Worker (62 huesos con dedos, 4 mallas con esqueleto): cabeza de proporción natural,
+  hombros, manos con dedos y calzado con suela, rodilleras. Se quitan el bigote y los clips de combate.
+- **Ropa por material (cambia la paleta, no la malla):** mameluco azul (`Op_Mameluco`, rodilleras `Op_Mameluco_Rodilla`),
+  chaleco verde reflectivo (`Op_Chaleco`, `Op_Reflectivo`), casco naranja, guantes de nitrilo azules (`Op_Guante`),
+  botas blancas de PVC (`Op_Bota`, `Op_Suela`), barbijo celeste (`Op_Barbijo`) y cofia blanca (`Op_Cofia`).
+  Cofia y barbijo son caras de la cabeza recoloreadas; la cofia deja las orejas libres.
+- **Clips (10), nombres sin prefijo:** `Idle`, `Walk`, `Run`, `Interact`, `Wave` vienen del rig (renombrados de
+  `CharacterArmature|X`); `Jump`, `Sit` (manejar, muslos horizontales, manos al volante), `Yes`, `No` y `Dance` se
+  arman en el script por poses (FK por dirección de hueso) y se hornean a 24 fps.
 
 ## Dónde se usa
 
 - El operario que maneja el usuario (`Walk.tsx`).
-- Los 4 operarios de FlexSim (`Scene3D.tsx → Operarios`), clonados con `SkeletonUtils.clone`.
+- Los operarios de FlexSim (`Scene3D.tsx → Operarios`), clonados con `SkeletonUtils.clone`.
 
 ## Para cambiarlo
 
-Abrir `blender/operario.blend`, escena "Operario", editar y volver a exportar con las mismas opciones
-(`export_animation_mode="ACTIONS"`, `export_yup=True`, selección: `Operario` + `Operario_Cuerpo`). Si se cambian
-nombres de huesos o de acciones, hay que actualizar `Walk.tsx` (nombres de los clips) y `GESTOS`.
+Editar `blender/operario_worker.py` (colores, poses de los clips nuevos) y volver a correrlo. Si se cambian los
+nombres de clips, actualizar `Walk.tsx` y `GESTOS`. Los operarios de autoelevador y de cámaras dentro de
+`planta_v10.glb` (`Operario_Autoelevador_*`, `Operario_Camara_*`) son mallas estáticas armadas en
+`blender/construir_planta.py`, sin este rig: no usan este archivo.

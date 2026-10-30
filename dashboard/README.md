@@ -6,7 +6,7 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
 1. `cd dashboard/web` y `npm install` (la primera vez), luego `npm run dev`.
 2. Abrir http://localhost:3000.
 3. Abrir `PLANTASJ.fsm` en FlexSim y apretar Run: el nodo `Tools/Publicar` envía un JSON cada 60 s simulados a `POST /api/ingest`.
-   Sin FlexSim, el botón **Ver demo** carga datos sintéticos (marcados como DEMO).
+   Sin FlexSim, el botón **Ver demo** carga datos sintéticos (marcados como DEMO); en ese modo el encabezado no muestra el chip de estado.
 
 ## Piezas
 - `web/` — la web. Home = planta 3D completa (`public/models/planta_v10.glb`, la exporta `blender/exportar_glb.py`: Ciclo 1, Ciclo 2 y Elaborados L1–L8; ver `PLAN_MODELO_3D.md`) con pines por máquina; clic en un pin abre el panel con estadísticas. Secciones: Producción, Paradas, Colas y WIP, Velocidad, Balance de masa, Montacargas, Estadística, Escenarios.
@@ -22,7 +22,7 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
   2. calle C2–Elaborados; los de PT siguen por la calle sur y la este;
   3. pasa el muelle y entra marcha atrás describiendo un arco;
   4. sale por la mano contraria y pasa por la báscula de egreso (45 s) hasta la ruta.
-- El 3D oculta los camiones fijos de esos muelles y de la báscula, y clona el mismo camión del modelo.
+- El 3D oculta los camiones fijos de esos muelles y de la báscula, y clona el camión articulado del modelo (`Camion_Carga_PT_1`, con ruedas, dirección y acoplado animados).
 - Funciona igual en vivo, reproduciendo el historial y en el demo.
 
 ## Reproductor

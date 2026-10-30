@@ -14,6 +14,7 @@ import { fleetAt } from "@/lib/fleetPath";
 import { alongPath, pathBetween } from "@/lib/network";
 import { trucksAt } from "@/lib/trucks";
 import { fleetGround, forklifts } from "@/lib/live3d";
+import { crearCamion, rigMontacargas, stepRigs } from "@/lib/vehicleFx";
 import Walk from "@/components/Walk";
 import { CineRig, CineTruck } from "@/components/Cinematics";
 import { useCine } from "@/lib/cine";
@@ -300,16 +301,12 @@ function Escenario3D() {
 /* ---------- camiones animados (MP a Elaborados y expedición de PT; horarios de lib/trucks.ts) ---------- */
 function Trucks() {
   const { scene } = useGLTF("/models/planta_v10.glb");
-  // el mismo camión del modelo (el de la báscula), apoyado en el piso: cabina hacia +x local
+  // el camión articulado del modelo (tractor + acoplado, con ruedas sueltas), apoyado en el piso: cabina hacia +x local
   const slots = useMemo(() => {
-    const src = scene.getObjectByName("Camion_Bascula_Ingreso");
+    const src = scene.getObjectByName("Camion_Carga_PT_1");
     if (!src) return [] as THREE.Group[];
     return [0, 1, 2, 3].map(() => {
-      const c = src.clone(true);
-      c.position.set(0, 0, 0); c.rotation.set(0, 0, 0); c.scale.set(1, 1, 1);
-      c.traverse((o) => { o.visible = true; });
-      const g = new THREE.Group();
-      g.add(c);
+      const g = crearCamion(src).g;
       g.visible = false;
       return g;
     });
@@ -475,12 +472,17 @@ function Clouds() {
 function ForkliftModel({ id }: { id: string }) {
   const steel = "#5f6f8d", dark = "#252d40";
   return (
-    <group ref={(g) => { if (g) fk.set(id, g); else fk.delete(id); }} scale={1.35}>
-      {/* ruedas (motrices adelante, directrices atrás) */}
+    <group ref={(g) => { if (g) { fk.set(id, g); rigMontacargas(g); } else fk.delete(id); }} scale={1.35}>
+      {/* ruedas (motrices adelante, directrices atrás): userData.wheel = radio; el grupo es la dirección y su hijo el giro */}
       {[[-0.62, 0.55, 0.36], [0.62, 0.55, 0.36], [-0.6, -0.85, 0.3], [0.6, -0.85, 0.3]].map(([x, z, r], i) => (
-        <group key={i} position={[x, r, z]} rotation={[0, 0, Math.PI / 2]}>
-          <mesh><cylinderGeometry args={[r, r, 0.3, 20]} /><meshLambertMaterial color={dark} /></mesh>
-          <mesh position={[0, x > 0 ? 0.16 : -0.16, 0]}><cylinderGeometry args={[r * 0.5, r * 0.5, 0.04, 16]} /><meshLambertMaterial color="#aeb9d0" /></mesh>
+        <group key={i} position={[x, r, z]} userData={{ wheel: r, rear: z < 0 }}>
+          <group>
+            <group rotation={[0, 0, Math.PI / 2]}>
+              <mesh><cylinderGeometry args={[r, r, 0.3, 20]} /><meshLambertMaterial color={dark} /></mesh>
+              <mesh position={[0, x > 0 ? 0.16 : -0.16, 0]}><cylinderGeometry args={[r * 0.5, r * 0.5, 0.04, 16]} /><meshLambertMaterial color="#aeb9d0" /></mesh>
+              <mesh position={[0, x > 0 ? 0.19 : -0.19, 0]}><boxGeometry args={[0.03, 0.03, r * 0.9]} /><meshLambertMaterial color={dark} /></mesh>
+            </group>
+          </group>
         </group>
       ))}
       {/* chasis y contrapeso */}
@@ -490,8 +492,14 @@ function ForkliftModel({ id }: { id: string }) {
       {/* asiento */}
       <RoundedBox args={[0.7, 0.14, 0.6]} radius={0.05} position={[0, 1.04, -0.4]}><meshLambertMaterial color={dark} /></RoundedBox>
       <RoundedBox args={[0.7, 0.5, 0.12]} radius={0.05} position={[0, 1.3, -0.72]}><meshLambertMaterial color={dark} /></RoundedBox>
-      {/* volante */}
-      <mesh position={[0, 1.32, 0.12]} rotation={[0.9, 0, 0]}><torusGeometry args={[0.16, 0.025, 8, 20]} /><meshLambertMaterial color={dark} /></mesh>
+      {/* volante: gira con la dirección (grupo "volante", eje = normal del aro) */}
+      <group position={[0, 1.36, 0.16]} rotation={[0.9, 0, 0]}>
+        <group name="volante">
+          <mesh><torusGeometry args={[0.2, 0.03, 8, 20]} /><meshLambertMaterial color={dark} /></mesh>
+          <mesh><boxGeometry args={[0.4, 0.03, 0.03]} /><meshLambertMaterial color={dark} /></mesh>
+          <mesh><boxGeometry args={[0.03, 0.2, 0.03]} /><meshLambertMaterial color={dark} /></mesh>
+        </group>
+      </group>
       {/* techo de protección */}
       {[[-0.52, 0.55], [0.52, 0.55], [-0.52, -0.82], [0.52, -0.82]].map(([x, z], i) => (
         <mesh key={i} position={[x, 1.55, z]}><boxGeometry args={[0.06, 1.0, 0.06]} /><meshLambertMaterial color={dark} /></mesh>
@@ -542,6 +550,7 @@ function Projector() {
   const cam = useThree((s) => s.camera);
   const v = useRef(new THREE.Vector3());
   useFrame((_, dt) => {
+    stepRigs(dt);
     const st = useStore.getState();
     const h = st.history;
     const snap = h.length ? snapshotAt(h, clock.t) : undefined;

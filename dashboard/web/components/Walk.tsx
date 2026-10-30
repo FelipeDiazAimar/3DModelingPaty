@@ -7,6 +7,7 @@ import { acceleratedRaycast, MeshBVH } from "three-mesh-bvh";
 import { FLEET, MACHINES, STAGES, STAGE_LABEL, STATE_COLOR, byId } from "@/lib/layout";
 import type { LayoutItem } from "@/lib/types";
 import { forklifts } from "@/lib/live3d";
+import { crearCamion, rigMontacargas } from "@/lib/vehicleFx";
 import { EDGES, NODES } from "@/lib/network";
 import { useCine } from "@/lib/cine";
 import { clock, indexAt, useStore } from "@/lib/store";
@@ -85,7 +86,7 @@ const look = { yaw: Math.PI / 2, pitch: -0.12 }; // yaw 0 = mirar hacia -z; a pi
 // arranca en el pasillo central entre L7 y L8 (Blender (0, -4)), fuera de las rutas de los montacargas, mirando al oeste
 const me = { pos: new THREE.Vector3(0, 0, 4), vy: 0, onGround: true, ry: -Math.PI / 2, interact: 0, floor: 0 };
 
-interface Veh { id: string; label: string; obj: THREE.Object3D; fwd: THREE.Vector3; cx: number; half: number; side: number; vmax: number; speed: number; eye: THREE.Vector3; seat?: THREE.Vector3; dist: number }
+interface Veh { id: string; label: string; obj: THREE.Object3D; fwd: THREE.Vector3; cx: number; half: number; side: number; vmax: number; speed: number; eye: THREE.Vector3; seat?: THREE.Vector3; dist: number; cab?: { cabina: THREE.Object3D[]; interior: THREE.Object3D } }
 let truck: Veh | null = null;
 const live = { veh: null as Veh | null }; // vehículo que se maneja ahora: lo leen el minimapa y el velocímetro
 
@@ -181,34 +182,29 @@ function montacargas(id: string): Veh | null {
 let propio: THREE.Object3D | null = null;
 function montacargasPropio(scene: THREE.Object3D) {
   const molde = forklifts.get(FLEET[0].id);
-  if (!propio && molde) propio = molde.clone(true);
+  if (!propio && molde) { propio = molde.clone(true); rigMontacargas(propio); }
   if (!propio) return null;
   if (!propio.parent) scene.add(propio);
   forklifts.set("propio", propio as THREE.Group);
   return montacargas("propio");
 }
 
-/** Camión manejable: el mismo del modelo (cabina hacia +x local), estacionado donde la planta tiene el que espera la báscula. */
+/** Camión manejable: el articulado del modelo (cabina hacia +x local), estacionado donde la planta tiene el que espera la báscula. */
 function armarCamion(plant: THREE.Object3D): Veh | null {
-  const src = plant.getObjectByName("Camion_Bascula_Ingreso");
+  const src = plant.getObjectByName("Camion_Carga_PT_1");
   const spot = plant.getObjectByName("Camion_Espera_Bascula");
   if (!src) return null;
-  const c = src.clone(true);
-  c.position.set(0, 0, 0); c.rotation.set(0, 0, 0); c.scale.set(1, 1, 1);
-  c.traverse((o) => { o.visible = true; });
-  c.updateMatrixWorld(true);
-  const box = new THREE.Box3().setFromObject(c);
-  const g = new THREE.Group();
-  g.add(c);
+  const { g, cabina, interior, eye } = crearCamion(src);
+  const box = new THREE.Box3().setFromObject(g);
   if (spot) {
     spot.updateWorldMatrix(true, false);
     g.position.setFromMatrixPosition(spot.matrixWorld);
     const x = new THREE.Vector3(1, 0, 0).transformDirection(spot.matrixWorld);
     g.rotation.y = Math.atan2(-x.z, x.x);
   }
+  // 1ª persona: ojos del conductor (asiento izquierdo) dentro de la cabina, con el interior simple en lugar de la cabina maciza
   return { id: "camion", label: "camión", obj: g, fwd: new THREE.Vector3(1, 0, 0), cx: (box.max.x + box.min.x) / 2, half: (box.max.x - box.min.x) / 2,
-    side: (box.max.z - box.min.z) / 2 + 0.9, vmax: 11, speed: 0, // ojo apenas delante del parabrisas: la cabina del modelo es maciza por dentro
-    eye: new THREE.Vector3(box.max.x + 0.15, 2.4, -0.55), dist: 20 };
+    side: (box.max.z - box.min.z) / 2 + 0.9, vmax: 11, speed: 0, eye, dist: 20, cab: { cabina, interior } };
 }
 
 /** Caminar <-> correr en fase (como webgl_animation_skinning_blending de three.js): sigue pisando el mismo pie. */
@@ -492,6 +488,10 @@ export default function Walk() {
     }
 
     /* ----- cámara ----- */
+    if (cam3?.cab) { // cabina maciza afuera / interior simple adentro (solo en 1ª persona manejando)
+      const dentro = veh === cam3 && st.view === "1p";
+      cam3.cab.cabina.forEach((o) => { o.visible = !dentro; }); cam3.cab.interior.visible = dentro;
+    }
     const pc = cam as THREE.PerspectiveCamera, fov = enPlano ? 45 : 70;
     if (pc.fov !== fov) { pc.fov = fov; pc.updateProjectionMatrix(); }
     if (enPlano) {

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useLive } from "@/lib/useLive";
 import { useLatest, useStore } from "@/lib/store";
 import { Player } from "./Player";
@@ -14,6 +14,15 @@ import { CINES, useCine } from "@/lib/cine";
 export function simClock(t: number) {
   const d = Math.floor(t / 86400), h = Math.floor((t % 86400) / 3600), m = Math.floor((t % 3600) / 60);
   return `Día ${d + 1} · ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+/** Media query reactiva (false en SSR); permite montar una sola vez cada bloque responsivo. */
+function useMq(q: string) {
+  return useSyncExternalStore(
+    (cb) => { const m = window.matchMedia(q); m.addEventListener("change", cb); return () => m.removeEventListener("change", cb); },
+    () => window.matchMedia(q).matches,
+    () => false,
+  );
 }
 
 /** Barra de progreso fina al cambiar de sección. */
@@ -129,6 +138,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const setDemo = useStore((s) => s.setDemo);
   const last = useLatest();
   const [menu, setMenu] = useState(false);
+  const md = useMq("(min-width: 768px)");
+  const xl = useMq("(min-width: 1600px)");
   const waiting = !last;
   const home = path === "/";
   const ok = connected && !waiting;
@@ -138,7 +149,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <RouteBar />
       <MobileMenu open={menu} onClose={() => setMenu(false)} />
       <div className={home ? "pointer-events-none absolute inset-x-0 top-0 z-30" : "z-30"}>
-        <header className={`flex items-start gap-2 px-3 py-2 md:items-center md:gap-3 md:px-4 md:py-3 ${home ? "flex-wrap [&>*]:pointer-events-auto" : ""}`}>
+        <header className={`flex flex-wrap items-start gap-2 px-3 py-2 md:items-center md:gap-3 md:px-4 md:py-3 ${home ? "[&>*]:pointer-events-auto" : ""}`}>
           <Link href="/" className={`shrink-0 items-center gap-2.5 pr-1 ${home ? "hidden md:flex" : "flex"}`}>
             <span className="grid h-9 w-9 place-items-center rounded-2xl bg-brand text-base font-extrabold text-white shadow-[0_8px_18px_-6px_rgba(217,41,59,.7)] md:h-10 md:w-10">P</span>
             <span className="hidden whitespace-nowrap leading-tight md:block">
@@ -153,24 +164,22 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="hidden md:block min-[1800px]:hidden"><NavMenu /></div>
-          {home && <div className="hidden min-w-0 md:block min-[1600px]:hidden"><KpiChips compact fila /></div>}
-          {home && <div className="hidden min-w-0 min-[1600px]:block"><KpiChips /></div>}
-          <div className={`ml-auto hidden items-center gap-2 md:flex ${home ? "order-1 min-[1800px]:order-none" : ""}`}>
+          {home && md && <div className="min-w-0"><KpiChips compact={!xl} fila={!xl} /></div>}
+          <div className={`ml-auto hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex ${home ? "order-1 min-[1800px]:order-none" : ""}`}>
             <LineSelector className="flex" />
-            <div className="glass flex items-center gap-2 whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold">
+            {!demo && <div className="glass flex items-center gap-2 whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold">
               <span className={`live-dot h-2.5 w-2.5 rounded-full ${ok ? "bg-[var(--ok)]" : "bg-[var(--warn)]"}`} />
               {statusText}
               <span className="tnum font-semibold text-muted">{last ? simClock(last.t) : ""}</span>
-            </div>
-            <button onClick={() => setDemo(!demo)} className="glass whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold hover:bg-white">{demo ? "Salir del demo" : "Demo"}</button>
+            </div>}
+            <button onClick={() => setDemo(!demo)} className="glass whitespace-nowrap px-3 py-2.5 text-[13px] font-bold hover:bg-white">{demo ? "Salir del demo" : "Ver demo"}</button>
           </div>
           {/* teléfono: estado a la izquierda de la hamburguesa, ambos a la derecha */}
-          <div className={`ml-auto flex shrink-0 items-start gap-2 md:hidden ${home ? "order-1" : ""}`}>
-            {home && <KpiChips compact />}
-            <div className="glass flex h-10 items-center gap-1.5 whitespace-nowrap px-3 text-[11px] font-bold" title={statusText} aria-label={statusText}>
+          <div className={`ml-auto flex min-w-0 max-w-full flex-wrap items-start justify-end gap-2 md:hidden ${home ? "order-1" : ""}`}>
+            {home && !md && <KpiChips compact />}
+            {!demo && <div className="glass flex h-10 items-center gap-1.5 whitespace-nowrap px-3 text-[11px] font-bold" title={statusText} aria-label={statusText}>
               <span className={`live-dot h-2.5 w-2.5 rounded-full ${ok ? "bg-[var(--ok)]" : "bg-[var(--warn)]"}`} />
-              {demo && "DEMO"}
-            </div>
+            </div>}
             <button onClick={() => setMenu(true)} aria-label="Abrir menú" aria-expanded={menu} className="glass grid h-10 w-10 place-items-center">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden><path d="M4 7h16M4 12h16M4 17h16" /></svg>
             </button>

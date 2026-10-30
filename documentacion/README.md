@@ -1,18 +1,19 @@
 # Documentación de los cambios de la web 3D (octubre 2026)
 
 Cambios hechos sobre el dashboard web (`dashboard/web`) y sus assets de Blender, en la rama
-`web-3d-recorrido` (no en `main`). Todo es solo web: no cambia la simulación de FlexSim ni sus datos,
+`web-3d-realismo` (no en `main`). Todo es solo web: no cambia la simulación de FlexSim ni sus datos,
 salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 
 | # | Tema | Qué agrega |
 |---|------|-----------|
 | 1 | [Cómo iniciar](01_como_iniciar.md) | `iniciar_web.bat` y el acceso directo del escritorio |
-| 2 | [Recorrido a pie y vehículos](02_recorrido_a_pie.md) | Operario en 1ª/3ª persona, correr, saltar, gestos, manejar montacargas y camión, colisiones |
+| 2 | [Recorrido a pie y vehículos](02_recorrido_a_pie.md) | Operario en 1ª/3ª persona, correr, saltar, gestos, manejar montacargas y camión (articulado, con cámara en la cabina), ruedas, dirección y suspensión, colisiones |
 | 3 | [Operario 3D (Blender)](03_operario_blender.md) | Personaje riggeado con 10 animaciones, hecho con el MCP de Blender |
 | 4 | [Plano y puntos de interés](04_plano_y_puntos_de_interes.md) | Vista desde arriba, ir a un lugar con un clic, barra "Ir a" por etapa |
 | 5 | [Iluminación horneada y modo rendimiento](05_iluminacion_y_rendimiento.md) | Sombras horneadas en Blender (interruptor) y planta fundida para PCs lentas |
 | 6 | [Análisis en 3D](06_analisis_3d.md) | Operarios de FlexSim, mapa de calor, seguir un lote (Little), comparar escenarios |
 | 7 | [FlexSim y su MCP](07_flexsim_mcp.md) | Límite de 100 objetos, instalación del MCP, pendientes |
+| 8 | [Gráficos y pantalla completa](08_graficos_y_pantalla_completa.md) | Botón ⛶ en los gráficos, kg/h con ventana móvil de 1 h, encabezado con KPI y botón de demo |
 
 ## Archivos tocados
 
@@ -20,7 +21,12 @@ salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 |---|---|
 | `dashboard/web/components/Walk.tsx` | **Nuevo.** Recorrido a pie: operario, vehículos, colisiones, cámara, plano, puntos de interés, interfaz (minimapa, velocímetro) |
 | `dashboard/web/components/Controles3D.tsx` | **Nuevo.** Desplegable "Opciones de vista": rendimiento, iluminación, mapa de calor, escenarios |
-| `dashboard/web/components/Scene3D.tsx` | Luz horneada en los pisos, planta fundida, operarios de FlexSim, mapa de calor, comparación de escenarios; los montacargas se pueden manejar |
+| `dashboard/web/components/Scene3D.tsx` | Luz horneada en los pisos, planta fundida, operarios de FlexSim, mapa de calor, comparación de escenarios; los montacargas se pueden manejar; camiones animados con el articulado `Camion_Carga_PT_1` |
+| `dashboard/web/components/Chart.tsx` | Botón ⛶ y overlay de pantalla completa (× y Esc) en cada gráfico |
+| `dashboard/web/components/Shell.tsx` | KPI chips montados según el ancho; chip de estado oculto en demo; botón "Ver demo" / "Salir del demo" |
+| `dashboard/web/app/velocidad/page.tsx` | kg/h con ventana móvil de 1 h simulada |
+| `dashboard/web/lib/vehicleFx.ts` | **Nuevo.** Dinámica visual de camiones y montacargas: ruedas, dirección, suspensión y acoplado |
+| `blender/operario_worker.py` | **Nuevo, sin commit y en curso.** Pipeline del operario desde `operario_worker.glb` (ver [Operario 3D](03_operario_blender.md)) |
 | `dashboard/web/app/page.tsx` | Columna izquierda: "Recorrer a pie" primero y el desplegable de opciones |
 | `dashboard/web/lib/store.ts` | Estado nuevo: `mode`, `view`, `driving`, `hint`, `plan`, `luz`, `rend`, `calor`, `escenario` |
 | `dashboard/web/lib/cine.ts` | Cinemática "Seguir un lote" y `tiempoEnEtapa` (Little) |
@@ -40,6 +46,7 @@ salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 
 - `npx tsc --noEmit` sin errores; `npx eslint` sin errores nuevos (los 10 problemas que marca ya estaban en archivos no tocados).
 - `npx next build` pasa.
+- Lo de la verificación de arriba es anterior a la tanda de vehículos y gráficos (ruedas, camión articulado, 1ª persona en cabina, pantalla completa, kg/h y encabezado). Esa tanda no tiene verificación documentada.
 - Probado en Chrome con los datos de ejemplo: caminar, correr, saltar, gestos, subir y bajar del montacargas y del
   camión, 1ª/3ª persona, máquinas con la tecla E, plano, puntos de interés, iluminación, modo rendimiento, mapa de
   calor, seguir un lote y comparación de escenarios.
