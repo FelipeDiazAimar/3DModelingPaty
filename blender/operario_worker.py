@@ -1,6 +1,8 @@
 """Operario v2: parte de operario_worker.glb (proyecto de Tecnologías para la Automatización, CC0) y lo adapta a la
 planta de alimentos: mameluco azul, chaleco verde reflectivo, casco, cofia, barbijo, guantes de nitrilo y botas
 blancas; sin bigote. Renombra los clips del rig (sin prefijo) y arma los que faltan: Jump, Sit, Yes, No, Dance.
+Corrige el rig: Idle/Interact/Wave pierden las rotaciones de pierna (con el pie fijo estiraban una bota a 0,35 m y achicaban la otra),
+los clips armados aquí llevan el pie al tobillo y el Run se cierra sin salto en el loop.
 
 Uso (headless):
   blender -b --python blender/operario_worker.py -- <operario_worker.glb> <salida.glb> [<salida.blend>]
@@ -74,8 +76,8 @@ for a in list(bpy.data.actions):
     if n in KEEP: a.name = n; a.use_fake_user = True
     else: bpy.data.actions.remove(a)
 
-# ---------- clips nuevos: poses por dirección de hueso (FK) ----------
 A.animation_data_create(); bpy.context.view_layer.objects.active = A
+# ---------- clips nuevos: poses por dirección de hueso (FK) ----------
 FK = ["Body", "Hips", "Abdomen", "Torso", "Chest", "Neck", "Head", "Shoulder.L", "UpperArm.L", "LowerArm.L", "Wrist.L",
       "Shoulder.R", "UpperArm.R", "LowerArm.R", "Wrist.R", "UpperLeg.L", "LowerLeg.L", "UpperLeg.R", "LowerLeg.R", "Foot.L", "Foot.R"]
 V = lambda *a: Vector(a).normalized()
@@ -90,6 +92,17 @@ def aim(name, d, twist=0.0):
 def shift(name, d):  # desplaza el hueso d metros (mundo)
     pb = A.pose.bones[name]; upd()
     pb.matrix = Matrix.Translation(MW.inverted().to_3x3() @ Vector(d)) @ pb.matrix
+def pie_al_tobillo(s):
+    """El pie del rig es un objetivo de IK (hijo de Root) que el glTF no ata a la pierna: se lo lleva al tobillo, a 0,51 m
+    de la rodilla en la dirección de la pierna baja, para que la bota (pesos en LowerLeg y Foot) no se estire."""
+    upd()
+    ll, pf = A.pose.bones["LowerLeg." + s], A.pose.bones["Foot." + s]
+    ank = MW @ ll.head + wdir(ll) * 0.51
+    rest = MW @ A.data.bones["Foot." + s].head_local
+    pf.matrix = Matrix.Translation(MW.inverted() @ Vector((ank.x, ank.y, max(ank.z, rest.z)))) @ pf.matrix.to_3x3().to_4x4()
+def usar(a):
+    A.animation_data.action = a
+    if hasattr(A.animation_data, "action_slot") and a.slots: A.animation_data.action_slot = a.slots[0]
 def pose(f, dz=0.0, dy=0.0, lean=0.0, head=(0.0, 0.0), roll=0.0, arms=None, legs=None, spin=0.0, yaw=0.0):
     """Una pose en el cuadro f. arms/legs: {'L'|'R': (dir_alto, dir_bajo)} en mundo (x=lado). lean: inclina el torso hacia adelante (rad).
     head=(giro, cabeceo); spin: giro del torso sobre su eje; yaw: giro de cadera; roll: inclinación lateral del torso."""
@@ -100,17 +113,12 @@ def pose(f, dz=0.0, dy=0.0, lean=0.0, head=(0.0, 0.0), roll=0.0, arms=None, legs
     for n, k in (("Hips", 0.2), ("Abdomen", 0.3), ("Torso", 0.5), ("Chest", 0.7), ("Neck", 0.4)): aim(n, lean_d(lean * k, roll * k), (yaw if n == "Hips" else spin * 0.3))
     aim("Head", lean_d(head[1], 0), head[0])
     for s, sd in (("L", 1), ("R", -1)):
-        aim("Shoulder." + s, V(sd, 0, 0.05))
         u, l = (arms or {}).get(s, (V(sd * 0.12, 0, -1), V(sd * 0.1, -0.25, -1)))
+        aim("Shoulder." + s, V(sd, 0, 0.05 + 0.5 * max(0.0, u.z)))  # brazo arriba: sube la clavícula, si no el hombro se hunde en el cuello
         aim("UpperArm." + s, u); aim("LowerArm." + s, l); aim("Wrist." + s, l)
         u, l = (legs or {}).get(s, (V(0, 0, -1), V(0, 0, -1)))
         aim("UpperLeg." + s, u); aim("LowerLeg." + s, l)
-        # el pie sigue al tobillo: a 0,51 m de la rodilla en la dirección de la pierna baja
-        knee = MW @ A.pose.bones["LowerLeg." + s].head
-        ank = knee + Vector(l).normalized() * 0.51
-        rest = MW @ A.data.bones["Foot." + s].head_local
-        pf = A.pose.bones["Foot." + s]; upd()
-        pf.matrix = Matrix.Translation(MW.inverted() @ Vector((rest.x, ank.y, max(ank.z, rest.z)))) @ pf.matrix.to_3x3().to_4x4()
+        pie_al_tobillo(s)
     upd()
     for n in FK:
         pb = A.pose.bones[n]
@@ -135,9 +143,9 @@ def jump():  # en el aire: sube con brazos arriba, recoge las piernas y extiende
 
 def sit():  # manejando: muslos horizontales, rodillas a 90 grados, manos adelante al volante
     pose(1, lean=0.06, arms=arms_both(lambda s: (V(SIDE(s) * 0.3, -0.75, -0.55), V(SIDE(s) * 0.15, -1, 0.05))),
-         legs=arms_both(lambda s: (V(SIDE(s) * 0.04, -1, 0), V(0, -0.06, -1))))
+         legs=arms_both(lambda s: (V(SIDE(s) * 0.12, -1, 0), V(-SIDE(s) * 0.02, -0.06, -1))))
     pose(24, lean=0.07, arms=arms_both(lambda s: (V(SIDE(s) * 0.3, -0.75, -0.55), V(SIDE(s) * 0.15, -1, 0.05))),
-         legs=arms_both(lambda s: (V(SIDE(s) * 0.04, -1, 0), V(0, -0.06, -1))))
+         legs=arms_both(lambda s: (V(SIDE(s) * 0.12, -1, 0), V(-SIDE(s) * 0.02, -0.06, -1))))
 
 def yes():
     for i, (f, p) in enumerate(((1, 0), (7, 0.38), (13, -0.08), (19, 0.38), (25, -0.08), (31, 0.38), (40, 0))): pose(f, head=(0, p), lean=0.03)
@@ -146,13 +154,40 @@ def no():
 
 def dance():  # rebote con brazos alternados; el cuadro 49 repite el 1 para que cierre el ciclo
     hi = lambda s: (V(SIDE(s) * 0.5, -0.3, 0.8), V(SIDE(s) * 0.35, -0.5, 0.75))
-    lo = lambda s: (V(SIDE(s) * 0.45, -0.1, -0.85), V(SIDE(s) * 0.4, -0.6, -0.65))
+    lo = lambda s: (V(SIDE(s) * 0.55, -0.1, -0.8), V(SIDE(s) * 0.5, -0.5, -0.7))
     beats = [(1, 0, "L"), (13, -0.06, "R"), (25, 0, "R"), (37, -0.06, "L"), (49, 0, "L")]
     for f, dz, hand in beats:
         o = "R" if hand == "L" else "L"
-        pose(f, dz=dz, lean=0.08, roll=0.22 * SIDE(hand), spin=0.5 * SIDE(hand), yaw=0.25 * SIDE(o), head=(0.25 * SIDE(hand), 0.05),
+        pose(f, dz=dz, lean=0.08, roll=0.12 * SIDE(hand), spin=0.3 * SIDE(hand), yaw=0.25 * SIDE(o), head=(0.25 * SIDE(hand), 0.05),
              arms={hand: hi(hand), o: lo(o)},
              legs={hand: (V(SIDE(hand) * 0.25, -0.1, -1), V(SIDE(hand) * 0.2, 0.15, -1)), o: (V(-SIDE(o) * 0.0, -0.3, -0.95), V(0, 0.4, -0.9))})
+
+# ---------- retarget de los clips del rig ----------
+sc = bpy.context.scene
+def cuadros(a): return range(int(a.frame_range[0]), int(a.frame_range[1]) + 1)
+import re
+for n in ("Idle", "Interact", "Wave"):
+    # el rig original las animó con las piernas abiertas y el pie (objetivo de IK) quieto en el piso: el glTF no trae el IK y la
+    # suela de un pie se estiraba a 0,35 m y la del otro se achicaba a 0,20 (bind: 0,28). Sin esos canales quedan las piernas rectas
+    # del rig (la cadera no se mueve: el Body del Wave se inclinaba y también corría los tobillos), que llegan justo al pie.
+    cb = bpy.data.actions[n].layers[0].strips[0].channelbags[0]
+    for fc in [fc for fc in cb.fcurves if re.search(r'"(Body|(Upper|Lower)Leg\.[LR])"', fc.data_path)]: cb.fcurves.remove(fc)
+def cerrar_loop(n, m):
+    """Mezcla los últimos m cuadros hacia el primero (smoothstep) para que el ciclo cierre sin salto."""
+    a = bpy.data.actions[n]; usar(a)
+    bones = sorted({fc.data_path.split('"')[1] for fc in a.layers[0].strips[0].channelbags[0].fcurves if fc.data_path.startswith("pose.bones")})
+    f0, f1 = cuadros(a)[0], cuadros(a)[-1]
+    sc.frame_set(f0)
+    q0 = {b: A.pose.bones[b].rotation_quaternion.copy() for b in bones}; l0 = {b: A.pose.bones[b].location.copy() for b in bones}
+    for f in range(f1 - m, f1 + 1):
+        sc.frame_set(f)
+        t = (f - (f1 - m)) / m; t = t * t * (3 - 2 * t)
+        for b in bones:
+            pb = A.pose.bones[b]
+            pb.rotation_quaternion = pb.rotation_quaternion.slerp(q0[b], t); pb.location = pb.location.lerp(l0[b], t)
+            pb.keyframe_insert("rotation_quaternion", frame=f)
+            if any(fc.data_path.endswith(f'"{b}"].location') for fc in a.layers[0].strips[0].channelbags[0].fcurves): pb.keyframe_insert("location", frame=f)
+cerrar_loop("Run", 5)
 
 for n, fn, fr in (("Jump", jump, 24), ("Sit", sit, 24), ("Yes", yes, 40), ("No", no, 40), ("Dance", dance, 49)): clip(n, fn, fr)
 A.animation_data.action = bpy.data.actions["Idle"]

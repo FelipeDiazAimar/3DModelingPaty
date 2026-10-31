@@ -37,15 +37,25 @@ export function rigMontacargas(g: THREE.Object3D) {
   alta(g, g, { truck: false, L: 1.4, d: 0, kmax: 0.9, kp: 0.012, kr: 0.012, lim: 0.045, ratio: 3 }, wheels, g.getObjectByName("volante") ?? undefined);
 }
 
+/** Un cuerpo rígido en planta (para colisiones): rectángulo en el marco de `obj`, largo sobre `eje` ("x" o "z" local) y semiancho `b` sobre el otro. */
+export interface Cuerpo { obj: THREE.Object3D; eje: "x" | "z"; a0: number; a1: number; b: number }
+
+/** Agarre del volante: mano izquierda en (izq·r·cos a, r·sin a) del marco del volante, la derecha en el simétrico (rotan con él). */
+export const AGARRE = { a: 0.5 };
+const RV = 0.17; // radio del volante del camión (m)
+
 /** Camión articulado a partir de Camion_Carga_PT_1 (cabina en -x): tractor + acoplado con ruedas separables, frente +x. */
 export function crearCamion(src: THREE.Object3D) {
   const c = src.clone(true);
-  // la cola queda donde estaba la del modelo fundido (x = -9,04): el camión de PT mide 20 m y el fundido 18
-  c.position.set(1.11, 0, 0); c.rotation.set(0, Math.PI, 0); c.scale.set(1, 1, 1);
+  // el camión mide 18 m y su cola queda donde estaba la del modelo fundido (x = -9,04): el acoplado se corre 2 m hacia la cabina
+  // (su borde delantero queda 1 m por delante del pivote, como en un acoplado real; antes quedaba 1 m detrás y se veía un hueco)
+  c.position.set(-0.89, 0, 0); c.rotation.set(0, Math.PI, 0); c.scale.set(1, 1, 1);
   c.traverse((o) => { o.visible = true; });
   const por = (re: RegExp) => { const l: THREE.Object3D[] = []; c.children.forEach((o) => { if (re.test(o.name)) l.push(o); }); return l; };
   const quinta = por(/_Tractor_Quinta_Rueda$/)[0];
-  const cabina = por(/_Tractor_(Cabina|Parabrisas|Espejo_[LR]|Parrilla)$/); // lo que tapa la vista en 1ª persona
+  const sol = por(/_Tractor_Cabina$/);
+  const rojo = (sol[0] as THREE.Mesh | undefined)?.material as THREE.Material | undefined;
+  const cabina = { solida: sol, vista: por(/_Tractor_(Parabrisas|Espejo_[LR]|Parrilla)$/) }; // la maciza se oculta al manejar; el resto tapa la vista en 1ª persona
   const wheels: Wheel[] = [];
   for (const w of por(/_Rueda_\d[LR]$/)) {
     const piezas = [w, ...por(new RegExp(`${w.name}_Llanta$`))];
@@ -58,48 +68,118 @@ export function crearCamion(src: THREE.Object3D) {
     }
     wheels.push({ steer, spin: piezas, r: 0.5 });
   }
-  // acoplado: todo lo Semi_ (y los logos) cuelga de un pivote en la quinta rueda
+  // acoplado: todo lo Semi_ (y los logos) cuelga de un pivote exactamente sobre la quinta rueda
   const semi = new THREE.Group();
-  semi.position.set(quinta?.position.x ?? -4.6, 0, 0);
-  for (const o of por(/_(Semi|Logo)_/)) { o.position.x -= semi.position.x; semi.add(o); }
+  const px = quinta?.position.x ?? -4.6;
+  semi.position.set(px, 0, 0);
+  for (const o of por(/_(Semi|Logo)_/)) {
+    o.position.x -= px + 2;
+    if (/_Pata_/.test(o.name)) { o.position.set(1.3, 0.77, Math.sign(o.position.z) * 0.44); o.scale.y = 0.7; } // patas recogidas, bajo el chasis y entre las ruedas
+    else if (!/_(Rueda|Paragolpes)/.test(o.name)) o.position.y += 0.22; // el chasis apoya sobre la quinta y pasa por encima del chasis del tractor (1,1 m)
+    semi.add(o);
+  }
   c.add(semi);
 
-  // interior simple (la cabina del modelo es maciza): solo se ve en 1ª persona, con la cabina oculta
+  // cabina hueca (la del modelo es maciza): piso a 1,7 m y ventanas abiertas. Se ve al manejar, en 1ª y 3ª persona
   const interior = new THREE.Group();
   interior.visible = false;
   const mat = (col: string) => new THREE.MeshLambertMaterial({ color: col });
-  const caja = (w: number, h: number, d: number, x: number, y: number, z: number, col: string) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(col));
+  const caja = (w: number, h: number, d: number, x: number, y: number, z: number, col: string | THREE.Material | undefined) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof col === "string" ? mat(col) : col ?? mat("#b3202e"));
     m.position.set(x, y, z);
     interior.add(m);
   };
-  caja(2.3, 0.1, 2.5, -8.7, 1.05, 0, "#2b3447");       // piso
-  caja(2.3, 0.1, 2.5, -8.7, 3.75, 0, "#3a4560");       // techo
-  caja(0.7, 1.45, 2.4, -9.5, 1.725, 0, "#3a4560");     // tablero
-  caja(0.1, 2.7, 2.5, -7.6, 2.4, 0, "#2b3447");        // pared trasera
-  caja(2.3, 1.5, 0.1, -8.7, 1.8, 1.2, "#2b3447");      // puertas
-  caja(2.3, 1.5, 0.1, -8.7, 1.8, -1.2, "#2b3447");
-  caja(0.7, 0.2, 0.7, -8.55, 1.75, 0.55, "#1d2230");   // asiento del conductor (izquierda)
-  caja(0.12, 0.8, 0.7, -8.15, 2.25, 0.55, "#1d2230");
-  const colvo = new THREE.Group();                     // volante: inclinado hacia el conductor (+x)
-  colvo.position.set(-9.2, 2.75, 0.55); colvo.rotation.z = 0.5;
+  const PISO = 1.7, ASIENTO = 2.08, HX = -8.3, HZ = 0.55; // piso, tope del asiento y cadera del conductor (c-local)
+  caja(2.3, 0.1, 2.5, -8.7, PISO - 0.05, 0, "#2b3447");    // piso
+  caja(2.3, 0.1, 2.5, -8.7, 3.75, 0, rojo);                // techo
+  caja(0.1, 1.5, 2.5, -9.78, 1.75, 0, rojo);               // frente, bajo el parabrisas
+  caja(0.1, 0.3, 2.5, -9.78, 3.65, 0, rojo);               // cabecera
+  caja(0.7, 0.75, 2.4, -9.45, PISO + 0.375, 0, "#3a4560"); // tablero
+  caja(0.1, 2.7, 2.5, -7.6, 2.35, 0, rojo);                // pared trasera
+  for (const z of [1.2, -1.2]) {
+    caja(2.3, 1.3, 0.1, -8.7, 1.65, z, rojo);              // puertas: llegan a 2,3 m y la ventana queda abierta
+    caja(0.12, 1.4, 0.2, -9.78, 3.0, z * 0.96, rojo);      // pilares delantero y trasero
+    caja(0.12, 1.4, 0.2, -7.62, 3.0, z * 0.96, rojo);
+  }
+  caja(0.7, 0.12, 0.7, HX, ASIENTO - 0.06, HZ, "#1d2230");                               // asiento del conductor (izquierda)
+  caja(0.5, ASIENTO - 0.12 - PISO, 0.5, HX, (PISO + ASIENTO - 0.12) / 2, HZ, "#2b3447"); // pedestal
+  caja(0.12, 0.9, 0.7, HX + 0.2, ASIENTO + 0.45, HZ, "#1d2230");                         // respaldo
+  caja(0.12, 0.06, 0.1, HX - 0.75, PISO + 0.03, HZ - 0.12, "#161b28");                   // pedales
+  caja(0.12, 0.06, 0.1, HX - 0.75, PISO + 0.03, HZ + 0.12, "#161b28");
+  // volante de 0,34 m (el anterior, de 0,44, llenaba la vista en 1ª persona), inclinado hacia el conductor (+x)
+  const colvo = new THREE.Group();
+  colvo.position.set(HX - 0.42, ASIENTO + 0.42, HZ); colvo.rotation.z = 0.5;
   const plano = new THREE.Group(); plano.rotation.y = Math.PI / 2;
   const volante = new THREE.Group(); volante.name = "volante";
   const negro = mat("#161b28");
-  volante.add(new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 8, 24), negro));
-  volante.add(new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.03), negro));
-  volante.add(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 0.03), negro));
+  volante.add(new THREE.Mesh(new THREE.TorusGeometry(RV, 0.022, 8, 24), negro));
+  volante.add(new THREE.Mesh(new THREE.BoxGeometry(RV * 2, 0.025, 0.025), negro));
+  volante.add(new THREE.Mesh(new THREE.BoxGeometry(0.025, RV, 0.025), negro));
   plano.add(volante); colvo.add(plano); interior.add(colvo);
+  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.5, 10), negro); // columna: del tablero al volante
+  col.position.set(colvo.position.x - Math.cos(0.5) * 0.25, colvo.position.y - Math.sin(0.5) * 0.25, HZ);
+  col.rotation.z = 0.5 - Math.PI / 2;
+  interior.add(col);
   c.add(interior);
+  // marcador del conductor: origen = pies del operario, +z = adelante (la cadera queda a 0,81 m sobre el asiento)
+  const asiento = new THREE.Object3D();
+  asiento.position.set(HX, ASIENTO - 0.81, HZ); asiento.rotation.y = -Math.PI / 2;
+  c.add(asiento);
 
   const tilt = new THREE.Group();
   tilt.add(c);
   const g = new THREE.Group();
   g.add(tilt);
   g.updateMatrixWorld(true);
-  const eye = c.localToWorld(new THREE.Vector3(-8.6, 3.0, 0.55)); // ojos del conductor, en el marco del camión
-  alta(g, tilt, { truck: true, L: 4, d: 11.5, kmax: 0.25, kp: 0.006, kr: 0.006, lim: 0.025, ratio: 6 }, wheels, volante, semi);
-  return { g, cabina, interior, eye };
+  const eye = c.localToWorld(new THREE.Vector3(HX - 0.12, ASIENTO - 0.81 + 1.66, HZ)); // ojos del conductor, en el marco del camión
+  const cuerpos: Cuerpo[] = [{ obj: c, eje: "x", a0: -9.9, a1: -3.6, b: 1.3 }, { obj: semi, eje: "x", a0: -1, a1: 12.7, b: 1.3 }];
+  alta(g, tilt, { truck: true, L: 4, d: 9.5, kmax: 0.25, kp: 0.006, kr: 0.006, lim: 0.025, ratio: 4 }, wheels, volante, semi);
+  return { g, cabina, interior, eye, asiento, volante, semi, cuerpos, grip: { izq: -1 as const, r: RV } };
+}
+
+const v1 = new THREE.Vector3(), v2 = new THREE.Vector3(), v3 = new THREE.Vector3(), v4 = new THREE.Vector3();
+const q1 = new THREE.Quaternion(), q2 = new THREE.Quaternion(), q3 = new THREE.Quaternion();
+/** Gira el hueso `h` (en mundo, alrededor de su origen) para que su hijo, ahora en `from`, quede hacia `to`; w mezcla con la pose actual. */
+function apuntar(h: THREE.Object3D, from: THREE.Vector3, to: THREE.Vector3, w: number) {
+  const p = h.getWorldPosition(v1);
+  q1.setFromUnitVectors(v2.copy(from).sub(p).normalize(), v3.copy(to).sub(p).normalize()).multiply(h.getWorldQuaternion(q2));
+  q3.copy(h.parent!.getWorldQuaternion(q2)).invert().multiply(q1);
+  h.quaternion.slerp(q3, w);
+  h.updateWorldMatrix(false, true);
+}
+
+/** IK analítica de 2 huesos (UpperArm, LowerArm): la muñeca (hueso Wrist) llega a 9 cm de `grip` con el codo hacia `polo`.
+ *  Devuelve cuánto le falta a la mano para llegar (m; 0 si alcanza). */
+export function brazoA(op: THREE.Object3D, lado: "L" | "R", grip: THREE.Vector3, polo: THREE.Vector3, w: number) {
+  const sup = op.getObjectByName(`UpperArm${lado}`), inf = op.getObjectByName(`LowerArm${lado}`), mano = op.getObjectByName(`Wrist${lado}`);
+  if (!sup || !inf || !mano) return 0;
+  const A = sup.getWorldPosition(new THREE.Vector3()), B = inf.getWorldPosition(new THREE.Vector3()), W = mano.getWorldPosition(new THREE.Vector3());
+  const l1 = A.distanceTo(B), l2 = B.distanceTo(W);
+  const T = grip.clone().addScaledVector(grip.clone().sub(A).normalize(), -0.09);
+  const u = T.clone().sub(A), largo = u.length();
+  const d = THREE.MathUtils.clamp(largo, Math.abs(l1 - l2) + 1e-3, l1 + l2 - 1e-3);
+  u.normalize();
+  const a = (l1 * l1 - l2 * l2 + d * d) / (2 * d), h = Math.sqrt(Math.max(0, l1 * l1 - a * a));
+  const perp = polo.clone().addScaledVector(u, -polo.dot(u)).normalize();
+  apuntar(sup, B, A.clone().addScaledVector(u, a).addScaledVector(perp, h), w);
+  apuntar(inf, mano.getWorldPosition(v4), A.clone().addScaledVector(u, d), w);
+  return Math.max(0, largo - (l1 + l2));
+}
+
+/** Las dos manos del operario `op` sobre el volante `v`, en agarres que giran con él. w = 0 deja la animación, 1 la IK completa.
+ *  Devuelve el mayor faltante de alcance (m). */
+export function agarrarVolante(op: THREE.Object3D, v: THREE.Object3D, grip: { izq: 1 | -1; r: number }, w: number) {
+  if (w < 0.01) return 0;
+  op.updateWorldMatrix(true, true); v.updateWorldMatrix(true, false);
+  const q = op.getWorldQuaternion(new THREE.Quaternion());
+  let falta = 0;
+  for (const lado of ["L", "R"] as const) {
+    const s = lado === "L" ? grip.izq : -grip.izq;
+    const g = v.localToWorld(new THREE.Vector3(s * grip.r * Math.cos(AGARRE.a), grip.r * Math.sin(AGARRE.a), 0));
+    const polo = new THREE.Vector3(lado === "L" ? 0.6 : -0.6, -1, -0.3).applyQuaternion(q); // codo hacia abajo, afuera y atrás
+    falta = Math.max(falta, brazoA(op, lado, g, polo, w));
+  }
+  return falta;
 }
 
 /** Un cuadro: pone a cada vehículo (que ya se movió en este cuadro o en el anterior) su dinámica. */
@@ -125,7 +205,7 @@ export function stepRigs(rawDt: number) {
       for (const s of w.spin) { if (c.truck) s.rotation.y += ds / w.r; else s.rotation.x += ds / (w.r * sc); }
       if (w.steer) w.steer.rotation.y = c.truck ? delta : -delta; // el montacargas dirige con las ruedas traseras
     }
-    if (r.volante) r.volante.rotation.z = clamp(delta * c.ratio, -3.2, 3.2) * (c.truck ? 1 : -1);
+    if (r.volante) r.volante.rotation.z = clamp(delta * c.ratio, -2.4, 2.4) * (c.truck ? 1 : -1);
     if (r.semi) { // sigue al tractor por detrás: en curva estacionaria el ángulo es atan(d·k), con atraso por distancia
       r.gam += (-Math.atan(c.d * r.kap) - r.gam) * (1 - Math.exp(-Math.abs(ds) / 6));
       r.semi.rotation.y = clamp(r.gam, -1, 1);

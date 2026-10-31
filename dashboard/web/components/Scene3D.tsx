@@ -13,7 +13,7 @@ import { demoFleetAt } from "@/lib/demo";
 import { fleetAt } from "@/lib/fleetPath";
 import { alongPath, pathBetween } from "@/lib/network";
 import { trucksAt } from "@/lib/trucks";
-import { fleetGround, forklifts } from "@/lib/live3d";
+import { fleetGround, forklifts, huellaUsuario } from "@/lib/live3d";
 import { crearCamion, rigMontacargas, stepRigs } from "@/lib/vehicleFx";
 import Walk from "@/components/Walk";
 import { CineRig, CineTruck } from "@/components/Cinematics";
@@ -489,23 +489,28 @@ function ForkliftModel({ id }: { id: string }) {
       <RoundedBox args={[1.24, 0.62, 2.2]} radius={0.14} smoothness={4} position={[0, 0.66, -0.1]}><meshLambertMaterial color="#ff9a1f" /></RoundedBox>
       <RoundedBox args={[1.2, 0.8, 0.62]} radius={0.2} smoothness={4} position={[0, 0.82, -1.18]}><meshLambertMaterial color="#f07d00" /></RoundedBox>
       <RoundedBox args={[1.0, 0.12, 0.5]} radius={0.04} position={[0, 1.04, 0.62]}><meshLambertMaterial color="#e08800" /></RoundedBox>
-      {/* asiento */}
-      <RoundedBox args={[0.7, 0.14, 0.6]} radius={0.05} position={[0, 1.04, -0.4]}><meshLambertMaterial color={dark} /></RoundedBox>
-      <RoundedBox args={[0.7, 0.5, 0.12]} radius={0.05} position={[0, 1.3, -0.72]}><meshLambertMaterial color={dark} /></RoundedBox>
-      {/* volante: gira con la dirección (grupo "volante", eje = normal del aro) */}
-      <group position={[0, 1.36, 0.16]} rotation={[0.9, 0, 0]}>
+      {/* asiento (tope a 1,25: el conductor se sienta ahí con los pies sobre el chasis; el marcador "asiento" son sus pies) y pedales */}
+      <RoundedBox args={[0.5, 0.2, 0.5]} radius={0.03} position={[0, 1.07, -0.4]}><meshLambertMaterial color="#2b3447" /></RoundedBox>
+      <RoundedBox args={[0.7, 0.14, 0.6]} radius={0.05} position={[0, 1.182, -0.4]}><meshLambertMaterial color={dark} /></RoundedBox>
+      <RoundedBox args={[0.7, 0.5, 0.12]} radius={0.05} position={[0, 1.5, -0.55]}><meshLambertMaterial color={dark} /></RoundedBox>
+      <object3D name="asiento" position={[0, 0.652, -0.4]} />
+      {[-0.1, 0.1].map((x) => <mesh key={x} position={[x, 0.99, 0.14]}><boxGeometry args={[0.1, 0.04, 0.12]} /><meshLambertMaterial color="#161b28" /></mesh>)}
+      {/* volante: gira con la dirección (grupo "volante", eje = normal del aro) y las manos del operario lo siguen; la columna lo une al chasis */}
+      <group position={[0, 1.581, -0.104]} rotation={[0.9, 0, 0]}>
         <group name="volante">
           <mesh><torusGeometry args={[0.2, 0.03, 8, 20]} /><meshLambertMaterial color={dark} /></mesh>
           <mesh><boxGeometry args={[0.4, 0.03, 0.03]} /><meshLambertMaterial color={dark} /></mesh>
           <mesh><boxGeometry args={[0.03, 0.2, 0.03]} /><meshLambertMaterial color={dark} /></mesh>
         </group>
       </group>
+      <mesh position={[0, 1.327, 0.098]} rotation={[0.9 + Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.035, 0.035, 0.65, 10]} /><meshLambertMaterial color={dark} /></mesh>
+      <RoundedBox args={[0.3, 0.1, 0.3]} radius={0.03} position={[0, 1.03, 0.3]}><meshLambertMaterial color="#e08800" /></RoundedBox>
       {/* techo de protección */}
       {[[-0.52, 0.55], [0.52, 0.55], [-0.52, -0.82], [0.52, -0.82]].map(([x, z], i) => (
-        <mesh key={i} position={[x, 1.55, z]}><boxGeometry args={[0.06, 1.0, 0.06]} /><meshLambertMaterial color={dark} /></mesh>
+        <mesh key={i} position={[x, 1.62, z]}><boxGeometry args={[0.06, 1.3, 0.06]} /><meshLambertMaterial color={dark} /></mesh>
       ))}
-      <RoundedBox args={[1.22, 0.07, 1.5]} radius={0.03} position={[0, 2.06, -0.14]}><meshLambertMaterial color="#3a4560" /></RoundedBox>
-      <mesh position={[0, 2.16, -0.1]}><cylinderGeometry args={[0.07, 0.09, 0.12, 12]} /><meshLambertMaterial color="#ffd23f" /></mesh>
+      <RoundedBox args={[1.22, 0.07, 1.5]} radius={0.03} position={[0, 2.3, -0.14]}><meshLambertMaterial color="#3a4560" /></RoundedBox>
+      <mesh position={[0, 2.4, -0.1]}><cylinderGeometry args={[0.07, 0.09, 0.12, 12]} /><meshLambertMaterial color="#ffd23f" /></mesh>
       {/* mástil, carro y horquillas */}
       {[-0.42, 0.42].map((x) => (
         <mesh key={x} position={[x, 1.02, 1.12]}><boxGeometry args={[0.1, 2.0, 0.12]} /><meshLambertMaterial color={steel} /></mesh>
@@ -582,6 +587,10 @@ function Projector() {
             const step = VIS_MAX_SPEED * dt;
             if (total > step) { const q = alongPath(path, step / total); nx = q.x; ny = q.y; }
           }
+        }
+        if (vis && huellaUsuario.length) { // el vehículo que maneja el operario no se atraviesa: este espera si se acerca a su huella
+          const q = P(nx, ny, 0);
+          if (huellaUsuario.some((h) => Math.hypot(q.x - h.x, q.z - h.z) < h.r + 1.3)) { nx = vis.x; ny = vis.y; }
         }
         visFleet.set(f.id, { x: nx, y: ny });
         const prev = c.clone();

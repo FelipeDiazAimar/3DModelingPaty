@@ -6,8 +6,8 @@ import * as THREE from "three";
 import { acceleratedRaycast, MeshBVH } from "three-mesh-bvh";
 import { FLEET, MACHINES, STAGES, STAGE_LABEL, STATE_COLOR, byId } from "@/lib/layout";
 import type { LayoutItem } from "@/lib/types";
-import { forklifts } from "@/lib/live3d";
-import { crearCamion, rigMontacargas } from "@/lib/vehicleFx";
+import { forklifts, huellaUsuario } from "@/lib/live3d";
+import { agarrarVolante, crearCamion, rigMontacargas, type Cuerpo } from "@/lib/vehicleFx";
 import { EDGES, NODES } from "@/lib/network";
 import { useCine } from "@/lib/cine";
 import { clock, indexAt, useStore } from "@/lib/store";
@@ -20,7 +20,9 @@ import { clock, indexAt, useStore } from "@/lib/store";
 
 const PLANTA = "/models/planta_v10.glb";
 const WALK = 1.8, RUN = 4.5, GRAV = 20, JUMP = 5.5; // m/s, m/s², m/s
-const RADIO = 0.35, PASO = 0.5;                    // radio del operario; escalón que sube caminando (m)
+const RADIO = 0.4, PASO = 0.5;                     // radio del operario; escalón que sube caminando (m)
+const ALT_OP = [0.55, 1.0, 1.6];                   // rayos del operario: rodillas (por encima del escalón que sube), cintura y cabeza
+const ANIM = { Walk: 1.35, Run: 2.8 };             // m/s que avanza el cuerpo con cada clip a velocidad 1 (medido en operario.glb): timeScale = velocidad real / esto
 const UP = new THREE.Vector3(0, 1, 0);
 
 /* ---------- estado del recorrido (persiste entre entradas y salidas del modo) ---------- */
@@ -86,7 +88,15 @@ const look = { yaw: Math.PI / 2, pitch: -0.12 }; // yaw 0 = mirar hacia -z; a pi
 // arranca en el pasillo central entre L7 y L8 (Blender (0, -4)), fuera de las rutas de los montacargas, mirando al oeste
 const me = { pos: new THREE.Vector3(0, 0, 4), vy: 0, onGround: true, ry: -Math.PI / 2, interact: 0, floor: 0 };
 
-interface Veh { id: string; label: string; obj: THREE.Object3D; fwd: THREE.Vector3; cx: number; half: number; side: number; vmax: number; speed: number; eye: THREE.Vector3; seat?: THREE.Vector3; dist: number; cab?: { cabina: THREE.Object3D[]; interior: THREE.Object3D } }
+interface Veh {
+  id: string; label: string; obj: THREE.Object3D; fwd: THREE.Vector3; cx: number; half: number; side: number; vmax: number; speed: number;
+  eye: THREE.Vector3; dist: number;
+  asiento?: THREE.Object3D;                                 // marcador con los pies del conductor (origen) y su frente (+z)
+  volante?: THREE.Object3D; grip?: { izq: 1 | -1; r: number }; // volante que gira y agarres de las manos
+  cuerpos: Cuerpo[];                                        // huella para colisiones (el camión tiene tractor y acoplado)
+  orbita?: { dist: number; lat: number; alt: number };       // 3ª persona: cámara atrás, al costado izquierdo y arriba del conductor
+  cab?: { solida: THREE.Object3D[]; vista: THREE.Object3D[]; interior: THREE.Object3D };
+}
 let truck: Veh | null = null;
 const live = { veh: null as Veh | null }; // vehículo que se maneja ahora: lo leen el minimapa y el velocímetro
 
@@ -132,6 +142,9 @@ function golpe(from: THREE.Vector3, dir: THREE.Vector3, far: number) {
   return ray.intersectObjects(near, false)[0];
 }
 const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3();
+const seatQ = new THREE.Quaternion();             // orientación del conductor sentado (la del marcador "asiento" del vehículo)
+const ik = { w: 0 };                              // peso de la IK de brazos (sube al subirse, 0 a pie)
+const marcha = { x: 0, z: 0, v: 0 };              // velocidad horizontal real del operario (suavizada), para acoplar el paso al piso
 /** Altura del piso bajo p (busca desde un escalón arriba, así no toma techos ni entrepisos). */
 function piso(p: THREE.Vector3) {
   const h = golpe(tmp.copy(p).setY(p.y + PASO), tmp2.set(0, -1, 0), 60);
@@ -171,10 +184,13 @@ function montacargas(id: string): Veh | null {
   const obj = forklifts.get(id);
   if (!obj) return null;
   let v = vehs.get(id);
-  // modelo de Scene3D (escala 1,35, frente +z): asiento en (0, 1,04, -0,4)
-  if (!v) vehs.set(id, v = { id, label: FLEET.find((f) => f.id === id)?.label ?? "montacargas", obj, fwd: new THREE.Vector3(0, 0, 1), cx: 0, half: 1.9, side: 1.4, vmax: 4, speed: 0,
-    eye: new THREE.Vector3(0, 1.6, -0.3), seat: new THREE.Vector3(0, 0.47, -0.4), dist: 6 });
-  v.obj = obj;
+  // modelo de Scene3D (escala 1,35, frente +z): cuerpo de -1,5 a 2,45 (contrapeso a punta de horquillas) y 1,6 de ancho, en unidades del modelo
+  if (!v) vehs.set(id, v = { id, label: FLEET.find((f) => f.id === id)?.label ?? "montacargas", obj, fwd: new THREE.Vector3(0, 0, 1), cx: 0.65, half: 2.65, side: 1.4, vmax: 4, speed: 0,
+    eye: new THREE.Vector3(0, 1.6, -0.3), dist: 6, grip: { izq: 1, r: 0.2 }, cuerpos: [{ obj, eje: "z", a0: -1.5, a1: 2.45, b: 0.8 }] });
+  if (v.obj !== obj || !v.asiento) {
+    v.obj = obj; v.cuerpos[0].obj = obj;
+    v.asiento = obj.getObjectByName("asiento") ?? undefined; v.volante = obj.getObjectByName("volante") ?? undefined;
+  }
   return v;
 }
 
@@ -194,7 +210,7 @@ function armarCamion(plant: THREE.Object3D): Veh | null {
   const src = plant.getObjectByName("Camion_Carga_PT_1");
   const spot = plant.getObjectByName("Camion_Espera_Bascula");
   if (!src) return null;
-  const { g, cabina, interior, eye } = crearCamion(src);
+  const { g, cabina, interior, eye, asiento, volante, cuerpos, grip } = crearCamion(src);
   const box = new THREE.Box3().setFromObject(g);
   if (spot) {
     spot.updateWorldMatrix(true, false);
@@ -202,10 +218,110 @@ function armarCamion(plant: THREE.Object3D): Veh | null {
     const x = new THREE.Vector3(1, 0, 0).transformDirection(spot.matrixWorld);
     g.rotation.y = Math.atan2(-x.z, x.x);
   }
-  // 1ª persona: ojos del conductor (asiento izquierdo) dentro de la cabina, con el interior simple en lugar de la cabina maciza
+  // al manejar se oculta la cabina maciza y se ve la hueca (con el conductor sentado a la izquierda); en 1ª persona los ojos van en su cabeza
   return { id: "camion", label: "camión", obj: g, fwd: new THREE.Vector3(1, 0, 0), cx: (box.max.x + box.min.x) / 2, half: (box.max.x - box.min.x) / 2,
-    side: (box.max.z - box.min.z) / 2 + 0.9, vmax: 11, speed: 0, eye, dist: 20, cab: { cabina, interior } };
+    side: (box.max.z - box.min.z) / 2 + 0.9, vmax: 11, speed: 0, eye, dist: 20, asiento, volante, grip, cuerpos,
+    orbita: { dist: 6.5, lat: 4.5, alt: 3.4 }, cab: { solida: cabina.solida, vista: cabina.vista, interior } };
 }
+
+/* ---------- colisiones de cuerpos (operario y vehículos) ---------- */
+const tmpV = new THREE.Vector3();
+/** Esquinas en planta (x, z del mundo) de un cuerpo, en orden. */
+function esquinas(b: Cuerpo) {
+  b.obj.updateWorldMatrix(true, false);
+  const { a0, a1, b: w } = b;
+  const pts = b.eje === "x" ? [[a0, -w], [a1, -w], [a1, w], [a0, w]] : [[-w, a0], [-w, a1], [w, a1], [w, a0]];
+  return pts.map(([x, z]) => { b.obj.localToWorld(tmpV.set(x, 0, z)); return new THREE.Vector2(tmpV.x, tmpV.z); });
+}
+/** Teorema del eje separador entre dos rectángulos en planta (con 10 cm de margen). */
+function solapan(A: THREE.Vector2[], B: THREE.Vector2[]) {
+  for (const P of [A, B]) for (let i = 0; i < 4; i++) {
+    const e = P[(i + 1) % 4].clone().sub(P[i]), n = new THREE.Vector2(-e.y, e.x).normalize();
+    const pa = A.map((p) => p.dot(n)), pb = B.map((p) => p.dot(n));
+    if (Math.max(...pa) + 0.1 < Math.min(...pb) || Math.max(...pb) + 0.1 < Math.min(...pa)) return false;
+  }
+  return true;
+}
+const cuerpoDe = new Map<THREE.Object3D, Cuerpo>();
+/** Cuerpos de todos los demás vehículos (los montacargas de la simulación, el propio y el camión), menos los de `excluir`. */
+function ajenos(excluir: THREE.Object3D | null) {
+  const out: Cuerpo[] = [];
+  for (const g of forklifts.values()) {
+    if (g === excluir || !g.parent || !g.visible) continue;
+    let b = cuerpoDe.get(g);
+    if (!b) cuerpoDe.set(g, b = { obj: g, eje: "z", a0: -1.5, a1: 2.45, b: 0.8 });
+    out.push(b);
+  }
+  if (truck && truck.obj !== excluir) out.push(...truck.cuerpos);
+  return out;
+}
+function normalDe(h: THREE.Intersection, dir: THREE.Vector3) {
+  const n = h.face ? h.face.normal.clone().transformDirection(h.object.matrixWorld) : dir.clone().negate();
+  n.y = 0;
+  return n.lengthSq() > 1e-6 ? n.normalize() : dir.clone().negate();
+}
+/** ¿Choca el vehículo (en su pose actual) con la planta o con otro vehículo? Devuelve la normal de la pared (cero si es otro vehículo) o null.
+ *  Rayos desde el centro de cada cuerpo hacia puntos del borde cada ~1,2 m (esquinas y medios laterales) a 0,6 y 1,4 m de altura. */
+function choque(v: Veh) {
+  v.obj.updateMatrixWorld(true);
+  const dir = new THREE.Vector3();
+  for (const b of v.cuerpos) {
+    const E = esquinas(b), c = E[0].clone().add(E[2]).multiplyScalar(0.5);
+    for (let i = 0; i < 4; i++) {
+      const a = E[i], e = E[(i + 1) % 4], n = Math.ceil(a.distanceTo(e) / 1.2);
+      for (let k = 0; k < n; k++) {
+        const q = a.clone().lerp(e, k / n);
+        dir.set(q.x - c.x, 0, q.y - c.y);
+        const far = dir.length();
+        dir.normalize();
+        for (const y of [0.6, 1.4]) {
+          const h = golpe(tmp.set(c.x, v.obj.position.y + y, c.y), dir, far);
+          if (h) return normalDe(h, dir);
+        }
+      }
+    }
+  }
+  const otros = ajenos(v.obj);
+  for (const b of v.cuerpos) { const E = esquinas(b); if (otros.some((o) => solapan(E, esquinas(o)))) return new THREE.Vector3(); }
+  return null;
+}
+/** Aparta al operario (a pie) de las paredes (rayos en 8 direcciones a rodillas, cintura y cabeza) y de los vehículos. Desliza solo. */
+const DIRS8 = Array.from({ length: 8 }, (_, i) => new THREE.Vector3(Math.cos((i * Math.PI) / 4), 0, Math.sin((i * Math.PI) / 4)));
+function empujar(p: THREE.Vector3, paredes: boolean) {
+  if (paredes) for (let pasada = 0; pasada < 2; pasada++) {
+    let movio = false;
+    for (const d of DIRS8) for (const y of ALT_OP) {
+      const h = golpe(tmp.copy(p).setY(p.y + y), d, RADIO);
+      if (h) { p.addScaledVector(d, -(RADIO - h.distance)); movio = true; }
+    }
+    if (!movio) break;
+  }
+  const q = new THREE.Vector3(), l = new THREE.Vector3();
+  for (const b of ajenos(null)) {
+    b.obj.updateWorldMatrix(true, false);
+    const s = b.obj.scale.x, P = b.obj.worldToLocal(l.copy(p));
+    const a = b.eje === "x" ? P.x : P.z, t = b.eje === "x" ? P.z : P.x;
+    const ca = THREE.MathUtils.clamp(a, b.a0, b.a1), ct = THREE.MathUtils.clamp(t, -b.b, b.b);
+    if (a === ca && t === ct) { // adentro: sale por el borde más cercano
+      const d = [a - b.a0, b.a1 - a, t + b.b, b.b - t], m = Math.min(...d), i = d.indexOf(m);
+      const na = i === 0 ? b.a0 - RADIO / s : i === 1 ? b.a1 + RADIO / s : a, nt = i === 2 ? -b.b - RADIO / s : i === 3 ? b.b + RADIO / s : t;
+      q.set(b.eje === "x" ? na : nt, P.y, b.eje === "x" ? nt : na);
+    } else {
+      q.set(b.eje === "x" ? ca : ct, P.y, b.eje === "x" ? ct : ca);
+      const dd = Math.hypot(a - ca, t - ct) * s;
+      if (dd >= RADIO) continue;
+      const k = RADIO / s / Math.hypot(a - ca, t - ct); // el punto se aleja del borde hasta RADIO
+      q.set(b.eje === "x" ? ca + (a - ca) * k : ct + (t - ct) * k, P.y, b.eje === "x" ? ct + (t - ct) * k : ca + (a - ca) * k);
+    }
+    const w = b.obj.localToWorld(q);
+    p.x = w.x; p.z = w.z;
+  }
+}
+const libreOp = (p: THREE.Vector3) => {
+  const q = p.clone();
+  empujar(q, true);
+  return Math.hypot(q.x - p.x, q.z - p.z) < 0.02;
+};
 
 /** Caminar <-> correr en fase (como webgl_animation_skinning_blending de three.js): sigue pisando el mismo pie. */
 function enFase(prev: THREE.AnimationAction, next: THREE.AnimationAction) {
@@ -361,19 +477,40 @@ export default function Walk() {
       veh.speed += f * (veh.speed * f < 0 ? 9 : 3) * dt;
       if (!f) veh.speed *= 1 - Math.min(1, dt * 1.2);
       veh.speed = THREE.MathUtils.clamp(veh.speed, -veh.vmax * 0.4, veh.vmax * (run ? 1.4 : 1));
-      veh.obj.rotation.y -= s * 0.9 * dt * THREE.MathUtils.clamp(veh.speed / 3, -1, 1);
+      const dyaw = -s * 0.9 * dt * THREE.MathUtils.clamp(veh.speed / 3, -1, 1);
+      const r0 = veh.obj.rotation.y, v0 = veh.obj.position.clone();
+      veh.obj.rotation.y = r0 + dyaw;
       const dir = tmp2.copy(veh.fwd).applyAxisAngle(UP, veh.obj.rotation.y);
-      const centro = veh.obj.position.clone().addScaledVector(dir, veh.cx);
-      const paso = veh.speed * dt;
-      const sentido = dir.clone().multiplyScalar(Math.sign(paso) || 1);
-      if (Math.abs(paso) > 1e-4 && choca(centro, sentido, veh.half + Math.abs(paso) + 0.2, [0.6, 1.4])) veh.speed = 0;
-      else veh.obj.position.addScaledVector(dir, paso);
+      const paso = veh.speed * dt, avance = dir.clone().multiplyScalar(paso);
+      veh.obj.position.add(avance);
+      const n = Math.abs(paso) > 1e-4 || dyaw ? choque(veh) : null;
+      if (n) {
+        // choca: vuelve atrás y prueba (1) avanzar sin girar, (2) deslizar por la pared (se quita de la marcha lo que empuja contra ella),
+        // (3) girar sin avanzar. Si ya estaba apoyado en algo (recién pedido junto a una pared) no se traba.
+        veh.obj.rotation.y = r0; veh.obj.position.copy(v0);
+        const apoyado = !!choque(veh);
+        const desliza = n.lengthSq() > 0 ? avance.clone().addScaledVector(n, -Math.min(0, avance.dot(n))) : avance.clone().multiplyScalar(0);
+        let ok = false;
+        for (const [k, d] of [avance, desliza].entries()) {
+          if (d.lengthSq() < 1e-8) continue;
+          veh.obj.position.copy(v0).add(d);
+          if (apoyado || !choque(veh)) { ok = true; if (k) veh.speed *= 0.85; break; }
+        }
+        if (!ok) {
+          veh.obj.position.copy(v0); veh.obj.rotation.y = r0 + dyaw;
+          if (choque(veh) && !apoyado) { veh.obj.rotation.y = r0; veh.speed = 0; }
+          else veh.speed *= 0.5;
+        }
+      }
       veh.obj.position.y = piso(veh.obj.position);
       if (veh.speed < -0.2) { pitido.t -= dt; if (pitido.t <= 0) { tono(1050, 0.22); pitido.t = 0.9; } }
       else pitido.t = 0;
-      // el operario va sentado en el montacargas (en el camión queda adentro de la cabina)
-      if (veh.seat) { me.pos.copy(veh.obj.localToWorld(veh.seat.clone())); me.ry = veh.obj.rotation.y; }
-      else me.pos.copy(veh.obj.position);
+      // el operario va sentado en el asiento: su posición y orientación salen del marcador (siguen al cabeceo y balanceo del vehículo)
+      if (veh.asiento) {
+        veh.obj.updateMatrixWorld(true);
+        veh.asiento.getWorldPosition(me.pos); veh.asiento.getWorldQuaternion(seatQ);
+        me.ry = new THREE.Euler().setFromQuaternion(seatQ, "YXZ").y;
+      } else me.pos.copy(veh.obj.position);
     } else if (viaje.t < 1) {
       /* ----- viajando a un punto de interés o a donde se tocó en el plano ----- */
       viaje.t = Math.min(1, viaje.t + dt / 1.1);
@@ -391,12 +528,10 @@ export default function Walk() {
       if (mv.lengthSq() > 0) {
         moving = true;
         mv.normalize();
-        const step = (run ? RUN : WALK) * dt;
-        // eje por eje: si choca en x todavía puede deslizar por z (y al revés)
-        for (const [ax, d] of [[new THREE.Vector3(Math.sign(mv.x), 0, 0), mv.x * step], [new THREE.Vector3(0, 0, Math.sign(mv.z)), mv.z * step]] as const) {
-          if (Math.abs(d) < 1e-5) continue;
-          if (!choca(me.pos, ax, RADIO + Math.abs(d), [0.6, 1.4])) me.pos.addScaledVector(ax, Math.abs(d));
-        }
+        const paso = (run ? RUN : WALK) * dt;
+        // en sub-pasos de 25 cm: cada uno avanza y se aparta de paredes y vehículos (rayos radiales), así desliza en vez de frenar en seco
+        const sub = Math.ceil(paso / 0.25);
+        for (let k = 0; k < sub; k++) { me.pos.addScaledVector(mv, paso / sub); empujar(me.pos, true); }
         let da = Math.atan2(mv.x, mv.z) - me.ry;
         da = Math.atan2(Math.sin(da), Math.cos(da));
         me.ry += da * Math.min(1, dt * 12);
@@ -412,6 +547,7 @@ export default function Walk() {
       if (me.pos.y <= y0) { me.pos.y = y0; me.vy = 0; me.onGround = true; }
       else if (me.pos.y - y0 > 0.08) me.onGround = false;
       me.interact = Math.max(0, me.interact - dt);
+      if (!moving) empujar(me.pos, false); // parado: un vehículo que viene lo empuja, no lo atraviesa
       // gestos: solo parado en el piso; moverse o saltar los corta
       if (press.gesto && me.onGround && !moving) {
         const dur = actions[press.gesto]?.getClip().duration ?? 1;
@@ -427,8 +563,8 @@ export default function Walk() {
     /* ----- modelo y animación ----- */
     const g = body.current;
     g.position.copy(me.pos);
-    g.rotation.y = me.ry;
-    g.visible = enPlano || (st.view === "3p" && !(veh && !veh.seat));
+    if (veh?.asiento) g.quaternion.copy(seatQ); else g.rotation.set(0, me.ry, 0);
+    g.visible = enPlano || (st.view === "3p" && !(veh && !veh.asiento));
     // sombra de contacto: se achica y aclara con la altura del salto
     const alto = Math.min(1, (me.pos.y - me.floor) / 1.2);
     blob.current.visible = g.visible && !veh;
@@ -442,6 +578,25 @@ export default function Walk() {
       prev?.fadeOut(0.18);
       next?.fadeIn(0.18).play();
       clip.current = want;
+    }
+    // el paso se acopla a la velocidad real (si choca con una pared el paso se frena, no patina)
+    marcha.v += (Math.hypot(me.pos.x - marcha.x, me.pos.z - marcha.z) / Math.max(dt, 1e-3) - marcha.v) * Math.min(1, dt * 10);
+    marcha.x = me.pos.x; marcha.z = me.pos.z;
+    actions.Walk?.setEffectiveTimeScale(THREE.MathUtils.clamp(marcha.v / ANIM.Walk, 0.6, 2.2));
+    actions.Run?.setEffectiveTimeScale(THREE.MathUtils.clamp(marcha.v / ANIM.Run, 0.6, 2.2));
+    // conductor: manos del operario sobre el volante (IK de 2 huesos por brazo), que sigue girando con la dirección
+    ik.w = veh?.volante && veh.grip && g.visible ? Math.min(1, ik.w + dt * 4) : 0;
+    if (ik.w > 0 && veh?.volante && veh.grip) agarrarVolante(op, veh.volante, veh.grip, ik.w);
+    // huella del vehículo que se maneja: la flota de la simulación se frena antes de atravesarlo
+    huellaUsuario.length = 0;
+    if (veh) for (const b of veh.cuerpos) {
+      b.obj.updateWorldMatrix(true, false);
+      const n = Math.max(1, Math.ceil(((b.a1 - b.a0) * b.obj.scale.x) / 1.5));
+      for (let k = 0; k <= n; k++) {
+        const a = b.a0 + ((b.a1 - b.a0) * k) / n;
+        b.obj.localToWorld(tmpV.set(b.eje === "x" ? a : 0, 0, b.eje === "x" ? 0 : a));
+        huellaUsuario.push({ x: tmpV.x, z: tmpV.z, r: b.b * b.obj.scale.x });
+      }
     }
 
     /* ----- qué hay a mano para la tecla E ----- */
@@ -469,10 +624,16 @@ export default function Walk() {
 
     if (press.e) {
       press.e = false;
-      if (veh) { // bajarse por el costado izquierdo
+      if (veh) { // bajarse por el costado izquierdo (o el primer lugar libre alrededor, comprobado con rayos y contra los demás vehículos)
         const dir = tmp.copy(veh.fwd).applyAxisAngle(UP, veh.obj.rotation.y);
         const izq = new THREE.Vector3(dir.z, 0, -dir.x);
-        me.pos.copy(veh.obj.position).addScaledVector(dir, veh.cx + (veh.seat ? 0 : veh.half - 2)).addScaledVector(izq, -veh.side);
+        veh.obj.updateMatrixWorld(true);
+        const t = (veh.asiento ? veh.asiento.getWorldPosition(new THREE.Vector3()) : veh.obj.position).clone().sub(veh.obj.position).dot(dir); // dónde está el conductor a lo largo del vehículo
+        const ancho = Math.max(...veh.cuerpos.map((b) => b.b * b.obj.scale.x)) + RADIO + 0.4;
+        const lugares = [[t, ancho], [t, -ancho], [t + 1.5, ancho], [t - 1.5, ancho], [t + 1.5, -ancho], [t - 1.5, -ancho], [veh.cx - veh.half - RADIO - 0.6, 0], [veh.cx + veh.half + RADIO + 0.6, 0]]
+          .map(([a, l]) => { const q = veh.obj.position.clone().addScaledVector(dir, a).addScaledVector(izq, l); q.y = piso(q.setY(veh.obj.position.y + 3)); return q; });
+        me.pos.copy(lugares.find((q) => libreOp(q)) ?? lugares[0]);
+        empujar(me.pos, true);
         me.vy = 0;
         look.yaw += Math.atan2(-dir.x, -dir.z);
         veh.speed = 0;
@@ -488,9 +649,9 @@ export default function Walk() {
     }
 
     /* ----- cámara ----- */
-    if (cam3?.cab) { // cabina maciza afuera / interior simple adentro (solo en 1ª persona manejando)
-      const dentro = veh === cam3 && st.view === "1p";
-      cam3.cab.cabina.forEach((o) => { o.visible = !dentro; }); cam3.cab.interior.visible = dentro;
+    if (cam3?.cab) { // al manejar: cabina maciza fuera y hueca (con el conductor) adentro; en 1ª persona además sin parabrisas, espejos ni parrilla
+      const dentro = veh === cam3, uno = dentro && st.view === "1p";
+      cam3.cab.solida.forEach((o) => { o.visible = !dentro; }); cam3.cab.vista.forEach((o) => { o.visible = !uno }); cam3.cab.interior.visible = dentro;
     }
     const pc = cam as THREE.PerspectiveCamera, fov = enPlano ? 45 : 70;
     if (pc.fov !== fov) { pc.fov = fov; pc.updateProjectionMatrix(); }
@@ -507,6 +668,12 @@ export default function Walk() {
     if (st.view === "1p") {
       cam.position.copy(veh ? veh.obj.localToWorld(veh.eye.clone()) : me.pos.clone().setY(me.pos.y + 1.62));
       cam.lookAt(tmp.copy(cam.position).add(lookDir));
+    } else if (veh?.orbita) {
+      // camión: la cámara va atrás, al costado izquierdo (el del conductor) y arriba, mirando al conductor: se ven la cabina y él
+      const o = veh.orbita, foco = me.pos.clone().setY(me.pos.y + 1.4);
+      const atras = tmp.set(Math.sin(yaw), 0, Math.cos(yaw)), izq = tmp2.set(-Math.cos(yaw), 0, Math.sin(yaw));
+      cam.position.copy(foco).addScaledVector(atras, o.dist).addScaledVector(izq, o.lat).setY(foco.y + o.alt - look.pitch * 5);
+      cam.lookAt(foco);
     } else {
       const tgt = veh ? veh.obj.position.clone().addScaledVector(tmp2.copy(veh.fwd).applyAxisAngle(UP, veh.obj.rotation.y), veh.cx).setY(veh.obj.position.y + 2.2) : me.pos.clone().setY(me.pos.y + 1.5);
       let dist = veh ? veh.dist : 3.6;
