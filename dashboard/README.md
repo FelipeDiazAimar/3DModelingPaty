@@ -5,7 +5,7 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
 ## Cómo levantarlo
 1. `cd dashboard/web` y `npm install` (la primera vez), luego `npm run dev`.
 2. Abrir http://localhost:3000.
-3. Abrir `PLANTASJ.fsm` en FlexSim y apretar Run: el nodo `Tools/Publicar` envía un JSON cada 60 s simulados a `POST /api/ingest`.
+3. Abrir `PLANTASJ.fsm` en FlexSim y apretar Run: el nodo `Tools/Publicar` envía un JSON cada 10 s simulados a `POST /api/ingest`.
    Sin FlexSim, el botón **Ver demo** carga datos sintéticos (marcados como DEMO); en ese modo el encabezado no muestra el chip de estado.
 
 ## Piezas
@@ -31,7 +31,7 @@ FlexSim publica cada 10 s simulados (JSON compacto); el puente guarda hasta 40.0
 
 ## Dashboard en FlexSim
 Las gráficas de la web también están dentro del modelo en un solo dashboard, `PATY_Tablero` (menú Dashboards), con un único widget HTML y 7 hojas: Producción, Colas y WIP, Paradas, Velocidad, Balance de masa, Montacargas y Estadística, más los KPIs arriba. Es un solo navegador embebido (los gráficos nativos usan uno cada uno y frenaban la corrida) y no consume objetos de licencia (96/100).
-- `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 60 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
+- `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 10 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
 - `Tools/TableroHTML` (`tablero.fls`) arma el HTML con los gráficos en SVG (`svg_lineas.fls`, `svg_barras.fls`, `svg_estados.fls`); el estilo y el cambio de hoja están en `tablero_head.html` (`Tools/tableroHead`).
 - Escenarios E1–E4 no tiene hoja: sus resultados salen del Experimenter.
 

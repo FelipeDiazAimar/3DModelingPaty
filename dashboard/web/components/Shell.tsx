@@ -28,12 +28,12 @@ function useMq(q: string) {
 /** Barra de progreso fina al cambiar de sección. */
 function RouteBar() {
   const path = usePathname();
-  const [on, setOn] = useState(false);
+  const [doneFor, setDoneFor] = useState<string | null>(null);
   useEffect(() => {
-    setOn(true);
-    const id = setTimeout(() => setOn(false), 650);
+    const id = setTimeout(() => setDoneFor(path), 650);
     return () => clearTimeout(id);
   }, [path]);
+  const on = doneFor !== path; // activo desde que cambia path hasta 650 ms después
   return <div aria-hidden className={`route-bar ${on ? "route-bar-on" : ""}`} />;
 }
 
