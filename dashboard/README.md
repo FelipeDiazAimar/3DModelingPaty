@@ -34,6 +34,14 @@ Las gráficas de la web también están dentro del modelo en un solo dashboard, 
 - `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 10 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
 - `Tools/TableroHTML` (`tablero.fls`) arma el HTML con los gráficos en SVG (`svg_lineas.fls`, `svg_barras.fls`, `svg_estados.fls`); el estilo y el cambio de hoja están en `tablero_head.html` (`Tools/tableroHead`).
 - Escenarios E1–E4 no tiene hoja: sus resultados salen del Experimenter.
+- Alineado con la web:
+  - **En falla** es solo el estado 20 de FlexSim (antes también contaba el 12).
+  - Categorías y colores de la web: Inactiva `#8b97a8`, Procesando `#16a37f`, Bloqueada `#e08a1e`, Sin material `#d6a21a`, En falla `#d5334b`.
+  - Muestreo y historial cada 10 s simulados.
+  - Gráfico de PT acumulado con la línea punteada **Meta del programa** a 3 pal/h (72 pallets/día entre L7 y L8).
+  - KPI **pal/h PT (ventana 4 h)**: pallets PT de las últimas 4 h simuladas.
+  - kg/h L7 / L8: ventana móvil de 1 h simulada.
+- **Probado en FlexSim (02/11/2026):** los `.fls` del tablero se cargaron en `PLANTASJ.fsm`, el historial se arma cada 10 s y `TableroHTML` genera el HTML sin errores. Falta confirmar que kg/h coincida con el de la web tras 1 h de producción. Detalle en `documentacion/07_flexsim_mcp.md`.
 
 ## Componentes propios
 Scrollbar (`CScroll`), selector de sección (`NavMenu`), íconos (`Icons`), tablas (`Table`, `StatePill`, `MiniBar`) y reproductor (`Player`). Sin librerías de UI externas.

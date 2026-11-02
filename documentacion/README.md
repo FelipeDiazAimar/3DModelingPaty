@@ -25,6 +25,9 @@ salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 | `dashboard/web/components/Chart.tsx` | Botón ⛶ y overlay de pantalla completa (× y Esc) en cada gráfico |
 | `dashboard/web/components/Shell.tsx` | KPI chips montados según el ancho; chip de estado oculto en demo; botón "Ver demo" / "Salir del demo" |
 | `dashboard/web/app/velocidad/page.tsx` | kg/h con ventana móvil de 1 h simulada |
+| `dashboard/web/app/estadistica/page.tsx` | Utilización por etapa calculada de la simulación en curso (promedio de máquinas, filtro de línea, "MAYOR UTILIZACIÓN") |
+| `dashboard/web/app/produccion/page.tsx` | Lectura de `?m=` con `useSyncExternalStore` en vez de `setState` en un efecto (lint en 0 errores) |
+| `dashboard/web/components/NavMenu.tsx` | Menú de secciones sin `setState` en efectos (lint en 0 errores) |
 | `dashboard/web/lib/vehicleFx.ts` | **Nuevo.** Dinámica visual de camiones y montacargas: ruedas, dirección, suspensión y acoplado |
 | `blender/operario_worker.py` | **Nuevo, sin commit y en curso.** Pipeline del operario desde `operario_worker.glb` (ver [Operario 3D](03_operario_blender.md)) |
 | `dashboard/web/app/page.tsx` | Columna izquierda: "Recorrer a pie" primero y el desplegable de opciones |
@@ -38,13 +41,14 @@ salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 | `dashboard/web/public/models/planta_luz.jpg` / `.json` | **Nuevos.** Luz horneada sobre los pisos y su rectángulo |
 | `blender/hornear_piso.py` | **Nuevo.** Hornea `planta_luz.jpg` con Blender en segundo plano |
 | `dashboard/flexsim/publicador.fls` | El publicador también manda los 4 operarios (falta cargarlo en `PLANTASJ.fsm`) |
+| `dashboard/flexsim/indicadores.fls`, `arranca_indicadores.fls`, `tablero.fls`, `svg_estados.fls`, `svg_lineas.fls` | Tablero de FlexSim alineado con la web (falla solo estado 20, muestreo cada 10 s, meta 3 pal/h, KPI de 4 h). Cargados y probados en FlexSim el 02/11/2026 (el tablero se arma; falta comparar kg/h con la web) |
 | `iniciar_web.bat` | **Nuevo.** Arranca la web y abre el navegador |
 
 `planta_v10.glb` **no se modificó**: todo lo visual nuevo va en archivos aparte o se aplica en el navegador.
 
 ## Verificación
 
-- `npx tsc --noEmit` sin errores; `npx eslint` sin errores nuevos (los 10 problemas que marca ya estaban en archivos no tocados).
+- `npx tsc --noEmit` sin errores; `npx eslint` con 0 errores (quedan 6 warnings que ya estaban).
 - `npx next build` pasa.
 - Lo de la verificación de arriba es anterior a la tanda de vehículos y gráficos (ruedas, camión articulado, 1ª persona en cabina, pantalla completa, kg/h y encabezado). Esa tanda no tiene verificación documentada.
 - Probado en Chrome con los datos de ejemplo: caminar, correr, saltar, gestos, subir y bajar del montacargas y del

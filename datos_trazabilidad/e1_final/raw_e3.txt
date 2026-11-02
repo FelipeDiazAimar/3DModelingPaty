@@ -1,0 +1,12 @@
+# E3 (estres por fallas: Tools/mttrK = 1,25 sobre formadoras y tuneles), 24 h, arranque vacio. Corrido en FlexSim 2026 con PLANTASJ.fsm el 2026-11-02.
+# R|rep|QPaletizado_L7|QPaletizado_L8|SinkExpedicion|cajas_L7|cajas_L8   (acumulados a las 24 h)
+R|1|45|45|90|6594|6606
+R|2|44|45|89|6435|6606
+R|3|44|45|89|6432|6606
+R|4|45|45|90|6594|6564
+R|5|44|44|88|6443|6369
+R|6|45|45|90|6594|6606
+R|7|45|45|90|6594|6576
+R|8|44|44|88|6486|6452
+R|9|45|45|90|6535|6606
+R|10|45|45|90|6594|6606

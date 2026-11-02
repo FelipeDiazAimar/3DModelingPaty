@@ -34,3 +34,17 @@ sección Velocidad y el encabezado con los KPI y el botón de demo.
 - **Botón de demo:** en escritorio dice **"Ver demo"** o **"Salir del demo"** (antes decía "Demo"). En teléfono
   está al final del menú lateral, con el mismo texto y ocupando todo el ancho.
 - El encabezado puede envolverse en pantallas angostas en lugar de cortar los elementos.
+
+## Estadística: utilización por etapa (`app/estadistica/page.tsx`)
+
+- Antes, las barras del perfil de utilización eran porcentajes fijos (68 %, 52 %, 89 %…) marcados como
+  "Estimación estática". Ahora se calculan de la simulación en curso y ya no hay valores fijos.
+- Utilización de una máquina = % de muestras en estado **procesando**, acumuladas desde el inicio de la corrida.
+- Utilización de una etapa = promedio de las máquinas de esa etapa. Con el filtro de línea promedia solo las
+  máquinas de esa línea; con "Todas", las de las dos líneas.
+- Incluye el warm-up: no se descartan las primeras muestras. El subtítulo indica la línea y cuántas muestras hay.
+- Si una etapa no tiene datos, la barra no tiene valor y se muestra **"—"**.
+- La etapa con mayor utilización se marca en rojo con la etiqueta **MAYOR UTILIZACIÓN** (antes decía "CUELLO DE
+  BOTELLA"). Es la candidata a cuello de botella: hay que contrastarla con Distribución de Estados.
+- Lint de la web: 0 errores (`npx eslint`). Los efectos con `setState` de `NavMenu`, `RouteBar` y `Produccion` se
+  reemplazaron.
