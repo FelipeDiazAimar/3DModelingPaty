@@ -41,7 +41,7 @@ Las gráficas de la web también están dentro del modelo en un solo dashboard, 
   - Gráfico de PT acumulado con la línea punteada **Meta del programa** a 3 pal/h (72 pallets/día entre L7 y L8).
   - KPI **pal/h PT (ventana 4 h)**: pallets PT de las últimas 4 h simuladas.
   - kg/h L7 / L8: ventana móvil de 1 h simulada.
-- **Probado en FlexSim (02/11/2026):** los `.fls` del tablero se cargaron en `PLANTASJ.fsm`, el historial se arma cada 10 s y `TableroHTML` genera el HTML sin errores. Falta confirmar que kg/h coincida con el de la web tras 1 h de producción. Detalle en `documentacion/07_flexsim_mcp.md`.
+- **Probado en FlexSim (02/11/2026):** los `.fls` del tablero se cargaron en `PLANTASJ.fsm`, el historial se arma cada 10 s y `TableroHTML` genera el HTML sin errores. El kg/h del tablero coincide con la fórmula de la web (verificado a las 4 h). Detalle en `documentacion/07_flexsim_mcp.md`.
 
 ## Componentes propios
 Scrollbar (`CScroll`), selector de sección (`NavMenu`), íconos (`Icons`), tablas (`Table`, `StatePill`, `MiniBar`) y reproductor (`Player`). Sin librerías de UI externas.

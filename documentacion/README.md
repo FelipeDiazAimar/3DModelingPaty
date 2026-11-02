@@ -41,7 +41,7 @@ salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 | `dashboard/web/public/models/planta_luz.jpg` / `.json` | **Nuevos.** Luz horneada sobre los pisos y su rectángulo |
 | `blender/hornear_piso.py` | **Nuevo.** Hornea `planta_luz.jpg` con Blender en segundo plano |
 | `dashboard/flexsim/publicador.fls` | El publicador también manda los 4 operarios (falta cargarlo en `PLANTASJ.fsm`) |
-| `dashboard/flexsim/indicadores.fls`, `arranca_indicadores.fls`, `tablero.fls`, `svg_estados.fls`, `svg_lineas.fls` | Tablero de FlexSim alineado con la web (falla solo estado 20, muestreo cada 10 s, meta 3 pal/h, KPI de 4 h). Cargados y probados en FlexSim el 02/11/2026 (el tablero se arma; falta comparar kg/h con la web) |
+| `dashboard/flexsim/indicadores.fls`, `arranca_indicadores.fls`, `tablero.fls`, `svg_estados.fls`, `svg_lineas.fls` | Tablero de FlexSim alineado con la web (falla solo estado 20, muestreo cada 10 s, meta 3 pal/h, KPI de 4 h). Cargados y probados en FlexSim el 02/11/2026 (el tablero se arma y kg/h coincide con la web) |
 | `iniciar_web.bat` | **Nuevo.** Arranca la web y abre el navegador |
 
 `planta_v10.glb` **no se modificó**: todo lo visual nuevo va en archivos aparte o se aplica en el navegador.

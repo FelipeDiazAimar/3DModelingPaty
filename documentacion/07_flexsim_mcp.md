@@ -64,8 +64,9 @@ FlexScript no interpreta `ó` en rutas: los archivos se copiaron a una carpeta s
 
 - **Verificado:** el historial se arma cada 10 s (370 filas a 1,03 h, 28 columnas; la columna 28 es la meta de 3 pal/h) y
   `Tools/TableroHTML` genera el HTML (107 KB) con la meta, "En falla" y la tasa de 4 h, sin errores nuevos en la consola.
-- **No verificado:** que kg/h del tablero coincida con el de la web después de 1 h de producción, y el aspecto visual del
-  tablero dentro de FlexSim. Con 8.640 filas de historial por corrida de 24 h el modelo no se enlenteció en las réplicas.
+- **kg/h verificado:** a las 4 h, con ventana de 1 h, el historial da 1.550 kg/h (L7) y 1.600 kg/h (L8), igual que
+  `(cajas ahora - cajas 1 h antes) x 5` que usa la web.
+- **No verificado:** el aspecto visual del tablero dentro de FlexSim. Con 8.640 filas de historial por corrida de 24 h el modelo no se enlenteció en las réplicas.
 
 ### Cómo correr réplicas rápido
 
