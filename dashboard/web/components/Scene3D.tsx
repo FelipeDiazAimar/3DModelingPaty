@@ -16,6 +16,7 @@ import { trucksAt } from "@/lib/trucks";
 import { fleetGround, forklifts, huellaUsuario } from "@/lib/live3d";
 import { crearCamion, rigMontacargas, stepRigs } from "@/lib/vehicleFx";
 import Walk from "@/components/Walk";
+import OperariosPlanta from "@/components/OperariosPlanta";
 import { CineRig, CineTruck } from "@/components/Cinematics";
 import { useCine } from "@/lib/cine";
 
@@ -37,7 +38,7 @@ const COLORS: Record<string, string> = {
 const HIDE = new Set(["M_Campo", "M_Pasto"]); // las reemplaza la isla de pasto
 // camiones fijos que reemplazan los animados (muelles de MP y PT de la nave original y los de la báscula)
 // (también la plantilla del camión de la cinemática, y cajas y bandejas fijas: en la web se mueven)
-const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula|CamionCine|Caja_PATY_|Hamburguesas_)/;
+const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula|CamionCine|Caja_PATY_|Hamburguesas_|Operario_|Op_)/; // Operario_* y Op_* (KIT_Operario): los empleados estáticos, los reemplaza OperariosPlanta
 
 /* ---------- iluminación horneada sobre los pisos (blender/hornear_piso.py): se prende y apaga sin recargar ---------- */
 const luzU = { uLuz: { value: null as THREE.Texture | null }, uOn: { value: 0 }, uRect: { value: new THREE.Vector4(0, 0, 1, 1) } };
@@ -834,6 +835,7 @@ export default function Scene3D() {
           <Plant />
           {rend && <PlantaFundida />}
           <Operarios />
+          <OperariosPlanta />
           <Trucks />
           <CineTruck />
         </Suspense>

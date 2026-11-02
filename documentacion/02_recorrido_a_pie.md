@@ -95,12 +95,16 @@ El signo es correcto: al girar a la izquierda el acoplado queda con ángulo nega
   comprobado con rayos y contra los demás vehículos.
 - **Flota de la simulación:** los montacargas que sigue la simulación esperan antes de entrar a la huella del vehículo que maneja el operario
   (`huellaUsuario` en `lib/live3d.ts`, margen 1,3 m). No esquivan al operario a pie ni a los camiones animados.
+- **Empleados de la planta:** los 47 clones animados de `OperariosPlanta.tsx` no están en la planta que recorre `Walk.tsx` (y las mallas
+  estáticas `Operario_*` están ocultas, así que `traverseVisible` no las toma): se los puede atravesar, como a los operarios de FlexSim.
+  Cerca de ellos (< 25 m) toman y apoyan cajas de 5 kg o pulsan paneles con IK de brazos (ver `03_operario_blender.md`); las cajas tampoco colisionan.
 - **Qué se probó:** las funciones de empuje y el teorema del eje separador, en node contra paredes simuladas (desliza por la pared y por
   la esquina; el operario dentro de un montacargas sale a 0,40 m del borde; una separación de 5 cm cuenta como choque por el margen de
   10 cm). No se probó a mano en el navegador.
 
 ## Límites conocidos
 
+- Los empleados de la planta (`OperariosPlanta.tsx`) no tienen colisión ni esquivan al operario; solo se ven a menos de 50 m de la cámara.
 - Los camiones animados de la simulación no chocan con el operario ni con el vehículo que maneja (lo atraviesan); los montacargas de la simulación esperan al vehículo que maneja el operario, pero no esquivan al operario a pie.
 - No hay controles táctiles: en celular no se puede caminar.
 - Manejar un montacargas es solo visual: no cambia la simulación.

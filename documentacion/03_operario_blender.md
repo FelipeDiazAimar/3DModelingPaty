@@ -50,10 +50,26 @@ van a 1,33x y 1,6x. Si choca con una pared el paso se frena y no patina.
 
 - El operario que maneja el usuario (`Walk.tsx`).
 - Los operarios de FlexSim (`Scene3D.tsx → Operarios`), clonados con `SkeletonUtils.clone`.
+- Los empleados de la planta (`components/OperariosPlanta.tsx`): 47 personas, una por cada malla `Torso` de `Operario_*` en `planta_v10.glb`
+  (49 posiciones distintas menos las 2 envasadoras que ya cubren los operarios de FlexSim). `Plant` oculta las ~660 mallas estáticas
+  (`TRUCK_HIDE` incluye `Operario_`) y cada persona es un clon con su `AnimationMixer`, en la posición y orientación de la malla
+  (la malla estática mira a +X; `operario.glb`, a +Z). De pie la base es `Idle` (fase inicial al azar) y los brazos van por IK después del mixer, con peso 0 -> 1 -> 0 suave:
+  `alcanzar(op, lado, punto, w)` y `mirar(op, punto, w)` en `lib/vehicleFx.ts` (IK de 2 huesos `brazoA`, la misma del volante; el objetivo se
+  acerca a 0,65 m del hombro, el operario no se mueve). Los puntos de trabajo se buscan al iniciar en la geometría de `planta_v10.glb`
+  (`HMI_Pantalla`, cuerpos de máquina, `Cinta_*_Banda`, `Mesada_*_Tapa`, `Cartones_Planos`, `Envasadora_*_Base`, `Pallet*_Pallet`) y el
+  operario se orienta hacia ellos; sin objeto a menos de 1 m se usa un punto delante a la cintura. Tareas: **caja** (envasado, encajonado,
+  desencajado, estibado): toma una caja de 5 kg (`BoxGeometry` con `M_Carton`) con las dos manos, la caja pasa a ser hija del hueso `WristR`,
+  la lleva ~0,5 m y la apoya; **maq** (picadora, mezcladora, formadora): pulsa el panel HMI (vaivén de 1 cm, 1-2 s) y revisa la máquina con
+  la cabeza. Si su máquina (`Operario_L7_Picadora` -> `Picadora_L7`, etc.) no está en `proc` en el snapshot, la tarea se congela (sin
+  máquina o sin snapshot trabajan). IK y cajas solo a menos de 25 m. También reemplazan a los 121 humanoides "kit" fundidos de la planta (nodos `Op_*`, todos instancias de la malla `KIT_Operario`; `TRUCK_HIDE` incluye `Op_`).
+  Se ponen con el origen en los pies y la orientación del nodo; `Op_Autoelevador_*` van en `Sit`; los que tienen una superficie a menos de 1 m
+  (`Carrito_Pasillo` para carritos, `Aditivos_Mesa` para aditivos, cintas, mesadas, pallets) hacen la tarea de caja; el resto (oficina, comedor,
+  vestuario, faena sin superficie detectada) queda en `Idle` sin IK. Carritos y aditivos solo toman y apoyan una caja: no hay mezcladora a su alcance para volcar. Los de los dos montacargas parados van en `Sit`. Solo se dibujan y animan los que están a menos de 50 m de la cámara.
+  No tienen colisión (no están en la planta que recorre `Walk.tsx`).
 
 ## Para cambiarlo
 
 Editar `blender/operario_worker.py` (colores, poses de los clips nuevos) y volver a correrlo. Si se cambian los
-nombres de clips, actualizar `Walk.tsx` y `GESTOS`. Los operarios de autoelevador y de cámaras dentro de
-`planta_v10.glb` (`Operario_Autoelevador_*`, `Operario_Camara_*`) son mallas estáticas armadas en
-`blender/construir_planta.py`, sin este rig: no usan este archivo.
+nombres de clips, actualizar `Walk.tsx` y `GESTOS`. Las mallas `Operario_*` dentro de `planta_v10.glb` siguen en el archivo
+(sin este rig) pero la web las oculta y las reemplaza por clones de este modelo. Los operarios armados con el kit
+(`Op_Carritos_*`, `Op_Aditivos_*`, `Op_Autoelevador_PT_*`) son mallas fundidas y siguen estáticos.

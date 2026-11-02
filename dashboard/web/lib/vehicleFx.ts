@@ -166,6 +166,26 @@ export function brazoA(op: THREE.Object3D, lado: "L" | "R", grip: THREE.Vector3,
   return Math.max(0, largo - (l1 + l2));
 }
 
+/** Una mano (`lado`) del operario `op` sobre el punto de mundo `p`; si queda a más de `max` m del hombro se acerca el objetivo (el operario no se mueve).
+ *  Aplicar después de mixer.update. w = 0 deja la animación, 1 la IK completa. Devuelve el faltante de alcance (m). */
+export function alcanzar(op: THREE.Object3D, lado: "L" | "R", p: THREE.Vector3, w: number, max = 0.65) {
+  const sup = op.getObjectByName(`UpperArm${lado}`);
+  if (!sup || w < 0.01) return 0;
+  const A = sup.getWorldPosition(new THREE.Vector3());
+  const t = p.clone();
+  if (t.distanceTo(A) > max) t.sub(A).setLength(max).add(A);
+  const polo = new THREE.Vector3(lado === "L" ? 0.6 : -0.6, -1, -0.3).applyQuaternion(op.getWorldQuaternion(new THREE.Quaternion()));
+  return brazoA(op, lado, t, polo, w);
+}
+
+/** Gira la cabeza (hueso Head) del operario `op`, que mira hacia su +Z, hacia el punto de mundo `p`. */
+export function mirar(op: THREE.Object3D, p: THREE.Vector3, w: number) {
+  const h = op.getObjectByName("Head");
+  if (!h || w < 0.01) return;
+  const from = h.getWorldPosition(new THREE.Vector3()).add(new THREE.Vector3(0, 0, 1).applyQuaternion(op.getWorldQuaternion(new THREE.Quaternion())));
+  apuntar(h, from, p, w);
+}
+
 /** Las dos manos del operario `op` sobre el volante `v`, en agarres que giran con él. w = 0 deja la animación, 1 la IK completa.
  *  Devuelve el mayor faltante de alcance (m). */
 export function agarrarVolante(op: THREE.Object3D, v: THREE.Object3D, grip: { izq: 1 | -1; r: number }, w: number) {
