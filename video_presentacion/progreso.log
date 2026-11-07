@@ -1,0 +1,4 @@
+# formato: ACTO|SKILL|OK/FAIL|path
+INIT|hyperframes-init|OK|film/index.html
+INIT|skills|OK|.agents/skills (hyperframes + motion-graphics)
+INIT|etapas|OK|etapas/ACTO1-2,ACTO3,ACTO4,ACTO5,ACTO6,ACTO7
