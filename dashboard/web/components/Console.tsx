@@ -9,7 +9,7 @@ import { FLEET, MACHINES, STAGES, STAGE_LABEL, STATE_COLOR, STATE_LABEL, byId } 
 import { compliance, insights, ratePalletsHour, series, utilization } from "@/lib/derive";
 import { useHist, useLatest, useStore } from "@/lib/store";
 
-export function KpiChips({ compact = false, fila = false }: { compact?: boolean; fila?: boolean }) {
+export function KpiChips({ compact = false, fila = false, columna = false }: { compact?: boolean; fila?: boolean; columna?: boolean }) {
   const h = useHist();
   const last = useLatest();
   const rate = ratePalletsHour(h);
@@ -17,7 +17,7 @@ export function KpiChips({ compact = false, fila = false }: { compact?: boolean;
   const procs = MACHINES.filter((m) => m.kind === "machine" && /(Form[AB]|Tunel)/.test(m.id));
   const active = last ? procs.filter((m) => last.machines[m.id]?.state === "proc").length : 0;
   return (
-    <div className={compact && !fila ? "pointer-events-auto grid w-fit max-w-full grid-cols-2 gap-1.5" : `pointer-events-auto flex items-center ${compact ? "gap-1.5" : "gap-2"}`}>
+    <div className={columna ? "pointer-events-auto flex w-fit flex-col items-start gap-1.5" : compact && !fila ? "pointer-events-auto grid w-fit max-w-full grid-cols-2 gap-1.5" : `pointer-events-auto flex items-center ${compact ? "gap-1.5" : "gap-2"}`}>
       <KpiMini compact={compact} icon="pallet" accent="brand" label="Pallets PT" value={last ? String(last.kpi.palletsPT) : "—"} hint={`${rate.toFixed(2)} pal/h (últimas 4 h)`} />
       <KpiMini compact={compact} icon="target" accent="green" label="Cumplimiento" value={last ? `${(comp * 100).toFixed(0)}` : "—"} unit="%" tone={comp >= 0.95 ? "ok" : comp >= 0.8 ? "warn" : "crit"} hint="Meta: 36 pal/día por línea" />
       <KpiMini compact={compact} icon="truck" accent="blue" label="MP recibida" value={last ? String(last.kpi.palletsMP) : "—"} hint="Pallets de camiones a cámaras" />
@@ -187,11 +187,32 @@ export function SidePanel() {
 }
 
 /** Recorrido del batch: etapas de la línea con el estado actual de cada una. */
+type Flujo = "flow" | "blocked" | "quiet";
+const FLUJO_COLOR: Record<Flujo, string> = { flow: "var(--ok)", blocked: "var(--warn)", quiet: "#b6c0cf" };
+
+/** Tramo entre dos etapas: puntos que viajan de izquierda a derecha cuando la etapa de origen procesa; ámbar y quietos si está bloqueada. */
+function Tramo({ estado, oculto }: { estado: Flujo; oculto?: boolean }) {
+  return (
+    <div className={`flow-track ${oculto ? "opacity-0" : ""}`} style={{ ["--c" as string]: FLUJO_COLOR[estado] }} data-flujo={estado}>
+      {estado === "flow" && <><i className="flow-dot" /><i className="flow-dot" style={{ animationDelay: "-.6s" }} /></>}
+      {estado === "blocked" && <i className="flow-dot flow-stuck" />}
+    </div>
+  );
+}
+
 export function BatchTrack() {
   const last = useLatest();
   const line = useStore((s) => s.line);
   const select = useStore((s) => s.select);
   const l = line === "L8" ? "L8" : "L7";
+  const etapas = STAGES.map((st) => {
+    const ms = MACHINES.filter((m) => m.line === l && m.stage === st);
+    const live = ms.map((m) => last?.machines[m.id]);
+    const working = live.some((x) => x?.state === "proc");
+    const blocked = live.some((x) => x?.state === "blocked");
+    return { st, ms, working, blocked, dentro: live.reduce((a, x) => a + (x?.content ?? 0), 0), salio: live.reduce((a, x) => a + (x?.out ?? 0), 0) };
+  });
+  const estado = (e: (typeof etapas)[number]): Flujo => (e.working ? "flow" : e.blocked ? "blocked" : "quiet");
   return (
     <div className="glass pointer-events-auto w-[clamp(430px,calc(100vw-960px),760px)] px-5 py-4">
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -199,26 +220,25 @@ export function BatchTrack() {
         <span className="text-[11px] text-muted">Batch de 1500 kg → 10 cargas → 300 cajas de 5 kg</span>
       </div>
       <ol className="flex items-start">
-        {STAGES.map((st, i) => {
-          const ms = MACHINES.filter((m) => m.line === l && m.stage === st);
-          const working = ms.some((m) => last?.machines[m.id]?.state === "proc");
-          const blocked = ms.some((m) => last?.machines[m.id]?.state === "blocked");
-          const c = working ? "var(--ok)" : blocked ? "var(--warn)" : "#b6c0cf";
+        {etapas.map((e, i) => {
+          const c = FLUJO_COLOR[estado(e)];
           return (
-            <li key={st} className="flex flex-1 flex-col items-center">
+            <li key={e.st} className="flex flex-1 flex-col items-center">
               <div className="flex w-full items-center">
-                <div className={`h-0.5 flex-1 ${i === 0 ? "opacity-0" : ""}`} style={{ background: c }} />
+                <Tramo estado={i ? estado(etapas[i - 1]) : "quiet"} oculto={i === 0} />
                 <button
-                  onClick={() => ms[0] && select(ms[0].id)}
-                  aria-label={STAGE_LABEL[st]}
-                  className="grid h-8 w-8 place-items-center rounded-full bg-white text-[11px] font-extrabold"
-                  style={{ boxShadow: `0 0 0 2.5px ${c}, var(--shadow)`, color: c }}
+                  onClick={() => e.ms[0] && select(e.ms[0].id)}
+                  aria-label={STAGE_LABEL[e.st]}
+                  className={`relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-[11px] font-extrabold ${e.working ? "node-pulse" : ""}`}
+                  style={{ boxShadow: `0 0 0 2.5px ${c}, var(--shadow)`, color: c, ["--c" as string]: c }}
                 >
                   {i + 1}
                 </button>
-                <div className={`h-0.5 flex-1 ${i === STAGES.length - 1 ? "opacity-0" : ""}`} style={{ background: c }} />
+                <Tramo estado={estado(e)} oculto={i === etapas.length - 1} />
               </div>
-              <span className="mt-1.5 text-[11px] font-semibold">{STAGE_LABEL[st]}</span>
+              <span className="mt-1.5 text-[11px] font-semibold">{STAGE_LABEL[e.st]}</span>
+              <span className="tnum text-[10px] leading-tight text-muted" title="Ítems dentro de la etapa · salidas acumuladas">{last ? `${Math.round(e.dentro)} dentro` : "—"}</span>
+              <span className="tnum text-[10px] leading-tight text-muted">{last ? `${Math.round(e.salio).toLocaleString("es-AR")} salió` : ""}</span>
             </li>
           );
         })}

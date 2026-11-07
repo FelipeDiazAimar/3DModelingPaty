@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/lib/store";
 
 /** Interruptor de la vista 3D; su valor se guarda en este navegador (clave `paty.<clave>`, la restaura OpcionesVista). */
@@ -40,16 +40,15 @@ function EscenarioPicker() {
   );
 }
 
-/** Desplegable con los interruptores de la vista 3D (cerrado ocupa una línea). `completo`: también mapa de calor y escenarios. */
-export function OpcionesVista({ completo }: { completo: boolean }) {
+/** Botón redondo con engranaje (arriba a la derecha) que abre los ajustes de la vista 3D. `completo`: también mapa de calor y escenarios. */
+function useAjustes() {
   const st = {
     rend: useStore((s) => s.rend), setRend: useStore((s) => s.setRend),
     luz: useStore((s) => s.luz), setLuz: useStore((s) => s.setLuz),
     calor: useStore((s) => s.calor), setCalor: useStore((s) => s.setCalor),
     escenario: useStore((s) => s.escenario),
   };
-  const [abierto, setAbierto] = useState(false);
-  // las preferencias guardadas se aplican aunque el desplegable esté cerrado
+  // las preferencias guardadas se aplican aunque el panel esté cerrado
   useEffect(() => {
     const s = useStore.getState();
     const leer = (k: string) => { try { return localStorage.getItem(`paty.${k}`) === "1"; } catch { return false; } };
@@ -57,19 +56,58 @@ export function OpcionesVista({ completo }: { completo: boolean }) {
     if (leer("luz")) s.setLuz(true);
     if (leer("calor")) s.setCalor(true);
   }, []);
-  const activas = [st.rend, st.luz, st.calor, !!st.escenario].filter(Boolean).length;
+  return st;
+}
+
+function ListaAjustes({ completo }: { completo: boolean }) {
+  const st = useAjustes();
   return (
-    <div className="glass pointer-events-auto hidden md:block">
-      <button onClick={() => setAbierto(!abierto)} aria-expanded={abierto} className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left">
-        <span className="text-[12.5px] font-extrabold">Opciones de vista{activas ? <span className="ml-1.5 rounded-full bg-brand px-1.5 py-0.5 text-[10.5px] text-white">{activas}</span> : null}</span>
-        <span className="text-[11px] text-muted" aria-hidden>{abierto ? "▲" : "▼"}</span>
+    <>
+      <Interruptor on={st.rend} set={st.setRend} clave="rend" titulo="Modo rendimiento" sub="Más fluido en PCs lentas" />
+      <Interruptor on={st.luz} set={st.setLuz} clave="luz" titulo="Iluminación realista" sub="Sombras horneadas en Blender" />
+      {completo && <Interruptor on={st.calor} set={st.setCalor} clave="calor" titulo="Mapa de calor" sub="Utilización: verde libre · rojo saturada" />}
+      {completo && <EscenarioPicker />}
+    </>
+  );
+}
+
+/** Los mismos ajustes, desplegados en línea (menú del teléfono). */
+export function AjustesEnLinea() {
+  return (
+    <div>
+      <div className="mb-1 text-[12px] font-semibold text-muted">Ajustes de vista</div>
+      <div className="flex flex-col"><ListaAjustes completo /></div>
+    </div>
+  );
+}
+
+export function OpcionesVista({ completo }: { completo: boolean }) {
+  const st = useAjustes();
+  const [abierto, setAbierto] = useState(false);
+  const raiz = useRef<HTMLDivElement>(null);
+  // se cierra al tocar afuera o con Esc
+  useEffect(() => {
+    if (!abierto) return;
+    const fuera = (e: PointerEvent) => { if (!raiz.current?.contains(e.target as Node)) setAbierto(false); };
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setAbierto(false); };
+    document.addEventListener("pointerdown", fuera);
+    window.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("pointerdown", fuera); window.removeEventListener("keydown", esc); };
+  }, [abierto]);
+  const activas = [st.rend, st.luz, completo && st.calor, completo && !!st.escenario].filter(Boolean).length;
+  return (
+    <div ref={raiz} className="pointer-events-auto relative hidden md:block">
+      <button onClick={() => setAbierto(!abierto)} aria-expanded={abierto} aria-label="Ajustes de rendimiento y vista" title="Ajustes de rendimiento y vista"
+        className="glass relative grid h-[42px] w-[42px] place-items-center !rounded-full hover:bg-white">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+        {activas > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white">{activas}</span>}
       </button>
       {abierto && (
-        <div className="flex flex-col pb-1.5 pl-1 pr-1">
-          <Interruptor on={st.rend} set={st.setRend} clave="rend" titulo="Modo rendimiento" sub="Más fluido en PCs lentas" />
-          <Interruptor on={st.luz} set={st.setLuz} clave="luz" titulo="Iluminación realista" sub="Sombras horneadas en Blender" />
-          {completo && <Interruptor on={st.calor} set={st.setCalor} clave="calor" titulo="Mapa de calor" sub="Utilización: verde libre · rojo saturada" />}
-          {completo && <EscenarioPicker />}
+        <div className="glass absolute right-0 top-[50px] z-50 flex w-[260px] flex-col p-1.5">
+          <ListaAjustes completo={completo} />
         </div>
       )}
     </div>

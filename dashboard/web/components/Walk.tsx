@@ -10,6 +10,7 @@ import { forklifts, huellaUsuario } from "@/lib/live3d";
 import { agarrarVolante, crearCamion, rigMontacargas, type Cuerpo } from "@/lib/vehicleFx";
 import { EDGES, NODES } from "@/lib/network";
 import { useCine } from "@/lib/cine";
+import { usePuedeCaminar } from "@/lib/puedeCaminar";
 import { clock, indexAt, useStore } from "@/lib/store";
 
 /**
@@ -30,12 +31,10 @@ const keys = new Set<string>();
 // teclas de un toque: se atienden en el próximo cuadro aunque se suelten antes; ir / punto = viaje pedido (punto de interés o clic en el plano)
 const press = { e: false, jump: false, gesto: null as string | null, ir: null as string | null, punto: null as THREE.Vector3 | null, traer: null as "montacargas" | "camion" | null };
 
-/** Gestos del operario (como los "emotes" del robot de webgl_animation_skinning_morph de three.js): clip del GLB, etiqueta y tecla. */
+/** Gestos del operario (como los "emotes" del robot de webgl_animation_skinning_morph de three.js): clip del GLB, etiqueta y tecla (letra). */
 export const GESTOS = [
-  { clip: "Wave", label: "Saludar", key: "1" },
-  { clip: "Yes", label: "Sí", key: "2" },
-  { clip: "No", label: "No", key: "3" },
-  { clip: "Dance", label: "Bailar", key: "4" },
+  { clip: "Wave", label: "Saludar", key: "Q", code: "KeyQ" },
+  { clip: "Dance", label: "Bailar", key: "B", code: "KeyB" },
 ] as const;
 export const hacerGesto = (clip: string) => { press.gesto = clip; };
 /** Pide un vehículo: aparece al lado del operario y lo sube a manejar. */
@@ -73,16 +72,10 @@ function irA(p: THREE.Vector3, yaw: number) {
   viaje.t = 0;
 }
 
-/** Vista de plano: cámara desde arriba con el norte hacia arriba; WASD la desplaza, la rueda acerca y aleja. */
-const plano = { c: new THREE.Vector3(), alt: 160 };
-export function abrirPlano(abrir: boolean) {
-  if (abrir) {
-    plano.c.copy(live.veh ? live.veh.obj.position : me.pos).setY(0);
-    plano.alt = 160;
-    if (document.pointerLockElement) document.exitPointerLock();
-  }
-  useStore.getState().setPlan(abrir);
-}
+/** Línea elegida en el menú "Ir a" (las teclas 1-9 viajan a las etapas de esa línea). */
+const lineaIr = { v: "L7" as "L7" | "L8" };
+const elegirLinea = (l: "L7" | "L8") => { lineaIr.v = l; };
+
 const gesto = { clip: null as string | null, t: 0 }; // gesto en curso y cuánto le queda (s); el baile sigue hasta moverse
 const look = { yaw: Math.PI / 2, pitch: -0.12 }; // yaw 0 = mirar hacia -z; a pie es absoluto, manejando es relativo al vehículo
 // arranca en el pasillo central entre L7 y L8 (Blender (0, -4)), fuera de las rutas de los montacargas, mirando al oeste
@@ -340,11 +333,10 @@ export default function Walk() {
   useMemo(() => { truck ??= armarCamion(plant); }, [plant]);
   const clip = useRef("");
   const lastNear = useRef(-1);
-  const lastSel = useRef<string | null>(null);
 
   useEffect(() => {
     op.traverse((o) => { o.frustumCulled = false; }); // malla con esqueleto: su caja no sigue a la animación
-    for (const c of ["Jump", "Wave", "Yes", "No"]) actions[c]?.setLoop(THREE.LoopOnce, 1);
+    for (const c of ["Jump", "Wave"]) actions[c]?.setLoop(THREE.LoopOnce, 1);
   }, [op, actions]);
 
   // al entrar: cámara de persona, sin cinemáticas; al salir: vuelve la vista orbital
@@ -354,23 +346,7 @@ export default function Walk() {
     const cam = camera as THREE.PerspectiveCamera;
     cam.fov = 70; cam.updateProjectionMatrix();
     const el = gl.domElement;
-    const lock = (e: MouseEvent) => {
-      if (!useStore.getState().plan) { if (document.pointerLockElement !== el) el.requestPointerLock(); return; }
-      // en el plano: clic en el piso para ir ahí, o sobre una máquina para pararse frente a ella
-      const r = el.getBoundingClientRect();
-      ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), get().camera);
-      ray.far = Infinity;
-      const h = ray.intersectObjects(all.map((x) => x.mesh), false)[0];
-      if (!h) return;
-      const m = MACHINES.find((mm) => distRect(h.point.x, -h.point.z, mm) < 0.3);
-      if (m) press.ir = m.id; else press.punto = h.point.clone();
-      abrirPlano(false);
-    };
-    const rueda = (e: WheelEvent) => {
-      if (!useStore.getState().plan) return;
-      e.preventDefault();
-      plano.alt = THREE.MathUtils.clamp(plano.alt * (1 + e.deltaY * 0.0012), 25, 900);
-    };
+    const lock = () => { if (document.pointerLockElement !== el) el.requestPointerLock(); };
     const mm = (e: MouseEvent) => {
       if (document.pointerLockElement !== el) return;
       look.yaw -= e.movementX * 0.0024;
@@ -384,27 +360,26 @@ export default function Walk() {
       const st = useStore.getState();
       if (e.code === "KeyE") press.e = true;
       if (e.code === "Space") press.jump = true;
-      const g = GESTOS.find((x) => e.code === `Digit${x.key}`);
+      const g = GESTOS.find((x) => e.code === x.code);
+      const dig = /^Digit([1-9])$/.exec(e.code);
+      if (dig && !st.driving) { const m = puntosDeInteres(lineaIr.v)[Number(dig[1]) - 1]; if (m) press.ir = m.id; }
       if (g) press.gesto = g.clip;
-      if (e.code === "KeyV" || e.code === "KeyC") st.setView(st.view === "1p" ? "3p" : "1p");
-      if (e.code === "KeyM") abrirPlano(!st.plan);
+      if (e.code === "KeyC") st.setView(st.view === "1p" ? "3p" : "1p");
       prenderAudio();
       if (e.code === "KeyF") press.traer = "montacargas";
       if (e.code === "KeyG") press.traer = "camion";
       if (e.code === "KeyH" && st.driving) bocina();
-      if (e.code === "Escape" && !document.pointerLockElement) { if (st.plan) abrirPlano(false); else st.setMode("orbit"); }
+      if (e.code === "Escape" && !document.pointerLockElement) st.setMode("orbit");
     };
     const ku = (e: KeyboardEvent) => keys.delete(e.code);
     const blur = () => keys.clear();
     el.addEventListener("click", lock);
-    el.addEventListener("wheel", rueda, { passive: false });
     window.addEventListener("mousemove", mm);
     window.addEventListener("keydown", kd);
     window.addEventListener("keyup", ku);
     window.addEventListener("blur", blur);
     return () => {
       el.removeEventListener("click", lock);
-      el.removeEventListener("wheel", rueda);
       window.removeEventListener("mousemove", mm);
       window.removeEventListener("keydown", kd);
       window.removeEventListener("keyup", ku);
@@ -423,9 +398,6 @@ export default function Walk() {
     const st = useStore.getState();
     let veh = st.driving === "camion" ? cam3 : st.driving ? montacargas(st.driving) : null;
     if (st.driving && !veh) st.setDriving(null);
-    // en el plano, elegir una máquina por su pin lleva hasta ella
-    if (st.plan && st.selected && st.selected !== lastSel.current && byId(st.selected)) { press.ir = st.selected; abrirPlano(false); }
-    lastSel.current = st.selected;
     if (press.ir || press.punto) {
       if (veh) { veh.speed = 0; st.setDriving(null); veh = null; }
       const m = press.ir ? byId(press.ir) : undefined;
@@ -433,7 +405,6 @@ export default function Walk() {
       else if (press.punto) { const q = press.punto.setY(3); cerca(all, q); q.y = piso(q); irA(q, look.yaw); }
       press.ir = null; press.punto = null;
       lastNear.current = -1;
-      plano.c.set(viaje.b.x, 0, viaje.b.z); // si el plano está abierto, que muestre el destino
     }
     if (press.traer) {
       const tipo = press.traer;
@@ -461,14 +432,13 @@ export default function Walk() {
       }
     }
     live.veh = veh;
-    const enPlano = useStore.getState().plan;
     const ref = veh ? veh.obj.position : me.pos;
     // BVH y lista de cercanos: se renuevan cada ~5 m recorridos (en pleno viaje no: armaría BVH de todo lo que sobrevuela)
     const k = Math.round(ref.x / 5) * 10007 + Math.round(ref.z / 5);
     if (viaje.t >= 1 && k !== lastNear.current) { lastNear.current = k; cerca(all, ref); }
 
-    const f = enPlano ? 0 : eje(["KeyW", "ArrowUp"], ["KeyS", "ArrowDown"]);
-    const s = enPlano ? 0 : eje(["KeyD", "ArrowRight"], ["KeyA", "ArrowLeft"]);
+    const f = eje(["KeyW", "ArrowUp"], ["KeyS", "ArrowDown"]);
+    const s = eje(["KeyD", "ArrowRight"], ["KeyA", "ArrowLeft"]);
     const run = keys.has("ShiftLeft") || keys.has("ShiftRight");
     let moving = false;
 
@@ -564,12 +534,12 @@ export default function Walk() {
     const g = body.current;
     g.position.copy(me.pos);
     if (veh?.asiento) g.quaternion.copy(seatQ); else g.rotation.set(0, me.ry, 0);
-    g.visible = enPlano || (st.view === "3p" && !(veh && !veh.asiento));
+    g.visible = (st.view === "3p" && !(veh && !veh.asiento));
     // sombra de contacto: se achica y aclara con la altura del salto
     const alto = Math.min(1, (me.pos.y - me.floor) / 1.2);
     blob.current.visible = g.visible && !veh;
     blob.current.position.set(me.pos.x, me.floor + 0.03, me.pos.z);
-    blob.current.scale.setScalar(enPlano ? plano.alt / 30 : 1 - alto * 0.45); // en el plano, marca grande de "estás acá"
+    blob.current.scale.setScalar(1 - alto * 0.45);
     const want = veh ? "Sit" : !me.onGround ? "Jump" : moving ? (run ? "Run" : "Walk") : me.interact > 0 ? "Interact" : gesto.clip ?? "Idle";
     if (want !== clip.current) {
       const prev = actions[clip.current], next = actions[want];
@@ -653,16 +623,8 @@ export default function Walk() {
       const dentro = veh === cam3, uno = dentro && st.view === "1p";
       cam3.cab.solida.forEach((o) => { o.visible = !dentro; }); cam3.cab.vista.forEach((o) => { o.visible = !uno }); cam3.cab.interior.visible = dentro;
     }
-    const pc = cam as THREE.PerspectiveCamera, fov = enPlano ? 45 : 70;
+    const pc = cam as THREE.PerspectiveCamera, fov = 70;
     if (pc.fov !== fov) { pc.fov = fov; pc.updateProjectionMatrix(); }
-    if (enPlano) {
-      const pan = plano.alt * 0.9 * dt;
-      plano.c.x += eje(["KeyD", "ArrowRight"], ["KeyA", "ArrowLeft"]) * pan;
-      plano.c.z -= eje(["KeyW", "ArrowUp"], ["KeyS", "ArrowDown"]) * pan;
-      cam.position.set(plano.c.x, plano.alt, plano.c.z + 0.01); // apenas corrida al sur: el norte queda arriba en pantalla
-      cam.lookAt(plano.c);
-      return;
-    }
     const yaw = yawCamara();
     const lookDir = new THREE.Vector3(-Math.sin(yaw) * Math.cos(look.pitch), Math.sin(look.pitch), -Math.cos(yaw) * Math.cos(look.pitch));
     if (st.view === "1p") {
@@ -702,8 +664,10 @@ const Key = ({ k }: { k: string }) => (
   <kbd className="inline-grid h-[22px] min-w-[22px] place-items-center rounded-md border border-[#cfd8e6] bg-white px-1.5 text-[11px] font-extrabold text-ink shadow-[0_1.5px_0_#cfd8e6]">{k}</kbd>
 );
 
-const MAPA = 168, RADIO_MAPA = 45; // px; metros que muestra el minimapa del centro al borde
-const GAUGE = 2 * Math.PI * 50;    // perímetro del arco del velocímetro
+const MAPA = 180;                          // px del minimapa
+const ZOOMS = [28, 45, 75, 130];           // metros que muestra el minimapa del centro al borde (se cambia con +/-)
+const mapaZoom = { i: 1 };
+const GAUGE = 2 * Math.PI * 50;            // perímetro del arco del velocímetro
 
 /** Minimapa girado según el rumbo (adelante = arriba), como el GPS de un auto. Coordenadas Blender. */
 function dibujarMapa(ctx: CanvasRenderingContext2D) {
@@ -712,52 +676,86 @@ function dibujarMapa(ctx: CanvasRenderingContext2D) {
   const px = p.x, py = -p.z;
   const yaw = yawCamara();
   const hx = -Math.sin(yaw), hy = Math.cos(yaw); // adelante, en Blender
-  const R = MAPA / 2, k = R / RADIO_MAPA;
-  const to = (x: number, y: number): [number, number] => {
-    const dx = x - px, dy = y - py;
-    return [R + (dx * hy - dy * hx) * k, R - (dx * hx + dy * hy) * k];
-  };
+  const R = MAPA / 2, radio = ZOOMS[mapaZoom.i], k = R / radio;
+  const vec = (dx: number, dy: number): [number, number] => [(dx * hy - dy * hx) * k, -(dx * hx + dy * hy) * k];
+  const to = (x: number, y: number): [number, number] => { const [a, b] = vec(x - px, y - py); return [R + a, R + b]; };
   ctx.clearRect(0, 0, MAPA, MAPA);
   ctx.save();
   ctx.beginPath(); ctx.arc(R, R, R - 1, 0, Math.PI * 2); ctx.clip();
   ctx.fillStyle = "#16233a"; ctx.fillRect(0, 0, MAPA, MAPA);
+  // grilla (se mueve con el mundo)
+  const paso = radio > 100 ? 40 : radio > 60 ? 20 : 10;
+  ctx.strokeStyle = "rgba(255,255,255,.06)"; ctx.lineWidth = 1;
+  ctx.beginPath();
+  const gx0 = Math.floor((px - radio * 1.5) / paso) * paso, gy0 = Math.floor((py - radio * 1.5) / paso) * paso, n = Math.ceil((radio * 3) / paso) + 1;
+  for (let i = 0; i <= n; i++) {
+    const gx = gx0 + i * paso, gy = gy0 + i * paso;
+    ctx.moveTo(...to(gx, gy0)); ctx.lineTo(...to(gx, gy0 + n * paso));
+    ctx.moveTo(...to(gx0, gy)); ctx.lineTo(...to(gx0 + n * paso, gy));
+  }
+  ctx.stroke();
   // rutas de los montacargas
-  ctx.strokeStyle = "rgba(255,255,255,.16)"; ctx.lineWidth = 5; ctx.lineCap = "round";
+  ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = Math.max(3, 5 * (45 / radio) ** 0.5); ctx.lineCap = "round";
   ctx.beginPath();
   for (const [a, b] of EDGES) { ctx.moveTo(...to(...NODES[a])); ctx.lineTo(...to(...NODES[b])); }
   ctx.stroke();
   // máquinas con el color de su estado
   const h = useStore.getState().history;
   const snap = h.length ? h[indexAt(h, clock.t)] : undefined;
-  ctx.globalAlpha = 0.85;
+  const sel = useStore.getState().selected;
   for (const m of MACHINES) {
     const c = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => to(m.x + (a * m.sx) / 2, m.y + (b * m.sy) / 2));
+    ctx.globalAlpha = 0.85;
     ctx.fillStyle = STATE_COLOR[snap?.machines[m.id]?.state ?? "idle"];
     ctx.beginPath(); c.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 1;
+    if (m.id === sel) { ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke(); }
   }
-  ctx.globalAlpha = 1;
-  // vehículos
+  // nombres de las máquinas cercanas (solo con zoom cerca)
+  if (radio <= 30) {
+    ctx.fillStyle = "#fff"; ctx.font = "700 9px system-ui"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (const m of MACHINES) {
+      if (Math.hypot(m.x - px, m.y - py) > radio * 0.95) continue;
+      const [x, y] = to(m.x, m.y);
+      ctx.fillText(m.label.length > 11 ? `${m.label.slice(0, 10)}…` : m.label, x, y);
+    }
+  }
+  // destino de un viaje en curso
+  if (viaje.t < 1) {
+    const [x, y] = to(viaje.b.x, -viaje.b.z);
+    ctx.strokeStyle = "#4fd1c5"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.stroke();
+  }
+  // montacargas: triángulos que apuntan hacia donde van
   for (const [id, g] of forklifts) {
-    if (v?.id === id) continue;
-    const [x, y] = to(g.position.x, -g.position.z);
-    ctx.fillStyle = "#ff9a1f"; ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+    if (v?.id === id || !g.visible) continue;
+    const d = new THREE.Vector3(0, 0, 1).applyAxisAngle(UP, g.rotation.y);
+    const [x, y] = to(g.position.x, -g.position.z), [fx, fy] = vec(d.x, -d.z);
+    const l = Math.hypot(fx, fy) || 1, ux = fx / l, uy = fy / l;
+    ctx.fillStyle = "#ff9a1f"; ctx.beginPath();
+    ctx.moveTo(x + ux * 6, y + uy * 6); ctx.lineTo(x - ux * 4 - uy * 4, y - uy * 4 + ux * 4); ctx.lineTo(x - ux * 4 + uy * 4, y - uy * 4 - ux * 4); ctx.closePath(); ctx.fill();
   }
   if (truck && v !== truck) {
     const d = frente(truck), c = truck.obj.position.clone().addScaledVector(d, truck.cx);
-    ctx.strokeStyle = "#f23a4f"; ctx.lineWidth = 6; ctx.beginPath();
+    ctx.strokeStyle = "#f23a4f"; ctx.lineWidth = 6; ctx.lineCap = "butt"; ctx.beginPath();
     ctx.moveTo(...to(c.x - d.x * truck.half, -(c.z - d.z * truck.half)));
     ctx.lineTo(...to(c.x + d.x * truck.half, -(c.z + d.z * truck.half)));
     ctx.stroke();
   }
+  // cono de visión
+  const g = ctx.createRadialGradient(R, R, 0, R, R, R * 0.85);
+  g.addColorStop(0, "rgba(79,209,197,.38)"); g.addColorStop(1, "rgba(79,209,197,0)");
+  ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(R, R); ctx.arc(R, R, R * 0.85, -Math.PI / 2 - 0.6, -Math.PI / 2 + 0.6); ctx.closePath(); ctx.fill();
   ctx.restore();
   // norte en el borde
   const [nx, ny] = to(px, py + 1);
-  const n = Math.hypot(nx - R, ny - R) || 1;
+  const nn = Math.hypot(nx - R, ny - R) || 1;
+  const cx = R + ((nx - R) / nn) * (R - 11), cy = R + ((ny - R) / nn) * (R - 11);
+  ctx.fillStyle = "#d9293b"; ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = "#ffffff"; ctx.font = "800 11px system-ui"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-  ctx.fillText("N", R + ((nx - R) / n) * (R - 10), R + ((ny - R) / n) * (R - 10));
+  ctx.fillText("N", cx, cy + 0.5);
   // yo: flecha al centro (naranja si voy manejando)
-  ctx.fillStyle = v ? "#ff9a1f" : "#4fd1c5";
-  ctx.beginPath(); ctx.moveTo(R, R - 8); ctx.lineTo(R + 6, R + 6); ctx.lineTo(R, R + 3); ctx.lineTo(R - 6, R + 6); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = v ? "#ff9a1f" : "#4fd1c5"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(R, R - 9); ctx.lineTo(R + 7, R + 7); ctx.lineTo(R, R + 3); ctx.lineTo(R - 7, R + 7); ctx.closePath(); ctx.fill(); ctx.stroke();
 }
 
 /** Zona donde está el operario: la máquina más cercana a menos de 15 m. */
@@ -770,26 +768,62 @@ function zona(): [string, string] {
   return [best.line === "Común" ? etapa : `Línea ${best.line.slice(1)} · ${etapa}`, `Cerca · ${best.label}`];
 }
 
+const Chevron = ({ abierto }: { abierto: boolean }) => (
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={`transition ${abierto ? "" : "rotate-180"}`}><path d="M6 9l6 6 6-6" /></svg>
+);
+
+/** Menú vertical "Ir a" (a la derecha): una etapa de la línea por botón; también se viaja con las teclas 1-8. */
+function IrA() {
+  const [linea, setLineaS] = useState<"L7" | "L8">("L7");
+  const [abierto, setAbierto] = useState(true);
+  const setLinea = (l: "L7" | "L8") => { elegirLinea(l); setLineaS(l); };
+  return (
+    <div className="glass pointer-events-auto fixed right-4 top-[84px] z-10 w-[188px] p-1.5 text-[12px]">
+      <div className="flex items-center gap-1 pl-1.5">
+        <span className="mr-auto text-[12.5px] font-extrabold">Ir a</span>
+        {abierto && (["L7", "L8"] as const).map((l) => (
+          <button key={l} onClick={() => setLinea(l)} aria-pressed={linea === l} className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${linea === l ? "bg-ink text-white" : "bg-[#eef3fa]"}`}>{l}</button>
+        ))}
+        <button onClick={() => setAbierto(!abierto)} aria-expanded={abierto} aria-label={abierto ? "Minimizar" : "Desplegar"} className="grid h-6 w-6 place-items-center rounded-full bg-[#eef3fa]"><Chevron abierto={abierto} /></button>
+      </div>
+      {abierto && (
+        <div className="mt-1.5 flex flex-col gap-0.5">
+          {puntosDeInteres(linea).map((m, i) => (
+            <button key={m.id} onClick={() => irAMaquina(m.id)} className="flex items-center gap-2 rounded-xl px-1.5 py-1 text-left font-bold hover:bg-[#eef3fa]">
+              <Key k={String(i + 1)} /> {STAGE_LABEL[m.stage] ?? m.stage}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function WalkHud() {
   const walk = useStore((s) => s.mode === "walk");
   const view = useStore((s) => s.view);
   const hint = useStore((s) => s.hint);
   const driving = useStore((s) => s.driving);
   const setMode = useStore((s) => s.setMode);
-  const setView = useStore((s) => s.setView);
-  const plan = useStore((s) => s.plan);
+  const puede = usePuedeCaminar();
   const [locked, setLocked] = useState(false);
-  const [linea, setLinea] = useState<"L7" | "L8">("L7");
+  const [ctl, setCtl] = useState(true);
+  const [, setZ] = useState(1);
   const mapa = useRef<HTMLCanvasElement>(null);
   const zonaT = useRef<HTMLDivElement>(null), zonaS = useRef<HTMLDivElement>(null);
   const arco = useRef<SVGCircleElement>(null), kmh = useRef<HTMLSpanElement>(null), marcha = useRef<HTMLSpanElement>(null);
 
+  // en un teléfono o pantalla táctil no hay recorrido a pie
+  useEffect(() => { if (walk && !puede) setMode("orbit"); }, [walk, puede, setMode]);
+
   // minimapa, zona y velocímetro: se pintan por cuadro directo en el DOM (sin pasar por React)
   useEffect(() => {
-    if (!walk) return;
+    if (!walk || !puede) return;
     const onLock = () => setLocked(!!document.pointerLockElement);
     document.addEventListener("pointerlockchange", onLock);
-    const ctx = mapa.current?.getContext("2d");
+    const cv = mapa.current, ctx = cv?.getContext("2d");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (cv && ctx) { cv.width = MAPA * dpr; cv.height = MAPA * dpr; ctx.scale(dpr, dpr); }
     let raf = 0, zt = 0;
     const loop = (t: number) => {
       raf = requestAnimationFrame(loop);
@@ -810,40 +844,16 @@ export function WalkHud() {
     };
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); document.removeEventListener("pointerlockchange", onLock); };
-  }, [walk]);
+  }, [walk, puede]);
 
-  if (!walk) {
-    return (
-      <button onClick={() => setMode("walk")} className="glass pointer-events-auto hidden items-center gap-2.5 px-3 py-2 text-left transition hover:-translate-y-0.5 md:flex">
-        <span className="grid h-8 w-8 place-items-center rounded-full bg-[#eef3fa] text-[17px]" aria-hidden>🚶</span>
-        <span>
-          <span className="block text-[12.5px] font-extrabold leading-tight">Recorrer a pie</span>
-          <span className="block text-[11px] leading-tight text-muted">Operario, montacargas y camión</span>
-        </span>
-      </button>
-    );
-  }
+  if (!puede) return null;
+  if (!walk) return null;
+  const zoom = (d: number) => { mapaZoom.i = Math.max(0, Math.min(ZOOMS.length - 1, mapaZoom.i + d)); setZ(mapaZoom.i); };
   return (
     <>
-      {view === "1p" && locked && !plan && <div className="pointer-events-none fixed left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_0_1.5px_rgba(0,0,0,.45)]" aria-hidden />}
-      {plan && (
-        <div className="glass pointer-events-none fixed left-1/2 top-[96px] z-20 -translate-x-1/2 px-5 py-3 text-center">
-          <div className="text-[15px] font-extrabold tracking-tight">Plano de la planta</div>
-          <div className="mt-1 flex flex-wrap items-center justify-center gap-1 text-[12px] text-muted">
-            Clic en el piso o en una máquina para ir · <Key k="W" /><Key k="A" /><Key k="S" /><Key k="D" /> mover · rueda: zoom · <Key k="M" /> volver
-          </div>
-        </div>
-      )}
-      {!driving && (
-        <div className="pointer-events-auto fixed bottom-[76px] left-1/2 z-10 flex max-w-[min(760px,calc(100vw-640px))] -translate-x-1/2 items-center gap-1 overflow-x-auto rounded-full bg-[#16233a]/85 p-1 text-[12px] font-bold text-white shadow-lg">
-          <span className="pl-2 pr-1 text-white/60">Ir a</span>
-          <button onClick={() => setLinea(linea === "L7" ? "L8" : "L7")} className="shrink-0 rounded-full bg-white px-2 py-1 text-[#16233a]" aria-label={`Línea ${linea}, cambiar de línea`}>{linea}</button>
-          {puntosDeInteres(linea).map((m) => (
-            <button key={m.id} onClick={() => irAMaquina(m.id)} className="shrink-0 rounded-full px-2.5 py-1 hover:bg-white/15">{STAGE_LABEL[m.stage] ?? m.stage}</button>
-          ))}
-        </div>
-      )}
-      {!locked && !plan && (
+      {view === "1p" && locked && <div className="pointer-events-none fixed left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_0_1.5px_rgba(0,0,0,.45)]" aria-hidden />}
+      {!driving && <IrA />}
+      {!locked && (
         <div className="glass pointer-events-none fixed left-1/2 top-[26%] z-20 -translate-x-1/2 px-6 py-4 text-center">
           <div className="text-[17px] font-extrabold tracking-tight">Hacé clic para jugar</div>
           <div className="mt-1.5 flex items-center justify-center gap-1 text-[12px] text-muted">El mouse mira · <Key k="Esc" /> lo suelta · <Key k="Esc" /> otra vez sale</div>
@@ -865,46 +875,59 @@ export function WalkHud() {
         </div>
       )}
       <div className="flex flex-col items-start gap-2">
-        <div className="pointer-events-none flex flex-col items-center" aria-hidden>
-          <canvas ref={mapa} width={MAPA} height={MAPA} className="rounded-full shadow-lg ring-2 ring-white/70" style={{ width: MAPA, height: MAPA }} />
-          <div ref={zonaT} className="mt-1.5 rounded-full bg-[#16233a]/85 px-3 py-0.5 text-[13px] font-extrabold text-white" />
-          <div ref={zonaS} className="mt-0.5 text-[10.5px] font-bold uppercase tracking-[.12em] text-ink/70" />
+        <div className="flex flex-col items-center">
+          <div className="pointer-events-none" aria-hidden>
+            <canvas ref={mapa} className="rounded-full shadow-lg ring-2 ring-white/70" style={{ width: MAPA, height: MAPA }} />
+          </div>
+          <div className="pointer-events-auto -mt-3 flex gap-1 rounded-full bg-[#16233a]/90 p-0.5 text-white shadow-lg">
+            <button onClick={() => zoom(-1)} aria-label="Acercar el mapa" className="grid h-6 w-7 place-items-center rounded-full text-[15px] font-extrabold hover:bg-white/15">+</button>
+            <button onClick={() => zoom(1)} aria-label="Alejar el mapa" className="grid h-6 w-7 place-items-center rounded-full text-[15px] font-extrabold hover:bg-white/15">−</button>
+          </div>
+          <div className="pointer-events-none flex flex-col items-center" aria-hidden>
+            <div ref={zonaT} className="mt-1.5 rounded-full bg-[#16233a]/85 px-3 py-0.5 text-[13px] font-extrabold text-white" />
+            <div ref={zonaS} className="mt-0.5 text-[10.5px] font-bold uppercase tracking-[.12em] text-ink/70" />
+          </div>
         </div>
         <div className="glass pointer-events-auto w-[280px] p-3 text-[12px]">
-          <div className="mb-2 text-[13px] font-extrabold">{driving ? "Manejando" : "Recorriendo a pie"}</div>
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-muted">
-            <span className="flex items-center gap-1"><Key k="W" /><Key k="A" /><Key k="S" /><Key k="D" /> {driving ? "manejar" : "moverse"}</span>
-            <span className="flex items-center gap-1"><Key k="Shift" /> {driving ? "turbo" : "correr"}</span>
-            {!driving && <span className="flex items-center gap-1"><Key k="Espacio" /> saltar</span>}
-            <span className="flex items-center gap-1"><Key k="C" /> cámara</span>
-            <span className="flex items-center gap-1"><Key k="M" /> plano</span>
-            {driving && <span className="flex items-center gap-1"><Key k="H" /> bocina</span>}
+          <div className={`flex items-center justify-between text-[13px] font-extrabold ${ctl ? "mb-2" : ""}`}>
+            {driving ? "Manejando" : "Recorriendo a pie"}
+            <button onClick={() => setCtl(!ctl)} aria-expanded={ctl} aria-label={ctl ? "Minimizar controles" : "Mostrar controles"} className="grid h-6 w-6 place-items-center rounded-full bg-[#eef3fa]"><Chevron abierto={ctl} /></button>
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-1">
-            <span className="mr-0.5 font-bold text-ink">Pedir:</span>
-            {([["montacargas", "F", "Montacargas"], ["camion", "G", "Camión"]] as const).map(([t, k, l]) => (
-              <button key={t} onClick={() => { prenderAudio(); traerVehiculo(t); }} className="flex items-center gap-1 rounded-full bg-[#ffe8cc] py-0.5 pl-0.5 pr-2 font-bold hover:opacity-80">
-                <Key k={k} /> {l}
-              </button>
-            ))}
-          </div>
-          {!driving && (
-            <div className="mt-2 flex flex-wrap items-center gap-1">
-              {GESTOS.map((g) => (
-                <button key={g.clip} onClick={() => hacerGesto(g.clip)} className="flex items-center gap-1 rounded-full bg-[#eef3fa] py-0.5 pl-0.5 pr-2 font-bold hover:opacity-80">
-                  <Key k={g.key} /> {g.label}
-                </button>
-              ))}
-            </div>
+          {ctl && (
+            <>
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-muted">
+                <span className="flex items-center gap-1"><Key k="W" /><Key k="A" /><Key k="S" /><Key k="D" /> {driving ? "manejar" : "moverse"}</span>
+                <span className="flex items-center gap-1"><Key k="Shift" /> {driving ? "turbo" : "correr"}</span>
+                {!driving && <span className="flex items-center gap-1"><Key k="Espacio" /> saltar</span>}
+                <span className="flex items-center gap-1"><Key k="C" /> cámara 1ª / 3ª persona</span>
+                {!driving && <span className="flex items-center gap-1"><Key k="1" />–<Key k="8" /> ir a</span>}
+                {driving && <span className="flex items-center gap-1"><Key k="H" /> bocina</span>}
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-1">
+                <span className="mr-0.5 font-bold text-ink">Pedir:</span>
+                {([["montacargas", "F", "Montacargas"], ["camion", "G", "Camión"]] as const).map(([t, k, l]) => (
+                  <button key={t} onClick={() => { prenderAudio(); traerVehiculo(t); }} className="flex items-center gap-1 rounded-full bg-[#ffe8cc] py-0.5 pl-0.5 pr-2 font-bold hover:opacity-80">
+                    <Key k={k} /> {l}
+                  </button>
+                ))}
+              </div>
+              {!driving && (
+                <div className="mt-2 flex flex-wrap items-center gap-1">
+                  {GESTOS.map((g) => (
+                    <button key={g.clip} onClick={() => hacerGesto(g.clip)} className="flex items-center gap-1 rounded-full bg-[#eef3fa] py-0.5 pl-0.5 pr-2 font-bold hover:opacity-80">
+                      <Key k={g.key} /> {g.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="mt-2 flex min-h-[32px] items-center gap-2 rounded-lg bg-[#eef3fa] px-2.5 py-1.5 text-[12px] font-bold" aria-live="polite">
+                {hint ? <><Key k="E" /> {hint.replace(/^E · /, "")}</> : "Acercate a una máquina o a un vehículo"}
+              </div>
+              <div className="mt-2 flex gap-1.5">
+                <button onClick={() => setMode("orbit")} className="flex-1 rounded-full bg-ink px-3 py-1.5 font-bold text-white hover:opacity-90">Salir</button>
+              </div>
+            </>
           )}
-          <div className="mt-2 flex min-h-[32px] items-center gap-2 rounded-lg bg-[#eef3fa] px-2.5 py-1.5 text-[12px] font-bold" aria-live="polite">
-            {hint ? <><Key k="E" /> {hint.replace(/^E · /, "")}</> : "Acercate a una máquina o a un vehículo"}
-          </div>
-          <div className="mt-2 flex gap-1.5">
-            <button onClick={() => setView(view === "1p" ? "3p" : "1p")} className="flex-1 rounded-full bg-[#eef3fa] px-3 py-1.5 font-bold hover:opacity-80">{view === "1p" ? "3ª persona" : "1ª persona"}</button>
-            <button onClick={() => abrirPlano(!plan)} aria-pressed={plan} className={`flex-1 rounded-full px-3 py-1.5 font-bold hover:opacity-80 ${plan ? "bg-brand text-white" : "bg-[#eef3fa]"}`}>Plano</button>
-            <button onClick={() => setMode("orbit")} className="flex-1 rounded-full bg-ink px-3 py-1.5 font-bold text-white hover:opacity-90">Salir</button>
-          </div>
         </div>
       </div>
     </>

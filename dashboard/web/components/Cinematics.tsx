@@ -13,7 +13,6 @@ import { byId, STATE_COLOR, STATE_LABEL } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
 import type { Snapshot } from "@/lib/types";
 import { Chart } from "./Chart";
-import { Icon } from "./Icons";
 
 // Blender (x, y, z-arriba) -> three (x, z, -y)
 const P = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
@@ -174,33 +173,6 @@ function animarCamionCine(t: { raiz: THREE.Group; der: Pieza; izq: Pieza; techo:
   camionCine.x = pose.x; camionCine.y = pose.y; camionCine.h = pose.h; camionCine.visible = true;
 }
 
-/* ---------- botones ---------- */
-export function CineButtons() {
-  const id = useCine((s) => s.id);
-  const play = useCine((s) => s.play);
-  const stop = useCine((s) => s.stop);
-  return (
-    <div className="pointer-events-auto flex gap-1.5 overflow-x-auto md:flex-col">
-      {CINES.map((c) => {
-        const on = id === c.id;
-        return (
-          <button key={c.id} onClick={() => (on ? stop() : play(c.id, useStore.getState().history))}
-            className={`glass flex shrink-0 items-center gap-2.5 px-3 py-2 text-left transition hover:-translate-y-0.5 ${on ? "ring-2 ring-brand" : ""}`}
-            title={c.sub}>
-            <span className={`grid h-8 w-8 place-items-center rounded-full ${on ? "bg-brand text-white" : "bg-[#eef3fa] text-ink"}`}>
-              <Icon name={on ? "pause" : c.icon} size={17} />
-            </span>
-            <span className={id ? "hidden" : "hidden md:block"}>
-              <span className="block text-[12.5px] font-extrabold leading-tight">{c.label}</span>
-              <span className="block text-[11px] leading-tight text-muted">{on ? "Tocá para detener" : c.sub}</span>
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 /* ---------- lo que se ve en pantalla durante la cinemática ---------- */
 const fmt = (v: number, d = 0) => v.toLocaleString("es-AR", { maximumFractionDigits: d, minimumFractionDigits: d });
 
@@ -316,7 +288,7 @@ export function CineOverlay() {
   return (
     <div className="pointer-events-none absolute inset-0 z-20">
       {/* relato abajo a la izquierda (arriba del reproductor en pantallas angostas), con el paso y Detener */}
-      <div className="absolute bottom-[132px] left-3 right-3 md:right-auto md:w-[min(520px,46vw)] md:left-4 md:bottom-[96px] min-[1460px]:bottom-6">
+      <div className="absolute bottom-[132px] left-3 right-3 md:right-auto md:w-[min(520px,46vw)] md:left-4 md:bottom-[92px] min-[1300px]:bottom-3 min-[1300px]:w-[min(520px,calc(100vw-930px))]">
         <div key={idx} className="glass cine-in px-4 py-3">
           <div className="mb-1 flex items-center gap-2 text-[11px] font-bold text-muted">
             <span className="text-brand">{c.label}</span>

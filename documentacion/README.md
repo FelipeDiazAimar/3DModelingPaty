@@ -9,7 +9,7 @@ salvo el publicador (ver [FlexSim](07_flexsim_mcp.md)).
 | 1 | [Cómo iniciar](01_como_iniciar.md) | `iniciar_web.bat` y el acceso directo del escritorio |
 | 2 | [Recorrido a pie y vehículos](02_recorrido_a_pie.md) | Operario en 1ª/3ª persona, correr, saltar, gestos, manejar montacargas y camión (articulado, con cámara en la cabina), ruedas, dirección y suspensión, colisiones |
 | 3 | [Operario 3D (Blender)](03_operario_blender.md) | Personaje riggeado con 10 animaciones, hecho con el MCP de Blender |
-| 4 | [Plano y puntos de interés](04_plano_y_puntos_de_interes.md) | Vista desde arriba, ir a un lugar con un clic, barra "Ir a" por etapa |
+| 4 | [Plano y puntos de interés](04_plano_y_puntos_de_interes.md) | Menú "Ir a" por etapa (teclas 1-8), minimapa |
 | 5 | [Iluminación horneada y modo rendimiento](05_iluminacion_y_rendimiento.md) | Sombras horneadas en Blender (interruptor) y planta fundida para PCs lentas |
 | 6 | [Análisis en 3D](06_analisis_3d.md) | Operarios de FlexSim, mapa de calor, seguir un lote (Little), comparar escenarios |
 | 7 | [FlexSim y su MCP](07_flexsim_mcp.md) | Límite de 100 objetos, instalación del MCP, pendientes |

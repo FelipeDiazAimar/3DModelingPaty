@@ -707,7 +707,7 @@ export function PinLayer() {
   const selected = useStore((s) => s.selected);
   const select = useStore((s) => s.select);
   const line = useStore((s) => s.line);
-  const walk = useStore((s) => s.mode === "walk" && !s.plan); // a pie: solo el pin de lo elegido (en el plano, todos)
+  const walk = useStore((s) => s.mode === "walk"); // a pie: solo el pin de lo elegido
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {MACHINES.map((m) => {

@@ -5,9 +5,11 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useLive } from "@/lib/useLive";
 import { useLatest, useStore } from "@/lib/store";
 import { Player } from "./Player";
-import { NAV, NavMenu } from "./NavMenu";
+import { CineMenu, NAV, NavMenu } from "./NavMenu";
 import { KpiChips } from "./Console";
 import { Icon } from "./Icons";
+import { AjustesEnLinea, OpcionesVista } from "./Controles3D";
+import { usePuedeCaminar } from "@/lib/puedeCaminar";
 import { useRouter } from "next/navigation";
 import { CINES, useCine } from "@/lib/cine";
 
@@ -22,6 +24,25 @@ function useMq(q: string) {
     (cb) => { const m = window.matchMedia(q); m.addEventListener("change", cb); return () => m.removeEventListener("change", cb); },
     () => window.matchMedia(q).matches,
     () => false,
+  );
+}
+
+/** Entrada al recorrido a pie (solo escritorio con teclado y mouse), a la derecha de los KPI. */
+function BotonCaminar() {
+  const puede = usePuedeCaminar();
+  const walk = useStore((s) => s.mode === "walk");
+  const cine = useCine((s) => s.id);
+  const setMode = useStore((s) => s.setMode);
+  if (!puede || walk || cine) return null;
+  return (
+    <button onClick={() => setMode("walk")} className="glass flex items-center gap-2.5 whitespace-nowrap py-2 pl-2.5 pr-3.5 text-[13px] font-bold transition hover:bg-white">
+      <span className="grid h-8 w-8 place-items-center rounded-xl bg-ink text-white">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+          <circle cx="13" cy="4.5" r="1.8" /><path d="M11 21l2-6-2.5-2.5 1-5 3.5 2 2 3M9.5 12.5L8 16.5M10.5 7.5l-3 1.2L6 12" />
+        </svg>
+      </span>
+      Recorrer a pie
+    </button>
   );
 }
 
@@ -75,7 +96,8 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           </span>
           <button onClick={onClose} aria-label="Cerrar menú" className="grid h-9 w-9 place-items-center rounded-full bg-[#eaf0fa] text-lg font-bold">×</button>
         </div>
-        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto" aria-label="Secciones">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <nav className="space-y-1" aria-label="Secciones">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[15px] font-semibold ${n.href === path ? "bg-ink text-white" : "hover:bg-[#eef3fb]"}`}>
               <span className={`grid h-9 w-9 place-items-center rounded-xl ${n.href === path ? "bg-white/15" : "bg-[#eaf0fa] text-brand"}`}><Icon name={n.icon} size={18} /></span>
@@ -92,6 +114,8 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           <button onClick={() => { setDemo(!demo); onClose(); }} className="w-full rounded-2xl bg-ink px-4 py-3 text-[14px] font-bold text-white">
             {demo ? "Salir del demo" : "Ver demo"}
           </button>
+          {path === "/" && <AjustesEnLinea />}
+        </div>
         </div>
       </aside>
     </div>
@@ -136,6 +160,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const connected = useStore((s) => s.connected);
   const demo = useStore((s) => s.demo);
   const setDemo = useStore((s) => s.setDemo);
+  const walk = useStore((s) => s.mode === "walk");
   const last = useLatest();
   const [menu, setMenu] = useState(false);
   const md = useMq("(min-width: 768px)");
@@ -164,7 +189,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="hidden md:block min-[1800px]:hidden"><NavMenu /></div>
+          <div className="hidden md:block"><CineMenu /></div>
           {home && md && <div className="min-w-0"><KpiChips compact={!xl} fila={!xl} /></div>}
+          {home && md && <BotonCaminar />}
+          {home && !md && <div className="mr-auto min-w-0"><KpiChips compact columna /></div>}
           <div className={`ml-auto hidden min-w-0 flex-wrap items-center justify-end gap-2 md:flex ${home ? "order-1 min-[1800px]:order-none" : ""}`}>
             <LineSelector className="flex" />
             {!demo && <div className="glass flex items-center gap-2 whitespace-nowrap px-3.5 py-2.5 text-[13px] font-bold">
@@ -173,10 +201,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <span className="tnum font-semibold text-muted">{last ? simClock(last.t) : ""}</span>
             </div>}
             <button onClick={() => setDemo(!demo)} className="glass whitespace-nowrap px-3 py-2.5 text-[13px] font-bold hover:bg-white">{demo ? "Salir del demo" : "Ver demo"}</button>
+            {home && <OpcionesVista completo={!walk} />}
           </div>
           {/* teléfono: estado a la izquierda de la hamburguesa, ambos a la derecha */}
           <div className={`ml-auto flex min-w-0 max-w-full flex-wrap items-start justify-end gap-2 md:hidden ${home ? "order-1" : ""}`}>
-            {home && !md && <KpiChips compact />}
             {!demo && <div className="glass flex h-10 items-center gap-1.5 whitespace-nowrap px-3 text-[11px] font-bold" title={statusText} aria-label={statusText}>
               <span className={`live-dot h-2.5 w-2.5 rounded-full ${ok ? "bg-[var(--ok)]" : "bg-[var(--warn)]"}`} />
             </div>}

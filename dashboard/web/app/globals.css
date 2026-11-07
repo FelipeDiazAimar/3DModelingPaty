@@ -130,3 +130,15 @@ body {
 @media (pointer: coarse) {
   .pin { padding: 9px; margin: -9px; }
 }
+
+/* Recorrido del batch: tramos con puntos que fluyen y nodos que laten mientras la etapa procesa */
+.flow-track { position: relative; height: 4px; flex: 1; border-radius: 99px; overflow: hidden; background: color-mix(in srgb, var(--c) 22%, #e4eaf3); }
+.flow-track[data-flujo="flow"] { background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--c) 55%, transparent) 0 6px, color-mix(in srgb, var(--c) 18%, transparent) 6px 12px); background-size: 12px 100%; animation: flow-dash .5s linear infinite; }
+.flow-dot { position: absolute; top: 0; left: -8px; width: 8px; height: 4px; border-radius: 99px; background: var(--c); box-shadow: 0 0 6px 1px var(--c); animation: flow-move 1.2s linear infinite; }
+.flow-stuck { left: calc(100% - 8px); animation: flow-blink 1s ease-in-out infinite; }
+.node-pulse { animation: node-pulse 1.6s ease-out infinite; }
+@keyframes flow-move { from { left: -8px; } to { left: 100%; } }
+@keyframes flow-dash { to { background-position: 12px 0; } }
+@keyframes flow-blink { 50% { opacity: .25; } }
+@keyframes node-pulse { 0% { box-shadow: 0 0 0 2.5px var(--c), 0 0 0 2.5px var(--c); } 100% { box-shadow: 0 0 0 2.5px var(--c), 0 0 0 11px transparent; } }
+@media (prefers-reduced-motion: reduce) { .flow-track, .flow-dot, .node-pulse { animation: none !important; } }

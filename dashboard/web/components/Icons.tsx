@@ -2,11 +2,12 @@ import type { ReactNode } from "react";
 
 export type IconName =
   | "cube" | "factory" | "pause" | "layers" | "gauge" | "scale" | "forklift" | "chart" | "flask"
-  | "pallet" | "target" | "truck" | "cog" | "box" | "clock" | "meat" | "bolt" | "stack";
+  | "play" | "pallet" | "target" | "truck" | "cog" | "box" | "clock" | "meat" | "bolt" | "stack";
 
 const P: Record<IconName, ReactNode> = {
   cube: <><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" /><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5" /></>,
   factory: <><path d="M3 20V10l6 3V10l6 3V6h3v14z" /><path d="M7 20v-3M12 20v-3M17 20v-3" /></>,
+  play: <path d="M8 5.5v13l11-6.5z" />,
   pause: <><rect x="6" y="5" width="4" height="14" rx="1.5" /><rect x="14" y="5" width="4" height="14" rx="1.5" /></>,
   layers: <><path d="M12 4l9 5-9 5-9-5z" /><path d="M3 14l9 5 9-5" /></>,
   gauge: <><path d="M4 16a8 8 0 1116 0" /><path d="M12 16l4-5" /><circle cx="12" cy="16" r="1" /></>,

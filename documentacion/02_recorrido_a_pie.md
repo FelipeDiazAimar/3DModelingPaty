@@ -12,8 +12,7 @@ simulación corriendo. Se arranca en el pasillo central entre L7 y L8, fuera de 
 | Shift | correr | turbo |
 | Espacio | saltar | — |
 | E | ver la ficha de la máquina cercana; subir a un vehículo | bajarse |
-| C o V | 1ª / 3ª persona | igual |
-| M | vista de plano | igual |
+| C | 1ª / 3ª persona | igual |
 | F | pedir el montacargas propio (aparece al lado y te sube) | igual |
 | G | pedir el camión | igual |
 | H | — | bocina |

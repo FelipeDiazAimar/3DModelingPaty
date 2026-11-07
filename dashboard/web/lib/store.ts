@@ -22,7 +22,6 @@ interface S {
   /** vehículo que maneja el operario (id de montacargas o "camion") */
   driving: string | null;
   hint: string | null; // acción disponible con la tecla E (la escribe Walk)
-  plan: boolean; // a pie: vista de plano desde arriba
   luz: boolean; // iluminación horneada sobre los pisos (planta_luz.jpg)
   rend: boolean; // modo rendimiento: planta fundida en pocas mallas y menos resolución
   calor: boolean; // mapa de calor de utilización en el piso
@@ -38,7 +37,6 @@ interface S {
   setSpeed: (n: number) => void;
   setMode: (m: S["mode"]) => void;
   setView: (v: S["view"]) => void;
-  setPlan: (b: boolean) => void;
   setLuz: (b: boolean) => void;
   setRend: (b: boolean) => void;
   setCalor: (b: boolean) => void;
@@ -49,7 +47,7 @@ interface S {
 
 export const useStore = create<S>((set) => ({
   history: [], connected: false, demo: process.env.NEXT_PUBLIC_DEMO === "1", selected: null, line: "Todas",
-  playT: null, playing: true, speed: 5, mode: "orbit", view: "3p", driving: null, hint: null, plan: false, luz: false, rend: false, calor: false, escenario: null,
+  playT: null, playing: true, speed: 5, mode: "orbit", view: "3p", driving: null, hint: null, luz: false, rend: false, calor: false, escenario: null,
   setHistory: (history) => set({ history }),
   addMany: (batch) =>
     set((st) => {
@@ -68,9 +66,8 @@ export const useStore = create<S>((set) => ({
   setPlayT: (playT) => set({ playT }),
   setPlaying: (playing) => set({ playing }),
   setSpeed: (speed) => set({ speed }),
-  setMode: (mode) => set({ mode, driving: null, hint: null, selected: null, plan: false }),
+  setMode: (mode) => set({ mode, driving: null, hint: null, selected: null }),
   setView: (view) => set({ view }),
-  setPlan: (plan) => set({ plan }),
   setLuz: (luz) => set({ luz }),
   setRend: (rend) => set({ rend }),
   setCalor: (calor) => set({ calor }),

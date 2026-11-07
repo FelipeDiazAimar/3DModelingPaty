@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { OPERARIOS, byId } from "@/lib/layout";
 import { clock, snapshotAt, useStore } from "@/lib/store";
-import { alcanzar, mirar } from "@/lib/vehicleFx";
+import { agarrarVolante, alcanzar, mirar } from "@/lib/vehicleFx";
 
 /* ---------- empleados de la planta: el mismo operario.glb animado en cada puesto ----------
    planta_v10.glb trae ~660 mallas estáticas "Operario_*" (5-10 por persona; Plant las oculta). Acá se lee dónde
@@ -22,6 +22,9 @@ const CERCA = 25;               // m: dentro de esto hay IK y caja
 const PISO_TORSO = 1.15, ASIENTO = 0.6; // altura del torso de pie sobre sus pies; pies del conductor sentado sobre el piso
 const LADO = 0.17;              // m: cada mano a este lado del centro de la caja
 const CAJA = new THREE.BoxGeometry(0.34, 0.18, 0.24); // caja de 5 kg
+const VOL_R = 0.2;              // m: radio del volante de los autoelevadores
+const VOL_ARO = new THREE.TorusGeometry(VOL_R, 0.025, 8, 20), VOL_RAYO = new THREE.BoxGeometry(VOL_R * 2, 0.025, 0.025), VOL_COL = new THREE.CylinderGeometry(0.03, 0.03, 0.5, 8);
+const MAT_VOL = new THREE.MeshLambertMaterial({ color: "#252d40" });
 const MAQ: Record<string, string> = { Desencajado: "Desencajado", Picadora: "Picadora", Plataforma_Mezclado: "MezA", Formadora: "FormA", Envasadora: "EnvA", Encajonadora: "EncA" };
 // duración (s) de cada fase; 0 = al azar. caja: pausa, alcanzar, agarrar, llevar, apoyar, soltar. maq: pausa, alcanzar panel, pulsar, soltar, revisar
 const FASES = { caja: [0, 0.8, 0.25, 1, 0.35, 0.6], maq: [0, 0.7, 0, 0.5, 0] };
@@ -32,6 +35,7 @@ interface Pers {
   tarea: "caja" | "maq" | "sentado" | "libre"; cur: string; yaw: number; raiz: THREE.Group;
   A: THREE.Vector3; B: THREE.Vector3; // puntos de trabajo en mundo. caja: origen y destino. maq: panel y centro de la máquina (lo que mira)
   f: number; tf: number; dur: number; w: number; wl: number; box?: THREE.Mesh; enMano: boolean;
+  volante?: THREE.Object3D; // conductores: volante visual al que se agarran (IK)
 }
 
 /** Mallas de la planta que sirven de objetivo: panel HMI, cuerpo de máquina y superficies donde apoyar cajas. */
@@ -82,7 +86,7 @@ export default function OperariosPlanta() {
       // la persona estática mira hacia +X de su malla; operario.glb mira hacia +Z
       fwd.set(1, 0, 0).applyQuaternion(q);
       let yaw = Math.atan2(fwd.x, fwd.z);
-      const piso = kit ? pos.y + (sentado ? ASIENTO : 0) : pos.y - (sentado ? 1.08 - ASIENTO : PISO_TORSO); // Op_*: el origen está en los pies
+      const piso = kit ? pos.y + (sentado ? ASIENTO : 0) : pos.y - (sentado ? 1.08 : PISO_TORSO); // Op_*: el origen está en los pies. Sentado: el torso estático está 1,08 m sobre los pies, que apoyan a 0,6 m del piso (la cadera queda sobre el asiento)
       const m = o.name.match(/^Operario_([LT]\d)_(Desencajado|Picadora|Plataforma_Mezclado|Formadora|Envasadora|Encajonadora)/);
             // puntos de trabajo: lo más cercano de la geometría de la planta; si no hay, un punto delante del operario a la cintura
       const cerca = (tipo: Cand["tipo"], r: number) => cands
@@ -116,10 +120,25 @@ export default function OperariosPlanta() {
       obj.visible = false;
       const mixer = new THREE.AnimationMixer(obj);
       const acc = Object.fromEntries(animations.map((c) => [c.name, mixer.clipAction(c)]));
+      let volante: THREE.Object3D | undefined;
+      if (sentado) { // volante inclinado frente al conductor (ver agarrarVolante: aro en el plano XY local, normal +z hacia el conductor)
+        volante = new THREE.Group();
+        const aro = new THREE.Group(); aro.name = "volante";
+        aro.add(new THREE.Mesh(VOL_ARO, MAT_VOL), new THREE.Mesh(VOL_RAYO, MAT_VOL), new THREE.Mesh(VOL_RAYO, MAT_VOL));
+        aro.children[2].rotation.z = Math.PI / 2;
+        const inc = new THREE.Group(); inc.rotation.x = -0.9; inc.add(aro);
+        const col = new THREE.Mesh(VOL_COL, MAT_VOL); col.position.set(0, -0.22, -0.1); col.rotation.x = -0.9 + Math.PI / 2;
+        inc.add(col);
+        volante.add(inc);
+        volante.position.set(pos.x + Math.sin(yaw) * 0.5, piso + 1.3, pos.z + Math.cos(yaw) * 0.5);
+        volante.rotation.y = yaw + Math.PI;
+        volante.visible = false;
+        raiz.add(volante);
+      }
       const box = tarea === "caja" ? new THREE.Mesh(CAJA, matCaja) : undefined;
       if (box) { box.visible = false; raiz.add(box); }
       out.push({ obj, mixer, acc, maq: (m && byId(`${MAQ[m[2]]}_${m[1]}`)?.id) || undefined, tarea, cur: "", yaw, raiz, A, B, f: 0, tf: 0, dur: ((Math.abs(pos.x * 7.3 + pos.z * 3.1) % 1) * 2), // fase inicial distinta por persona
-        w: 0, wl: 0, box, enMano: false });
+        w: 0, wl: 0, box, enMano: false, volante });
     });
     return { gente: out, raiz };
   }, [planta, scene, animations]);
@@ -180,6 +199,7 @@ function animarGente(gente: Pers[], cam: THREE.Vector3, dt: number) {
   for (const p of gente) {
     const d2 = p.obj.position.distanceToSquared(cam);
     p.obj.visible = d2 < DIST * DIST;
+    if (p.volante) p.volante.visible = p.obj.visible;
     if (!p.obj.visible) continue;
     if (p.cur === "") { // base: Idle (o Sit) en fases distintas, para que no se muevan al unísono
       p.cur = p.tarea === "sentado" ? "Sit" : "Idle";
@@ -187,7 +207,12 @@ function animarGente(gente: Pers[], cam: THREE.Vector3, dt: number) {
       if (a) { a.reset().play(); a.time = Math.random() * a.getClip().duration; }
     }
     p.mixer.update(dt);
-    if (p.tarea === "sentado" || p.tarea === "libre") continue;
+    if (p.tarea === "sentado") { // las dos manos sobre el volante (solo cerca: la IK cuesta)
+      p.w += ((p.volante && d2 < CERCA * CERCA ? 1 : 0) - p.w) * Math.min(1, dt * 8);
+      if (p.volante && p.w > 0.01) agarrarVolante(p.obj, p.volante.children[0].children[0], { izq: -1, r: VOL_R }, p.w);
+      continue;
+    }
+    if (p.tarea === "libre") continue;
     if (d2 > CERCA * CERCA) { // lejos: sin IK ni caja
       if (p.w > 0 || p.wl > 0 || p.box?.visible) { p.w = p.wl = 0; p.f = 0; p.tf = 0; p.dur = 1; soltar(p, p.A, true); }
       continue;

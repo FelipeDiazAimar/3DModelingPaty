@@ -106,6 +106,117 @@ export function crearCamion(src: THREE.Object3D) {
   caja(0.12, 0.9, 0.7, HX + 0.2, ASIENTO + 0.45, HZ, "#1d2230");                         // respaldo
   caja(0.12, 0.06, 0.1, HX - 0.75, PISO + 0.03, HZ - 0.12, "#161b28");                   // pedales
   caja(0.12, 0.06, 0.1, HX - 0.75, PISO + 0.03, HZ + 0.12, "#161b28");
+  // ---- detalles realistas (solo visuales): tablero con relojes, consola, palanca de cambios, botones, asientos, puertas y litera ----
+  const tex = (w: number, h: number, dibujar: (g: CanvasRenderingContext2D) => void) => {
+    if (typeof document === "undefined") return null;
+    const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    const g = cv.getContext("2d"); if (!g) return null;
+    dibujar(g);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    return t;
+  };
+  /** Plano que mira hacia el conductor (+x) con textura (o color liso si no hay canvas). */
+  const cara = (w: number, h: number, x: number, y: number, z: number, t: THREE.Texture | null, col = "#101420") => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial(t ? { map: t } : { color: col }));
+    m.position.set(x, y, z); m.rotation.y = Math.PI / 2;
+    interior.add(m);
+    return m;
+  };
+  const cil = (r: number, largo: number, x: number, y: number, z: number, col: string) => {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, largo, 14), mat(col));
+    m.position.set(x, y, z); m.rotation.z = Math.PI / 2; // eje a lo largo de x: la tapa mira al conductor
+    interior.add(m);
+    return m;
+  };
+  const XT = -9.1; // cara del tablero que mira al conductor
+  // cuadro de instrumentos: capucha sobre el tablero y, adelante, velocímetro y cuentarrevoluciones con marcas y números
+  caja(0.2, 0.22, 0.62, -9.2, 2.56, HZ, "#12161f");
+  const reloj = (g: CanvasRenderingContext2D, cx: number, cy: number, r: number, max: number, paso: number, etiqueta: string, rojoDesde: number) => {
+    g.fillStyle = "#06080d"; g.beginPath(); g.arc(cx, cy, r + 6, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = "#3a4560"; g.lineWidth = 3; g.stroke();
+    const a0 = Math.PI * 0.75, a1 = Math.PI * 2.25;
+    for (let v = 0; v <= max; v += paso / 2) {
+      const a = a0 + (a1 - a0) * (v / max), mayor = v % paso === 0, d = mayor ? 14 : 8;
+      g.strokeStyle = v >= rojoDesde ? "#ff4d5e" : "#e9eef7"; g.lineWidth = mayor ? 3 : 1.5;
+      g.beginPath(); g.moveTo(cx + Math.cos(a) * (r - d), cy + Math.sin(a) * (r - d)); g.lineTo(cx + Math.cos(a) * (r - 2), cy + Math.sin(a) * (r - 2)); g.stroke();
+      if (mayor) { g.fillStyle = "#e9eef7"; g.font = "bold 13px system-ui"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(String(v), cx + Math.cos(a) * (r - 27), cy + Math.sin(a) * (r - 27)); }
+    }
+    g.strokeStyle = "#ff9a1f"; g.lineWidth = 4; g.lineCap = "round"; g.beginPath(); g.moveTo(cx, cy);
+    const an = a0 + (a1 - a0) * 0.28; g.lineTo(cx + Math.cos(an) * (r - 18), cy + Math.sin(an) * (r - 18)); g.stroke();
+    g.fillStyle = "#e9eef7"; g.beginPath(); g.arc(cx, cy, 6, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#9db0cf"; g.font = "bold 12px system-ui"; g.textAlign = "center"; g.fillText(etiqueta, cx, cy + r * 0.52);
+  };
+  const cuadro = tex(512, 192, (g) => {
+    g.fillStyle = "#0b0e15"; g.fillRect(0, 0, 512, 192);
+    reloj(g, 110, 100, 84, 120, 20, "km/h", 100);
+    reloj(g, 402, 100, 84, 3000, 500, "rpm", 2500);
+    g.fillStyle = "#0e2a1f"; g.fillRect(190, 50, 132, 62); g.fillStyle = "#4fe3a8"; g.font = "bold 22px monospace"; g.textAlign = "center"; g.fillText("D  54", 256, 74); g.font = "12px monospace"; g.fillText("12 345 km", 256, 98);
+    (["#4fe3a8", "#ffb02e", "#ff4d5e", "#4f9bff", "#4fe3a8"] as const).forEach((c, i) => { g.fillStyle = c; g.beginPath(); g.arc(200 + i * 26, 150, 7, 0, Math.PI * 2); g.fill(); });
+  });
+  cara(0.56, 0.21, XT + 0.002, 2.555, HZ, cuadro, "#0b0e15");
+  // consola central: radio con pantalla, perillas y botonera, salidas de aire y comandos de la climatización
+  const ZC = -0.45;
+  caja(0.05, 0.62, 0.62, XT + 0.01, 2.14, ZC, "#161b28");
+  const radio = tex(256, 96, (g) => {
+    g.fillStyle = "#0e2a1f"; g.fillRect(0, 0, 256, 96); g.fillStyle = "#4fe3a8"; g.font = "bold 34px monospace"; g.textAlign = "left"; g.fillText("FM 98.5", 12, 44); g.font = "16px monospace"; g.fillText("RADIO · 3 PRESETS", 12, 76);
+  });
+  cara(0.4, 0.15, XT + 0.04, 2.3, ZC, radio);
+  for (const z of [ZC - 0.22, ZC + 0.22]) cil(0.04, 0.05, XT + 0.05, 2.17, z, "#c4cde0");
+  ["#ff9a1f", "#c4cde0", "#c4cde0", "#c4cde0", "#c4cde0", "#4fe3a8"].forEach((c, i) => caja(0.03, 0.04, 0.06, XT + 0.04, 2.13, ZC - 0.18 + i * 0.072, c));
+  for (let i = 0; i < 4; i++) caja(0.03, 0.04, 0.12, XT + 0.04, 2.04, ZC - 0.21 + i * 0.14, i % 2 ? "#2b3447" : "#33405a");
+  for (const z of [ZC - 0.2, ZC, ZC + 0.2]) cil(0.04, 0.05, XT + 0.05, 1.93, z, "#aeb9d0");   // perillas de clima
+  caja(0.03, 0.14, 0.34, XT + 0.01, 2.41, -0.1, "#0e1119");                                  // salida de aire central
+  for (let i = 0; i < 5; i++) caja(0.015, 0.012, 0.3, XT + 0.03, 2.38 + i * 0.026, -0.1, "#2b3447");
+  for (const z of [1.02, -1.02]) caja(0.03, 0.1, 0.16, XT + 0.01, 2.3, z, "#0e1119");        // salidas laterales
+  caja(0.03, 0.3, 0.62, XT + 0.01, 1.98, -0.9, "#2b3447");                                   // guantera
+  caja(0.04, 0.04, 0.14, XT + 0.03, 2.08, -0.9, "#aeb9d0");                                  // manija de la guantera
+  // túnel de transmisión entre los asientos: palanca de cambios, freno de mano y portavasos
+  caja(0.8, 0.3, 0.46, -8.78, PISO + 0.15, 0, "#1d2230");
+  caja(0.34, 0.04, 0.4, -8.9, PISO + 0.31, 0, "#12161f");                                      // placa de la palanca
+  const palanca = new THREE.Group(); palanca.position.set(-8.9, PISO + 0.33, 0); palanca.rotation.z = -0.12;
+  const fuelle = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.085, 0.1, 14), mat("#0e1119")); fuelle.position.y = 0.05; palanca.add(fuelle);
+  const ejeP = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.018, 0.34, 10), mat("#aeb9d0")); ejeP.position.y = 0.26; palanca.add(ejeP);
+  const perilla = new THREE.Mesh(new THREE.SphereGeometry(0.042, 14, 10), mat("#161b28")); perilla.position.y = 0.45; perilla.scale.y = 1.25; palanca.add(perilla);
+  const franja = new THREE.Mesh(new THREE.CylinderGeometry(0.043, 0.043, 0.02, 14), mat("#ff9a1f")); franja.position.y = 0.43; palanca.add(franja);
+  interior.add(palanca);
+  const patron = tex(128, 128, (g) => {
+    g.fillStyle = "#12161f"; g.fillRect(0, 0, 128, 128); g.strokeStyle = "#aeb9d0"; g.lineWidth = 3; g.beginPath();
+    g.moveTo(28, 28); g.lineTo(28, 100); g.moveTo(64, 28); g.lineTo(64, 100); g.moveTo(100, 28); g.lineTo(100, 100); g.moveTo(28, 64); g.lineTo(100, 64); g.stroke();
+    g.fillStyle = "#e9eef7"; g.font = "bold 16px system-ui"; g.textAlign = "center";
+    ["1", "3", "5"].forEach((t, i) => g.fillText(t, 28 + i * 36, 20)); ["2", "4", "R"].forEach((t, i) => g.fillText(t, 28 + i * 36, 122));
+  });
+  const placa = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.3), new THREE.MeshBasicMaterial(patron ? { map: patron } : { color: "#12161f" }));
+  placa.rotation.x = -Math.PI / 2; placa.rotation.z = -Math.PI / 2; placa.position.set(-8.9, PISO + 0.321, 0); interior.add(placa);
+  const freno = new THREE.Group(); freno.position.set(-8.55, PISO + 0.3, -0.12); freno.rotation.z = 0.5;
+  const fb = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.3, 0.06), mat("#2b3447")); fb.position.y = 0.15; freno.add(fb);
+  const fm = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.07, 0.07), mat("#d9293b")); fm.position.y = 0.32; freno.add(fm);
+  interior.add(freno);
+  for (const z of [-0.12, 0.12]) { const a = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.012, 6, 16), mat("#aeb9d0")); a.rotation.x = Math.PI / 2; a.position.set(-8.35, PISO + 0.31, z); interior.add(a); }
+  // asiento del acompañante y apoyacabezas
+  caja(0.7, 0.12, 0.7, HX, ASIENTO - 0.06, -HZ, "#1d2230");
+  caja(0.5, ASIENTO - 0.12 - PISO, 0.5, HX, (PISO + ASIENTO - 0.12) / 2, -HZ, "#2b3447");
+  caja(0.12, 0.9, 0.7, HX + 0.2, ASIENTO + 0.45, -HZ, "#1d2230");
+  for (const z of [HZ, -HZ]) { caja(0.1, 0.24, 0.3, HX + 0.22, ASIENTO + 1.02, z, "#161b28"); caja(0.62, 0.08, 0.1, HX - 0.05, ASIENTO + 0.1, z + 0.38, "#161b28"); caja(0.62, 0.08, 0.1, HX - 0.05, ASIENTO + 0.1, z - 0.38, "#161b28"); }
+  // alfombra, puertas con apoyabrazos, manija, bolsillo y botonera de los alzavidrios
+  caja(1.5, 0.014, 1.7, -8.8, PISO + 0.007, 0, "#10131c");
+  for (const s of [1, -1]) {
+    caja(1.0, 0.09, 0.13, -8.55, 2.2, s * 1.07, "#1d2230");
+    caja(0.24, 0.04, 0.07, -8.05, 2.28, s * 1.12, "#aeb9d0");
+    caja(0.28, 0.5, 0.05, -9.2, 1.95, s * 1.14, "#2b3447");                                 // bolsillo de la puerta
+    caja(0.26, 0.12, 0.04, -9.2, 2.1, s * 1.115, "#0e1119");
+  }
+  for (let i = 0; i < 4; i++) caja(0.05, 0.03, 0.04, -8.75 + i * 0.1, 2.26, 1.08, i % 2 ? "#aeb9d0" : "#33405a");
+  // techo: viseras parasol, espejo interior, luz de cabina y radio de CB
+  for (const z of [HZ, -HZ]) caja(0.34, 0.04, 0.62, -9.45, 3.68, z, "#3a4560");
+  caja(0.04, 0.1, 0.34, -9.7, 3.52, 0, "#161b28"); caja(0.04, 0.2, 0.025, -9.72, 3.64, 0, "#161b28");
+  caja(0.2, 0.025, 0.2, -8.7, 3.69, 0, "#e9eef7");
+  caja(0.2, 0.09, 0.3, -9.0, 3.68, 0, "#12161f");
+  // litera detrás de los asientos
+  caja(0.95, 0.2, 2.2, -7.98, 2.4, 0, "#4b5a7a");
+  caja(0.5, 0.24, 0.8, -7.8, 2.62, 0.55, "#e9eef7");
+  // comandos en la columna de dirección (luces y limpiaparabrisas) y balizas
+  for (const y of [-0.06, 0.02]) { const m = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.025, 0.025), mat("#161b28")); m.position.set(-9.05, 2.5 + y, HZ + 0.12); m.rotation.z = 0.2; interior.add(m); }
+  caja(0.05, 0.05, 0.09, -9.0, 2.36, HZ - 0.12, "#d9293b");
   // volante de 0,34 m (el anterior, de 0,44, llenaba la vista en 1ª persona), inclinado hacia el conductor (+x)
   const colvo = new THREE.Group();
   colvo.position.set(HX - 0.42, ASIENTO + 0.42, HZ); colvo.rotation.z = 0.5;
