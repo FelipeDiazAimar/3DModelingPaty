@@ -72,7 +72,7 @@ export function Card({ title, sub, children, className = "", right }: { title: s
 }
 
 export function Tag({ kind, children }: { kind: "supuesto" | "sinCorrida" | "real"; children?: ReactNode }) {
-  const m = { supuesto: ["#fff4e0", "#a8620b", "Supuesto"], sinCorrida: ["#fde8eb", "#a81a2a", "Sin corrida"], real: ["#e3f6f0", "#0e7a5f", "Dato real"] }[kind];
+  const m = { supuesto: ["#e8f0fe", "#1a4fa3", "Oficial"], sinCorrida: ["#fde8eb", "#a81a2a", "Sin corrida"], real: ["#e3f6f0", "#0e7a5f", "Dato real"] }[kind];
   return <span className="whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold" style={{ background: m[0], color: m[1] }}>{children ?? m[2]}</span>;
 }
 

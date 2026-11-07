@@ -1,5 +1,7 @@
 # E1 base — modelo final PLANTASJ.fsm (L7 + L8), 10 réplicas
 
+> **Vigente: la última sección ("Lavado de 30 min y cuello de botella por escenario").** Las secciones anteriores describen la corrida histórica sin lavado (89,4 pallets/día) y se conservan como referencia de sensibilidad. Desde el 7/11/2026 el lavado de 30 min por batch y el resto de los supuestos son oficiales (`SUPUESTOS_v2.md`).
+
 Reemplaza a `../e1_run/E1_BASE_24H.md`, que se hizo sobre una copia vieja de la línea 3 (`planta_sanjorge_v1_8.fsm`).
 Este informe es del **modelo final** (`PLANTASJ.fsm`, 96/100 objetos de licencia), corrido dentro de FlexSim sin copias.
 
@@ -61,10 +63,8 @@ Paros simulados contra lo que implican las entradas (min/día, media de 10 répl
   Con lavado, el batch grande rinde más (menos lavados por tonelada). Con 15 min las 10 réplicas dan el mismo valor en ambas variantes: el cuello son las mezcladoras y las fallas no pasan por ahí. Con 0 y 30 min es una réplica. La ventaja del 1200 kg sin lavado es un efecto del arranque desde vacío.
 - Antes de correr los escenarios se comprobó que con `mttrK = 1` el modelo reproduce exactamente la réplica 1 de E1 (mismas fallas y 6594/6602 cajas). En esa verificación apareció y se corrigió un arranque duplicado de las fallas cuando el modelo se reabría (el relay quedaba registrado dos veces); las corridas E1 no estaban afectadas.
 
-## Pendiente
-- Confirmar en planta si hay lavado o cambio de formato por batch: con un lavado supuesto de 30 min por batch el modelo da 55,7 t/día contra 56,0 del tablero (hipótesis, no calibración).
-- Revisar cómo asigna el tablero los pallets a cada línea (25,8 contra 39,1 con líneas iguales).
-- Llegadas de materia prima por hora (hoy 16 pallets cada 8 h con descarga fija) y ruido en los tiempos de máquina: hoy el modelo es determinista salvo las fallas.
+## Pendiente (cerrado el 7/11/2026)
+Sin pendientes abiertos. El lavado de 30 min por batch es dato de planta y quedó en el modelo; la asignación de pallets por línea del tablero, la variación de llegadas y tiempos de máquina y el tiempo de desencajado se cerraron como parámetros oficiales (ver `SUPUESTOS_v2.md`).
 
 ## Lavado de 30 min y cuello de botella por escenario (corrida del 7/11/2026; `analizar_cuellos.py`, `actualizar_summary_e1.py`, `raw_cuellos/`)
 **El lavado de 30 min por batch es dato de planta** y pasa a ser parte del modelo base (`SetupTime` 1800 s en las 4 mezcladoras). Todo lo anterior de este informe (89,4 pallets/día, brecha +17 % en toneladas, E2/E3/E4 con lavado 0) corresponde al modelo sin lavado; las corridas sin lavado quedan en `raw_cuellos/sin_lavado/` como sensibilidad. Se repitieron E1, E2 y E3 (10 réplicas cada uno, mismos streams) y E4 (1500 y 1200 kg con lavado de 30 min, 10 réplicas; 0 y 15 min, 5 réplicas), guardando por estación el tiempo en cada estado, el contenido, la estadía y las colas. **E3 pasa a ser "más materia prima + E2"**; el antiguo E3 (MTTR ×1,25) queda como E5 (medido sin lavado).
@@ -75,3 +75,5 @@ Paros simulados contra lo que implican las entradas (min/día, media de 10 répl
 - **E3 (E2 + 24 pallets de MP por turno):** 89,6 pallets/día; −0,1 contra E2 (no distinguible de cero). Las cámaras de MP pasan de 6,3 a 21,8 pallets promedio: el desencajado impide aprovechar la MP extra.
 - **E4 (diferencia 1200 − 1500 kg, IC pareado):** lavado 30 min −4,0 [−4,6 ; −3,4] (10 réplicas); 15 min −2,4 [−3,1 ; −1,7]; sin lavado +1,8 [+1,2 ; +2,4] (latencia, 5 réplicas).
 - Limitaciones: horizonte terminante de 24 h arrancando vacío; tiempos de máquina constantes; la serie horaria (Welch) y los paros de la web son de la corrida sin lavado.
+- **Serie horaria y paros con lavado** (mismas 10 réplicas, `raw_replicas.txt`): el transitorio sigue en ≈ 4 h y los paros no cambian (las fallas usan los mismos streams y no dependen del lavado): formadoras 37,7 min/día (esperado 49,5), túneles 16,6 (8,9), envasadoras 6,7 (6,1), estibadores 17,1 (20,3), picadoras 26,1 (36,5); la corrida sin lavado queda en `raw_cuellos/sin_lavado/raw_replicas_sin_lavado.txt`.
+- **Ley de Little por estación** (`summary_little.json`): λ·W / L entre 0,94 y 1,04 en 10 de las 12 estaciones; en formadoras +7 % y en mezcladoras +14–18 %, porque el ítem se divide dentro de la estación (batch → cargas → bandejas) y FlexSim mide la estadía por ítem que sale.

@@ -3,7 +3,9 @@
 treenode tl = model().find("Tools");
 treenode fL = tl.find("svgLineas");
 treenode fB = tl.find("svgBarras");
-treenode fE = tl.find("svgEstados");
+treenode fE = tl.find("svgEstados");
+treenode sp = tl.find("svgSpark");
+treenode sd = tl.find("svgDonut");
 Array H = tl.find("indHist").value;
 int n = H.length;
 Array ult = n > 0 ? H[n] : [Model.time / 3600, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 982, 1843, 0];
@@ -68,26 +70,30 @@ for (int i = 1; i <= FALLA.length; i++) {
 	pcnt.push(objectexists(c2) ? c2.value : 0);
 }
 S = S + "<div class='hoja' data-hoja='paradas'><div class='grid'>";
-S = S + nodefunction(fB, "Pareto de paradas no programadas", "minutos de paro", FALLA, pmin, RO, 1, "MTBF exponencial y MTTR lognormal del tablero Sep–Oct (supuesto: 3 turnos continuos).");
+S = S + nodefunction(fB, "Pareto de paradas no programadas", "minutos de paro", FALLA, pmin, RO, 1, "MTBF exponencial y MTTR lognormal del tablero Sep–Oct (r&eacute;gimen oficial: 3 turnos continuos).");
 S = S + nodefunction(fB, "Cantidad de paradas por equipo", "paradas", FALLA, pcnt, NA, 1, "");
 S = S + nodefunction(fE, "Estados por equipo: espera, bloqueo y falla", FALLA, CAT, CCAT, "");
 S = S + "</div></div>";
 
 // Velocidad
 S = S + "<div class='hoja' data-hoja='vel'><div class='grid'>";
-S = S + nodefunction(fL, "Kilos por hora (ventana móvil de 1 h)", "kg/h", H, [6, 7, 26, 27], ["Línea 7", "Línea 8", "Nominal formadora", "Estándar de línea"], [AZ, VI, GR, AM], "La brecha entre 982 (nominal de la formadora) y 1843 kg/h (estándar) debe conciliarse en planta.");
+S = S + nodefunction(fL, "Kilos por hora (ventana móvil de 1 h)", "kg/h", H, [6, 7, 26, 27], ["Línea 7", "Línea 8", "Nominal formadora", "Estándar de línea"], [AZ, VI, GR, AM], "Los valores 982 (nominal de la formadora) y 1843 kg/h (estándar) son oficiales.");
+S = S + nodefunction(fB, "Rendimiento actual contra el est&aacute;ndar", "kg/h", ["L&iacute;nea 7", "L&iacute;nea 8", "Nominal formadora", "Est&aacute;ndar de l&iacute;nea"], [ult[6], ult[7], 982, 1843], AZ, 0, "Ambos valores (982 nominal y 1843 est&aacute;ndar) son oficiales.");
+S = S + nodefunction(sd, "Cajas producidas por l&iacute;nea", "cajas", ["L&iacute;nea 7", "L&iacute;nea 8"], [ult[4], ult[5]], [AZ, VI], "Las dos l&iacute;neas trabajan por igual.");
 S = S + "</div></div>";
 
 // Balance de masa
 S = S + "<div class='hoja' data-hoja='masa'><div class='grid'>";
 S = S + nodefunction(fL, "Entra y sale", "kg", H, [8, 9, 10, 11], ["MP recibida", "Producto en cajas", "En pallets PT", "En proceso (diferencia)"], [AZ, VE, VI, AM], "1 pallet de MP = 1 batch de 1500 kg; caja = 5 kg; pallet PT = 144 cajas.");
-S = S + nodefunction(fB, "Balance actual", "kg", ["MP recibida", "Producto en cajas", "En pallets PT", "En proceso"], [ult[8], ult[9], ult[10], ult[11]], VE, 0, "Merma de proceso 3 % y regalía por sobrepeso: supuestos del informe, el modelo no los descuenta.");
+S = S + nodefunction(fB, "Balance actual", "kg", ["MP recibida", "Producto en cajas", "En pallets PT", "En proceso"], [ult[8], ult[9], ult[10], ult[11]], VE, 0, "Merma de proceso 3 % y regalía por sobrepeso: par&aacute;metros oficiales del informe, el modelo no los descuenta.");
+S = S + nodefunction(sd, "Destino de la materia prima recibida", "kg", ["En pallets PT", "Cajas sin paletizar", "En proceso"], [ult[10], ult[9] - ult[10], ult[11]], [VI, VE, AM], "La suma es la MP recibida (1 pallet de MP = 1500 kg).");
 S = S + "</div></div>";
 
 // Montacargas
 S = S + "<div class='hoja' data-hoja='flota'><div class='grid'>";
 S = S + nodefunction(fL, "Traslados acumulados", "traslados", H, [22, 23, 24, 25], FLOTA, [AZ, VI, VE, AM], "");
-S = S + nodefunction(fE, "Estados de los montacargas", FLOTA, ["Esperando", "Viajando", "Cargando"], ["#c3cad5", "#1f6feb", "#22a06b"], "");
+S = S + nodefunction(fE, "Estados de los montacargas", FLOTA, ["Esperando", "Viajando", "Cargando"], ["#c3cad5", "#1f6feb", "#22a06b"], "");
+S = S + nodefunction(fB, "Traslados por montacargas", "traslados", FLOTA, [ult[22], ult[23], ult[24], ult[25]], AZ, 0, "Cantidad de viajes de cada montacargas hasta ahora.");
 S = S + "</div></div>";
 
 // Estadística

@@ -1,0 +1,150 @@
+{
+ "replicas": 10,
+ "nota": "Estaciones L7 y L8 promediadas; E1 con lavado de 30 min.",
+ "filas": [
+  {
+   "id": "Desencajado",
+   "nombre": "Desencajado",
+   "divide": false,
+   "L": 0.97,
+   "W_s": 3500.0,
+   "lambda_h": 1.0,
+   "lambda_W": 0.9722222222222222,
+   "razon": 1.002290950744559,
+   "entradas_dia": 24.0,
+   "salidas_dia": 24.0
+  },
+  {
+   "id": "Picadora",
+   "nombre": "Picadora",
+   "divide": false,
+   "L": 0.2425,
+   "W_s": 906.4,
+   "lambda_h": 1.0,
+   "lambda_W": 0.25177777777777777,
+   "razon": 1.0382588774341353,
+   "entradas_dia": 24.0,
+   "salidas_dia": 23.0
+  },
+  {
+   "id": "MezA",
+   "nombre": "Mezcladora A",
+   "divide": true,
+   "L": 2.8634999999999997,
+   "W_s": 2968.15,
+   "lambda_h": 3.9708333333333337,
+   "lambda_W": 3.2738969328703704,
+   "razon": 1.1433200394169272,
+   "entradas_dia": 10.0,
+   "salidas_dia": 95.3
+  },
+  {
+   "id": "MezB",
+   "nombre": "Mezcladora B",
+   "divide": true,
+   "L": 2.618,
+   "W_s": 2974.2,
+   "lambda_h": 3.7312499999999997,
+   "lambda_W": 3.0826343749999996,
+   "razon": 1.1774768430099312,
+   "entradas_dia": 9.8,
+   "salidas_dia": 89.55
+  },
+  {
+   "id": "FormA",
+   "nombre": "Formadora A",
+   "divide": true,
+   "L": 8.8445,
+   "W_s": 286.0,
+   "lambda_h": 118.51666666666667,
+   "lambda_W": 9.41549074074074,
+   "razon": 1.0645588490859563,
+   "entradas_dia": 95.3,
+   "salidas_dia": 2844.4
+  },
+  {
+   "id": "FormB",
+   "nombre": "Formadora B",
+   "divide": true,
+   "L": 8.2895,
+   "W_s": 285.2,
+   "lambda_h": 111.61874999999999,
+   "lambda_W": 8.842685416666667,
+   "razon": 1.0667332669843377,
+   "entradas_dia": 89.55,
+   "salidas_dia": 2678.85
+  },
+  {
+   "id": "Tunel",
+   "nombre": "Túnel de frío",
+   "divide": false,
+   "L": 19.404500000000002,
+   "W_s": 304.4,
+   "lambda_h": 230.00833333333333,
+   "lambda_W": 19.448482407407404,
+   "razon": 1.0022666086427068,
+   "entradas_dia": 5520.2,
+   "salidas_dia": 5496.1
+  },
+  {
+   "id": "EnvA",
+   "nombre": "Envasadora A",
+   "divide": false,
+   "L": 0.227,
+   "W_s": 4.05,
+   "lambda_h": 199.78125,
+   "lambda_W": 0.22475390625,
+   "razon": 0.9901053138766519,
+   "entradas_dia": 4794.75,
+   "salidas_dia": 4794.55
+  },
+  {
+   "id": "EnvB",
+   "nombre": "Envasadora B",
+   "divide": false,
+   "L": 0.0475,
+   "W_s": 5.55,
+   "lambda_h": 29.122916666666665,
+   "lambda_W": 0.044897829861111106,
+   "razon": 0.9452174707602338,
+   "entradas_dia": 698.95,
+   "salidas_dia": 698.9
+  },
+  {
+   "id": "EncA",
+   "nombre": "Encajonadora A",
+   "divide": false,
+   "L": 0.281,
+   "W_s": 5.0,
+   "lambda_h": 199.77291666666667,
+   "lambda_W": 0.2774623842592593,
+   "razon": 0.9874106201397127,
+   "entradas_dia": 4794.55,
+   "salidas_dia": 4794.1
+  },
+  {
+   "id": "EncB",
+   "nombre": "Encajonadora B",
+   "divide": false,
+   "L": 0.044,
+   "W_s": 5.45,
+   "lambda_h": 29.12083333333333,
+   "lambda_W": 0.044085706018518515,
+   "razon": 1.001947864057239,
+   "entradas_dia": 698.9,
+   "salidas_dia": 698.75
+  },
+  {
+   "id": "EstA",
+   "nombre": "Estibador",
+   "divide": false,
+   "L": 1.0,
+   "W_s": 15.35,
+   "lambda_h": 230.3354166666667,
+   "lambda_W": 0.9821246238425927,
+   "razon": 0.9821246238425927,
+   "entradas_dia": 5528.05,
+   "salidas_dia": 5527.05
+  }
+ ]
+}

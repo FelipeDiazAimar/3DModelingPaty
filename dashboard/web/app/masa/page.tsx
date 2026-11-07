@@ -39,7 +39,7 @@ export default function Masa() {
             <li className="flex justify-between"><span className="text-muted">Giveaway (informe)</span><b>1,54 %</b></li>
             <li className="flex justify-between"><span className="text-muted">Referencia tablero: carne real procesada</span><b>2,62 M kg</b></li>
           </ul>
-          <p className="mt-3 text-[12px] text-muted">Son supuestos del informe, no resultados de la simulación. El balance de arriba toma 1 pallet de MP = 1 batch de 1500 kg.</p>
+          <p className="mt-3 text-[12px] text-muted">Son parámetros oficiales del informe: el modelo no descuenta merma ni mide giveaway, por eso el balance de arriba no los incluye. El balance toma 1 pallet de MP = 1 batch de 1500 kg.</p>
         </Card>
       </div>
     </Page>

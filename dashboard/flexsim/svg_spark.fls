@@ -1,0 +1,36 @@
+// Tools/svgSpark(historial, columnas, modo, color): mini gráfico SVG (tendencia con área) para las tarjetas de KPIs.
+// historial = filas de Tools/indHist (col 1 = horas). modo 0: suma de las columnas; 1: tasa por hora (ventana de 1 h) de la primera columna;
+// 2: porcentaje de la primera columna contra la meta (col 28). Devuelve "" si todavía hay pocos datos.
+Array H = param(1);
+Array cols = param(2);
+int modo = param(3);
+string color = param(4);
+int n = H.length;
+if (n < 3) return "";
+int paso = Math.max(1, Math.ceil(n / 60));
+Array v = [];
+for (int i = 1; i <= n; i += paso) {
+	double y = 0;
+	if (modo == 1) {
+		int j = Math.max(1, i - 360);
+		double dh = Math.max(0.0167, H[i][1] - H[j][1]);
+		y = (H[i][cols[1]] - H[j][cols[1]]) / dh;
+	} else if (modo == 2) {
+		y = H[i][28] > 0 ? 100 * H[i][cols[1]] / H[i][28] : 0;
+	} else {
+		for (int k = 1; k <= cols.length; k++) y += H[i][cols[k]];
+	}
+	v.push(y);
+}
+int m = v.length;
+if (m < 2) return "";
+double vmax = 0;
+for (int i = 1; i <= m; i++) vmax = Math.max(vmax, v[i]);
+if (vmax <= 0) vmax = 1;
+string pts = "";
+for (int i = 1; i <= m; i++) {
+	double x = 120 * (i - 1) / (m - 1);
+	double yy = 29 - 26 * v[i] / vmax;
+	pts = pts + string.fromNum(x, 1) + "," + string.fromNum(yy, 1) + " ";
+}
+return "<svg class='sp' viewBox='0 0 120 30' preserveAspectRatio='none'><polygon points='0,30 " + pts + "120,30' fill='" + color + "' fill-opacity='.15'/><polyline points='" + pts + "' fill='none' stroke='" + color + "' stroke-width='1.8' vector-effect='non-scaling-stroke' stroke-linejoin='round'/></svg>";

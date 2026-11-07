@@ -46,7 +46,7 @@ export function ValidacionE1() {
       className="mt-4"
       title="Validación campo vs. modelo (E1 base con lavado de 30 min, 10 réplicas)"
       sub="Error relativo = (sim − real)/real · ¿real ∈ IC 95 %? · media y P95 sobre 10 réplicas de 24 h, con fallas aleatorias del tablero"
-      right={<><Tag kind="real">10 réplicas</Tag><Tag kind="real">Valida en toneladas</Tag><Tag kind="supuesto">Pallets: +16 % por el tamaño del pallet</Tag></>}
+      right={<><Tag kind="real">10 réplicas</Tag><Tag kind="real">Valida en toneladas</Tag><Tag kind="supuesto">Pallet oficial: 720 kg</Tag></>}
     >
       <Table maxH={340} head={[{ label: "Indicador" }, { label: "Real (tablero)", right: true }, { label: "Sim media", right: true }, { label: "P95 sim", right: true }, { label: "IC 95 %", right: true }, { label: "Error rel.", right: true }, { label: "¿Real ∈ IC?", right: true }]}>
         {rows.map((r) => (
@@ -75,7 +75,7 @@ export function ValidacionE1() {
       <div className="mt-3 space-y-2 text-[12px] leading-relaxed text-muted">
         <p><b>Lectura:</b> con el lavado de 30 min por batch (dato de planta) el modelo <b>valida en toneladas</b>: la planta da {f(d.validacion.Planta.ton_sim, 1)} t/día contra {f(d.validacion.Planta.ton_real, 1)} t del tablero ({sign((d.validacion.Planta.ton_sim - d.validacion.Planta.ton_real) / d.validacion.Planta.ton_real * 100)}). El real queda apenas fuera del IC porque 10 réplicas casi sin variación lo dejan muy angosto (semiancho de unas {f(((d.validacion.Planta.ton_ic_sup ?? 0) - (d.validacion.Planta.ton_ic_inf ?? 0)) / 2, 1)} t): la diferencia, de ≈ 1 t, es chica para la decisión. Sin lavado daba 65,5 t/día (+17 %).</p>
         <p><b>Pallets:</b> el modelo arma pallets de 144 bandejas × 5 kg = 720 kg y el tablero promedia 862,5 kg. Por eso en pallets la planta da {f(d.validacion.Planta.sim, 1)} contra {f(d.validacion.Planta.real, 1)} ({sign(d.validacion.Planta.error_rel_pct)}); con pallets de 862,5 kg serían {f(d.validacion.Planta.ton_sim / 0.8625, 1)} por día. Las dos líneas trabajan por igual, así que la diferencia entre líneas del tablero (25,8 y 39,1) no la explica la planta y la comparación válida es contra las dos juntas.</p>
-        <p><b>Qué falta:</b> los tiempos de máquina son constantes y las llegadas de materia prima fijas (la única variación son las fallas), por eso los IC son tan angostos. La serie horaria (calentamiento) y los paros de más abajo son de la corrida anterior, sin lavado.</p>
+        <p><b>Alcance oficial del modelo:</b> tiempos de máquina constantes y llegadas de materia prima fijas (16 pallets por turno); la única fuente de variación son las fallas, por eso los IC son tan angostos.</p>
         <p>Con {d.replicas} réplicas el semiancho del IC es {f(ptot.h_rel, 2)} % de la media, por debajo del 2 % pedido (n necesario: {ptot.n_req_2pct}). Significancia ≠ importancia práctica (ET6 p.35).</p>
       </div>
     </Card>
@@ -100,7 +100,7 @@ export function ParosSimulados() {
           </tr>
         ))}
       </Table>
-      <p className="mt-2 text-[12px] text-muted">MTBF exponencial y MTTR lognormal (σ = 0,9) por equipo, tomados del tablero Sep–Oct (línea 3) bajo el supuesto de 3 turnos continuos; las picadoras usan el dato de planta. Con 10 réplicas la dispersión es grande porque son pocos eventos por día.</p>
+      <p className="mt-2 text-[12px] text-muted">MTBF exponencial y MTTR lognormal (σ = 0,9) por equipo, tomados del tablero Sep–Oct (línea 3) con el régimen oficial de 3 turnos continuos; las picadoras usan el dato de planta. Con 10 réplicas la dispersión es grande porque son pocos eventos por día.</p>
     </Card>
   );
 }

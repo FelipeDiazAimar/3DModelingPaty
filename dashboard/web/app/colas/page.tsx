@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Chart, axisTiempoH } from "@/components/Chart";
 import { Card, Empty, Kpi, Page, PageHead, Tag, Table } from "@/components/Ui";
 import { MACHINES } from "@/lib/layout";
@@ -20,6 +20,8 @@ export default function Colas() {
 
   const avg = useMemo(() => (h.length > 1 ? timeAverages(h, focus) : null), [h, focus]);
   const lambda = useMemo(() => lambdaArrivals(h, focus), [h, focus]);
+  const [little24, setLittle24] = useState<{ filas: { id: string; nombre: string; divide: boolean; L: number; lambda_h: number; W_s: number; lambda_W: number; razon: number | null }[] } | null>(null);
+  useEffect(() => { fetch("/e1/little.json").then((r) => r.json()).then(setLittle24).catch(() => setLittle24(null)); }, []);
   const little = useMemo(() => {
     if (!avg || avg.T <= 0) return null;
     // W por vía clientes: sin log por cliente en el puente, se estima W=L/λ solo como referencia (no verifica, ET5 p.15).
@@ -52,7 +54,7 @@ export default function Colas() {
         className="mb-4"
         title="Evolución Temporal del WIP y Producción Acumulada (Dinámica 24 h)"
         sub="WIP instantáneo en cajas (eje izq.) vs. pallets PT acumulados desde inicio de corrida (eje der.). Doble escala: no comparar magnitudes. WIP filtra por línea; Pallets PT es total planta."
-        right={<Tag kind="supuesto">Dinámica de Línea</Tag>}
+        right={<Tag kind="supuesto">Dinámica de línea</Tag>}
       >
         <Chart
           height={320}
@@ -162,11 +164,23 @@ export default function Colas() {
           )}
           <p className="mt-2 text-[12px] text-muted">Control: |L−(Lq+ρ)|={avg ? formatES(avg.check_L, 4) : "—"} (debe →0; si no cierra, hay error en gráficos/estadísticos, ET5 p.12-13).</p>
         </Card>
-        <Card title="Chequeo Ley de Little" sub="L=λW, Lq=λWq por dos vías independientes (ET5 p.15)" right={<Tag kind="sinCorrida">W clientes pendiente</Tag>}>
-          {!avg || !little ? <Empty /> : (
+        <Card title="Chequeo Ley de Little" sub="L=λW por dos vías independientes (ET5 p.15): área bajo N(t) contra λ·W medida por FlexSim en cada estación" right={<Tag kind="real">10 réplicas · 24 h</Tag>}>
+          {!little24 ? <div className="skeleton h-40 w-full" /> : (
             <>
-              <p className="text-[13px]">λ={formatES(lambda * 3600, 2)} ítems/h (vía arribos t≥warm-up) · L={formatES(avg.L, 2)} (vía áreas)</p>
-              <p className="mt-1 text-[12px] leading-relaxed text-muted">W por vía clientes pendiente (el puente no trae log por cliente): W_ref=L/λ={formatES(little.Wref, 3)} h solo referencial. No se muestra como verificado: si Lq=sumaEsperas/T, cierra por álgebra y no prueba nada (ET5 p.15). Requiere tabla de permanencias por caja/pallet o CSV.</p>
+              <Table maxH={340} head={[{ label: "Estación" }, { label: "L (área)", right: true }, { label: "λ [ítems/h]", right: true }, { label: "W [s]", right: true }, { label: "λ·W", right: true }, { label: "λ·W / L", right: true }]}>
+                {little24.filas.map((r) => (
+                  <tr key={r.id}>
+                    <td className="first font-semibold">{r.nombre}{r.divide ? " *" : ""}</td>
+                    <td className="num">{formatES(r.L, 2)}</td>
+                    <td className="num">{formatES(r.lambda_h, 1)}</td>
+                    <td className="num">{formatES(r.W_s, 0)}</td>
+                    <td className="num">{formatES(r.lambda_W, 2)}</td>
+                    <td className="num font-bold" style={{ color: Math.abs((r.razon ?? 1) - 1) <= 0.07 ? "var(--ok)" : "var(--warn)" }}>{formatES(r.razon ?? 0, 3)}</td>
+                  </tr>
+                ))}
+              </Table>
+              <p className="mt-2 text-[12px] leading-relaxed text-muted">Cierra dentro de ±7 % en 10 de las 12 estaciones (L7 y L8 promediadas, E1 con lavado de 30 min). L sale de las áreas bajo N(t) y W de la estadía por ítem que registra FlexSim, así que no es un cierre por álgebra. * En mezcladoras y formadoras el ítem se divide dentro de la estación (batch → cargas → bandejas): λ es la tasa de salida y la razón es de +7 % en formadoras y +14–18 % en mezcladoras, donde el ítem que entra no es el que sale. El balance medio incluye el arranque desde vacío y lo que queda en proceso al corte de las 24 h.</p>
+              {avg && little && <p className="mt-1 text-[12px] leading-relaxed text-muted">En vivo ({focus}): λ = {formatES(lambda * 3600, 2)} ítems/h, L = {formatES(avg.L, 2)} y W = L/λ = {formatES(little.Wref, 3)} h, referencial: con una sola corrida W sale de la propia ley.</p>}
             </>
           )}
         </Card>

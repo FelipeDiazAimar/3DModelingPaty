@@ -1,7 +1,8 @@
 """Pasa las 10 réplicas de E1 con lavado de 30 min (raw_cuellos/E1.txt) a summary_e1.json y a la copia de la web (public/e1/summary.json).
-Actualiza métricas de pallets, cajas y toneladas y la validación contra el tablero. La serie horaria (Welch) y los paros siguen siendo
-de la corrida anterior sin lavado (raw_replicas.txt): no se recalcularon."""
-import json, math, os, shutil, statistics as st
+Actualiza métricas de pallets, cajas y toneladas y la validación contra el tablero. La serie horaria (Welch) y los paros salen de raw_replicas.txt
+(10 réplicas con lavado, analizar_e1.py); la corrida sin lavado quedó en raw_cuellos/sin_lavado/."""
+import json, math, os, shutil, statistics as st, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from analizar_cuellos import cargar, E1  # E1 = 10 réplicas con lavado de 30 min
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +30,7 @@ for k, key, ton in (("L7", "pal_L7", d["metricas"]["ton_L7"]), ("L8", "pal_L8", 
              real_en_ic=m["ic_inf"] <= v["real"] <= m["ic_sup"], ton_sim=ton["media"], ton_ic_inf=ton["ic_inf"], ton_ic_sup=ton["ic_sup"],
              ton_real_en_ic=ton["ic_inf"] <= v["ton_real"] <= ton["ic_sup"])
 d["lavado_min"] = 30
-d["nota"] = "Pallets, cajas, toneladas y validación: 10 réplicas con lavado de 30 min por batch (dato de planta). Serie horaria (Welch) y paros: corrida anterior sin lavado."
+d["nota"] = "Todo con 10 réplicas con lavado de 30 min por batch (dato de planta): pallets, cajas, toneladas, validación, serie horaria (Welch) y paros."
 json.dump(d, open(os.path.join(HERE, "summary_e1.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 shutil.copy(os.path.join(HERE, "summary_e1.json"), WEB)
 for k in ("L7", "L8", "Planta"):

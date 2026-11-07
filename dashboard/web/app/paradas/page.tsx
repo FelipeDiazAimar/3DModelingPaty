@@ -135,7 +135,7 @@ export default function Paradas() {
             </tr>
           ))}
         </Table>
-        <p className="mt-2 text-[12px] text-muted">MTBF bajo supuesto 3 turnos continuo (47520/eventos). Si el régimen real no fue continuo, recalcular ventana. MTTR a FlexSim como lognormal por equipo (ET6 p.12,22).</p>
+        <p className="mt-2 text-[12px] text-muted">Régimen oficial: 3 turnos continuos (MTBF = 47520 min / eventos). MTTR en FlexSim como lognormal por equipo (ET6 p.12,22).</p>
       </Card>
 
       <ValidacionE1 />

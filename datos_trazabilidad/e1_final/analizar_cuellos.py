@@ -16,7 +16,7 @@ Definiciones
   de menor capacidad implícita. Túnel (varios lotes a la vez) y estibado (el Combiner espera pallet) no son
   candidatos: su "procesando" solo indica que tienen algo adentro.
 """
-import json, math, os, statistics as st
+import json, math, os, shutil, statistics as st
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW = os.path.join(HERE, "raw_cuellos")
@@ -303,3 +303,25 @@ os.makedirs(WEB, exist_ok=True)
 shutil.copy(os.path.join(HERE, "summary_cuellos.json"), os.path.join(WEB, "cuellos.json"))
 shutil.copy(os.path.join(HERE, "summary_escenarios_v2.json"), os.path.join(WEB, "escenarios.json"))
 shutil.copy(os.path.join(HERE, "summary_e4_v2.json"), os.path.join(WEB, "e4.json"))
+
+# ---------------------------------------------------------------- Ley de Little por estación (E1, 24 h, 10 réplicas)
+# L = contenido medio (área bajo N(t)); W = estadía media que mide FlexSim por ítem; λ = ítems que entran por segundo.
+# Mezcladoras y formadoras dividen el ítem de entrada (batch -> cargas -> bandejas) y FlexSim mide la estadía por ítem que sale:
+# ahí λ es la tasa de salida. Es un chequeo por dos vías independientes (área contra λ·W), no por álgebra.
+NOMBRE_EST = {"Desencajado": "Desencajado", "Picadora": "Picadora", "MezA": "Mezcladora A", "MezB": "Mezcladora B", "FormA": "Formadora A",
+              "FormB": "Formadora B", "Tunel": "Túnel de frío", "EnvA": "Envasadora A", "EnvB": "Envasadora B", "EncA": "Encajonadora A",
+              "EncB": "Encajonadora B", "EstA": "Estibador"}
+DIV = ("MezA", "MezB", "FormA", "FormB")
+little = []
+for pref, nombre in NOMBRE_EST.items():
+    fila = dict(id=pref, nombre=nombre, divide=pref in DIV)
+    L = media([media([r["S"][f"{pref}_L{l}"]["cont"] for l in (7, 8)]) for r in E1])
+    W = media([media([r["S"][f"{pref}_L{l}"]["stay"] for l in (7, 8)]) for r in E1])
+    ent = media([media([r["S"][f"{pref}_L{l}"]["inp"] for l in (7, 8)]) for r in E1])
+    sal = media([media([r["S"][f"{pref}_L{l}"]["out"] for l in (7, 8)]) for r in E1])
+    lam = (sal if pref in DIV else ent) / 86400.0
+    fila.update(L=L, W_s=W, lambda_h=lam * 3600, lambda_W=lam * W, razon=(lam * W / L if L else None), entradas_dia=ent, salidas_dia=sal)
+    little.append(fila)
+json.dump(dict(replicas=10, nota="Estaciones L7 y L8 promediadas; E1 con lavado de 30 min.", filas=little),
+          open(os.path.join(HERE, "summary_little.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+shutil.copy(os.path.join(HERE, "summary_little.json"), os.path.join(WEB, "little.json"))

@@ -1,0 +1,24 @@
+// Tools/svgDonut(titulo, unidad, nombres, valores, colores, nota): tarjeta con grafico de dona en SVG y leyenda con porcentajes.
+string tit = param(1);
+string uni = param(2);
+Array nom = param(3);
+Array val = param(4);
+Array col = param(5);
+string nota = param(6);
+double tot = 0;
+for (int i = 1; i <= val.length; i++) tot += val[i];
+string s = "<div class='card'><div class='ct'>" + tit + " <span class='u'>" + uni + "</span></div>";
+if (tot <= 0) return s + "<div class='vacio'>Sin datos todavia: hace Reset y Run.</div></div>";
+double cc = 2 * 3.14159265 * 42;
+double off = 0;
+s = s + "<div class='dn'><svg viewBox='0 0 120 120'><circle cx='60' cy='60' r='42' fill='none' stroke='#eef2f8' stroke-width='16'/>";
+for (int i = 1; i <= val.length; i++) {
+	double len = cc * val[i] / tot;
+	if (len > 0) s = s + "<circle cx='60' cy='60' r='42' fill='none' stroke='" + col[i] + "' stroke-width='16' stroke-dasharray='" + string.fromNum(len, 2) + " " + string.fromNum(cc - len, 2) + "' stroke-dashoffset='" + string.fromNum(-off, 2) + "' transform='rotate(-90 60 60)'/>";
+	off += len;
+}
+s = s + "<text x='60' y='58' text-anchor='middle' class='dnv'>" + string.fromNum(tot, 0) + "</text><text x='60' y='73' text-anchor='middle' class='dnl'>" + uni + "</text></svg><div class='lg2'>";
+for (int i = 1; i <= val.length; i++) s = s + "<div><i style='background:" + col[i] + "'></i>" + nom[i] + " <b>" + string.fromNum(val[i], 0) + "</b> <em>" + string.fromNum(100 * val[i] / tot, 0) + " %</em></div>";
+s = s + "</div></div>";
+if (nota.length > 0) s = s + "<div class='nota'>" + nota + "</div>";
+return s + "</div>";
