@@ -6,10 +6,10 @@ treenode fB = tl.find("svgBarras");
 treenode fE = tl.find("svgEstados");
 Array H = tl.find("indHist").value;
 int n = H.length;
-Array ult = n > 0 ? H[n] : [Model.time / 3600, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 982, 1843];
+Array ult = n > 0 ? H[n] : [Model.time / 3600, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 982, 1843, 0];
 string AZ = "#1f6feb"; string VI = "#8250df"; string VE = "#1a7f37"; string AM = "#d4a72c"; string RO = "#cf222e"; string CE = "#0598bc"; string NA = "#e16f24"; string GR = "#8b97a8";
-Array CAT = ["Inactiva", "Procesando", "Bloqueada", "Sin material", "Falla"];
-Array CCAT = ["#c3cad5", "#22a06b", "#e8a317", "#8aa4c8", "#d64545"];
+Array CAT = ["Inactiva", "Procesando", "Bloqueada", "Sin material", "En falla"];
+Array CCAT = ["#8b97a8", "#16a37f", "#e08a1e", "#d6a21a", "#d5334b"];
 string et = "Desencajado,Picadora,MezA,MezB,FormA,FormB,Tunel,EnvA,EnvB,EncA,EncB,EstA";
 Array e = et.split(",");
 Array M7 = []; Array M8 = []; Array MT = [];
@@ -26,9 +26,14 @@ Array FLOTA = sFLOTA.split(",");
 // encabezado con KPIs (siempre visible)
 double horas = Model.time / 3600;
 double meta = 72 * horas / 24; // 36 pallets PT por día y por línea (tablero)
+int i4 = 1;
+while (i4 < n && H[i4][1] < ult[1] - 4) i4++;
+double dt4 = n > 0 ? ult[1] - H[i4][1] : 0;
+double r4 = dt4 > 0 ? (ult[3] - H[i4][3]) / dt4 : 0; // igual que ratePalletsHour de la web
 double cumpl = meta > 0 ? 100 * ult[3] / meta : 0;
 string S = getnodestr(tl.find("tableroHead")) + "<div class='pt'><div class='top'><div class='tt'>PATY San Jorge · Elaborados L7 y L8 <span>" + string.fromNum(horas, 1) + " h simuladas</span></div><div class='kpis'>";
 S = S + "<div class='k'><b>" + string.fromNum(ult[3], 0) + "</b><span>Pallets PT expedidos</span></div>";
+S = S + "<div class='k'><b>" + string.fromNum(r4, 2) + "</b><span>pal/h PT (ventana 4 h)</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(cumpl, 0) + " %</b><span>Cumplimiento (meta 36 pal/día/línea)</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(ult[2], 0) + "</b><span>Pallets MP recibidos</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(ult[6], 0) + " / " + string.fromNum(ult[7], 0) + "</b><span>kg/h L7 / L8</span></div>";
@@ -39,7 +44,7 @@ S = S + "<div class='tabs'><span class='tab' data-hoja='prod' onclick=\"patyVer(
 Array prodN = []; Array prodV = [];
 for (int i = 1; i <= MT.length; i++) { prodN.push(MT[i]); prodV.push(getoutput(Model.find(MT[i]))); }
 S = S + "<div class='hoja on' data-hoja='prod'><div class='grid'>";
-S = S + nodefunction(fL, "Pallets acumulados", "pallets", H, [2, 3], ["MP recibidos", "PT expedidos"], [AZ, VE], "");
+S = S + nodefunction(fL, "Pallets de PT acumulados", "pallets", H, [3, 28], ["Simulado", "Meta del programa"], [VE, GR], "Meta: 36 pallets/día por línea (3 pal/h entre L7 y L8).");
 S = S + nodefunction(fL, "Cajas de 5 kg por línea", "cajas", H, [4, 5], ["Línea 7", "Línea 8"], [AZ, VI], "");
 S = S + nodefunction(fB, "Producción por máquina", "salidas", prodN, prodV, AZ, 0, "Unidades de cada etapa: batches, cargas, bandejas, paquetes y cajas.");
 S = S + "</div></div>";
@@ -97,7 +102,7 @@ for (int i = 1; i <= MT.length; i++) {
 S = S + "<div class='hoja' data-hoja='est'><div class='grid'>";
 S = S + nodefunction(fL, "Período de calentamiento: pallets recibidos y terminados", "pallets", H, [2, 3], ["MP recibidos", "PT expedidos"], [AZ, VE], "");
 S = S + nodefunction(fB, "Utilización comparativa por estación", "% procesando", utN, utV, VE, 1, "");
-S = S + nodefunction(fE, "Distribución de estados en la simulación", MT, CAT, CCAT, "Estados muestreados cada 60 s simulados.");
+S = S + nodefunction(fE, "Distribución de estados en la simulación", MT, CAT, CCAT, "Estados muestreados cada 10 s simulados (desde la primera salida de camiones de MP).");
 S = S + "</div></div>";
 S = S + "</div>";
 // acentos como entidades: el widget no declara UTF-8

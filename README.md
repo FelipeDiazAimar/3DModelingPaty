@@ -15,7 +15,8 @@ Planta de elaborados (150 x 70 m, líneas L7 y L8) modelada en **Blender**, simu
 | `datos_trazabilidad/` | Evidencia estadística (ajustes, CSV agregados). Los JSON crudos de la planta no se publican. |
 
 ## Correr todo en local
-1. **Web:** `cd dashboard/web && npm install && npm run dev` → http://localhost:3000
+1. **Web:** doble clic en `iniciar_web.bat`, o `cd dashboard/web && npm install && npm run dev` → http://localhost:3000.
+   Recorrido a pie, vehículos, plano, iluminación horneada, modo rendimiento y análisis en 3D: ver [`documentacion/`](documentacion/README.md).
 2. **FlexSim:** abrir `PLANTASJ.fsm` y dar Run. El modelo envía un JSON cada 10 s simulados a `POST /api/ingest`; la web lo muestra sola.
    Sin FlexSim, el botón **Demo** de la web carga datos sintéticos rotulados.
 3. Para controlar FlexSim desde un asistente se usa el servidor MCP: https://github.com/FelipeDiazAimar/MCP_Flexsim

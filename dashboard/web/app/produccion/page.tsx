@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Chart, axisT, axisV } from "@/components/Chart";
 import { Card, Empty, Kpi, MiniBar, Page, PageHead, StatePill, Table } from "@/components/Ui";
 import { MACHINES, META_PAL_DIA_LINEA, STAGE_LABEL } from "@/lib/layout";
@@ -10,8 +10,7 @@ function Inner() {
   const h = useHist();
   const last = useLatest();
   const line = useStore((s) => s.line);
-  const [focus, setFocus] = useState<string | null>(null);
-  useEffect(() => { setFocus(new URLSearchParams(window.location.search).get("m")); }, []);
+  const focus = useSyncExternalStore(() => () => {}, () => new URLSearchParams(window.location.search).get("m"), () => null);
   if (!last) return <Empty />;
   const hrs = Math.max(last.t / 3600, 0.01);
   const metaPerH = (META_PAL_DIA_LINEA * 2) / 24;

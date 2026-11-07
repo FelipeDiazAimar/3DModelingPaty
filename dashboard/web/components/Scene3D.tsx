@@ -1,16 +1,22 @@
 "use client";
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, RoundedBox, useGLTF, useProgress } from "@react-three/drei";
+import { Html, OrbitControls, RoundedBox, useGLTF, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import type { OrbitControls as OC } from "three-stdlib";
-import { FLEET, MACHINES, STATE_COLOR, byId } from "@/lib/layout";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { FLEET, MACHINES, OPERARIOS, STATE_COLOR, byId } from "@/lib/layout";
+import { utilization } from "@/lib/derive";
 import { clock, indexAt, snapshotAt, useLatest, useStore } from "@/lib/store";
 import { demoFleetAt } from "@/lib/demo";
 import { fleetAt } from "@/lib/fleetPath";
 import { alongPath, pathBetween } from "@/lib/network";
 import { trucksAt } from "@/lib/trucks";
-import { fleetGround } from "@/lib/live3d";
+import { fleetGround, forklifts, huellaUsuario } from "@/lib/live3d";
+import { crearCamion, rigMontacargas, stepRigs } from "@/lib/vehicleFx";
+import Walk from "@/components/Walk";
+import OperariosPlanta from "@/components/OperariosPlanta";
 import { CineRig, CineTruck } from "@/components/Cinematics";
 import { useCine } from "@/lib/cine";
 
@@ -32,17 +38,43 @@ const COLORS: Record<string, string> = {
 const HIDE = new Set(["M_Campo", "M_Pasto"]); // las reemplaza la isla de pasto
 // camiones fijos que reemplazan los animados (muelles de MP y PT de la nave original y los de la báscula)
 // (también la plantilla del camión de la cinemática, y cajas y bandejas fijas: en la web se mueven)
-const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula|CamionCine|Caja_PATY_|Hamburguesas_)/;
+const TRUCK_HIDE = /^(Camion_Descarga_MP_|Camion_Carga_PT_|Camion_Bascula_|Camion_Espera_Bascula|CamionCine|Caja_PATY_|Hamburguesas_|Operario_|Op_)/; // Operario_* y Op_* (KIT_Operario): los empleados estáticos, los reemplaza OperariosPlanta
+
+/* ---------- iluminación horneada sobre los pisos (blender/hornear_piso.py): se prende y apaga sin recargar ---------- */
+const luzU = { uLuz: { value: null as THREE.Texture | null }, uOn: { value: 0 }, uRect: { value: new THREE.Vector4(0, 0, 1, 1) } };
+/** El piso toma la luz horneada según su posición en planta (x, z): no hace falta una segunda capa de UV en el GLB. */
+function conLuz(mat: THREE.Material) {
+  mat.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, luzU);
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vLuzXZ;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\nvLuzXZ = (modelMatrix * vec4(transformed, 1.0)).xz;");
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\nvarying vec2 vLuzXZ;\nuniform sampler2D uLuz;\nuniform float uOn;\nuniform vec4 uRect;")
+      .replace("#include <map_fragment>", `#include <map_fragment>
+        if (uOn > 0.5) {
+          vec2 uvL = (vLuzXZ - uRect.xy) / uRect.zw;
+          if (uvL.x >= 0.0 && uvL.x <= 1.0 && uvL.y >= 0.0 && uvL.y <= 1.0) diffuseColor.rgb *= texture2D(uLuz, vec2(uvL.x, 1.0 - uvL.y)).r;
+        }`);
+  };
+  mat.needsUpdate = true;
+}
 
 function Plant() {
   const { scene } = useGLTF("/models/planta_v10.glb");
+  const luz = useStore((s) => s.luz);
   useMemo(() => {
     const seen = new Set<THREE.Material>();
+    const pisos: THREE.Mesh[] = []; // mallas chatas a nivel del suelo: reciben la luz horneada
+    const caja = new THREE.Box3();
+    scene.updateWorldMatrix(true, true);
     scene.traverse((o) => {
       if (TRUCK_HIDE.test(o.name)) { o.visible = false; return; }
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
       const mats = Array.isArray(m.material) ? m.material : [m.material];
+      caja.setFromObject(m);
+      if (caja.max.y < 0.6 && caja.max.y - caja.min.y < 0.6) pisos.push(m);
       mats.forEach((mat) => {
         const sm = mat as THREE.MeshStandardMaterial;
         if (HIDE.has(sm.name)) { m.visible = false; return; }
@@ -60,23 +92,222 @@ function Plant() {
         sm.needsUpdate = true;
       });
     });
+    // los pisos usan una copia del material con la luz: el mismo material en algo alto (una pared, una tarima) queda como estaba
+    const copia = new Map<THREE.Material, THREE.Material>();
+    const conPiso = (x: THREE.Material) => {
+      let c = copia.get(x);
+      if (!c) { c = x.clone(); conLuz(c); copia.set(x, c); }
+      return c;
+    };
+    for (const m of pisos) m.material = Array.isArray(m.material) ? m.material.map(conPiso) : conPiso(m.material);
   }, [scene]);
+  // la textura se baja recién la primera vez que se prende; si falta, el interruptor vuelve a apagado
+  useEffect(() => {
+    if (!luz) { luzU.uOn.value = 0; return; }
+    if (luzU.uLuz.value) { luzU.uOn.value = 1; return; }
+    Promise.all([
+      fetch("/models/planta_luz.json").then((r) => { if (!r.ok) throw new Error(`planta_luz.json: ${r.status}`); return r.json(); }),
+      new THREE.TextureLoader().loadAsync("/models/planta_luz.jpg"),
+    ]).then(([j, t]: [{ x0: number; x1: number; z0: number; z1: number }, THREE.Texture]) => {
+      t.anisotropy = 8;
+      luzU.uRect.value.set(j.x0, j.z0, j.x1 - j.x0, j.z1 - j.z0);
+      luzU.uLuz.value = t;
+      luzU.uOn.value = useStore.getState().luz ? 1 : 0;
+    }).catch((e) => { console.warn("Sin iluminación horneada:", e); useStore.getState().setLuz(false); });
+  }, [luz]);
   return <primitive object={scene} />;
+}
+
+/* ---------- modo rendimiento: la planta estática fundida en una malla por material ----------
+   El modelo trae ~17.000 piezas y cada una es un dibujo aparte por cuadro (eso, no los triángulos, es lo que la
+   hace lenta). Fundida quedan unas decenas. Las piezas originales pasan a una capa que la cámara no dibuja pero
+   los rayos del recorrido a pie sí ven (colisiones). */
+const CAPA_ORIGINAL = 1;
+function PlantaFundida() {
+  const { scene } = useGLTF("/models/planta_v10.glb");
+  const { fundidas, piezas } = useMemo(() => {
+    scene.updateWorldMatrix(true, true);
+    const grupos = new Map<string, { mat: THREE.Material; geos: THREE.BufferGeometry[] }>();
+    const piezas: THREE.Mesh[] = [];
+    scene.traverseVisible((o) => {
+      const m = o as THREE.Mesh;
+      if (!m.isMesh || (m as THREE.InstancedMesh).isInstancedMesh || Array.isArray(m.material)) return;
+      const g = m.geometry;
+      // se funden juntas solo las que comparten material y los mismos atributos
+      const clave = `${m.material.uuid}|${Object.keys(g.attributes).sort().join(",")}|${g.index ? 1 : 0}`;
+      let gr = grupos.get(clave);
+      if (!gr) grupos.set(clave, (gr = { mat: m.material, geos: [] }));
+      gr.geos.push(g.clone().applyMatrix4(m.matrixWorld));
+      piezas.push(m);
+    });
+    const fundidas: THREE.Mesh[] = [];
+    for (const { mat, geos } of grupos.values()) {
+      const g = mergeGeometries(geos, false);
+      geos.forEach((x) => x.dispose());
+      if (g) fundidas.push(new THREE.Mesh(g, mat));
+    }
+    return { fundidas, piezas };
+  }, [scene]);
+  useEffect(() => {
+    piezas.forEach((m) => m.layers.set(CAPA_ORIGINAL));
+    return () => { piezas.forEach((m) => m.layers.set(0)); fundidas.forEach((m) => m.geometry.dispose()); };
+  }, [piezas, fundidas]);
+  return <>{fundidas.map((m) => <primitive key={m.uuid} object={m} />)}</>;
+}
+
+/* ---------- operarios de FlexSim con el modelo del operario (blender/operario.blend) ----------
+   Si el publicador manda su posición (fleet), la siguen; si no, quedan en su puesto. Trabajan (Interact)
+   mientras su máquina procesa, caminan cuando se mueven y si no esperan (Idle). */
+interface Op { o: (typeof OPERARIOS)[number]; obj: THREE.Object3D; mixer: THREE.AnimationMixer; acc: Record<string, THREE.AnimationAction>; clip: { v: string }; prev: THREE.Vector3 }
+function Operarios() {
+  const { scene, animations } = useGLTF("/models/operario.glb");
+  const ops = useMemo<Op[]>(() => OPERARIOS.map((o) => {
+    const obj = cloneSkinned(scene);
+    obj.traverse((x) => { x.frustumCulled = false; }); // malla con esqueleto: su caja no sigue a la animación
+    obj.position.copy(P(o.x, o.y, 0));
+    const mixer = new THREE.AnimationMixer(obj);
+    const acc = Object.fromEntries(animations.map((c) => [c.name, mixer.clipAction(c)]));
+    return { o, obj, mixer, acc, clip: { v: "" }, prev: obj.position.clone() };
+  }), [scene, animations]);
+  useFrame((_, dt) => animarOperarios(ops, dt));
+  return <>{ops.map((p) => <primitive key={p.o.id} object={p.obj} />)}</>;
+}
+
+const opMeta = new THREE.Vector3(), opMira = new THREE.Vector3();
+function animarOperarios(ops: Op[], dt: number) {
+  const h = useStore.getState().history;
+  const snap = h.length ? snapshotAt(h, clock.t) : undefined;
+  for (const p of ops) {
+    const f = snap?.fleet[p.o.id];
+    opMeta.copy(f ? P(f.x, f.y, 0) : P(p.o.x, p.o.y, 0));
+    p.obj.position.lerp(opMeta, Math.min(1, dt * 6));
+    const vel = p.obj.position.distanceTo(p.prev) / Math.max(dt, 1e-3);
+    const m = byId(p.o.maq);
+    // de frente a donde camina; quieto, de frente a su máquina
+    if (vel > 0.3) opMira.subVectors(p.obj.position, p.prev);
+    else if (m) opMira.subVectors(P(m.x, m.y, 0), p.obj.position);
+    if (opMira.lengthSq() > 1e-6) {
+      let da = Math.atan2(opMira.x, opMira.z) - p.obj.rotation.y;
+      da = Math.atan2(Math.sin(da), Math.cos(da));
+      p.obj.rotation.y += da * Math.min(1, dt * 8);
+    }
+    const want = vel > 0.3 ? "Walk" : snap?.machines[p.o.maq]?.state === "proc" ? "Interact" : "Idle";
+    if (want !== p.clip.v) {
+      p.acc[p.clip.v]?.fadeOut(0.25);
+      p.acc[want]?.reset().fadeIn(0.25).play();
+      p.clip.v = want;
+    }
+    p.mixer.update(dt);
+    p.prev.copy(p.obj.position);
+  }
+}
+
+/* ---------- mapa de calor: el piso de cada máquina de L7/L8 según su utilización acumulada ---------- */
+function Calor() {
+  const grupo = useMemo(() => {
+    const g = new THREE.Group();
+    for (const m of MACHINES.filter((x) => x.line !== "Común")) {
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(m.sx + 1.6, m.sy + 1.6), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.78, depthWrite: false }));
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.copy(P(m.x, m.y, 0.06));
+      mesh.name = m.id;
+      mesh.renderOrder = 2;
+      g.add(mesh);
+    }
+    return g;
+  }, []);
+  useFrame(() => pintarCalor(grupo));
+  useEffect(() => { calorT.v = 0; }, []); // al prender, pintar en el primer cuadro
+  return <primitive object={grupo} />;
+}
+const calorT = { v: 0 };
+/** Recalcula cada 1,5 s (recorre todo el historial): verde = libre, rojo = saturada. */
+function pintarCalor(g: THREE.Group) {
+  const now = performance.now();
+  if (now - calorT.v < 1500) return;
+  calorT.v = now;
+  const h = useStore.getState().history;
+  for (const o of g.children) {
+    const mesh = o as THREE.Mesh;
+    mesh.visible = h.length > 0;
+    (mesh.material as THREE.MeshBasicMaterial).color.setHSL((1 - utilization(h, mesh.name).proc) * 0.33, 0.95, 0.45);
+  }
+}
+
+/* ---------- comparar un escenario contra E1 en el 3D (resultados de public/e1) ---------- */
+const CAMBIA: Record<"E2" | "E3" | "E4", { maq: string[]; color: string }> = {
+  E2: { maq: ["FormA_L7", "FormB_L7", "FormA_L8", "FormB_L8"], color: "#2f7bff" },
+  E3: { maq: ["FormA_L7", "FormB_L7", "FormA_L8", "FormB_L8", "Tunel_L7", "Tunel_L8"], color: "#e08a1e" },
+  E4: { maq: ["Desencajado_L7", "Picadora_L7", "MezA_L7", "MezB_L7", "Desencajado_L8", "Picadora_L8", "MezA_L8", "MezB_L8"], color: "#8b5cf6" },
+};
+interface IC { media: number; ic_inf: number; ic_sup: number }
+interface Esc { nombre: string; cambio: string; pallets: IC }
+interface DatosEsc { e: { escenarios: Record<string, Esc> }; e4: { descripcion: string; replicas_15min: number; filas: { lavado_min: number; pal_1500: number; pal_1200: number }[] } }
+
+function Escenario3D() {
+  const esc = useStore((s) => s.escenario);
+  const [datos, setDatos] = useState<DatosEsc | null>(null);
+  useEffect(() => {
+    if (!esc || datos) return;
+    Promise.all([fetch("/e1/escenarios.json").then((r) => r.json()), fetch("/e1/e4.json").then((r) => r.json())])
+      .then(([e, e4]) => setDatos({ e, e4 }))
+      .catch((err) => console.warn("Sin resultados de escenarios:", err));
+  }, [esc, datos]);
+  if (!esc) return null;
+  const c = CAMBIA[esc];
+  const f = (n: number) => n.toLocaleString("es-AR", { maximumFractionDigits: 1 });
+  let titulo: string = esc, cambio = "", filas: [string, string][] = [], veredicto = "";
+  if (datos && esc !== "E4") {
+    const b = datos.e.escenarios.E1, x = datos.e.escenarios[esc];
+    const d = x.pallets.media - b.pallets.media;
+    const solapan = !(x.pallets.ic_inf > b.pallets.ic_sup || x.pallets.ic_sup < b.pallets.ic_inf);
+    titulo = `${esc} · ${x.nombre}`; cambio = x.cambio;
+    filas = [["E1 · Base", `${f(b.pallets.media)} pallets/día (IC ${f(b.pallets.ic_inf)}–${f(b.pallets.ic_sup)})`],
+             [esc, `${f(x.pallets.media)} pallets/día (IC ${f(x.pallets.ic_inf)}–${f(x.pallets.ic_sup)})`],
+             ["Diferencia", `${d >= 0 ? "+" : ""}${f(d)} pallets/día`]];
+    veredicto = Math.abs(d) < 0.05 ? "Sin diferencia con E1." : solapan ? "Los IC 95 % se solapan: con este criterio la diferencia no alcanza (ver la prueba pareada en Escenarios)." : "Los IC 95 % no se solapan: la diferencia es significativa.";
+  } else if (datos) {
+    const r = datos.e4.filas.find((x) => x.lavado_min === 15) ?? datos.e4.filas[0];
+    titulo = "E4 · Batch de 1200 kg"; cambio = datos.e4.descripcion;
+    filas = [["Batch 1500 kg", `${r.pal_1500} pallets/día`], ["Batch 1200 kg", `${r.pal_1200} pallets/día`],
+             ["Diferencia", `${r.pal_1200 - r.pal_1500 >= 0 ? "+" : ""}${r.pal_1200 - r.pal_1500} pallets/día (lavado de ${r.lavado_min} min, ${datos.e4.replicas_15min} réplicas)`]];
+  }
+  return (
+    <group>
+      {c.maq.map((id) => {
+        const m = byId(id);
+        return m ? (
+          <RoundedBox key={id} args={[m.sx + 0.8, m.sz + 0.6, m.sy + 0.8]} radius={0.4} smoothness={3} position={P(m.x, m.y, m.sz / 2)}>
+            <meshBasicMaterial color={c.color} transparent opacity={0.35} depthWrite={false} />
+          </RoundedBox>
+        ) : null;
+      })}
+      <Html position={P(-5, -4, 9)} center zIndexRange={[20, 0]}>
+        <div className="glass w-[320px] p-4 text-[12px]" style={{ borderTop: `4px solid ${c.color}` }}>
+          <div className="text-[15px] font-extrabold leading-tight">{titulo}</div>
+          {cambio && <div className="mt-1 text-muted">{cambio}</div>}
+          {datos ? (
+            <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+              {filas.flatMap(([k, v]) => [<dt key={`${k}t`} className="font-bold">{k}</dt>, <dd key={`${k}d`} className="tnum">{v}</dd>])}
+            </dl>
+          ) : <div className="mt-2 text-muted">Cargando resultados…</div>}
+          {veredicto && <div className="mt-2 rounded-lg bg-[#eef3fa] px-2 py-1.5 font-bold">{veredicto}</div>}
+          <div className="mt-2 text-[11px] text-muted">Resaltadas: las máquinas que cambian en {esc}.</div>
+        </div>
+      </Html>
+    </group>
+  );
 }
 
 /* ---------- camiones animados (MP a Elaborados y expedición de PT; horarios de lib/trucks.ts) ---------- */
 function Trucks() {
   const { scene } = useGLTF("/models/planta_v10.glb");
-  // el mismo camión del modelo (el de la báscula), apoyado en el piso: cabina hacia +x local
+  // el camión articulado del modelo (tractor + acoplado, con ruedas sueltas), apoyado en el piso: cabina hacia +x local
   const slots = useMemo(() => {
-    const src = scene.getObjectByName("Camion_Bascula_Ingreso");
+    const src = scene.getObjectByName("Camion_Carga_PT_1");
     if (!src) return [] as THREE.Group[];
     return [0, 1, 2, 3].map(() => {
-      const c = src.clone(true);
-      c.position.set(0, 0, 0); c.rotation.set(0, 0, 0); c.scale.set(1, 1, 1);
-      c.traverse((o) => { o.visible = true; });
-      const g = new THREE.Group();
-      g.add(c);
+      const g = crearCamion(src).g;
       g.visible = false;
       return g;
     });
@@ -242,29 +473,45 @@ function Clouds() {
 function ForkliftModel({ id }: { id: string }) {
   const steel = "#5f6f8d", dark = "#252d40";
   return (
-    <group ref={(g) => { if (g) fk.set(id, g); else fk.delete(id); }} scale={1.35}>
-      {/* ruedas (motrices adelante, directrices atrás) */}
+    <group ref={(g) => { if (g) { fk.set(id, g); rigMontacargas(g); } else fk.delete(id); }} scale={1.35}>
+      {/* ruedas (motrices adelante, directrices atrás): userData.wheel = radio; el grupo es la dirección y su hijo el giro */}
       {[[-0.62, 0.55, 0.36], [0.62, 0.55, 0.36], [-0.6, -0.85, 0.3], [0.6, -0.85, 0.3]].map(([x, z, r], i) => (
-        <group key={i} position={[x, r, z]} rotation={[0, 0, Math.PI / 2]}>
-          <mesh><cylinderGeometry args={[r, r, 0.3, 20]} /><meshLambertMaterial color={dark} /></mesh>
-          <mesh position={[0, x > 0 ? 0.16 : -0.16, 0]}><cylinderGeometry args={[r * 0.5, r * 0.5, 0.04, 16]} /><meshLambertMaterial color="#aeb9d0" /></mesh>
+        <group key={i} position={[x, r, z]} userData={{ wheel: r, rear: z < 0 }}>
+          <group>
+            <group rotation={[0, 0, Math.PI / 2]}>
+              <mesh><cylinderGeometry args={[r, r, 0.3, 20]} /><meshLambertMaterial color={dark} /></mesh>
+              <mesh position={[0, x > 0 ? 0.16 : -0.16, 0]}><cylinderGeometry args={[r * 0.5, r * 0.5, 0.04, 16]} /><meshLambertMaterial color="#aeb9d0" /></mesh>
+              <mesh position={[0, x > 0 ? 0.19 : -0.19, 0]}><boxGeometry args={[0.03, 0.03, r * 0.9]} /><meshLambertMaterial color={dark} /></mesh>
+            </group>
+          </group>
         </group>
       ))}
       {/* chasis y contrapeso */}
       <RoundedBox args={[1.24, 0.62, 2.2]} radius={0.14} smoothness={4} position={[0, 0.66, -0.1]}><meshLambertMaterial color="#ff9a1f" /></RoundedBox>
       <RoundedBox args={[1.2, 0.8, 0.62]} radius={0.2} smoothness={4} position={[0, 0.82, -1.18]}><meshLambertMaterial color="#f07d00" /></RoundedBox>
       <RoundedBox args={[1.0, 0.12, 0.5]} radius={0.04} position={[0, 1.04, 0.62]}><meshLambertMaterial color="#e08800" /></RoundedBox>
-      {/* asiento */}
-      <RoundedBox args={[0.7, 0.14, 0.6]} radius={0.05} position={[0, 1.04, -0.4]}><meshLambertMaterial color={dark} /></RoundedBox>
-      <RoundedBox args={[0.7, 0.5, 0.12]} radius={0.05} position={[0, 1.3, -0.72]}><meshLambertMaterial color={dark} /></RoundedBox>
-      {/* volante */}
-      <mesh position={[0, 1.32, 0.12]} rotation={[0.9, 0, 0]}><torusGeometry args={[0.16, 0.025, 8, 20]} /><meshLambertMaterial color={dark} /></mesh>
+      {/* asiento (tope a 1,25: el conductor se sienta ahí con los pies sobre el chasis; el marcador "asiento" son sus pies) y pedales */}
+      <RoundedBox args={[0.5, 0.2, 0.5]} radius={0.03} position={[0, 1.07, -0.4]}><meshLambertMaterial color="#2b3447" /></RoundedBox>
+      <RoundedBox args={[0.7, 0.14, 0.6]} radius={0.05} position={[0, 1.182, -0.4]}><meshLambertMaterial color={dark} /></RoundedBox>
+      <RoundedBox args={[0.7, 0.5, 0.12]} radius={0.05} position={[0, 1.5, -0.55]}><meshLambertMaterial color={dark} /></RoundedBox>
+      <object3D name="asiento" position={[0, 0.652, -0.4]} />
+      {[-0.1, 0.1].map((x) => <mesh key={x} position={[x, 0.99, 0.14]}><boxGeometry args={[0.1, 0.04, 0.12]} /><meshLambertMaterial color="#161b28" /></mesh>)}
+      {/* volante: gira con la dirección (grupo "volante", eje = normal del aro) y las manos del operario lo siguen; la columna lo une al chasis */}
+      <group position={[0, 1.581, -0.104]} rotation={[0.9, 0, 0]}>
+        <group name="volante">
+          <mesh><torusGeometry args={[0.2, 0.03, 8, 20]} /><meshLambertMaterial color={dark} /></mesh>
+          <mesh><boxGeometry args={[0.4, 0.03, 0.03]} /><meshLambertMaterial color={dark} /></mesh>
+          <mesh><boxGeometry args={[0.03, 0.2, 0.03]} /><meshLambertMaterial color={dark} /></mesh>
+        </group>
+      </group>
+      <mesh position={[0, 1.327, 0.098]} rotation={[0.9 + Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.035, 0.035, 0.65, 10]} /><meshLambertMaterial color={dark} /></mesh>
+      <RoundedBox args={[0.3, 0.1, 0.3]} radius={0.03} position={[0, 1.03, 0.3]}><meshLambertMaterial color="#e08800" /></RoundedBox>
       {/* techo de protección */}
       {[[-0.52, 0.55], [0.52, 0.55], [-0.52, -0.82], [0.52, -0.82]].map(([x, z], i) => (
-        <mesh key={i} position={[x, 1.55, z]}><boxGeometry args={[0.06, 1.0, 0.06]} /><meshLambertMaterial color={dark} /></mesh>
+        <mesh key={i} position={[x, 1.62, z]}><boxGeometry args={[0.06, 1.3, 0.06]} /><meshLambertMaterial color={dark} /></mesh>
       ))}
-      <RoundedBox args={[1.22, 0.07, 1.5]} radius={0.03} position={[0, 2.06, -0.14]}><meshLambertMaterial color="#3a4560" /></RoundedBox>
-      <mesh position={[0, 2.16, -0.1]}><cylinderGeometry args={[0.07, 0.09, 0.12, 12]} /><meshLambertMaterial color="#ffd23f" /></mesh>
+      <RoundedBox args={[1.22, 0.07, 1.5]} radius={0.03} position={[0, 2.3, -0.14]}><meshLambertMaterial color="#3a4560" /></RoundedBox>
+      <mesh position={[0, 2.4, -0.1]}><cylinderGeometry args={[0.07, 0.09, 0.12, 12]} /><meshLambertMaterial color="#ffd23f" /></mesh>
       {/* mástil, carro y horquillas */}
       {[-0.42, 0.42].map((x) => (
         <mesh key={x} position={[x, 1.02, 1.12]}><boxGeometry args={[0.1, 2.0, 0.12]} /><meshLambertMaterial color={steel} /></mesh>
@@ -296,7 +543,7 @@ function ForkliftModel({ id }: { id: string }) {
 const world = new Map<string, THREE.Vector3>(); // posición del pin
 const ground = fleetGround; // montacargas: posición en el piso (suavizada); la leen también las cinemáticas
 const els = new Map<string, HTMLElement>();
-const fk = new Map<string, THREE.Group>();
+const fk = forklifts;
 const pal = new Map<string, THREE.Group>(); // pallet sobre las horquillas
 const visFleet = new Map<string, { x: number; y: number }>(); // posición mostrada (Blender)
 const VIS_MAX_SPEED = 14; // m/s: velocidad visual máxima de un montacargas
@@ -309,6 +556,7 @@ function Projector() {
   const cam = useThree((s) => s.camera);
   const v = useRef(new THREE.Vector3());
   useFrame((_, dt) => {
+    stepRigs(dt);
     const st = useStore.getState();
     const h = st.history;
     const snap = h.length ? snapshotAt(h, clock.t) : undefined;
@@ -317,6 +565,12 @@ function Projector() {
       const l = snap?.fleet[f.id];
       const g = fk.get(f.id);
       const c = ground.get(f.id)!;
+      if (g && st.driving === f.id) { // lo maneja el operario (Walk): al soltarlo vuelve solo por la red a su posición simulada
+        c.copy(g.position);
+        visFleet.set(f.id, { x: c.x, y: -c.z });
+        world.set(f.id, c.clone().setY(3.4));
+        return;
+      }
       let tb: { x: number; y: number } | null = null; // posición objetivo (coordenadas de Blender)
       if (st.demo) { const dd = demoFleetAt(f.id, clock.t); tb = { x: dd.x, y: dd.y }; }
       else if (l) tb = fleetAt(h, f.id, clock.t) ?? { x: l.x, y: l.y };
@@ -334,6 +588,10 @@ function Projector() {
             const step = VIS_MAX_SPEED * dt;
             if (total > step) { const q = alongPath(path, step / total); nx = q.x; ny = q.y; }
           }
+        }
+        if (vis && huellaUsuario.length) { // el vehículo que maneja el operario no se atraviesa: este espera si se acerca a su huella
+          const q = P(nx, ny, 0);
+          if (huellaUsuario.some((h) => Math.hypot(q.x - h.x, q.z - h.z) < h.r + 1.3)) { nx = vis.x; ny = vis.y; }
         }
         visFleet.set(f.id, { x: nx, y: ny });
         const prev = c.clone();
@@ -449,11 +707,13 @@ export function PinLayer() {
   const selected = useStore((s) => s.selected);
   const select = useStore((s) => s.select);
   const line = useStore((s) => s.line);
+  const walk = useStore((s) => s.mode === "walk" && !s.plan); // a pie: solo el pin de lo elegido (en el plano, todos)
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {MACHINES.map((m) => {
         if (line !== "Todas" && m.line !== "Común" && m.line !== line) return null;
         const on = selected === m.id;
+        if (walk && !on) return null;
         const state = last?.machines[m.id]?.state ?? "idle";
         return (
           <div key={m.id} ref={(e) => { if (e) els.set(m.id, e); else els.delete(m.id); }} className="absolute left-0 top-0" style={{ willChange: "transform" }}>
@@ -467,6 +727,7 @@ export function PinLayer() {
       {FLEET.map((f) => {
         const on = selected === f.id;
         const carrying = last?.fleet[f.id]?.carrying;
+        if (walk && !on) return null;
         return (
           <div key={f.id} ref={(e) => { if (e) els.set(f.id, e); else els.delete(f.id); }} className="absolute left-0 top-0" style={{ willChange: "transform" }}>
             <button onClick={() => select(on ? null : f.id)} className={`pin pin-fork pointer-events-auto ${on ? "pin-on" : ""}`} aria-label={f.label}>
@@ -561,14 +822,20 @@ function LoaderOverlay() {
 }
 
 export default function Scene3D() {
+  const walk = useStore((s) => s.mode === "walk");
+  const rend = useStore((s) => s.rend);
+  const calor = useStore((s) => s.calor);
   return (
     <div className="absolute inset-0" style={{ isolation: "isolate", zIndex: 0, background: "linear-gradient(180deg, #a9dcff 0%, #cfe9ff 40%, #dcefff 100%)" }}>
-      <Canvas dpr={[1, 1.5]} performance={{ min: 0.6 }} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
+      <Canvas dpr={rend ? 1 : [1, 1.5]} performance={{ min: 0.6 }} camera={{ position: [86, 66, 86], fov: 32, near: 0.1, far: 3000 }} gl={{ antialias: true, alpha: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
         <fog attach="fog" args={["#dcefff", 500, 2800]} />
         <hemisphereLight args={["#ffffff", "#9be37a", 1.55]} />
         <directionalLight position={[80, 150, 60]} intensity={2.1} color="#fffdf6" />
         <Suspense fallback={null}>
           <Plant />
+          {rend && <PlantaFundida />}
+          <Operarios />
+          <OperariosPlanta />
           <Trucks />
           <CineTruck />
         </Suspense>
@@ -578,9 +845,17 @@ export default function Scene3D() {
         <Flow />
         {FLEET.map((f) => <ForkliftModel key={f.id} id={f.id} />)}
         <Highlight />
-        <OrbitControls makeDefault enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2.15} minDistance={0.05} maxDistance={Infinity} zoomToCursor target={[0, 0, 0]} />
-        <Rig />
-        <CineRig />
+        {calor && <Calor />}
+        <Escenario3D />
+        {walk ? (
+          <Suspense fallback={null}><Walk /></Suspense>
+        ) : (
+          <>
+            <OrbitControls makeDefault enableDamping dampingFactor={0.08} maxPolarAngle={Math.PI / 2.15} minDistance={0.05} maxDistance={Infinity} zoomToCursor target={[0, 0, 0]} />
+            <Rig />
+            <CineRig />
+          </>
+        )}
         <Projector />
       </Canvas>
       <PinLayer />

@@ -2,6 +2,8 @@
 import dynamic from "next/dynamic";
 import { BatchTrack, BottomTable, SidePanel } from "@/components/Console";
 import { CineButtons, CineOverlay } from "@/components/Cinematics";
+import { WalkHud } from "@/components/Walk";
+import { OpcionesVista } from "@/components/Controles3D";
 import { useCine } from "@/lib/cine";
 import { useLatest, useStore } from "@/lib/store";
 
@@ -14,14 +16,23 @@ export default function Home() {
   const last = useLatest();
   const setDemo = useStore((s) => s.setDemo);
   const cine = useCine((s) => s.id);
+  const walk = useStore((s) => s.mode === "walk");
   return (
     <div className="absolute inset-0">
       <Scene3D />
       <div className="pointer-events-none absolute inset-0 z-10">
-        <div className="absolute left-4 top-[96px] hidden md:block">
-          <CineButtons />
+        <div className={`absolute left-4 hidden md:flex md:flex-col md:gap-1.5 ${walk ? "bottom-4" : "top-[96px]"}`}>
+          {!walk && !cine && <WalkHud />}
+          {!walk && <CineButtons />}
+          {!cine && <OpcionesVista completo={!walk} />}
+          {walk && <WalkHud />}
         </div>
-        {!cine && (
+        {!cine && walk && (
+          <div className="absolute bottom-[84px] right-4 top-[84px] hidden w-[380px] max-w-[92vw] flex-col justify-end md:flex">
+            <SidePanel />
+          </div>
+        )}
+        {!cine && !walk && (
           <>
             <div className="absolute bottom-4 left-4 hidden md:block">
               <BatchTrack />
@@ -37,7 +48,7 @@ export default function Home() {
         )}
       </div>
       <CineOverlay />
-      {!last && !cine && (
+      {!last && !cine && !walk && (
         <div className="glass pointer-events-auto absolute left-1/2 top-1/2 z-10 w-[min(460px,90vw)] -translate-x-1/2 -translate-y-1/2 p-6 text-center">
           <h2 className="text-[20px] font-extrabold tracking-tight">Esperando la simulación</h2>
           <p className="mt-2 text-[14px] text-muted">

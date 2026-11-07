@@ -1,0 +1,12 @@
+# E2 (formadoras a 1843 kg/h: EntrySpacePadding 3,27 -> 1,554 m en CintaFormA/B_L7/L8), 24 h, arranque vacio. Corrido en FlexSim 2026 con PLANTASJ.fsm el 2026-11-02.
+# R|rep|QPaletizado_L7|QPaletizado_L8|SinkExpedicion|cajas_L7|cajas_L8   (acumulados a las 24 h)
+R|1|46|46|92|6698|6702
+R|2|46|46|92|6698|6709
+R|3|45|46|91|6577|6709
+R|4|46|46|92|6698|6709
+R|5|46|46|92|6698|6709
+R|6|46|46|92|6698|6709
+R|7|46|46|92|6698|6709
+R|8|46|46|92|6698|6709
+R|9|46|46|92|6698|6709
+R|10|46|46|92|6698|6709

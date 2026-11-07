@@ -4,5 +4,12 @@ import * as THREE from "three";
  *  cuadro y la leen las cinemáticas para seguirlos con la cámara. */
 export const fleetGround = new Map<string, THREE.Vector3>();
 
+/** Grupo 3D de cada montacargas: lo mueve Scene3D según la simulación, o Walk cuando el operario lo maneja. */
+export const forklifts = new Map<string, THREE.Group>();
+
+/** Huella del vehículo que maneja el operario (círculos de radio r a lo largo de sus cuerpos, mundo three): la escribe Walk y los montacargas
+ *  de la simulación se frenan antes de atravesarla. */
+export const huellaUsuario: { x: number; z: number; r: number }[] = [];
+
 /** Pose del camión de la cinemática (coordenadas de Blender); la escribe CineTruck y la lee la cámara. */
 export const camionCine = { x: 0, y: 0, h: 0, visible: false };

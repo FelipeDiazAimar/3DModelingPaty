@@ -10,7 +10,7 @@ export const NODES: Record<string, Pt> = {
   J_Des_L7: [-52, 12], D_Des_L7: [-48.3, 12], J_Des_L8: [-52, -20], D_Des_L8: [-48.3, -20],
 };
 
-const EDGES: [string, string][] = [
+export const EDGES: [string, string][] = [
   ["NN_Recepcion", "NN_W_Pasillo"], ["NN_W_Pasillo", "J_Des_L8"], ["J_Des_L8", "NN_W_PuertaEnfr"], ["NN_W_PuertaEnfr", "J_Des_L7"],
   ["J_Des_L7", "NN_W_PuertaCong"], ["NN_W_PuertaEnfr", "NN_MPEnfr"], ["NN_W_PuertaCong", "NN_MPCong"],
   ["J_Des_L7", "D_Des_L7"], ["J_Des_L8", "D_Des_L8"],

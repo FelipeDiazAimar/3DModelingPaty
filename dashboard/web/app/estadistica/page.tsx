@@ -65,13 +65,13 @@ const FITTING_TABS = {
 
 // Perfil de utilización por estación para diagnóstico del cuello de botella
 const BOTTLENECK_STAGES = [
-  { stage: "Desencajado Mesada", util: 68, rate: "3.500 s / pallet", bottleneck: false },
-  { stage: "Picadora Weiler", util: 52, rate: "900 s / batch (6 t/h)", bottleneck: false },
-  { stage: "Mezcladoras Ribbon", util: 58, rate: "1.200 s / batch", bottleneck: false },
-  { stage: "Formadora F26 / F19", util: 89, rate: "18,33 s / caja (982 kg/h)", bottleneck: true },
-  { stage: "Túnel de Congelado", util: 64, rate: "300 s / batch (cap. 60)", bottleneck: false },
-  { stage: "Envasadora Fripack", util: 44, rate: "4,0 s / caja (150 paq/min)", bottleneck: false },
-  { stage: "Robot Estibador", util: 38, rate: "144 cajas / pal (60 s)", bottleneck: false },
+  { stage: "Desencajado Mesada", key: "desencajado", rate: "3.500 s / pallet" },
+  { stage: "Picadora Weiler", key: "picado", rate: "900 s / batch (6 t/h)" },
+  { stage: "Mezcladoras Ribbon", key: "mezclado", rate: "1.200 s / batch" },
+  { stage: "Formadora F26 / F19", key: "formado", rate: "18,33 s / caja (982 kg/h)" },
+  { stage: "Túnel de Congelado", key: "tunel", rate: "300 s / batch (cap. 60)" },
+  { stage: "Envasadora Fripack", key: "envasado", rate: "4,0 s / caja (150 paq/min)" },
+  { stage: "Robot Estibador", key: "estibado", rate: "144 cajas / pal (60 s)" },
 ];
 
 function ChartGuide({ title, shows, watch }: { title: string; shows: string; watch: string }) {
@@ -233,6 +233,14 @@ export default function Estadistica() {
     .map((m) => ({ ...m, states: utilization(h, m.id) }))
     .sort((a, b) => b.states.proc - a.states.proc);
 
+  // utilización por etapa = promedio de la utilización de sus máquinas (muestras acumuladas de la corrida)
+  const stageUtil = BOTTLENECK_STAGES.map((st) => {
+    const ms = MACHINES.filter((m) => m.kind === "machine" && m.stage === st.key && (line === "Todas" || m.line === line));
+    return h.length && ms.length ? (ms.reduce((a, m) => a + utilization(h, m.id).proc, 0) / ms.length) * 100 : null;
+  });
+  const maxUtil = Math.max(...stageUtil.map((u) => u ?? -1));
+  const isBottleneck = (i: number) => stageUtil[i] !== null && stageUtil[i] === maxUtil;
+
   const curFit = FITTING_TABS[tabFit];
   const palletComparison = [
     { name: "Pallets MP recibidos", data: h.map((s) => [s.t / 3600, s.kpi.palletsMP] as [number, number]) },
@@ -335,8 +343,8 @@ export default function Estadistica() {
           <Card
             className="lg:col-span-2"
             title="Perfil de Utilización Comparativa por Estación (Diagnóstico del Cuello de Botella)"
-            sub="Estimación estática ilustrativa, no medición de esta corrida — ver Distribución de Estados para utilización en vivo"
-            right={<div className="flex items-center gap-2"><Tag kind="supuesto">Estimación estática</Tag><ChartGuide title="Utilización comparativa por estación" shows="Compara el porcentaje de tiempo efectivo de procesamiento de las etapas productivas." watch="La etapa con utilización más alta se acerca a su capacidad y puede limitar el ritmo de toda la línea. También observá las estaciones con menor uso: podrían estar esperando producto del cuello de botella." /></div>}
+            sub={`Medido en la simulación en curso: % de muestras en estado procesando, promedio de las máquinas de cada etapa · ${line === "Todas" ? "Todas las líneas" : `Línea ${line.slice(1)}`} · ${h.length} muestras acumuladas desde el inicio (incluye warm-up)`}
+            right={<div className="flex items-center gap-2"><ChartGuide title="Utilización comparativa por estación" shows="Compara el porcentaje de tiempo efectivo de procesamiento de las etapas productivas." watch="La etapa con utilización más alta se acerca a su capacidad y puede limitar el ritmo de toda la línea. También observá las estaciones con menor uso: podrían estar esperando producto del cuello de botella." /></div>}
           >
             <Chart
               height={260}
@@ -361,7 +369,7 @@ export default function Estadistica() {
                     barWidth: "55%",
                     itemStyle: {
                       color: (params: { dataIndex: number }) => {
-                        return BOTTLENECK_STAGES[params.dataIndex].bottleneck ? "#d9293b" : "#2b59ff";
+                        return isBottleneck(params.dataIndex) ? "#d9293b" : "#2b59ff";
                       },
                       borderRadius: [0, 4, 4, 0],
                     },
@@ -369,20 +377,21 @@ export default function Estadistica() {
                       show: true,
                       position: "right",
                       formatter: (p: { dataIndex: number; value: unknown }) => {
-                        const st = BOTTLENECK_STAGES[p.dataIndex];
-                        return st.bottleneck ? `${p.value}% (CUELLO DE BOTELLA)` : `${p.value}%`;
+                        const u = stageUtil[p.dataIndex];
+                        if (u === null) return "—";
+                        return isBottleneck(p.dataIndex) ? `${u.toFixed(1)}% (MAYOR UTILIZACIÓN)` : `${u.toFixed(1)}%`;
                       },
                       fontWeight: "bold",
                       fontSize: 11,
                       color: "#0f1b2d",
                     },
-                    data: BOTTLENECK_STAGES.map((s) => s.util),
+                    data: stageUtil,
                   },
                 ],
               }}
             />
             <div className="mt-2 rounded-xl bg-amber-50/70 p-3 text-[12px] leading-relaxed text-[#8a520a]">
-              <b>Efecto Restricción:</b> <b>Dato:</b> Formadora 18,33 s/caja = 982 kg/h nominales (SUPUESTOS T5). <b>Supuesto ilustrativo:</b> perfil 89% formadora vs resto — estimación estática, no medición de esta corrida. El bloqueo aguas arriba y la ociosidad de envasado/robot son el efecto esperado si la formadora restringe el flujo; contrastar con Distribución de Estados en vivo.
+              <b>Efecto Restricción:</b> <b>Dato:</b> Formadora 18,33 s/caja = 982 kg/h nominales (SUPUESTOS T5). <b>Medición de esta corrida:</b> utilización calculada con las muestras acumuladas de la simulación en curso (sin descartar warm-up); la etapa con mayor utilización es la candidata a cuello de botella. El bloqueo aguas arriba y la ociosidad de envasado/robot son el efecto esperado si la formadora restringe el flujo; contrastar con Distribución de Estados en vivo.
             </div>
           </Card>
 

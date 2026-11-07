@@ -43,7 +43,7 @@ for (int k = 1; k <= cols.length; k++) {
 		pts = pts + string.fromNum(x, 1) + "," + string.fromNum(y, 1) + " ";
 	}
 	string dash = "";
-	if (nom[k].indexOf("Nominal") == 1 || nom[k].indexOf("Estándar") == 1) dash = " stroke-dasharray='6 4'";
+	if (nom[k].indexOf("Nominal") == 1 || nom[k].indexOf("Meta") == 1 || nom[k].indexOf("Estándar") == 1) dash = " stroke-dasharray='6 4'";
 	s = s + "<polyline points='" + pts + "' fill='none' stroke='" + col[k] + "' stroke-width='2'" + dash + "/>";
 }
 s = s + "</svg><div class='lg'>";

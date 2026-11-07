@@ -5,13 +5,20 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 WEB = os.path.join(HERE, "..", "..", "dashboard", "web", "public", "e1")
 T = 2.262  # t(0,975; 9 gl)
 
-# (pallets L7, pallets L8, cajas L7, cajas L8) por réplica 1..10 — salida cruda de FlexSim (ver raw_* )
-E1 = [(45, 45, 6594, 6602), (44, 45, 6443, 6606), (44, 45, 6470, 6606), (45, 45, 6594, 6564), (44, 44, 6443, 6375),
-      (45, 45, 6594, 6606), (45, 45, 6594, 6576), (44, 44, 6486, 6466), (45, 45, 6538, 6606), (45, 45, 6594, 6606)]
-E3 = [(45, 45, 6594, 6606), (44, 45, 6435, 6606), (44, 45, 6432, 6606), (45, 45, 6594, 6564), (44, 44, 6443, 6369),
-      (45, 45, 6594, 6606), (45, 45, 6594, 6576), (44, 44, 6486, 6452), (45, 45, 6535, 6606), (45, 45, 6594, 6606)]
-E2 = [(46, 46, 6698, 6702), (46, 46, 6698, 6709), (45, 46, 6577, 6709), (46, 46, 6698, 6709), (46, 46, 6698, 6709),
-      (46, 46, 6698, 6709), (46, 46, 6698, 6709), (46, 46, 6698, 6709), (46, 46, 6698, 6709), (46, 46, 6698, 6709)]
+# (pallets L7, pallets L8, cajas L7, cajas L8) por réplica 1..10 — salida cruda de FlexSim: E1 de raw_replicas.txt, E2/E3 de raw_e2.txt y raw_e3.txt
+def leer(nombre):  # R|rep|q7|q8|sink|cajas_L7|cajas_L8 -> (pallets L7, pallets L8, cajas L7, cajas L8) por réplica
+    out = {}
+    for ln in open(os.path.join(HERE, nombre), encoding="utf-8"):
+        if ln.startswith("R|"):
+            f = ln.strip().split("|")
+            out[int(f[1])] = (int(f[2]), int(f[3]), int(f[5]), int(f[6]))
+    assert sorted(out) == list(range(1, 11)), nombre
+    return [out[k] for k in range(1, 11)]
+
+
+E1 = leer("raw_replicas.txt")
+E3 = leer("raw_e3.txt")
+E2 = leer("raw_e2.txt")
 DEFS = {
     "E1": dict(nombre="Base", cambio="Fallas del tablero, formadoras a 982 kg/h", datos=E1),
     "E2": dict(nombre="Más dotación", cambio="Formadoras a 1843 kg/h (separación entre bandejas 3,27 → 1,554 m)", datos=E2),

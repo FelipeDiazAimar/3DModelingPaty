@@ -5,8 +5,8 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
 ## Cómo levantarlo
 1. `cd dashboard/web` y `npm install` (la primera vez), luego `npm run dev`.
 2. Abrir http://localhost:3000.
-3. Abrir `PLANTASJ.fsm` en FlexSim y apretar Run: el nodo `Tools/Publicar` envía un JSON cada 60 s simulados a `POST /api/ingest`.
-   Sin FlexSim, el botón **Ver demo** carga datos sintéticos (marcados como DEMO).
+3. Abrir `PLANTASJ.fsm` en FlexSim y apretar Run: el nodo `Tools/Publicar` envía un JSON cada 10 s simulados a `POST /api/ingest`.
+   Sin FlexSim, el botón **Ver demo** carga datos sintéticos (marcados como DEMO); en ese modo el encabezado no muestra el chip de estado.
 
 ## Piezas
 - `web/` — la web. Home = planta 3D completa (`public/models/planta_v10.glb`, la exporta `blender/exportar_glb.py`: Ciclo 1, Ciclo 2 y Elaborados L1–L8; ver `PLAN_MODELO_3D.md`) con pines por máquina; clic en un pin abre el panel con estadísticas. Secciones: Producción, Paradas, Colas y WIP, Velocidad, Balance de masa, Montacargas, Estadística, Escenarios.
@@ -22,7 +22,7 @@ Web local (Next.js + React + three.js) que muestra la simulación de FlexSim en 
   2. calle C2–Elaborados; los de PT siguen por la calle sur y la este;
   3. pasa el muelle y entra marcha atrás describiendo un arco;
   4. sale por la mano contraria y pasa por la báscula de egreso (45 s) hasta la ruta.
-- El 3D oculta los camiones fijos de esos muelles y de la báscula, y clona el mismo camión del modelo.
+- El 3D oculta los camiones fijos de esos muelles y de la báscula, y clona el camión articulado del modelo (`Camion_Carga_PT_1`, con ruedas, dirección y acoplado animados).
 - Funciona igual en vivo, reproduciendo el historial y en el demo.
 
 ## Reproductor
@@ -31,9 +31,17 @@ FlexSim publica cada 10 s simulados (JSON compacto); el puente guarda hasta 40.0
 
 ## Dashboard en FlexSim
 Las gráficas de la web también están dentro del modelo en un solo dashboard, `PATY_Tablero` (menú Dashboards), con un único widget HTML y 7 hojas: Producción, Colas y WIP, Paradas, Velocidad, Balance de masa, Montacargas y Estadística, más los KPIs arriba. Es un solo navegador embebido (los gráficos nativos usan uno cada uno y frenaban la corrida) y no consume objetos de licencia (96/100).
-- `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 60 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
+- `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 10 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
 - `Tools/TableroHTML` (`tablero.fls`) arma el HTML con los gráficos en SVG (`svg_lineas.fls`, `svg_barras.fls`, `svg_estados.fls`); el estilo y el cambio de hoja están en `tablero_head.html` (`Tools/tableroHead`).
 - Escenarios E1–E4 no tiene hoja: sus resultados salen del Experimenter.
+- Alineado con la web:
+  - **En falla** es solo el estado 20 de FlexSim (antes también contaba el 12).
+  - Categorías y colores de la web: Inactiva `#8b97a8`, Procesando `#16a37f`, Bloqueada `#e08a1e`, Sin material `#d6a21a`, En falla `#d5334b`.
+  - Muestreo y historial cada 10 s simulados.
+  - Gráfico de PT acumulado con la línea punteada **Meta del programa** a 3 pal/h (72 pallets/día entre L7 y L8).
+  - KPI **pal/h PT (ventana 4 h)**: pallets PT de las últimas 4 h simuladas.
+  - kg/h L7 / L8: ventana móvil de 1 h simulada.
+- **Probado en FlexSim (02/11/2026):** los `.fls` del tablero se cargaron en `PLANTASJ.fsm`, el historial se arma cada 10 s y `TableroHTML` genera el HTML sin errores. El kg/h del tablero coincide con la fórmula de la web (verificado a las 4 h). Detalle en `documentacion/07_flexsim_mcp.md`.
 
 ## Componentes propios
 Scrollbar (`CScroll`), selector de sección (`NavMenu`), íconos (`Icons`), tablas (`Table`, `StatePill`, `MiniBar`) y reproductor (`Player`). Sin librerías de UI externas.

@@ -1,4 +1,4 @@
-// Tools/Indicadores: cada 60 s simulados actualiza las Tracked Variables que usan los dashboards de FlexSim
+// Tools/Indicadores: cada 10 s simulados actualiza (igual que el publicador de la web) las Tracked Variables que usan los dashboards de FlexSim
 // (las mismas métricas que calcula la web). Vive en Tools: no consume objetos de licencia.
 // 1 pallet de MP = 1 batch de 1500 kg; caja = 5 kg; pallet PT = 144 cajas. kg/h = ventana móvil de 1 h.
 treenode self = model().find("Tools/Indicadores");
@@ -22,16 +22,16 @@ tvs.find("Kg_en_cajas").as(TrackedVariable).value = kcj;
 tvs.find("Kg_en_pallets_PT").as(TrackedVariable).value = ppt * 144 * 5;
 tvs.find("Kg_en_proceso").as(TrackedVariable).value = Math.max(0, kmp - kcj);
 
-// velocidad efectiva: cajas de la última hora × 5 kg (anillo de 60 muestras de 1 min)
+// velocidad efectiva: cajas de la última hora × 5 kg (anillo de 360 muestras de 10 s)
 treenode ring = model().find("Tools/indRing");
-int k = Math.fmod(Math.round(Model.time / 60), 60);
+int k = Math.fmod(Math.round(Model.time / 10), 360);
 treenode r = ring.subnodes.assert("r" + string.fromNum(k));
 treenode rt = r.subnodes.assert("t");
 treenode r7 = r.subnodes.assert("c7");
 treenode r8 = r.subnodes.assert("c8");
 double t0 = 0; double a7 = 0; double a8 = 0;
 if (rt.value > 0 && rt.value < Model.time && Model.time - rt.value < 3700) { t0 = rt.value; a7 = r7.value; a8 = r8.value; }
-double dt = Math.max(60, Model.time - t0);
+double dt = Math.max(10, Model.time - t0);
 tvs.find("KgHora_L7").as(TrackedVariable).value = (c7 - a7) * 5 * 3600 / dt;
 tvs.find("KgHora_L8").as(TrackedVariable).value = (c8 - a8) * 5 * 3600 / dt;
 rt.value = Model.time; r7.value = c7; r8.value = c8;
@@ -56,8 +56,8 @@ for (int i = 1; i <= f.length; i++) {
 	if (objectexists(tv)) tv.as(TrackedVariable).value = objectexists(d) ? d.value / 60 : 0;
 }
 
-// historial para el tablero HTML (una fila por minuto) y estados muestreados (mismas 5 categorías que la web)
-// fila: [h, palletsMP, palletsPT, cajasL7, cajasL8, kgh7, kgh8, kgMP, kgCajas, kgPT, kgProceso, wip7, wip8, 8 colas, 4 traslados, 982, 1843]
+// historial para el tablero HTML (una fila cada 10 s) y estados muestreados (mismas 5 categorías que la web)
+// fila: [h, palletsMP, palletsPT, cajasL7, cajasL8, kgh7, kgh8, kgMP, kgCajas, kgPT, kgProceso, wip7, wip8, 8 colas, 4 traslados, 982, 1843, meta 3 pal/h]
 string qs = "QRecepcion,RackMPCongelado,RackMPEnfriado,QPaletizado_L7,QPaletizado_L8,RackPTCongelado,RackPTEnfriado,QExpedicion";
 string fl = "MontacargasRecep,MontacargasAlmacenMP,MontacargasLineaPT,MontacargasExped";
 Array fila = [Model.time / 3600, pmp, ppt, c7, c8, tvs.find("KgHora_L7").as(TrackedVariable).value, tvs.find("KgHora_L8").as(TrackedVariable).value, kmp, kcj, ppt * 144 * 5, Math.max(0, kmp - kcj), w7, w8];
@@ -66,6 +66,7 @@ for (int i = 1; i <= q.length; i++) fila.push(content(Model.find(q[i])));
 Array fa = fl.split(",");
 for (int i = 1; i <= fa.length; i++) fila.push(getinput(Model.find(fa[i])));
 fila.push(982); fila.push(1843); // 26 nominal formadora, 27 estándar de línea
+fila.push(Model.time / 3600 * 3); // 28 meta del programa: 72 pallets/día = 3 pal/h (web)
 treenode hn = model().find("Tools/indHist");
 Array hist = hn.value;
 hist.push(fila);
@@ -83,7 +84,7 @@ for (int i = 1; i <= ms.length; i++) {
 	else if (sn == 2 || sn == 3 || sn == 5 || sn == 7 || sn == 8 || sn == 21) st = 1;
 	else if (sn == 4 || sn == 23) st = 2;
 	else if (sn == 9) st = 3;
-	else if (sn == 20 || sn == 12) st = 4;
+	else if (sn == 20) st = 4;
 	treenode cn = en.subnodes.assert(ms[i]);
 	Array k5 = cn.value;
 	if (k5.length != 5) k5 = [0, 0, 0, 0, 0];
@@ -91,5 +92,5 @@ for (int i = 1; i <= ms.length; i++) {
 	cn.value = k5;
 }
 
-delayednodefunction(self, 60, 0);
+delayednodefunction(self, 10, 0);
 return 0;

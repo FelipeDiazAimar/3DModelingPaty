@@ -1,5 +1,5 @@
 // Tools/svgEstados(titulo, ids, categorias, colores, nota): barras 100 % apiladas con el tiempo en cada estado,
-// a partir de los muestreos de Tools/indEst (Tools/Indicadores, cada 60 s).
+// a partir de los muestreos de Tools/indEst (Tools/Indicadores, cada 10 s).
 string tit = param(1);
 Array ids = param(2);
 Array cat = param(3);

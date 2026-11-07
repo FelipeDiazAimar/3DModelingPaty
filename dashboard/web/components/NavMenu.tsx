@@ -19,24 +19,25 @@ export const NAV: { href: string; label: string; icon: IconName }[] = [
 /** Selector de sección propio (reemplaza al <select> del navegador). */
 export function NavMenu() {
   const path = usePathname();
-  const [open, setOpen] = useState(false);
-  const [idx, setIdx] = useState(0);
+  const [openAt, setOpenAt] = useState<string | null>(null); // path con el menú abierto: navegar lo cierra
+  const open = openAt === path;
+  const setOpen = (v: boolean | ((o: boolean) => boolean)) => setOpenAt((c) => ((typeof v === "function" ? v(c === path) : v) ? path : null));
+  const [idxRaw, setIdx] = useState<{ path: string; i: number } | null>(null);
+  const idx = idxRaw?.path === path ? idxRaw.i : Math.max(0, NAV.findIndex((n) => n.href === path));
   const root = useRef<HTMLDivElement>(null);
   const cur = NAV.find((n) => n.href === path) ?? NAV[0];
 
   useEffect(() => {
     if (!open) return;
-    setIdx(Math.max(0, NAV.findIndex((n) => n.href === path)));
-    const away = (e: PointerEvent) => { if (!root.current?.contains(e.target as Node)) setOpen(false); };
+    const away = (e: PointerEvent) => { if (!root.current?.contains(e.target as Node)) setOpenAt(null); };
     window.addEventListener("pointerdown", away);
     return () => window.removeEventListener("pointerdown", away);
   }, [open, path]);
-  useEffect(() => setOpen(false), [path]);
 
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") setOpen(false);
-    else if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setIdx((i) => (i + 1) % NAV.length); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); setOpen(true); setIdx((i) => (i - 1 + NAV.length) % NAV.length); }
+    else if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setIdx({ path, i: (idx + 1) % NAV.length }); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setOpen(true); setIdx({ path, i: (idx - 1 + NAV.length) % NAV.length }); }
     else if (e.key === "Enter" && open) { e.preventDefault(); (root.current?.querySelectorAll<HTMLAnchorElement>("a")[idx])?.click(); }
   };
 
@@ -51,7 +52,7 @@ export function NavMenu() {
       {open && (
         <div role="listbox" className="menu-pop glass absolute left-0 top-[calc(100%+8px)] z-50 w-[250px] p-2">
           {NAV.map((n, i) => (
-            <Link key={n.href} href={n.href} role="option" aria-selected={n.href === path} onMouseEnter={() => setIdx(i)}
+            <Link key={n.href} href={n.href} role="option" aria-selected={n.href === path} onMouseEnter={() => setIdx({ path, i })}
               className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[14px] font-semibold transition ${n.href === path ? "bg-ink text-white" : i === idx ? "bg-[#e8eef8]" : ""}`}>
               <span className={`grid h-8 w-8 place-items-center rounded-xl ${n.href === path ? "bg-white/15" : "bg-[#eaf0fa] text-brand"}`}><Icon name={n.icon} size={17} /></span>
               {n.label}

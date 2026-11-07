@@ -13,12 +13,14 @@ export default function Velocidad() {
   const h = useHist();
   const last = useLatest();
   if (!last) return <Page><PageHead title="Velocidad efectiva" sub="Qué tan cerca de su capacidad trabaja cada línea." /><Empty /></Page>;
-  const hrs = Math.max(last.t / 3600, 0.01);
-  const kg7 = (last.kpi.cajasL7 * KG_CAJA) / hrs, kg8 = (last.kpi.cajasL8 * KG_CAJA) / hrs;
+  // ventana móvil de 1 h simulada (igual que el tablero de FlexSim); al inicio, desde el primer dato
+  const ref = h.find((s) => s.t >= last.t - 3600) ?? h[0];
+  const hrs = Math.max((last.t - ref.t) / 3600, 0.01);
+  const kg7 = ((last.kpi.cajasL7 - ref.kpi.cajasL7) * KG_CAJA) / hrs, kg8 = ((last.kpi.cajasL8 - ref.kpi.cajasL8) * KG_CAJA) / hrs;
   const pct = (v: number) => `${((v / NOMINAL) * 100).toFixed(0)} %`;
-  // kg/h en ventana móvil de ~20 puntos
-  const roll = (pick: (s: Snapshot) => number) => h.map((s, i) => {
-    const j = Math.max(0, i - 60); const a = h[j];
+  // kg/h en ventana móvil de 1 h simulada
+  const roll = (pick: (s: Snapshot) => number) => h.map((s) => {
+    const a = h.find((x) => x.t >= s.t - 3600) ?? h[0];
     const dt = (s.t - a.t) / 3600;
     return [s.t / 3600, dt > 0 ? ((pick(s) - pick(a)) * KG_CAJA) / dt : 0] as [number, number];
   });

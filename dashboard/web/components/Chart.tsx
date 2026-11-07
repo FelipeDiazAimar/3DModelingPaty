@@ -1,5 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import type { EChartsOption } from "echarts";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false, loading: () => <div className="skeleton h-full min-h-[120px] w-full" /> });
@@ -28,14 +30,27 @@ function thin(option: EChartsOption): EChartsOption {
 }
 
 export function Chart({ option, height = 260 }: { option: EChartsOption; height?: number }) {
-  option = thin(option);
+  const [full, setFull] = useState(false);
+  useEffect(() => {
+    if (!full) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") setFull(false); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [full]);
+  const opt = { color: PALETTE, ...base, ...thin(option) } as EChartsOption;
+  const btn = "absolute right-1 top-1 z-10 grid h-7 w-7 place-items-center rounded-full bg-[#e6ecf4] text-[13px] font-bold hover:bg-[#d8e0ec]";
   return (
-    <ReactECharts
-      style={{ height, width: "100%" }}
-      notMerge={false}
-      lazyUpdate
-      option={{ color: PALETTE, ...base, ...option } as EChartsOption}
-    />
+    <div className="relative">
+      <button onClick={() => setFull(true)} aria-label="Pantalla completa" title="Pantalla completa" className={`${btn} opacity-70 hover:opacity-100`}>⛶</button>
+      <ReactECharts style={{ height, width: "calc(100% - 30px)" }} notMerge={false} lazyUpdate option={opt} />
+      {full && createPortal(
+        <div role="dialog" aria-label="Gráfico en pantalla completa" className="fixed inset-0 z-[80] flex flex-col bg-white p-3 md:p-6">
+          <button onClick={() => setFull(false)} aria-label="Cerrar pantalla completa" title="Cerrar (Esc)" className="absolute right-3 top-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-[#e6ecf4] text-lg font-bold hover:bg-[#d8e0ec] md:right-6 md:top-6">×</button>
+          <div className="min-h-0 flex-1 pt-10"><ReactECharts style={{ height: "100%", width: "100%" }} notMerge={false} lazyUpdate option={opt} /></div>
+        </div>,
+        document.body,
+      )}
+    </div>
   );
 }
 

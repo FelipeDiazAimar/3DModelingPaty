@@ -1,7 +1,7 @@
 // Relay (OnExit de SrcCamionesMP): arranca Tools/Indicadores si no está corriendo (primera corrida o tras un reset).
 treenode lastN = model().find("Tools/indLast");
 double last = lastN.value;
-if (Model.time - last > 90 || Model.time < last) {
+if (Model.time - last > 25 || Model.time < last) {
 	lastN.value = Model.time;
 	model().find("Tools/indRing").subnodes.clear();
 	model().find("Tools/indHist").value = Array();
