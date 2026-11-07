@@ -25,7 +25,8 @@ interface S {
   luz: boolean; // iluminación horneada sobre los pisos (planta_luz.jpg)
   rend: boolean; // modo rendimiento: planta fundida en pocas mallas y menos resolución
   calor: boolean; // mapa de calor de utilización en el piso
-  escenario: "E2" | "E3" | "E4" | null; // escenario comparado contra E1 en el 3D
+  escenario: "E1" | "E2" | "E3" | "E4" | null; // escenario cuyo cuello de botella se ve en el 3D (E1 = base)
+  lavado: 0 | 15 | 30; // lavado por batch (min) que se muestra en E4
   setHistory: (h: Snapshot[]) => void;
   addMany: (s: Snapshot[]) => void;
   setConnected: (b: boolean) => void;
@@ -41,13 +42,14 @@ interface S {
   setRend: (b: boolean) => void;
   setCalor: (b: boolean) => void;
   setEscenario: (e: S["escenario"]) => void;
+  setLavado: (l: S["lavado"]) => void;
   setDriving: (id: string | null) => void;
   setHint: (h: string | null) => void;
 }
 
 export const useStore = create<S>((set) => ({
   history: [], connected: false, demo: process.env.NEXT_PUBLIC_DEMO === "1", selected: null, line: "Todas",
-  playT: null, playing: true, speed: 5, mode: "orbit", view: "3p", driving: null, hint: null, luz: false, rend: false, calor: false, escenario: null,
+  playT: null, playing: true, speed: 5, mode: "orbit", view: "3p", driving: null, hint: null, luz: false, rend: false, calor: false, escenario: null, lavado: 30,
   setHistory: (history) => set({ history }),
   addMany: (batch) =>
     set((st) => {
@@ -72,6 +74,7 @@ export const useStore = create<S>((set) => ({
   setRend: (rend) => set({ rend }),
   setCalor: (calor) => set({ calor }),
   setEscenario: (escenario) => set({ escenario }),
+  setLavado: (lavado) => set({ lavado }),
   setDriving: (driving) => set({ driving }),
   setHint: (hint) => set({ hint }),
 }));

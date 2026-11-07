@@ -65,3 +65,13 @@ Paros simulados contra lo que implican las entradas (min/día, media de 10 répl
 - Confirmar en planta si hay lavado o cambio de formato por batch: con un lavado supuesto de 30 min por batch el modelo da 55,7 t/día contra 56,0 del tablero (hipótesis, no calibración).
 - Revisar cómo asigna el tablero los pallets a cada línea (25,8 contra 39,1 con líneas iguales).
 - Llegadas de materia prima por hora (hoy 16 pallets cada 8 h con descarga fija) y ruido en los tiempos de máquina: hoy el modelo es determinista salvo las fallas.
+
+## Lavado de 30 min y cuello de botella por escenario (corrida del 7/11/2026; `analizar_cuellos.py`, `actualizar_summary_e1.py`, `raw_cuellos/`)
+**El lavado de 30 min por batch es dato de planta** y pasa a ser parte del modelo base (`SetupTime` 1800 s en las 4 mezcladoras). Todo lo anterior de este informe (89,4 pallets/día, brecha +17 % en toneladas, E2/E3/E4 con lavado 0) corresponde al modelo sin lavado; las corridas sin lavado quedan en `raw_cuellos/sin_lavado/` como sensibilidad. Se repitieron E1, E2 y E3 (10 réplicas cada uno, mismos streams) y E4 (1500 y 1200 kg con lavado de 30 min, 10 réplicas; 0 y 15 min, 5 réplicas), guardando por estación el tiempo en cada estado, el contenido, la estadía y las colas. **E3 pasa a ser "más materia prima + E2"**; el antiguo E3 (MTTR ×1,25) queda como E5 (medido sin lavado).
+- **Capacidad implícita** = entradas por día ÷ ocupación (procesando + bloqueada) × kg por entrada. El cuello es la etapa de menor capacidad. Túnel y estibado no compiten: su "procesando" solo indica que tienen algo adentro.
+- **E1 (validación):** 75,3 ± 0,7 pallets/día y 54,9 t/día contra 56,0 del tablero (−1,9 %): valida en toneladas. En pallets +16 % por el tamaño del pallet (720 contra 862,5 kg). El IC es muy angosto (tiempos constantes), así que el real queda ≈ 0,6 t fuera.
+- **E1 (cuello):** las mezcladoras (65,3 t/día, 91 % ocupadas, cola de 3,5 lotes); siguiente: desencajado (74,1 t/día).
+- **E2:** +14,4 pallets/día (+19,1 %, IC [+13,8 ; +15,0]). Mezclado 91 → 80 % y formado 64 → 44 % de ocupación; el cuello pasa al desencajado.
+- **E3 (E2 + 24 pallets de MP por turno):** 89,6 pallets/día; −0,1 contra E2 (no distinguible de cero). Las cámaras de MP pasan de 6,3 a 21,8 pallets promedio: el desencajado impide aprovechar la MP extra.
+- **E4 (diferencia 1200 − 1500 kg, IC pareado):** lavado 30 min −4,0 [−4,6 ; −3,4] (10 réplicas); 15 min −2,4 [−3,1 ; −1,7]; sin lavado +1,8 [+1,2 ; +2,4] (latencia, 5 réplicas).
+- Limitaciones: horizonte terminante de 24 h arrancando vacío; tiempos de máquina constantes; la serie horaria (Welch) y los paros de la web son de la corrida sin lavado.

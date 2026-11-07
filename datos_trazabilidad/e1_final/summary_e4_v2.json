@@ -1,0 +1,103 @@
+{
+ "descripcion": "Batch de 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 20 pallets de 1200 kg por turno de recepción (mismas 72 t/día de MP). El lavado de la mezcladora por batch entra como tiempo de preparación (supuesto, no hay dato).",
+ "replicas": 5,
+ "nota": "5 réplicas por variante con los mismos streams; 1500 kg sin lavado = réplicas 1 a 5 de E1. IC con t(0,975; 4 gl) = 2,776.",
+ "filas": [
+  {
+   "lavado_min": 0,
+   "n": 5,
+   "pal_1500": {
+    "media": 89.2,
+    "desv": 0.8366600265340756,
+    "h": 1.038684090568446,
+    "ic_inf": 88.16131590943155,
+    "ic_sup": 90.23868409056846
+   },
+   "pal_1200": {
+    "media": 91.0,
+    "desv": 0.7071067811865476,
+    "h": 0.877848278462742,
+    "ic_inf": 90.12215172153726,
+    "ic_sup": 91.87784827846274
+   },
+   "dif_pal": {
+    "media": 1.8,
+    "desv": 0.4472135954999579,
+    "h": 0.5551999999999999,
+    "ic_inf": 1.2448000000000001,
+    "ic_sup": 2.3552,
+    "cero_en_ic": false
+   },
+   "cajas_1500": 13059.4,
+   "cajas_1200": 13197.4,
+   "dif_cajas_pct": 1.0567101091933706,
+   "ton_1500": 65.297,
+   "ton_1200": 65.987,
+   "dif_pal_pct": 2.0179372197309364
+  },
+  {
+   "lavado_min": 15,
+   "n": 5,
+   "pal_1500": {
+    "media": 84.0,
+    "desv": 0.7071067811865476,
+    "h": 0.877848278462742,
+    "ic_inf": 83.12215172153726,
+    "ic_sup": 84.87784827846274
+   },
+   "pal_1200": {
+    "media": 81.6,
+    "desv": 0.5477225575051661,
+    "h": 0.6799783525966101,
+    "ic_inf": 80.92002164740339,
+    "ic_sup": 82.2799783525966
+   },
+   "dif_pal": {
+    "media": -2.4,
+    "desv": 0.5477225575051661,
+    "h": 0.6799783525966101,
+    "ic_inf": -3.0799783525966102,
+    "ic_sup": -1.7200216474033898,
+    "cero_en_ic": false
+   },
+   "cajas_1500": 12242.4,
+   "cajas_1200": 11906.6,
+   "dif_cajas_pct": -2.742926223616282,
+   "ton_1500": 61.212,
+   "ton_1200": 59.533,
+   "dif_pal_pct": -2.857142857142869
+  },
+  {
+   "lavado_min": 30,
+   "n": 10,
+   "pal_1500": {
+    "media": 75.3,
+    "desv": 0.9486832980505138,
+    "h": 0.6786,
+    "ic_inf": 74.6214,
+    "ic_sup": 75.9786
+   },
+   "pal_1200": {
+    "media": 71.3,
+    "desv": 0.48304589153964794,
+    "h": 0.3455262073996703,
+    "ic_inf": 70.95447379260033,
+    "ic_sup": 71.64552620739967
+   },
+   "dif_pal": {
+    "media": -4.0,
+    "desv": 0.816496580927726,
+    "h": 0.5840458886080784,
+    "ic_inf": -4.584045888608078,
+    "ic_sup": -3.4159541113919216,
+    "cero_en_ic": false
+   },
+   "cajas_1500": 10985.7,
+   "cajas_1200": 10391.8,
+   "dif_cajas_pct": -5.406118863613618,
+   "ton_1500": 54.9285,
+   "ton_1200": 51.959,
+   "dif_pal_pct": -5.312084993359889
+  }
+ ]
+}

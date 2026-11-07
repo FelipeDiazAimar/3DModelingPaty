@@ -31,6 +31,8 @@ FlexSim publica cada 10 s simulados (JSON compacto); el puente guarda hasta 40.0
 
 ## Dashboard en FlexSim
 Las gráficas de la web también están dentro del modelo en un solo dashboard, `PATY_Tablero` (menú Dashboards), con un único widget HTML y 7 hojas: Producción, Colas y WIP, Paradas, Velocidad, Balance de masa, Montacargas y Estadística, más los KPIs arriba. Es un solo navegador embebido (los gráficos nativos usan uno cada uno y frenaban la corrida) y no consume objetos de licencia (96/100).
+
+El widget ocupa toda la ventana del dashboard: su tamaño se guarda en `Tools/Dashboards/PATY_Tablero/WebStatGraph5` (`spatialx/y/sx/sy` = 0, 0, ancho y alto del panel menos 24 px de la barra de pestañas; hoy 1531 × 524). El HTML llena el ancho y no deja márgenes sobrantes. Si se cambia el tamaño de la ventana de FlexSim o se abre en otra pantalla, ajustar esos valores (y los del widget abierto en `VIEW:/1>Documents/Dashboard/1+/~/GraphPanel/1`) y llamar `refreshview(node("VIEW:/1>Documents/Dashboard/1+/~"))`.
 - `Tools/Indicadores` (`flexsim/indicadores.fls`) guarda cada 10 s simulados una fila de historial (`Tools/indHist`) y muestrea el estado de cada máquina y montacargas (`Tools/indEst`, mismas categorías que la web). Lo arranca `arranca_indicadores.fls` con la primera salida de `SrcCamionesMP`.
 - `Tools/TableroHTML` (`tablero.fls`) arma el HTML con los gráficos en SVG (`svg_lineas.fls`, `svg_barras.fls`, `svg_estados.fls`); el estilo y el cambio de hoja están en `tablero_head.html` (`Tools/tableroHead`).
 - Escenarios E1–E4 no tiene hoja: sus resultados salen del Experimenter.

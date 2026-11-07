@@ -21,21 +21,34 @@ function Interruptor({ on, set, clave, titulo, sub }: { on: boolean; set: (b: bo
   );
 }
 
-/** Elegir un escenario para verlo contra E1 sobre la planta (máquinas que cambian + resultados). */
+/** Elegir un escenario para ver su cuello de botella sobre la planta (cuello + etapas más afectadas + resultados). */
 function EscenarioPicker() {
   const esc = useStore((s) => s.escenario);
   const set = useStore((s) => s.setEscenario);
+  const lavado = useStore((s) => s.lavado);
+  const setLavado = useStore((s) => s.setLavado);
   return (
     <div className="px-2 py-1.5">
-      <div className="text-[12.5px] font-extrabold leading-tight">Comparar con E1 en 3D</div>
+      <div className="text-[12.5px] font-extrabold leading-tight">Cuello de botella por escenario</div>
       <div className="mt-1.5 flex gap-1" role="group" aria-label="Escenario">
-        {(["E2", "E3", "E4"] as const).map((e) => (
+        {(["E1", "E2", "E3", "E4"] as const).map((e) => (
           <button key={e} onClick={() => set(esc === e ? null : e)} aria-pressed={esc === e}
             className={`flex-1 rounded-full px-2.5 py-1 text-[12px] font-bold transition ${esc === e ? "bg-brand text-white" : "bg-[#eef3fa] hover:opacity-80"}`}>
             {e}
           </button>
         ))}
       </div>
+      {esc === "E4" && (
+        <div className="mt-1.5 flex items-center gap-1" role="group" aria-label="Lavado por batch">
+          <span className="mr-0.5 text-[11px] text-muted">Lavado</span>
+          {([0, 15, 30] as const).map((l) => (
+            <button key={l} onClick={() => setLavado(l)} aria-pressed={lavado === l}
+              className={`flex-1 rounded-full px-2 py-0.5 text-[11.5px] font-bold transition ${lavado === l ? "bg-ink text-white" : "bg-[#eef3fa] hover:opacity-80"}`}>
+              {l === 0 ? "0" : `${l} min`}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

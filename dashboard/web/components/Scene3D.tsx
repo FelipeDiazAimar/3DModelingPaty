@@ -6,6 +6,7 @@ import * as THREE from "three";
 import type { OrbitControls as OC } from "three-stdlib";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { clone as cloneSkinned } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { COLOR_AFECTADA, COLOR_CUELLO, MAQ_ETAPA, NOMBRE_ETAPA, claveEsc, useCuellos, type Paquete } from "@/lib/cuellos";
 import { FLEET, MACHINES, OPERARIOS, STATE_COLOR, byId } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
 import { clock, indexAt, snapshotAt, useLatest, useStore } from "@/lib/store";
@@ -234,65 +235,94 @@ function pintarCalor(g: THREE.Group) {
   }
 }
 
-/* ---------- comparar un escenario contra E1 en el 3D (resultados de public/e1) ---------- */
-const CAMBIA: Record<"E2" | "E3" | "E4", { maq: string[]; color: string }> = {
-  E2: { maq: ["FormA_L7", "FormB_L7", "FormA_L8", "FormB_L8"], color: "#2f7bff" },
-  E3: { maq: ["FormA_L7", "FormB_L7", "FormA_L8", "FormB_L8", "Tunel_L7", "Tunel_L8"], color: "#e08a1e" },
-  E4: { maq: ["Desencajado_L7", "Picadora_L7", "MezA_L7", "MezB_L7", "Desencajado_L8", "Picadora_L8", "MezA_L8", "MezB_L8"], color: "#8b5cf6" },
-};
-interface IC { media: number; ic_inf: number; ic_sup: number }
-interface Esc { nombre: string; cambio: string; pallets: IC }
-interface DatosEsc { e: { escenarios: Record<string, Esc> }; e4: { descripcion: string; replicas_15min: number; filas: { lavado_min: number; pal_1500: number; pal_1200: number }[] } }
+/* ---------- cuello de botella de un escenario en el 3D (resultados de public/e1/cuellos.json) ---------- */
+interface IC { media: number; ic_inf: number; ic_sup: number; cero_en_ic?: boolean }
+interface ResProd { pal: IC; dif?: IC; base: string }
+const TITULO_ESC: Record<string, string> = { E1: "E1 · Base", E2: "E2 · Formadoras a 1843 kg/h", E3: "E3 · Más MP + formadoras rápidas", E4: "E4 · Batch de 1200 kg" };
+
+/** Etiqueta corta (antes → después) que se dibuja sobre la etapa. */
+function etiquetaEtapa(p: Paquete, id: string, esBase: boolean): string {
+  const e = p.etapas.find((x) => x.id === id);
+  if (!e) return "";
+  const n = (v: number, d = 0) => v.toLocaleString("es-AR", { maximumFractionDigits: d, minimumFractionDigits: d });
+  if (id === "camara_mp") return esBase ? `${n(e.rack ?? 0, 1)} pallets esperando` : `${n(e.rack_base ?? 0, 1)} → ${n(e.rack ?? 0, 1)} pallets esperando`;
+  const oc = esBase ? `${n(e.ocup ?? 0)} % ocupada` : `ocupación ${n(e.ocup_base ?? 0)} → ${n(e.ocup ?? 0)} %`;
+  if (id === p.cuello.etapa) return `${oc} · ${n(p.cuello.cap_t, 1)} t/día`;
+  if (id === "mezclado" && e.cola != null && e.cola_base != null && Math.abs(e.cola - e.cola_base) >= 0.5) return `${oc} · cola ${n(e.cola_base, 1)} → ${n(e.cola, 1)}`;
+  return oc;
+}
 
 function Escenario3D() {
   const esc = useStore((s) => s.escenario);
-  const [datos, setDatos] = useState<DatosEsc | null>(null);
+  const lavado = useStore((s) => s.lavado);
+  const datos = useCuellos(!!esc);
+  const [prod, setProd] = useState<{ e: { escenarios: Record<string, { pallets: IC; dif_pallets?: IC }> }; e4: { filas: { lavado_min: number; pal_1500: IC; pal_1200: IC; dif_pal: IC }[] } } | null>(null);
   useEffect(() => {
-    if (!esc || datos) return;
+    if (!esc || prod) return;
     Promise.all([fetch("/e1/escenarios.json").then((r) => r.json()), fetch("/e1/e4.json").then((r) => r.json())])
-      .then(([e, e4]) => setDatos({ e, e4 }))
+      .then(([e, e4]) => setProd({ e, e4 }))
       .catch((err) => console.warn("Sin resultados de escenarios:", err));
-  }, [esc, datos]);
+  }, [esc, prod]);
   if (!esc) return null;
-  const c = CAMBIA[esc];
-  const f = (n: number) => n.toLocaleString("es-AR", { maximumFractionDigits: 1 });
-  let titulo: string = esc, cambio = "", filas: [string, string][] = [], veredicto = "";
-  if (datos && esc !== "E4") {
-    const b = datos.e.escenarios.E1, x = datos.e.escenarios[esc];
-    const d = x.pallets.media - b.pallets.media;
-    const solapan = !(x.pallets.ic_inf > b.pallets.ic_sup || x.pallets.ic_sup < b.pallets.ic_inf);
-    titulo = `${esc} · ${x.nombre}`; cambio = x.cambio;
-    filas = [["E1 · Base", `${f(b.pallets.media)} pallets/día (IC ${f(b.pallets.ic_inf)}–${f(b.pallets.ic_sup)})`],
-             [esc, `${f(x.pallets.media)} pallets/día (IC ${f(x.pallets.ic_inf)}–${f(x.pallets.ic_sup)})`],
-             ["Diferencia", `${d >= 0 ? "+" : ""}${f(d)} pallets/día`]];
-    veredicto = Math.abs(d) < 0.05 ? "Sin diferencia con E1." : solapan ? "Los IC 95 % se solapan: con este criterio la diferencia no alcanza (ver la prueba pareada en Escenarios)." : "Los IC 95 % no se solapan: la diferencia es significativa.";
-  } else if (datos) {
-    const r = datos.e4.filas.find((x) => x.lavado_min === 15) ?? datos.e4.filas[0];
-    titulo = "E4 · Batch de 1200 kg"; cambio = datos.e4.descripcion;
-    filas = [["Batch 1500 kg", `${r.pal_1500} pallets/día`], ["Batch 1200 kg", `${r.pal_1200} pallets/día`],
-             ["Diferencia", `${r.pal_1200 - r.pal_1500 >= 0 ? "+" : ""}${r.pal_1200 - r.pal_1500} pallets/día (lavado de ${r.lavado_min} min, ${datos.e4.replicas_15min} réplicas)`]];
+  const p = datos?.escenarios[claveEsc(esc, lavado)];
+  const esBase = esc === "E1";
+  const f = (n: number) => n.toLocaleString("es-AR", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+  let res: ResProd | null = null;
+  if (prod && esc !== "E4") res = { pal: prod.e.escenarios[esc].pallets, dif: prod.e.escenarios[esc].dif_pallets, base: "E1" };
+  else if (prod) {
+    const r = prod.e4.filas.find((x) => x.lavado_min === lavado);
+    if (r) res = { pal: r.pal_1200, dif: r.dif_pal, base: `1500 kg (lavado ${lavado} min)` };
   }
+  const etapas = p ? [p.cuello.etapa, ...p.afectadas] : [];
   return (
     <group>
-      {c.maq.map((id) => {
+      {etapas.flatMap((et, k) => (MAQ_ETAPA[et] ?? []).map((id) => {
         const m = byId(id);
+        const color = k === 0 ? COLOR_CUELLO : COLOR_AFECTADA;
         return m ? (
-          <RoundedBox key={id} args={[m.sx + 0.8, m.sz + 0.6, m.sy + 0.8]} radius={0.4} smoothness={3} position={P(m.x, m.y, m.sz / 2)}>
-            <meshBasicMaterial color={c.color} transparent opacity={0.35} depthWrite={false} />
+          <RoundedBox key={`${et}-${id}`} args={[m.sx + 0.8, m.sz + 0.6, m.sy + 0.8]} radius={0.4} smoothness={3} position={P(m.x, m.y, m.sz / 2)}>
+            <meshBasicMaterial color={color} transparent opacity={k === 0 ? 0.5 : 0.35} depthWrite={false} />
           </RoundedBox>
         ) : null;
+      }))}
+      {p && etapas.map((et, k) => {
+        const anc = byId((MAQ_ETAPA[et] ?? [])[0] ?? "");
+        if (!anc) return null;
+        const color = k === 0 ? COLOR_CUELLO : COLOR_AFECTADA;
+        return (
+          <Html key={`t-${et}`} position={P(anc.x, anc.y, anc.sz + 2.5 + k * 1.6)} center zIndexRange={[15, 0]}>
+            <div className="pointer-events-none whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold text-white shadow-lg" style={{ background: color }}>
+              {k === 0 ? "CUELLO · " : ""}{NOMBRE_ETAPA[et]} · {etiquetaEtapa(p, et, esBase)}
+            </div>
+          </Html>
+        );
       })}
       <Html position={P(-5, -4, 9)} center zIndexRange={[20, 0]}>
-        <div className="glass w-[320px] p-4 text-[12px]" style={{ borderTop: `4px solid ${c.color}` }}>
-          <div className="text-[15px] font-extrabold leading-tight">{titulo}</div>
-          {cambio && <div className="mt-1 text-muted">{cambio}</div>}
-          {datos ? (
-            <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
-              {filas.flatMap(([k, v]) => [<dt key={`${k}t`} className="font-bold">{k}</dt>, <dd key={`${k}d`} className="tnum">{v}</dd>])}
-            </dl>
-          ) : <div className="mt-2 text-muted">Cargando resultados…</div>}
-          {veredicto && <div className="mt-2 rounded-lg bg-[#eef3fa] px-2 py-1.5 font-bold">{veredicto}</div>}
-          <div className="mt-2 text-[11px] text-muted">Resaltadas: las máquinas que cambian en {esc}.</div>
+        <div className="glass pointer-events-auto max-h-[78vh] w-[360px] overflow-auto p-4 text-[12px]" style={{ borderTop: `4px solid ${COLOR_CUELLO}` }}>
+          <div className="text-[15px] font-extrabold leading-tight">{TITULO_ESC[esc]}{esc === "E4" ? ` · lavado ${lavado} min` : ""}</div>
+          {!p ? <div className="mt-2 text-muted">Cargando resultados…</div> : (
+            <>
+              <div className="mt-1 font-bold" style={{ color: COLOR_CUELLO }}>{p.texto.titulo}</div>
+              {res && (
+                <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+                  <dt className="font-bold">Pallets/día</dt><dd className="tnum">{f(res.pal.media)} (IC {f(res.pal.ic_inf)}–{f(res.pal.ic_sup)})</dd>
+                  {res.dif && !esBase && (<><dt className="font-bold">Contra {res.base}</dt><dd className="tnum">{res.dif.media > 0 ? "+" : ""}{f(res.dif.media)} ({res.dif.cero_en_ic ? "no distinguible de cero" : "distinta de cero"})</dd></>)}
+                </dl>
+              )}
+              <p className="mt-2 leading-snug">{p.texto.cuello}</p>
+              <div className="mt-2 text-[11px] font-extrabold uppercase tracking-wide text-muted">Lo que provoca (etapas más afectadas)</div>
+              <ul className="mt-1 space-y-1">
+                {p.texto.efectos.map((e) => (
+                  <li key={e.etapa} className="flex gap-1.5 leading-snug">
+                    <i className="mt-[5px] inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: e.etapa === p.cuello.etapa ? COLOR_CUELLO : COLOR_AFECTADA }} />
+                    <span><b>{NOMBRE_ETAPA[e.etapa]}.</b> {e.txt}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 rounded-lg bg-[#eef3fa] px-2 py-1.5 font-bold leading-snug">{p.texto.conclusion}</div>
+              <div className="mt-2 text-[11px] text-muted"><b style={{ color: COLOR_CUELLO }}>Rojo</b>: cuello · <b style={{ color: COLOR_AFECTADA }}>naranja</b>: etapas más afectadas{esBase ? "" : ` frente a ${p.base}`}.</div>
+            </>
+          )}
         </div>
       </Html>
     </group>
