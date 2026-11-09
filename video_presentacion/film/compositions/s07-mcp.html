@@ -1,7 +1,7 @@
 <template>
   <style>
     #root { position: absolute; inset: 0; overflow: hidden; background: #050507; color: #ffffff; font-family: "SF Pro Display", sans-serif; }
-    .m-p { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+    .m-p { position: absolute; inset: 0; overflow: hidden; opacity: 0; background: #050507; }
     .m-abs { position: absolute; white-space: nowrap; }
     .m-mono { font-family: "JetBrains Mono", monospace; }
 
@@ -156,11 +156,19 @@
       const pop = (s, at) => tl.fromTo(s, { opacity: 0, scale: 0.75 }, { opacity: 1, scale: 1, duration: 0.14, ease: "power3.out" }, at);
       const bar = (s, at, d) => tl.fromTo(s, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: d || 0.9, ease: "expo.out" }, at);
 
-      T.forEach((t, i) => {
-        const id = "#m-p" + i;
-        tl.set(id, { opacity: 1 }, t);
-        if (i < T.length - 1) tl.set(id, { opacity: 0 }, T[i + 1]);
-      });
+      const tr = (a, b, t, k) => {
+        const P = { transformPerspective: 1700 };
+        tl.set(b, { opacity: 1, zIndex: 3 }, t - 0.36);
+        if (k === "cubo") { tl.fromTo(a, { ...P, x: 0, rotationY: 0, transformOrigin: "100% 50%" }, { x: -1920, rotationY: -82, duration: 0.72, ease: "power2.inOut" }, t - 0.36); tl.fromTo(b, { ...P, x: 1920, rotationY: 82, transformOrigin: "0% 50%" }, { x: 0, rotationY: 0, duration: 0.72, ease: "power2.inOut" }, t - 0.36); }
+        if (k === "zoom") { tl.to(a, { scale: 4, opacity: 0, filter: "blur(24px)", duration: 0.5, ease: "power3.in" }, t - 0.36); tl.fromTo(b, { scale: 0.45, filter: "blur(24px)" }, { scale: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, t - 0.2); }
+        if (k === "sube") { tl.to(a, { y: -1080, scale: 0.88, duration: 0.7, ease: "expo.inOut" }, t - 0.36); tl.fromTo(b, { y: 1080, rotationX: -22, ...P }, { y: 0, rotationX: 0, duration: 0.7, ease: "expo.inOut" }, t - 0.36); }
+        if (k === "barre") { tl.to(a, { x: 2300, skewX: -14, duration: 0.55, ease: "power4.in" }, t - 0.36); tl.fromTo(b, { x: -2300, skewX: -14 }, { x: 0, skewX: 0, duration: 0.6, ease: "power4.out" }, t - 0.05); }
+        tl.set(a, { opacity: 0 }, t + 0.4);
+        tl.set(b, { zIndex: 1 }, t + 0.4);
+      };
+      const KIND = ["cubo", "zoom", "sube", "barre"];
+      tl.set("#m-p0", { opacity: 1 }, 0);
+      for (let i = 1; i < T.length; i++) tr("#m-p" + (i - 1), "#m-p" + i, T[i], KIND[i % 4]);
 
       // D23 · strikethrough-replace
       tl.fromTo("#m-tab", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, 0.2);

@@ -131,6 +131,17 @@
       const tl = gsap.timeline({ paused: true });
       tl.fromTo("#s04c-nave", { scale: 1 }, { scale: 1.07, duration: 113 / 30, ease: "none", transformOrigin: "50% 50%" }, 0);
 
+const tr = (a, b, t, k) => {
+        const P = { transformPerspective: 1700 };
+        tl.set(b, { opacity: 1, zIndex: 3 }, t - 0.36);
+        if (k === "cubo") { tl.fromTo(a, { ...P, x: 0, rotationY: 0, transformOrigin: "100% 50%" }, { x: -1920, rotationY: -82, duration: 0.72, ease: "power2.inOut" }, t - 0.36); tl.fromTo(b, { ...P, x: 1920, rotationY: 82, transformOrigin: "0% 50%" }, { x: 0, rotationY: 0, duration: 0.72, ease: "power2.inOut" }, t - 0.36); }
+        if (k === "zoom") { tl.to(a, { scale: 4, opacity: 0, filter: "blur(24px)", duration: 0.5, ease: "power3.in" }, t - 0.36); tl.fromTo(b, { scale: 0.45, filter: "blur(24px)" }, { scale: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, t - 0.2); }
+        if (k === "sube") { tl.to(a, { y: -1080, scale: 0.88, duration: 0.7, ease: "expo.inOut" }, t - 0.36); tl.fromTo(b, { y: 1080, rotationX: -22, ...P }, { y: 0, rotationX: 0, duration: 0.7, ease: "expo.inOut" }, t - 0.36); }
+        if (k === "barre") { tl.to(a, { x: 2300, skewX: -14, duration: 0.55, ease: "power4.in" }, t - 0.36); tl.fromTo(b, { x: -2300, skewX: -14 }, { x: 0, skewX: 0, duration: 0.6, ease: "power4.out" }, t - 0.05); }
+        tl.set(a, { opacity: 0 }, t + 0.4);
+        tl.set(b, { zIndex: 1 }, t + 0.4);
+      };
+      const KIND = ["cubo", "zoom", "sube", "barre"];
       function art(p, at) {
         const kind = p.dataset.art;
         if (!kind) return;
@@ -168,7 +179,8 @@
         });
       }
 
-      document.querySelectorAll(".s04c-p").forEach((p, i) => {
+      const ps = Array.from(document.querySelectorAll(".s04c-p"));
+      ps.forEach((p, i) => {
         const at = CUTS[i];
         const end = i < 3 ? CUTS[i + 1] : END;
         const num = document.createElement("div");
@@ -195,8 +207,8 @@
         p.appendChild(num);
         p.appendChild(lbl);
 
-        tl.set(p, { opacity: 1 }, at);
-        if (i < 3) tl.set(p, { opacity: 0 }, end);
+        if (i === 0) tl.set(p, { opacity: 1 }, 0);
+        else tr(ps[i - 1], p, at, KIND[(i + 1) % 4]);
         p.querySelectorAll(".s04c-reel").forEach((r, k) => {
           tl.fromTo(r, { y: 0 }, { y: -20 * H, duration: 1.2 + k * 0.12, ease: "expo.out" }, at);
         });

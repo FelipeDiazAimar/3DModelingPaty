@@ -1,63 +1,37 @@
 <template>
   <style>
-    #root {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      font-family: "SF Pro Display", sans-serif;
-    }
-    /* rgb-glitch-text del catálogo, a tamaño de pantalla completa */
-    .hf-catalog-rgb-glitch-text {
-      position: absolute;
-      left: 110px;
-      top: 330px;
-      width: 1700px;
-      height: 420px;
-      font-size: 190px;
-      font-weight: 900;
-      line-height: 1.02;
-      letter-spacing: -0.04em;
-      text-align: center;
-      opacity: 0;
-    }
-    .hf-catalog-rgb-glitch-text span,
-    .hf-catalog-rgb-glitch-text strong {
-      position: absolute;
-      inset: 0;
-      font-weight: 900;
-    }
-    .hf-catalog-rgb-glitch-text span:first-child {
-      color: #050507;
-      transform: translateX(var(--hf-glitch-red, 0px));
-    }
-    .hf-catalog-rgb-glitch-text span:nth-child(2) {
-      color: #ffd0d6;
-      transform: translateX(var(--hf-glitch-blue, 0px));
-    }
-    .hf-catalog-rgb-glitch-text strong {
-      color: #ffffff;
-    }
+    #root { position:absolute; inset:0; overflow:hidden; font-family:"SF Pro Display",sans-serif; perspective:1500px; }
+    #v-cam { position:absolute; inset:0; transform-style:preserve-3d; }
+    #v-g { position:absolute; left:660px; top:30px; }
+    #v-g path { fill:none; stroke-linecap:round; }
+    
+    .v-w { position:absolute; left:0; width:1920px; text-align:center; font-size:190px; font-weight:900; letter-spacing:-.04em; line-height:1; white-space:nowrap; color:#fff; }
+    .v-w span { display:inline-block; }
+    .v-g2 { position:absolute; left:0; top:520px; width:1920px; text-align:center; font-size:190px; font-weight:900; letter-spacing:-.04em; color:transparent; -webkit-text-stroke:3px #ffffff; opacity:0; white-space:nowrap; }
   </style>
-  <div id="root" data-composition-id="s04-variable" data-width="1920" data-height="1080">
-    <div class="hf-catalog-rgb-glitch-text" data-layout-allow-overlap>
-      <span data-layout-allow-overlap>MEDIDA DE DESEMPEÑO</span>
-      <span data-layout-allow-overlap>MEDIDA DE DESEMPEÑO</span>
-      <strong data-layout-allow-overlap>MEDIDA DE DESEMPEÑO</strong>
+  <div id="root" data-composition-id="s04-variable" data-width="1920" data-height="1080" data-layout-allow-overlap data-layout-allow-overflow>
+    <div id="v-cam" data-layout-allow-overlap data-layout-allow-overflow>
+      <svg id="v-g" width="600" height="340" viewBox="0 0 600 340" data-layout-ignore><path id="v-a" pathLength="1" d="M40 300 A260 260 0 0 1 560 300" stroke="#ffffff" stroke-opacity=".25" stroke-width="30"></path><path id="v-b" pathLength="1" d="M40 300 A260 260 0 0 1 560 300" stroke="#ffffff" stroke-width="30" stroke-dasharray="1" stroke-dashoffset="1"></path><g id="v-n"><path d="M300 300 L300 70" stroke="#ffffff" stroke-width="12"></path></g></svg>
+      <div id="v-w1" class="v-w" style="top:370px"></div>
+      <div id="v-w2" class="v-w" style="top:570px"></div>
+      <div id="v-e0" class="v-g2" data-layout-ignore style="top:570px">DESEMPEÑO</div>
+      <div id="v-e1" class="v-g2" data-layout-ignore style="top:570px">DESEMPEÑO</div>
+      <div id="v-e2" class="v-g2" data-layout-ignore style="top:570px">DESEMPEÑO</div>
     </div>
   </div>
   <script>
+    // Medida de desempeño: el indicador se llena, las letras entran en 3D y la cámara orbita.
     (function () {
       const tl = gsap.timeline({ paused: true });
-      const box = ".hf-catalog-rgb-glitch-text";
-      tl.fromTo(box, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.14, ease: "expo.out" }, 0.04);
-      [0.1, 0.7].forEach((at) => {
-        tl.fromTo(
-          box,
-          { "--hf-glitch-red": "0px", "--hf-glitch-blue": "0px" },
-          { "--hf-glitch-red": "-22px", "--hf-glitch-blue": "22px", duration: 0.06, repeat: 5, yoyo: true, ease: "steps(1)", immediateRender: false },
-          at,
-        );
-      });
+      const fill = (id, txt) => { document.getElementById(id).innerHTML = Array.from(txt).map((c) => "<span>" + (c === " " ? "&nbsp;" : c) + "</span>").join(""); };
+      fill("v-w1", "MEDIDA DE"); fill("v-w2", "DESEMPEÑO");
+      tl.fromTo("#v-cam", { rotationY: -24, rotationX: 10, scale: 1.14 }, { rotationY: 9, rotationX: -3, scale: 1, duration: 3.73, ease: "sine.inOut" }, 0);
+      tl.fromTo("#v-g", { opacity: 0, y: -260 }, { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.5)" }, 0.02);
+      tl.fromTo("#v-b", { strokeDashoffset: 1 }, { strokeDashoffset: 0.27, duration: 1.3, ease: "power3.out" }, 0.3);
+      tl.fromTo("#v-n", { rotation: -90, svgOrigin: "300 300" }, { rotation: 41, svgOrigin: "300 300", duration: 1.3, ease: "elastic.out(1,0.45)" }, 0.3);
+      document.querySelectorAll("#v-w1 span").forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 230, rotationX: -100, transformPerspective: 900 }, { opacity: 1, y: 0, rotationX: 0, duration: 0.42, ease: "back.out(1.8)" }, 0.5 + i * 0.03));
+      document.querySelectorAll("#v-w2 span").forEach((s, i) => tl.fromTo(s, { opacity: 0, y: -230, rotationX: 100, transformPerspective: 900 }, { opacity: 1, y: 0, rotationX: 0, duration: 0.42, ease: "back.out(1.8)" }, 0.85 + i * 0.03));
+      [0, 1, 2].forEach((i) => { tl.fromTo("#v-e" + i, { opacity: 0.8, scale: 1 }, { opacity: 0, scale: 1.45 + i * 0.3, duration: 0.8, ease: "power2.out" }, 1.45 + i * 0.09); });
       window.__timelines["s04-variable"] = tl;
     })();
   </script>

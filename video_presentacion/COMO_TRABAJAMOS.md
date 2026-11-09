@@ -47,11 +47,11 @@ Efecto: mecánica del catálogo de HyperFrames usada o adaptada. La voz y los ti
 | 14 | ¿Formadora? 982 contra 1843 kg/h | Barras y sacudida |
 | 15 | Por qué la formadora: 53 % | `rgb-glitch-text` |
 | 16 | Tres pasos para probar la sospecha | `marker-highlight`, `velocity-throw-snap` |
-| 17 | Medida de desempeño | Fondo y transición propios |
+| 17 | Medida de desempeño | Indicador animado, letras 3D y cámara orbital |
 | 18 | Tablero real: 56,0 t/día, ¿es válido? | `split-flap-board` |
 | 19 | Por dónde arrancamos a simular | `grid-pixelate-wipe` |
-| 20 | Planos de la planta | `chromatic-aberration-wipe` |
-| 21 | Blender | Revelado sobre render real |
+| 20 | Planos de la planta | Paneo del plano y `chromatic-aberration-wipe` de salida |
+| 21 | Blender | La planta pasa de alambre a sólida mientras baja la cámara |
 | 22 | Código que construye la planta | `code-terminal-run` |
 | 23 | FlexSim en vivo con karaoke | Toma real |
 | 24 | Conclusiones de la simulación | `rgb-glitch-text` |
@@ -68,7 +68,9 @@ Efecto: mecánica del catálogo de HyperFrames usada o adaptada. La voz y los ti
 | 35 | Cómo corrimos la simulación | Tarjetas 3D, `number-wheel` |
 | 36 | E1, de la formadora a las mezcladoras | `number-wheel` |
 | 37–39 | E2, E3 y E4 | Intervalos animados y sellos |
-| 40 | Conclusión de los escenarios | `confetti` |
+| 40 | Conclusión de los escenarios | Tarjetas 3D y pallets que caen y se apilan |
 | 41 | Conclusiones generales | Filas 3D, `shutter-slam` |
 | 42 | Agradecimiento, operario que saluda y baila | Renders reales de Blender |
 | 43 | Cierre con logo | `logo-outro`, `confetti` |
+
+Transiciones entre diapositivas (cubo 3D, zoom a través, empuje y barrido) en cifras, MCP y Acto 6.

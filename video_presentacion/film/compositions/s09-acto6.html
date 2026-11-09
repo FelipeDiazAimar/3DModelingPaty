@@ -138,8 +138,20 @@
     // Acto 6 (D32–D38), 5:00. El equipo graba encima siguiendo el karaoke. Datos: E1_FINAL.md, summary_escenarios_v2.json, app/estadistica/page.tsx.
     (function () {
       const tl = gsap.timeline({ paused: true });
+      const tr = (a, b, t, k) => {
+        const P = { transformPerspective: 1700 };
+        tl.set(b, { opacity: 1, zIndex: 3 }, t - 0.36);
+        if (k === "cubo") { tl.fromTo(a, { ...P, x: 0, rotationY: 0, transformOrigin: "100% 50%" }, { x: -1920, rotationY: -82, duration: 0.72, ease: "power2.inOut" }, t - 0.36); tl.fromTo(b, { ...P, x: 1920, rotationY: 82, transformOrigin: "0% 50%" }, { x: 0, rotationY: 0, duration: 0.72, ease: "power2.inOut" }, t - 0.36); }
+        if (k === "zoom") { tl.to(a, { scale: 4, opacity: 0, filter: "blur(24px)", duration: 0.5, ease: "power3.in" }, t - 0.36); tl.fromTo(b, { scale: 0.45, filter: "blur(24px)" }, { scale: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out" }, t - 0.2); }
+        if (k === "sube") { tl.to(a, { y: -1080, scale: 0.88, duration: 0.7, ease: "expo.inOut" }, t - 0.36); tl.fromTo(b, { y: 1080, rotationX: -22, ...P }, { y: 0, rotationX: 0, duration: 0.7, ease: "expo.inOut" }, t - 0.36); }
+        if (k === "barre") { tl.to(a, { x: 2300, skewX: -14, duration: 0.55, ease: "power4.in" }, t - 0.36); tl.fromTo(b, { x: -2300, skewX: -14 }, { x: 0, skewX: 0, duration: 0.6, ease: "power4.out" }, t - 0.05); }
+        tl.set(a, { opacity: 0 }, t + 0.4);
+        tl.set(b, { zIndex: 1 }, t + 0.4);
+      };
+      const KIND = ["cubo", "zoom", "sube", "barre"];
       const rv = (s, at) => tl.fromTo(s, { opacity: 0, y: 26, filter: "blur(14px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power4.out", immediateRender: true }, at);
-      tl.set("#s0",{opacity:1},0.000); tl.set("#s0",{opacity:0},22.000);
+      tl.set("#s0",{opacity:1},0.000);
+      tr("#s0","#s1",22.000,KIND[0]);
       rv("#z1",0.600);
       rv("#z20",0.600);
       rv("#z30",0.600);
@@ -153,7 +165,7 @@
       rv("#z23",16.547);
       rv("#z33",16.547);
       rv("#z43",16.547);
-      tl.set("#s1",{opacity:1},22.000); tl.set("#s1",{opacity:0},67.000);
+      tr("#s1","#s2",67.000,KIND[1]);
       rv("#a1",22.600);
       rv("#a2",31.590);
       rv("#a30",40.580);
@@ -174,7 +186,7 @@
       rv("#a82",53.815);
       rv("#a92",53.815);
       rv("#a52",53.815);
-      tl.set("#s2",{opacity:1},67.000); tl.set("#s2",{opacity:0},105.000);
+      tr("#s2","#s3",105.000,KIND[2]);
       rv("#b1",67.600);
       rv("#b20",67.600);
       rv("#b30",67.600);
@@ -188,7 +200,7 @@
       rv("#b23",67.600);
       rv("#b33",67.600);
       rv("#b43",67.600);
-      tl.set("#s3",{opacity:1},105.000); tl.set("#s3",{opacity:0},135.000);
+      tr("#s3","#s4",135.000,KIND[3]);
       rv("#c1",105.600);
       rv("#c2",105.600);
       rv("#c3",105.600);
@@ -203,7 +215,7 @@
       rv("#c53",105.600);
       rv("#c44",105.600);
       rv("#c54",105.600);
-      tl.set("#s4",{opacity:1},135.000); tl.set("#s4",{opacity:0},195.000);
+      tr("#s4","#s5",195.000,KIND[0]);
       rv("#d1",135.600);
       rv("#d2",135.600);
       rv("#d3",150.832);
@@ -216,7 +228,7 @@
       rv("#d4l",171.656);
       rv("#d4h",171.656);
       rv("#d5",184.317);
-      tl.set("#s5",{opacity:1},195.000); tl.set("#s5",{opacity:0},240.000);
+      tr("#s5","#s6",240.000,KIND[1]);
       rv("#e1",195.600);
       rv("#e2",202.778);
       rv("#e3",210.567);
@@ -229,7 +241,7 @@
       rv("#e4l",218.356);
       rv("#e4h",218.356);
       rv("#e5",230.426);
-      tl.set("#s6",{opacity:1},240.000); tl.set("#s6",{opacity:0},280.000);
+      tr("#s6","#s7",280.000,KIND[2]);
       rv("#f1",240.600);
       rv("#f2",240.600);
       rv("#f3",251.718);
@@ -242,7 +254,6 @@
       rv("#f4l",264.360);
       rv("#f4h",264.360);
       rv("#f5",264.360);
-      tl.set("#s7",{opacity:1},280.000); tl.set("#s7",{opacity:0},305.000);
       rv("#g1",280.600);
       rv("#g2",280.600);
       rv("#g3",285.829);
@@ -263,12 +274,13 @@
       tl.fromTo("#d5", { scale: 0.4, rotation: 6 }, { scale: 1, rotation: 0, duration: 0.35, ease: "back.out(2)" }, T[4][4] + 0.1);
       tl.fromTo("#e5", { scale: 0.4, rotation: -6 }, { scale: 1, rotation: 0, duration: 0.35, ease: "back.out(2)" }, T[5][4] + 0.1);
       tl.fromTo("#f5", { scale: 0.4, rotation: 6 }, { scale: 1, rotation: 0, duration: 0.35, ease: "back.out(2)" }, T[6][2] + 0.1);
-      tl.fromTo("#g1", { x: -1900 }, { x: 0, duration: 0.45, ease: "expo.out" }, NS[7] + 0.5);
-      tl.fromTo("#g2", { x: 1900 }, { x: 0, duration: 0.45, ease: "expo.out" }, NS[7] + 0.8);
+      tl.fromTo("#g1", { rotationX: -95, y: -180, transformPerspective: 1100, transformOrigin: "50% 100%" }, { rotationX: 0, y: 0, duration: 0.6, ease: "back.out(1.6)" }, NS[7] + 0.5);
+      tl.fromTo("#g2", { rotationX: 95, y: 320, transformPerspective: 1100, transformOrigin: "50% 0%" }, { rotationX: 0, y: 0, duration: 0.6, ease: "back.out(1.6)" }, NS[7] + 1);
+      tl.to("#g1", { y: -22, duration: 0.14, ease: "power2.out" }, NS[7] + 1.42); tl.to("#g1", { y: 0, duration: 0.3, ease: "bounce.out" }, NS[7] + 1.56);
       // shutter-slam de entrada a las distribuciones; confetti en la conclusión
       tl.to("#sa", { x: -1000, duration: 0.5, ease: "power3.inOut" }, NS[0] + 0.05);
       tl.to("#sb", { x: 1000, duration: 0.5, ease: "power3.inOut" }, NS[0] + 0.05);
-      (function(){ let sd = 11; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647; const b = document.getElementById("s7"); const cols = ["#050507", "#ffffff", "#ffb3bf"]; for (let i = 0; i < 70; i++) { const e = document.createElement("div"); e.style.cssText = "position:absolute;left:960px;top:360px;width:" + (10 + rnd() * 12) + "px;height:" + (16 + rnd() * 14) + "px;background:" + cols[i % 3] + ";opacity:0"; b.appendChild(e); const a = rnd() * 6.283, v = 400 + rnd() * 800; tl.fromTo(e, { x: 0, y: 0, opacity: 1, rotation: 0 }, { x: Math.cos(a) * v, y: Math.sin(a) * v * 0.6 + 650, rotation: rnd() * 800, duration: 2 + rnd(), ease: "power2.out" }, NS[7] + 1.3); tl.to(e, { opacity: 0, duration: 0.4 }, NS[7] + 3.4 + rnd()); } })();
+      (function(){ const b = document.getElementById("s7"); for (let i = 0; i < 32; i++) { const e = document.createElement("div"); const c = i % 16; e.style.cssText = "position:absolute;left:" + (32 + c * 117) + "px;top:" + (i < 16 ? 936 : 862) + "px;width:107px;height:66px;background:#a80016;border:3px solid #050507;border-radius:6px"; b.appendChild(e); const at = T[7][1] + ((i * 7) % 32) * 0.035; tl.fromTo(e, { y: -1250, rotation: (i % 5) * 7 - 14, opacity: 1 }, { y: 0, rotation: 0, opacity: 1, duration: 0.85, ease: "bounce.out", immediateRender: true }, at); tl.to(e, { opacity: 0.22, duration: 0.5 }, T[7][2] - 0.4); } })();
       window.__timelines["s09-acto6"] = tl;
       const HOST = 544.795237;
       const SEGS = [[0.5, 5.553, "La materia prima llega fija: dieciséis pallets por turno."], [6.003, 9.371, "Los tiempos de máquina son constantes."], [9.821, 15.997, "La variación la ponen las fallas: exponencial, porque aparecen al azar."], [16.447, 21.5, "Y la reparación, lognormal: muchas cortas y pocas largas."], [22.5, 31.04, "Antes de simular miramos los datos reales de la planta y les hicimos pruebas de bondad de ajuste."], [31.49, 40.03, "Kolmogorov-Smirnov mide la mayor distancia entre los datos y la curva teórica; si pasa el límite, se rechaza."], [40.48, 44.749, "Los arribos llegan en ráfagas: la exponencial queda rechazada."], [45.199, 53.265, "Las paradas tienen cola pesada: tampoco ajustan a una lognormal, aunque es la que mejor se acerca."], [53.715, 62.255, "Y el peso de los pallets es una mezcla de productos, así que la normal también se rechaza."], [62.705, 66.5, "No forzamos una distribución porque sí: lo decimos."], [67.5, 75.581, "En el modelo, las fallas son la fuente de variación: tiempo entre fallas exponencial y reparación lognormal."], [76.031, 84.111, "Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento."], [84.561, 91.216, "La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio."], [91.666, 104.5, "El modelo da cincuenta y cuatro coma nueve toneladas por día y la planta, cincuenta y seis: menos uno coma nueve por ciento. Por eso es válido."], [105.5, 112.023, "Este es el escenario base: setenta y cinco coma tres pallets por día."], [112.473, 125.018, "Sospechábamos de la formadora, pero el cuello real son las mezcladoras: noventa y uno por ciento ocupadas y una cola de tres coma cinco lotes."], [125.468, 134.5, "La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta."], [135.5, 150.282, "¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora."], [150.732, 162.943, "Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares."], [163.393, 171.106, "Son catorce coma cuatro pallets más por día: un diecinueve por ciento."], [171.556, 183.767, "El intervalo va de trece coma ocho a quince. No incluye el cero, así que la mejora es real."], [184.217, 194.5, "Pero el cuello se mueve: ahora manda el desencajado, con setenta y cuatro toneladas por día."], [195.5, 202.228, "Ahora lo obvio: si queremos producir más, traigamos más materia prima."], [202.678, 210.017, "Sobre las formadoras rápidas, veinticuatro pallets por turno en lugar de dieciséis."], [210.467, 217.806, "Contra el escenario anterior da menos cero coma uno pallets por día."], [218.256, 229.876, "El intervalo va de menos cero coma tres a más cero coma uno: incluye el cero, no hay diferencia."], [230.326, 239.5, "La materia prima se acumula: las cámaras pasan de seis a veintidós pallets en promedio."], [240.5, 251.168, "Después probamos un batch más chico: mil doscientos kilos en lugar de mil quinientos."], [251.618, 263.81, "Rinde cuatro pallets menos por día, porque con batches chicos se lava más veces por tonelada."], [264.26, 279.5, "El intervalo va de menos cuatro coma seis a menos tres coma cuatro. También es significativo: conviene el batch grande."], [280.5, 285.279, "La conclusión: primero formadoras, después desencajado."], [285.729, 293.695, "Traer más materia prima, por sí sola, no suma nada."], [294.145, 304.5, "Y todo esto lo sabemos porque comparamos intervalos de confianza, no corridas sueltas."]].map((s) => ({ t0: HOST + s[0], t1: HOST + s[1], text: s[2] }));
