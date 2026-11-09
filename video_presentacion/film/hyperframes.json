@@ -180,6 +180,11 @@
       "name": "ui-3d-reveal",
       "type": "hyperframes:block",
       "target": "compositions/ui-3d-reveal.html"
+    },
+    {
+      "name": "app-showcase",
+      "type": "hyperframes:block",
+      "target": "compositions/app-showcase.html"
     }
   ]
 }

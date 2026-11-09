@@ -172,3 +172,7 @@ Cambios pedidos diapositiva por diapositiva. Portada sin "San Jorge"; integrante
 ## 20. Idea de la web, zooms y animaciones
 
 Nueva diapositiva D31 (idea de la web, mecánica de `parallax-device-dive`). En la web, cada apartado usa cuadros reales de `secciones.mp4` (`assets/web/st/`) con zoom exacto a cada gráfica o tabla, dato resaltado y etiqueta; los valores salen de esos mismos cuadros. Acto 6: barras que crecen, sellos, tarjetas 3D, ruedas de números (`number-wheel`) e intervalos animados. E1 aclara que se sospechaba de la formadora y la simulación marcó las mezcladoras. Cierre con confeti (`confetti`). Logo PATY también en la web.
+
+## 21. Vista móvil en D31
+
+Antes de la PC, tres celulares en abanico (mecánica del bloque `app-showcase`) con capturas reales de la web en diseño móvil (`assets/web/st/m1-m3.png`). Dura 17 s.
