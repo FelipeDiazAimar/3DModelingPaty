@@ -1,0 +1,163 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #050507;
+      color: #ffffff;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    .s04v-h {
+      position: absolute;
+      left: 0;
+      top: 70px;
+      width: 1920px;
+      text-align: center;
+      font-size: 150px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+    #s04v-new {
+      color: #ff1f3d;
+    }
+    /* strikethrough-replace del catálogo */
+    #s04v-strike {
+      position: absolute;
+      left: 590px;
+      top: 150px;
+      width: 740px;
+      height: 16px;
+      background: #ff1f3d;
+    }
+    #s04v-axis {
+      position: absolute;
+      left: 160px;
+      top: 268px;
+      font-size: 40px;
+      font-weight: 500;
+      color: #a9a9b3;
+      white-space: nowrap;
+    }
+    .s04v-name {
+      position: absolute;
+      left: 160px;
+      width: 370px;
+      font-size: 54px;
+      font-weight: 700;
+      line-height: 110px;
+      white-space: nowrap;
+    }
+    .s04v-bar {
+      position: absolute;
+      left: 540px;
+      height: 110px;
+      background: #3a3a44;
+    }
+    .s04v-val {
+      position: absolute;
+      left: 540px;
+      height: 110px;
+      padding-left: 26px;
+      text-align: left;
+      font-size: 62px;
+      font-weight: 900;
+      line-height: 110px;
+      white-space: nowrap;
+    }
+    #s04v-ref {
+      position: absolute;
+      left: 1404px;
+      top: 330px;
+      width: 6px;
+      height: 430px;
+      background: #ffffff;
+    }
+    #s04v-reflbl {
+      position: absolute;
+      left: 1240px;
+      top: 268px;
+      font-size: 40px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    #s04v-pills {
+      position: absolute;
+      left: 0;
+      top: 830px;
+      width: 1920px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .s04v-pill {
+      display: inline-block;
+      margin: 0 12px;
+      padding: 20px 44px;
+      border-radius: 999px;
+      background: #ff1f3d;
+      color: #050507;
+      font-size: 54px;
+      font-weight: 900;
+    }
+  </style>
+  <div id="root" data-composition-id="s04-veredicto" data-width="1920" data-height="1080">
+    <div id="s04v-old" class="s04v-h" data-layout-allow-overlap>Formadora</div>
+    <div id="s04v-strike" data-layout-ignore></div>
+    <div id="s04v-new" class="s04v-h" data-layout-allow-overlap>Mezcladoras</div>
+
+    <div id="s04v-axis">Cuánto puede procesar cada etapa por día</div>
+    <div id="s04v-reflbl">72 t/día entran</div>
+
+    <div class="s04v-name" style="top: 335px; color: #ff1f3d">Mezcladoras</div>
+    <div class="s04v-bar" id="s04v-b1" style="top: 335px; width: 783px; background: #ff1f3d"></div>
+    <div class="s04v-val" id="s04v-v1" style="top: 335px; width: 783px; color: #050507">65,3 t</div>
+
+    <div class="s04v-name" style="top: 480px">Desencajado</div>
+    <div class="s04v-bar" id="s04v-b2" style="top: 480px; width: 889px"></div>
+    <div class="s04v-val" id="s04v-v2" style="top: 480px; width: 889px">74,1 t</div>
+
+    <div class="s04v-name" style="top: 625px">Formadoras</div>
+    <div class="s04v-bar" id="s04v-b3" style="top: 625px; width: 1046px"></div>
+    <div class="s04v-val" id="s04v-v3" style="top: 625px; width: 1046px">87,2 t</div>
+
+    <div id="s04v-ref" data-layout-ignore></div>
+
+    <div id="s04v-pills">
+      <span id="s04v-p1" class="s04v-pill">91 % ocupadas</span>
+      <span id="s04v-p2" class="s04v-pill">Cola: 3,5 lotes</span>
+      <span id="s04v-p3" class="s04v-pill">Lavado: 30 min por batch</span>
+    </div>
+  </div>
+  <script>
+    // Escena 4e · b69–81 · datos: E1_FINAL.md:73 y cuellos.json (corrida con lavado, 10 réplicas)
+    (function () {
+      const B = 0.9375;
+      const tl = gsap.timeline({ paused: true });
+      const blurIn = (s, at) =>
+        tl.fromTo(s, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, at);
+
+      tl.fromTo("#s04v-new", { opacity: 0, scale: 2.2, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out", immediateRender: true }, 5 * B);
+      tl.fromTo("#s04v-strike", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.22, ease: "power3.inOut" }, 3.6 * B);
+      tl.to("#s04v-old", { opacity: 0, x: -60, filter: "blur(12px)", duration: 0.16, ease: "power2.in" }, 4.7 * B);
+      tl.to("#s04v-strike", { opacity: 0, duration: 0.1 }, 4.7 * B);
+
+      blurIn("#s04v-axis", 0.3 * B);
+      ["1", "2", "3"].forEach((n, i) => {
+        tl.fromTo("#s04v-b" + n, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.5, ease: "expo.out" }, B + i * 0.1);
+        blurIn("#s04v-v" + n, 1.7 * B + i * 0.1);
+      });
+      tl.fromTo("#s04v-ref", { scaleY: 0, transformOrigin: "50% 0%" }, { scaleY: 1, duration: 0.3, ease: "power3.out" }, 2.6 * B);
+      blurIn("#s04v-reflbl", 2.8 * B);
+
+      [[30, -20], [-24, 16], [16, 10], [-8, -6], [0, 0]].forEach((s, k) => {
+        tl.to("#root", { x: s[0], y: s[1], duration: 1 / 30, ease: "none" }, 5 * B + k / 30);
+      });
+      blurIn("#s04v-p1", 6.5 * B);
+      blurIn("#s04v-p2", 7.5 * B);
+      blurIn("#s04v-p3", 8.5 * B);
+      window.__timelines["s04-veredicto"] = tl;
+    })();
+  </script>
+</template>

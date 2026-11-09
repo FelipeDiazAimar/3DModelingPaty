@@ -40,7 +40,7 @@ S = S + "<div class='k'><b>" + string.fromNum(cumpl, 0) + " %</b><span>Cumplimie
 S = S + "<div class='k'><b>" + string.fromNum(ult[2], 0) + "</b><span>Pallets MP recibidos</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(ult[6], 0) + " / " + string.fromNum(ult[7], 0) + "</b><span>kg/h L7 / L8</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(ult[12] + ult[13], 0) + "</b><span>Ítems en proceso</span></div></div></div>";
-S = S + "<div class='tabs'><span class='tab' data-hoja='prod' onclick=\"patyVer('prod')\">Producción</span><span class='tab' data-hoja='colas' onclick=\"patyVer('colas')\">Colas y WIP</span><span class='tab' data-hoja='paradas' onclick=\"patyVer('paradas')\">Paradas</span><span class='tab' data-hoja='vel' onclick=\"patyVer('vel')\">Velocidad</span><span class='tab' data-hoja='masa' onclick=\"patyVer('masa')\">Balance de masa</span><span class='tab' data-hoja='flota' onclick=\"patyVer('flota')\">Montacargas</span><span class='tab' data-hoja='est' onclick=\"patyVer('est')\">Estadística</span></div>";
+S = S + "<div class='tabs'><span class='tab' data-hoja='prod' onmousedown=\"patyVer('prod')\">Producción</span><span class='tab' data-hoja='colas' onmousedown=\"patyVer('colas')\">Colas y WIP</span><span class='tab' data-hoja='paradas' onmousedown=\"patyVer('paradas')\">Paradas</span><span class='tab' data-hoja='vel' onmousedown=\"patyVer('vel')\">Velocidad</span><span class='tab' data-hoja='masa' onmousedown=\"patyVer('masa')\">Balance de masa</span><span class='tab' data-hoja='flota' onmousedown=\"patyVer('flota')\">Montacargas</span><span class='tab' data-hoja='est' onmousedown=\"patyVer('est')\">Estadística</span></div>";
 
 // Producción
 Array prodN = []; Array prodV = [];

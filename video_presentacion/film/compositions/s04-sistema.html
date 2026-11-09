@@ -1,0 +1,139 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #ff1f3d;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    #s04s-title {
+      position: absolute;
+      left: 0;
+      top: 60px;
+      width: 1920px;
+      text-align: center;
+      font-size: 240px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      color: #050507;
+      white-space: nowrap;
+    }
+    #s04s-sub {
+      position: absolute;
+      left: 0;
+      top: 320px;
+      width: 1920px;
+      text-align: center;
+      font-size: 64px;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+    #s04s-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .s04s-d {
+      fill: none;
+      stroke: #050507;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+    }
+    .s04s-lbl {
+      position: absolute;
+      width: 300px;
+      margin-left: -150px;
+      text-align: center;
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #050507;
+      white-space: nowrap;
+    }
+    #s04s-lote {
+      position: absolute;
+      left: -14px;
+      top: 616px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ffffff;
+      opacity: 0;
+    }
+  </style>
+  <div id="root" data-composition-id="s04-sistema" data-width="1920" data-height="1080">
+    <div id="s04s-title">8 ETAPAS</div>
+    <div id="s04s-sub">Líneas 7 y 8 · de la materia prima al pallet</div>
+    <svg id="s04s-svg" width="1920" height="1080" viewBox="0 0 1920 1080" data-layout-ignore></svg>
+    <div id="s04s-lbls"></div>
+    <div id="s04s-lote" data-layout-ignore></div>
+  </div>
+  <script>
+    // Diapositiva 8 · las 8 etapas reales de cuellos.json, dibujadas a línea
+    (function () {
+      const B = 0.46875;
+      const ICON = {
+        Desencajado: "M10 78h80v8H10z M18 86v6 M50 86v6 M82 86v6 M20 52h28v26H20z M52 52h28v26H52z M36 26h28v26H36z",
+        Picado: "M30 12h40l-10 26H40z M28 38h44v30H28z M72 46h18v14H72 M38 68v22 M62 68v22",
+        Mezclado: "M14 30h72v30a20 20 0 0 1-20 20H34a20 20 0 0 1-20-20z M6 50h88 M30 38l10 24 M50 38l10 24 M70 38l10 24",
+        Formado: "M12 26h76v14H12z M30 40v14 M50 40v14 M70 40v14 M16 66a14 6 0 1 0 28 0a14 6 0 1 0-28 0 M56 66a14 6 0 1 0 28 0a14 6 0 1 0-28 0 M6 80h88 M6 88h88",
+        Túnel: "M10 72V42a40 30 0 0 1 80 0v30z M2 72h96 M50 30v24 M40 36l20 12 M60 36l-20 12",
+        Envasado: "M24 30h52l6 48H18z M24 30l8-14h36l8 14 M34 52h32 M34 62h32",
+        Encajonado: "M16 44h68v44H16z M16 44L6 28h32l12 16 M84 44l10-16H62L50 44 M50 44v44",
+        Estibado: "M16 90h38 M35 90V62 M30 62a5 5 0 1 0 10 0a5 5 0 1 0-10 0 M35 62l26-26 M56 36a5 5 0 1 0 10 0a5 5 0 1 0-10 0 M61 36l22 14 M83 50v16 M75 66h16",
+      };
+      const NOMBRES = Object.keys(ICON);
+      const X0 = 170, DX = 226.5, Y = 560, S = 1.55;
+      const svg = document.getElementById("s04s-svg");
+      const NS = "http://www.w3.org/2000/svg";
+      const mk = (d) => {
+        const p = document.createElementNS(NS, "path");
+        p.setAttribute("d", d);
+        p.setAttribute("pathLength", "1");
+        p.setAttribute("class", "s04s-d");
+        return p;
+      };
+      const rail = mk("M" + X0 + " 630H" + (X0 + DX * 7));
+      rail.id = "s04s-rail";
+      svg.appendChild(rail);
+      const lbls = document.getElementById("s04s-lbls");
+      NOMBRES.forEach((n, i) => {
+        const x = X0 + DX * i;
+        const g = document.createElementNS(NS, "g");
+        g.setAttribute("transform", "translate(" + (x - 50 * S) + " " + (Y - 50 * S) + ") scale(" + S + ")");
+        g.setAttribute("class", "s04s-g");
+        g.appendChild(mk(ICON[n]));
+        svg.appendChild(g);
+        const l = document.createElement("div");
+        l.className = "s04s-lbl";
+        l.style.left = x + "px";
+        l.style.top = (i % 2 ? 760 : 670) + "px";
+        l.textContent = n;
+        lbls.appendChild(l);
+      });
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#s04s-title", { opacity: 0, scale: 2.6, filter: "blur(24px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 2 * B - 0.2);
+      tl.fromTo("#s04s-sub", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power4.out" }, 2.3);
+      [[28, -18], [-22, 14], [14, 10], [-8, -5], [0, 0]].forEach((s, k) => {
+        tl.to("#root", { x: s[0], y: s[1], duration: 1 / 30, ease: "none" }, 2 * B + k / 30);
+      });
+      tl.fromTo("#s04s-rail", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, ease: "power2.inOut" }, 4);
+      const T0 = 5.0, STEP = 0.56;
+      document.querySelectorAll(".s04s-g .s04s-d").forEach((p, i) => {
+        tl.fromTo(p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, T0 + i * STEP);
+      });
+      document.querySelectorAll(".s04s-lbl").forEach((l, i) => {
+        tl.fromTo(l, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }, T0 + i * STEP + 0.05);
+      });
+      tl.fromTo("#s04s-lote", { x: X0, opacity: 0 }, { opacity: 1, duration: 0.15 }, T0);
+      tl.fromTo("#s04s-lote", { x: X0 }, { x: X0 + DX * 7, duration: STEP * 7, ease: "none", immediateRender: false }, T0);
+      window.__timelines["s04-sistema"] = tl;
+    })();
+  </script>
+</template>

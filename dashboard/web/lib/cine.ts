@@ -74,8 +74,8 @@ const L7: Shot[] = [
   { maquina: "Desencajado_L7", viaje: 3, pausa: 6, titulo: "4 · Desencajado", texto: "Se consume el pallet caja a caja: un batch de 1500 kg." },
   { maquina: "Picadora_L7", viaje: 3, pausa: 6, titulo: "5 · Picado", texto: "La carne se pica por batch." },
   { maquina: "MezA_L7", viaje: 3, pausa: 6, titulo: "6 · Mezclado", texto: "Se agregan los aditivos y el batch se divide en 10 cargas de 150 kg." },
-  { maquina: "FormA_L7", viaje: 3, pausa: 6, titulo: "7 · Formado", texto: "Cada carga sale como 30 bandejas de hamburguesas de 5 kg." },
-  { maquina: "Tunel_L7", viaje: 3, pausa: 6, titulo: "8 · Túnel de congelado", texto: "Las bandejas se congelan en continuo." },
+  { maquina: "FormA_L7", viaje: 3, pausa: 6, titulo: "7 · Formado", texto: "Cada carga de 150 kg se convierte en hamburguesas, de a 5 kg." },
+  { maquina: "Tunel_L7", viaje: 3, pausa: 6, titulo: "8 · Túnel de congelado", texto: "Las hamburguesas se congelan en continuo." },
   { maquina: "EnvA_L7", viaje: 3, pausa: 6, titulo: "9 · Envasado", texto: "Detector de metales y envasado en paquetes." },
   { maquina: "EncA_L7", viaje: 3, pausa: 6, titulo: "10 · Encajonado", texto: "Cajas de 5 kg con control de peso." },
   { maquina: "EstA_L7", viaje: 3, pausa: 6, titulo: "11 · Estibado", texto: "El robot arma el pallet de 144 cajas." },
@@ -92,7 +92,12 @@ const pct = (v: number) => `${Math.round(v * 100)} %`;
 /** Tiempo medio de una unidad en la máquina, por la ley de Little (W = L / λ) después del calentamiento; null sin datos. */
 export function tiempoEnEtapa(h: Snapshot[], id: string): number | null {
   if (h.length < 2 || h[h.length - 1].t <= WARMUP_S) return null;
-  const lam = lambdaArrivals(h, id);
+  // L y λ deben ir en la misma unidad: estas máquinas transforman lo que entra (p. ej. batch → cargas)
+  // y su contenido ya está en la unidad de salida, así que λ se mide con las salidas.
+  const a = h.find((s) => s.t >= WARMUP_S) ?? h[0], b = h[h.length - 1];
+  const lam = /^(Mez|Form|Env|Enc)/.test(id) && b.t > a.t
+    ? ((b.machines[id]?.out ?? 0) - (a.machines[id]?.out ?? 0)) / (b.t - a.t)
+    : lambdaArrivals(h, id);
   return lam > 0 ? timeAverages(h, id).L / lam : null;
 }
 const durTxt = (s: number) =>
@@ -105,12 +110,12 @@ function lote(h: Snapshot[]): Shot[] {
   let acum = 0;
   return [
     { maquina: etapas[0].id, viaje: 3, pausa: 4, titulo: `Seguir un lote · Línea ${l.slice(1)}`,
-      texto: "Un batch de 1500 kg recorre las 8 etapas. En cada una: el tiempo medio que pasa una unidad ahí según la simulación (ley de Little, W = L/λ, después del calentamiento de 2,5 h)." },
+      texto: "Un batch de 1500 kg recorre las 8 etapas. En cada una: el tiempo medio que pasa una unidad ahí según la simulación (ley de Little, W = L/λ, después del calentamiento)." },
     ...etapas.map((m, i): Shot => {
       const w = tiempoEnEtapa(h, m.id);
       if (w !== null) acum += w;
       return { maquina: m.id, viaje: 3, pausa: 5, titulo: `${i + 1} · ${STAGE_LABEL[m.stage]}`,
-        texto: w === null ? "Todavía no hay datos suficientes: hace falta pasar el calentamiento de 2,5 h simuladas." : `Tiempo medio en la etapa: ${durTxt(w)} · acumulado desde el desencajado: ${durTxt(acum)}.` };
+        texto: w === null ? "Todavía no hay datos suficientes: hace falta pasar el calentamiento." : `Tiempo medio en la etapa: ${durTxt(w)} · acumulado desde el desencajado: ${durTxt(acum)}.` };
     }),
   ];
 }
@@ -200,9 +205,9 @@ export function unidades(id: string): Unidad {
     case "Desencajado": return U("pallets de MP", "batches", "pallets de MP");
     case "Picadora": return U("batches");
     case "MezA": case "MezB": return U("batches", "cargas", "batches");
-    case "FormA": case "FormB": return U("cargas", "bandejas", "bandejas");
-    case "Tunel": return U("bandejas");
-    case "EnvA": case "EnvB": return U("bandejas", "paquetes", "paquetes");
+    case "FormA": case "FormB": return U("cargas", "unidades de 5 kg", "unidades de 5 kg");
+    case "Tunel": return U("unidades de 5 kg");
+    case "EnvA": case "EnvB": return U("unidades de 5 kg", "paquetes", "paquetes");
     case "EncA": case "EncB": return U("paquetes", "cajas", "cajas");
     case "EstA": case "EstB": return U("cajas");
     case "RackPTCongelado": case "RackPTEnfriado": case "QExpedicion": case "SinkExpedicion": return U("pallets de PT");

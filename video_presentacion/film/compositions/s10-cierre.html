@@ -1,0 +1,53 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; background:#000; color:#fff; font-family:"SF Pro Display",sans-serif; }
+    #q { position:absolute; inset:0; background:#050507; }
+    #q-t { position:absolute; left:0; top:60px; width:1920px; text-align:center; font-size:130px; font-weight:900; letter-spacing:-.05em; white-space:nowrap; color:#ff1f3d; }
+    .q-r { position:absolute; left:130px; width:1660px; font-size:62px; font-weight:800; letter-spacing:-.02em; white-space:nowrap; padding-left:44px; border-left:14px solid #ff1f3d; line-height:1.2; }
+    .q-r b { color:#ff4d63; font-weight:900; }
+    #op { position:absolute; inset:0; background:#000; opacity:0; }
+    #c-pose, video { position:absolute; left:900px; top:0; width:1080px; height:1080px; }
+    #c-d1, #c-d2 { transform:scale(2); transform-origin:50% 28%; }
+    .c { position:absolute; left:90px; width:1000px; white-space:nowrap; opacity:0; }
+    #c-th { top:150px; font-size:92px; font-weight:900; line-height:1.08; letter-spacing:-.04em; }
+    #c-th b { color:#ff1f3d; font-weight:900; }
+    #c-n { top:420px; font-size:50px; font-weight:700; line-height:1.3; }
+    #c-rl { top:670px; font-size:38px; font-weight:600; color:#a9a9b3; }
+    #c-r { top:724px; font-size:44px; font-weight:800; line-height:1.35; color:#ff4d63; }
+    #c-pie { top:940px; font-size:34px; font-weight:500; color:#a9a9b3; }
+  </style>
+  <div id="root" data-composition-id="s10-cierre" data-width="1920" data-height="1080">
+    <div id="q">
+      <div id="q-t">Conclusiones</div>
+      <div id="q-1" class="q-r" style="top:290px">El modelo es <b>válido</b>: reproduce la producción de la planta</div>
+      <div id="q-2" class="q-r" style="top:470px">El cuello son las <b>mezcladoras</b>, por el lavado de cada batch</div>
+      <div id="q-3" class="q-r" style="top:650px">Formadoras más rápidas: <b>+14,4 pallets</b> por día (+19 %)</div>
+      <div id="q-4" class="q-r" style="top:830px">Simular nos dejó probarlo <b>sin tocar la planta</b></div>
+    </div>
+    <div id="op">
+      <img id="c-pose" src="assets/renders/operario_pose.png" alt="" />
+      <video id="c-v1" class="clip" data-start="12" data-duration="3" muted playsinline src="assets/renders/operario.mp4"></video>
+      <video id="c-v2" class="clip" data-start="15" data-duration="3" muted playsinline src="assets/renders/operario.mp4"></video>
+      <video id="c-d1" class="clip" data-start="28" data-duration="3" muted playsinline src="assets/renders/baile.mp4"></video>
+      <video id="c-d2" class="clip" data-start="31" data-duration="3" muted playsinline src="assets/renders/baile.mp4"></video>
+      <div id="c-th" class="c">Gracias por recorrer<br /><b>la planta con nosotros</b></div>
+      <div id="c-n" class="c">Matias Buffa<br />Felipe Diaz Aimar<br />Jeremias Micheloud</div>
+      <div id="c-rl" class="c">Repositorios</div>
+      <div id="c-r" class="c">github.com/FelipeDiazAimar/3DModelingPaty<br />github.com/FelipeDiazAimar/MCP_Flexsim</div>
+      <div id="c-pie" class="c">Simulación · UTN · noviembre 2026</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const rv = (s, at) => tl.fromTo(s, { opacity: 0, x: -50, filter: "blur(14px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power4.out", immediateRender: true }, at);
+      tl.fromTo("#q-t", { opacity: 0, scale: 1.8, filter: "blur(24px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0.1);
+      rv("#q-1", 0.9); rv("#q-2", 3.3); rv("#q-3", 5.9); rv("#q-4", 8.5);
+      const D = 12;
+      tl.set("#q", { opacity: 0 }, D);
+      tl.set("#op", { opacity: 1 }, D);
+      rv("#c-th", D + 0.5); rv("#c-n", D + 3); rv("#c-rl", D + 6); rv("#c-r", D + 6.2); rv("#c-pie", D + 10);
+      window.__timelines["s10-cierre"] = tl;
+    })();
+  </script>
+</template>

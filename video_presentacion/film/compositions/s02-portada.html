@@ -1,0 +1,203 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "SF Pro Display";
+      font-weight: 500;
+      src: url("assets/fonts/SF-Pro-Display-Medium.otf") format("opentype");
+    }
+    @font-face {
+      font-family: "SF Pro Display";
+      font-weight: 900;
+      src: url("assets/fonts/SF-Pro-Display-Black.otf") format("opentype");
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #a30016;
+      font-family: "SF Pro Display", sans-serif;
+      color: #ffffff;
+    }
+    #s02-gl {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    .s02-row {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .s02-pill {
+      display: inline-block;
+      padding: 12px 32px;
+      margin: 0 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(0, 0, 0, 0.22);
+      font-weight: 500;
+      font-size: 36px;
+      letter-spacing: -0.01em;
+    }
+    #s02-title {
+      top: 330px;
+      font-weight: 900;
+      font-size: 164px;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+    }
+    .s02-ch {
+      display: inline-block;
+      white-space: pre;
+    }
+    #s02-period {
+      display: inline-block;
+      width: 34px;
+      height: 34px;
+      margin-left: 12px;
+      border-radius: 50%;
+      background: #050507;
+    }
+    #s02-sub {
+      top: 690px;
+      font-weight: 500;
+      font-size: 56px;
+      letter-spacing: -0.015em;
+    }
+    .s02-w {
+      display: inline-block;
+      margin: 0 7px;
+    }
+  </style>
+  <div id="root" data-composition-id="s02-portada" data-width="1920" data-height="1080">
+    <canvas id="s02-gl" width="1920" height="1080"></canvas>
+    <div class="s02-row" style="top: 232px">
+      <span id="s02-kicker" class="s02-pill">Simulación · UTN · 2026</span>
+    </div>
+    <div id="s02-title" class="s02-row">
+      <div id="s02-l1">Línea hamburguesas</div>
+      <div><span id="s02-l2">Paty</span><span id="s02-period"></span></div>
+    </div>
+    <div id="s02-sub" class="s02-row">
+      <span class="s02-w">Planta</span><span class="s02-w">Elaborados</span><span class="s02-w">·</span><span class="s02-w">gemelo</span><span class="s02-w">digital</span>
+    </div>
+    <div class="s02-row" style="top: 800px">
+      <span id="s02-c1" class="s02-pill">Eventos discretos</span>
+      <span id="s02-c2" class="s02-pill">10 réplicas</span>
+      <span id="s02-c3" class="s02-pill">IC 95 %</span>
+    </div>
+  </div>
+  <script>
+    // Escena 2 · beats 8–24 · f113–337 · tiempos locales desde b8
+    (function () {
+      const B = 0.703125; // 1,5 beats por paso: el relato necesita 24 beats
+      const DUR = 338 / 30;
+      const START = 225 / 30;
+
+      const canvas = document.getElementById("s02-gl");
+      const gl = canvas.getContext("webgl", { preserveDrawingBuffer: true, antialias: false });
+      // Misma seda que cierra la escena 1, con el mismo tiempo global: el empalme no salta
+      const FS = `precision highp float;
+        uniform vec2 R; uniform float T,DIM;
+        float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+        float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+          return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+        float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(17.,9.);a*=.5;}return v;}
+        void main(){
+          vec2 p=(gl_FragCoord.xy-.5*R)/R.y;
+          float w=(fbm(vec2(p.x*1.6,T*.35))-.5)*.035*1.18;
+          float y=p.y+w;
+          float q=fbm(vec2(p.x*2.2+T*.22,y*1.4-T*.3));
+          float rays=fbm(vec2(p.x*8.+q*2.6,T*.28));
+          float folds=.5+.5*sin(p.x*3.4+p.y*2.1+q*7.+T*.8);
+          vec3 c=mix(vec3(.62,.0,.08),vec3(1.,.09,.2),folds)*(.78+.4*rays);
+          c=c/(1.+max(max(c.r,c.g),c.b)*.12);
+          c*=DIM;
+          c+=(h(gl_FragCoord.xy)-.5)/255.;
+          gl_FragColor=vec4(c,1.);
+        }`;
+      function sh(type, src) {
+        const s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+        return s;
+      }
+      const pr = gl.createProgram();
+      gl.attachShader(pr, sh(gl.VERTEX_SHADER, "attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}"));
+      gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, FS));
+      gl.bindAttribLocation(pr, 0, "a");
+      gl.linkProgram(pr);
+      gl.useProgram(pr);
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(0);
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+      const uT = gl.getUniformLocation(pr, "T");
+      const uD = gl.getUniformLocation(pr, "DIM");
+      gl.uniform2f(gl.getUniformLocation(pr, "R"), 1920, 1080);
+
+      function renderAt(globalT) {
+        const local = Math.max(0, globalT - START);
+        const k = Math.min(1, local / (2 * B));
+        gl.uniform1f(uT, globalT);
+        gl.uniform1f(uD, 1 - 0.34 * k * k * (3 - 2 * k)); // oscurece para que el blanco lea
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+
+      // Divide el título en letras antes de crear los tweens
+      ["s02-l1", "s02-l2"].forEach((id) => {
+        const el = document.getElementById(id);
+        const txt = el.textContent;
+        el.textContent = "";
+        for (const ch of txt) {
+          const s = document.createElement("span");
+          s.className = "s02-ch";
+          s.textContent = ch;
+          el.appendChild(s);
+        }
+      });
+
+      const tl = gsap.timeline({ paused: true });
+      const blurIn = (sel, at, stagger) =>
+        tl.fromTo(
+          sel,
+          { opacity: 0, filter: "blur(10px)", y: 14 },
+          { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.3, ease: "expo.out", stagger: stagger || 0 },
+          at,
+        );
+
+      blurIn("#s02-kicker", 0.5 * B);
+      // SplitText: una letra cada 1/16 de beat musical
+      tl.fromTo(
+        ".s02-ch",
+        { opacity: 0, filter: "blur(10px)", y: 70 },
+        { opacity: 1, filter: "blur(0px)", y: 0, duration: 0.42, ease: "expo.out", stagger: B / 4 },
+        B,
+      );
+      tl.fromTo("#s02-period", { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 6.5 * B);
+      blurIn("#s02-sub .s02-w", 7 * B, 0.07);
+      blurIn("#s02-c1", 9 * B);
+      blurIn("#s02-c2", 10 * B);
+      blurIn("#s02-c3", 11 * B);
+
+      // Salida: el texto se desenfoca y el punto final crece hasta ser la escena siguiente
+      const OUT = 15 * B;
+      tl.to(["#s02-kicker", ".s02-ch", "#s02-sub", ".s02-row .s02-pill"], {
+        opacity: 0,
+        filter: "blur(10px)",
+        duration: 0.2,
+        ease: "power2.in",
+      }, OUT);
+      tl.to("#s02-period", { scale: 120, duration: DUR - OUT - 0.04, ease: "power3.in" }, OUT);
+
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(START);
+      window.__timelines["s02-portada"] = tl;
+    })();
+  </script>
+</template>

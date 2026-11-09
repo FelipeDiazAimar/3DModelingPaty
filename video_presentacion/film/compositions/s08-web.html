@@ -1,0 +1,125 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #050507; font-family: "SF Pro Display", sans-serif; }
+    #w8-z { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+    video { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    .w8-chip { position: absolute; right: 80px; top: 110px; padding: 12px 36px; border-radius: 999px; background: #ff1f3d; color: #050507; font-size: 64px; font-weight: 900; letter-spacing: -0.03em; white-space: nowrap; opacity: 0; }
+    #w8-wipe { position: absolute; inset: 0; background: #ff1f3d; transform: scaleX(0); }
+    #k-box { position: absolute; left: 210px; bottom: 110px; width: 1500px; text-align: center; opacity: 0; z-index: 5; }
+    #k-txt { display: inline-block; padding: 10px 28px; border-radius: 16px; background: rgba(5,5,7,.86); font-size: 34px; font-weight: 700; line-height: 1.2; }
+    #k-txt .w { color: transparent; -webkit-text-fill-color: transparent; background-image: linear-gradient(90deg,#fff 0%,#fff 100%); -webkit-background-clip: text; background-clip: text; }
+  </style>
+  <div id="root" data-composition-id="s08-web" data-width="1920" data-height="1080">
+    <div id="w8-z" data-layout-allow-overflow>
+      <video id="w8-v-elab" class="clip" data-start="0.000000" data-duration="52.000000" data-media-start="3" data-playback-rate="1.5" muted playsinline src="assets/web/web.mp4"></video>
+      <video id="w8-v-lote" class="clip" data-start="52.000000" data-duration="48.333333" data-media-start="2.5" data-playback-rate="1.5" muted playsinline src="assets/web/lote.mp4"></video>
+      <video id="w8-v-prod" class="clip" data-start="100.333333" data-duration="9.000000" data-media-start="5.52" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-par" class="clip" data-start="109.333333" data-duration="9.000000" data-media-start="26.52" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-col" class="clip" data-start="118.333333" data-duration="9.000000" data-media-start="47.52" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-vel" class="clip" data-start="127.333333" data-duration="9.000000" data-media-start="68.52" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-mas" class="clip" data-start="136.333333" data-duration="9.000000" data-media-start="89.52" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-flo" class="clip" data-start="145.333333" data-duration="9.000000" data-media-start="110.42" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-est" class="clip" data-start="154.333333" data-duration="9.000000" data-media-start="131.42" data-playback-rate="1.7" muted playsinline src="assets/web/secciones.mp4"></video>
+      <video id="w8-v-esc" class="clip" data-start="163.333333" data-duration="9.000000" data-media-start="152.32" data-playback-rate="1.7" muted playsinline src="assets/web/secciones.mp4"></video>
+    </div>
+    <div id="w8-c-elab" class="w8-chip" data-layout-ignore>Elaborados, en vivo</div>
+    <div id="w8-c-lote" class="w8-chip" data-layout-ignore>Seguir un lote</div>
+    <div id="w8-c-prod" class="w8-chip" data-layout-ignore>Producción</div>
+    <div id="w8-c-par" class="w8-chip" data-layout-ignore>Paradas</div>
+    <div id="w8-c-col" class="w8-chip" data-layout-ignore>Colas y WIP</div>
+    <div id="w8-c-vel" class="w8-chip" data-layout-ignore>Velocidad</div>
+    <div id="w8-c-mas" class="w8-chip" data-layout-ignore>Balance de masa</div>
+    <div id="w8-c-flo" class="w8-chip" data-layout-ignore>Montacargas</div>
+    <div id="w8-c-est" class="w8-chip" data-layout-ignore>Estadística</div>
+    <div id="w8-c-esc" class="w8-chip" data-layout-ignore>Escenarios</div>
+    <div id="w8-wipe" data-layout-ignore></div>
+    <div id="k-box" data-layout-ignore><span id="k-txt"></span></div>
+  </div>
+  <script>
+    // Diapositiva 31: web conectada a FlexSim, con zoom a gráficas y tablas y subtítulos.
+    (function () {
+      const HOST = 363.461904;
+      const tl = gsap.timeline({ paused: true });
+      const chip = (s, at) => {
+        tl.fromTo(s, { opacity: 0, scale: 1.8, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, at);
+        tl.to(s, { opacity: 0, filter: "blur(10px)", duration: 0.25, ease: "power2.in" }, at + 3);
+      };
+      const wipe = (c) => {
+        tl.set("#w8-wipe", { transformOrigin: "0% 50%" }, c - 0.16);
+        tl.to("#w8-wipe", { scaleX: 1, duration: 0.16, ease: "power3.in" }, c - 0.16);
+        tl.set("#w8-wipe", { transformOrigin: "100% 50%" }, c);
+        tl.to("#w8-wipe", { scaleX: 0, duration: 0.2, ease: "power3.out" }, c);
+      };
+      chip("#w8-c-elab", 0.300);
+      chip("#w8-c-lote", 52.300);
+      chip("#w8-c-prod", 100.633);
+      tl.to("#w8-z",{x:-757.2,y:-302.4,scale:1.800,duration:.5,ease:"power2.inOut"},100.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},101.833);
+      tl.to("#w8-z",{x:-661.8,y:-675.5,scale:1.700,duration:.5,ease:"power2.inOut"},106.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},108.633);
+      chip("#w8-c-par", 109.633);
+      tl.to("#w8-z",{x:-661.8,y:-216.5,scale:1.700,duration:.5,ease:"power2.inOut"},109.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},110.833);
+      tl.to("#w8-z",{x:-757.2,y:-799.2,scale:1.800,duration:.5,ease:"power2.inOut"},115.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},117.633);
+      chip("#w8-c-col", 118.633);
+      tl.to("#w8-z",{x:-661.8,y:-345.7,scale:1.700,duration:.5,ease:"power2.inOut"},118.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},119.833);
+      tl.to("#w8-z",{x:-1880.2,y:-894.4,scale:2.200,duration:.5,ease:"power2.inOut"},124.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},126.633);
+      chip("#w8-c-vel", 127.633);
+      tl.to("#w8-z",{x:-661.8,y:-298.1,scale:1.700,duration:.5,ease:"power2.inOut"},127.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},128.833);
+      tl.to("#w8-z",{x:-852.6,y:0.0,scale:1.900,duration:.5,ease:"power2.inOut"},133.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},135.633);
+      chip("#w8-c-mas", 136.633);
+      tl.to("#w8-z",{x:-502.8,y:-702.0,scale:2.300,duration:.5,ease:"power2.inOut"},136.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},137.833);
+      tl.to("#w8-z",{x:-2002.4,y:-702.0,scale:2.300,duration:.5,ease:"power2.inOut"},142.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},144.633);
+      chip("#w8-c-flo", 145.633);
+      tl.to("#w8-z",{x:-852.6,y:0.0,scale:1.900,duration:.5,ease:"power2.inOut"},145.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},146.833);
+      tl.to("#w8-z",{x:-661.8,y:-378.0,scale:1.700,duration:.5,ease:"power2.inOut"},151.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},153.633);
+      chip("#w8-c-est", 154.633);
+      tl.to("#w8-z",{x:-661.8,y:-109.4,scale:1.700,duration:.5,ease:"power2.inOut"},154.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},155.833);
+      tl.to("#w8-z",{x:-661.8,y:-568.4,scale:1.700,duration:.5,ease:"power2.inOut"},161.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},162.733);
+      chip("#w8-c-esc", 163.633);
+      tl.to("#w8-z",{x:-471.0,y:-394.5,scale:1.500,duration:.5,ease:"power2.inOut"},163.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},164.833);
+      tl.to("#w8-z",{x:-661.8,y:-756.0,scale:1.700,duration:.5,ease:"power2.inOut"},170.433); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},171.733);
+      wipe(52.000);
+      wipe(100.333);
+      wipe(109.333);
+      wipe(118.333);
+      wipe(127.333);
+      wipe(136.333);
+      wipe(145.333);
+      wipe(154.333);
+      wipe(163.333);
+      tl.to("#w8-z",{x:-471.0,y:-270.0,scale:1.500,duration:.5,ease:"power2.inOut"},102.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},105.533);
+      tl.to("#w8-z",{x:-471.0,y:-270.0,scale:1.500,duration:.5,ease:"power2.inOut"},111.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},114.533);
+      tl.to("#w8-z",{x:-471.0,y:-270.0,scale:1.500,duration:.5,ease:"power2.inOut"},120.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},123.533);
+      tl.to("#w8-z",{x:-1878.0,y:-544.6,scale:2.200,duration:.5,ease:"power2.inOut"},129.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},132.533);
+      tl.to("#w8-z",{x:-852.6,y:0.0,scale:1.900,duration:.5,ease:"power2.inOut"},138.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},141.533);
+      tl.to("#w8-z",{x:-448.0,y:-648.0,scale:2.200,duration:.5,ease:"power2.inOut"},147.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},150.533);
+      tl.to("#w8-z",{x:-471.0,y:-270.0,scale:1.500,duration:.5,ease:"power2.inOut"},156.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},159.533);
+      tl.to("#w8-z",{x:-471.0,y:-270.0,scale:1.500,duration:.5,ease:"power2.inOut"},165.533); tl.to("#w8-z",{x:0,y:0,scale:1,duration:.4,ease:"power2.inOut"},168.533);
+      window.__timelines["s08-web"] = tl;
+
+      const SEGS = [[0.3, 10.202, "Todo esto también se puede mirar desde afuera de FlexSim."], [10.602, 30.406, "Armamos una página web que recibe los datos del modelo mientras corre, y la planta se mueve en tres dimensiones."], [30.806, 51.6, "Recorremos el sector de elaborados: los trenes de picado, las líneas, las cámaras y, al final, las dos líneas que simulamos."], [52.3, 61.667, "Ahora seguimos un lote de mil quinientos kilos por las ocho etapas."], [62.067, 82.361, "En cada una, la web calcula cuánto tiempo pasa ahí con la ley de Little: lo que hay adentro, dividido por lo que pasa por hora."], [82.761, 99.933, "De punta a punta, un lote tarda poco más de dos horas, y casi todo ese tiempo se va antes de formar."], [100.633, 108.933, "Producción: cuántos pallets y cajas salen, comparados con lo programado."], [109.633, 117.933, "Paradas: cuándo se frena cada máquina y qué tan seguido."], [118.633, 126.933, "Colas: dónde se acumula el material, y otra vez la ley de Little."], [127.633, 135.933, "Velocidad: los kilos por hora de cada línea contra su capacidad."], [136.633, 144.933, "Balance de masa: lo que entra de carne y lo que sale en cajas."], [145.633, 153.933, "Montacargas: cuántos traslados hace cada uno."], [154.633, 162.933, "Estadística: ajustes de distribuciones e intervalos de confianza."], [163.633, 171.933, "Y escenarios: qué pasaría si cambiamos la planta. De eso hablamos ahora."]].map((s) => ({ t0: HOST + s[0], t1: HOST + s[1], text: s[2] }));
+      const box = document.getElementById("k-box"), txt = document.getElementById("k-txt");
+      let cur = null, spans = [], widths = [], total = 1;
+      function renderAt(t) {
+        const s = SEGS.find((x) => t >= x.t0 && t < x.t1);
+        if (!s) { box.style.opacity = 0; cur = null; return; }
+        box.style.opacity = 1;
+        if (cur !== s) {
+          cur = s;
+          txt.innerHTML = s.text.split(" ").map((w) => '<span class="w">' + w + "</span>").join(" ");
+          spans = Array.prototype.slice.call(txt.querySelectorAll(".w"));
+          widths = spans.map((sp) => sp.getBoundingClientRect().width + 8);
+          total = widths.reduce((a, b) => a + b, 0);
+        }
+        const target = Math.min(1, (t - s.t0) / ((s.t1 - s.t0) * 0.9)) * total;
+        let acc = 0;
+        for (let i = 0; i < spans.length; i++) {
+          const f = Math.max(0, Math.min(1, (target - acc) / (widths[i] - 8)));
+          const pc = (f * 100).toFixed(1);
+          spans[i].style.backgroundImage = "linear-gradient(90deg, #ff4d63 0%, #ff4d63 " + pc + "%, #ffffff " + pc + "%, #ffffff 100%)";
+          acc += widths[i];
+        }
+      }
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(0);
+    })();
+  </script>
+</template>

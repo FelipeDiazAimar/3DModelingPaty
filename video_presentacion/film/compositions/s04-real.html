@@ -1,0 +1,46 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    #s04r-a,
+    #s04r-b {
+      position: absolute;
+      left: 0;
+      width: 1920px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #s04r-a {
+      top: 180px;
+      font-size: 110px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+    #s04r-b {
+      top: 790px;
+      font-size: 90px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #ff1f3d;
+    }
+  </style>
+  <div id="root" data-composition-id="s04-real" data-width="1920" data-height="1080">
+    <div id="s04r-a">Tablero real: 56,0 t/día</div>
+    <div id="s04r-b">¿El modelo es válido?</div>
+  </div>
+  <script>
+    // Escena 4f · referencia real: L7 + L8, tablero Sep–Oct (SUPUESTOS_v2.md:127)
+    (function () {
+      const B = 0.46875;
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#s04r-a", { opacity: 0, scale: 1.5, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 2.2);
+      tl.fromTo("#s04r-b", { opacity: 0, scale: 1.5, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 4.6);
+      window.__timelines["s04-real"] = tl;
+    })();
+  </script>
+</template>

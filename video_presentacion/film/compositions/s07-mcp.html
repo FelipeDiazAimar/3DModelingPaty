@@ -1,0 +1,246 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #050507; color: #ffffff; font-family: "SF Pro Display", sans-serif; }
+    .m-p { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+    .m-abs { position: absolute; white-space: nowrap; }
+    .m-mono { font-family: "JetBrains Mono", monospace; }
+
+    /* D23 */
+    #m-p0 { background: #f4f1ec; color: #050507; }
+    #m-tab { position: absolute; left: 70px; top: 130px; width: 650px; height: 822px; overflow: hidden; border-radius: 24px; }
+    #m-tab img { position: absolute; left: 0; top: 0; width: 650px; height: 822px; max-width: none; }
+    #m-why { position: absolute; left: 780px; top: 130px; width: 1060px; font-size: 54px; font-weight: 600; line-height: 1.2; }
+    #m-goal { position: absolute; left: 780px; top: 810px; width: 1060px; font-size: 56px; font-weight: 800; line-height: 1.15; }
+    #m-old { position: absolute; left: 780px; top: 360px; font-size: 96px; font-weight: 900; letter-spacing: -0.04em; white-space: nowrap; }
+    #m-strike { position: absolute; left: 780px; top: 416px; width: 730px; height: 14px; background: #ff1f3d; }
+    #m-new { position: absolute; left: 780px; top: 510px; width: 1060px; font-size: 118px; line-height: 1.02; font-weight: 900; letter-spacing: -0.04em; color: #d0001f; }
+
+    /* D24 */
+    #m-h1 { left: 0; top: 50px; width: 1920px; text-align: center; font-size: 120px; font-weight: 900; letter-spacing: -0.04em; }
+    .m-col { position: absolute; top: 230px; width: 830px; height: 570px; border-radius: 30px; padding: 34px 40px; }
+    .m-lab { font-size: 58px; font-weight: 900; letter-spacing: -0.03em; }
+    .m-bub { position: absolute; padding: 20px 34px; border-radius: 28px; font-size: 44px; font-weight: 500; white-space: nowrap; }
+    .m-tool { position: absolute; left: 40px; padding: 16px 34px; border-radius: 999px; background: #050507; color: #ffffff; font-size: 46px; font-weight: 700; white-space: nowrap; }
+    #m-def { left: 110px; top: 825px; width: 1700px; text-align: center; font-size: 50px; font-weight: 700; line-height: 1.2; white-space: normal; }
+    #m-def span { color: #ff4d63; }
+
+    /* D25 */
+    #m-p2 { background: #ff1f3d; color: #050507; }
+    #m-zero { left: 0; top: 30px; width: 1920px; height: 550px; overflow: hidden; text-align: center; font-size: 500px; font-weight: 900; }
+    #m-zero div div { height: 550px; line-height: 550px; }
+    #m-gh { position: absolute; left: 960px; top: 300px; width: 900px; height: 452px; border-radius: 18px; overflow: hidden; opacity: 0; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+    #m-gh img { width: 900px; height: 452px; display: block; }
+    #m-no { left: 0; top: 580px; width: 1920px; text-align: center; font-size: 84px; font-weight: 700; color: #ffffff; }
+    #m-si { left: 0; top: 720px; width: 1920px; text-align: center; font-size: 140px; font-weight: 900; letter-spacing: -0.04em; }
+
+    /* D26 */
+    #m-h3 { left: 0; top: 50px; width: 1920px; text-align: center; font-size: 96px; font-weight: 900; letter-spacing: -0.04em; }
+    #m-line { position: absolute; left: 280px; top: 336px; width: 1360px; height: 6px; background: #3a3a44; }
+    #m-dot { position: absolute; left: 266px; top: 325px; width: 28px; height: 28px; border-radius: 50%; background: #ff1f3d; }
+    .m-node { position: absolute; top: 190px; width: 350px; height: 300px; padding: 22px 16px; border-radius: 26px; background: #17171d; border: 2px solid #3a3a44; text-align: center; }
+    .m-node svg { display: block; margin: 0 auto 12px; }
+    .m-node path { fill: none; stroke: #ff1f3d; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    .m-node b { display: block; font-size: 46px; font-weight: 900; letter-spacing: -0.03em; white-space: nowrap; }
+    .m-node span { display: block; margin-top: 22px; font-size: 34px; font-weight: 500; color: #c9c9d1; white-space: nowrap; }
+    #m-term { position: absolute; left: 110px; top: 540px; width: 1700px; height: 330px; padding: 44px 54px; border-radius: 28px; background: #14141a; border: 1px solid #33333d; font-size: 56px; font-weight: 700; line-height: 240px; text-align: center; white-space: nowrap; opacity: 0; }
+    #m-term b { color: #ff4d63; font-weight: 700; }
+    #m-term .c { display: inline-block; opacity: 0; white-space: pre; }
+    #m-l2 { color: #a9a9b3; opacity: 0; }
+
+    /* D27 */
+    #m-big { position: absolute; left: 90px; top: 280px; height: 300px; display: flex; font-size: 280px; font-weight: 900; line-height: 300px; color: #ff1f3d; letter-spacing: -0.04em; }
+    .m-slot { display: inline-block; width: 0.6em; height: 300px; overflow: hidden; }
+    .m-reel { display: block; }
+    .m-reel b { display: block; height: 300px; text-align: center; font-weight: 900; }
+    #m-bt { left: 96px; top: 596px; font-size: 44px; font-weight: 900; }
+    #m-bs { left: 96px; top: 670px; font-size: 56px; font-weight: 500; color: #c9c9d1; }
+    .m-cat { position: absolute; width: 304px; height: 390px; padding: 26px 16px 22px 20px; border-radius: 24px; background: #17171d; border: 1px solid #3a3a44; }
+    .m-cat i { display: block; font-style: normal; font-size: 92px; font-weight: 900; color: #ff1f3d; line-height: 1; }
+    .m-cat b { display: block; margin-top: 16px; font-size: 38px; line-height: 1.12; font-weight: 900; letter-spacing: -0.02em; }
+    .m-cat span { position: absolute; left: 20px; bottom: 24px; font-family: "JetBrains Mono", monospace; font-size: 28px; color: #ff9aa8; white-space: nowrap; }
+
+    /* D28 */
+    #m-h5 { left: 0; top: 50px; width: 1920px; text-align: center; font-size: 110px; font-weight: 900; letter-spacing: -0.04em; }
+    #m-t2 { position: absolute; left: 110px; top: 240px; width: 1700px; height: 640px; padding: 36px 40px; border-radius: 26px; background: #14141a; border: 1px solid #33333d; font-family: "JetBrains Mono", monospace; font-size: 50px; line-height: 1.55; white-space: nowrap; }
+    #m-t2 div { opacity: 0; margin-bottom: 8px; white-space: pre; }
+    #m-t2 b { color: #ff4d63; font-weight: 700; }
+    #m-t2 em { font-style: normal; color: #d6d6dd; }
+    #m-shot { position: absolute; left: 1060px; top: 240px; width: 800px; height: 640px; overflow: hidden; border-radius: 26px; }
+    #m-shot img { position: absolute; left: -8px; top: -115px; width: 1520px; height: 814px; max-width: none; }
+
+    /* D29 */
+    #m-p6 { background: #f4f1ec; color: #050507; }
+    #m-h6 { left: 0; top: 50px; width: 1920px; text-align: center; font-size: 100px; font-weight: 900; letter-spacing: -0.04em; }
+    #m-la { left: 0; top: 200px; width: 1920px; text-align: center; }
+    #m-la span { display: inline-block; padding: 16px 50px; border-radius: 999px; background: #ff1f3d; color: #050507; font-size: 66px; font-weight: 900; }
+    .m-b { position: absolute; left: 210px; height: 150px; }
+    .m-bt { position: absolute; left: 250px; height: 150px; font-size: 72px; font-weight: 900; line-height: 150px; white-space: nowrap; color: #ffffff; }
+    #m-pc { left: 0; top: 730px; width: 1920px; text-align: center; font-size: 120px; font-weight: 900; letter-spacing: -0.04em; color: #d0001f; }
+  </style>
+  <div id="root" data-composition-id="s07-mcp" data-width="1920" data-height="1080">
+    <div id="m-p0" class="m-p" data-layout-allow-overflow data-layout-allow-overlap>
+      <div id="m-tab"><img src="assets/flexsim/tablero.png" alt="" /></div>
+      <div id="m-why">Cada escenario son 10 réplicas: abrir, correr, copiar datos y comparar. Todo a mano no llegábamos.</div>
+      <div id="m-old" data-layout-allow-overlap>Mirar el modelo</div>
+      <div id="m-strike" data-layout-ignore></div>
+      <div id="m-new">Preguntarle al modelo</div>
+      <div id="m-goal">Que una IA abra FlexSim, lo corra y nos traiga los datos</div>
+    </div>
+
+    <div id="m-p1" class="m-p" data-layout-allow-overflow>
+      <div id="m-h1" class="m-abs">¿Qué es un MCP?</div>
+      <div id="m-c1" class="m-col" style="left: 110px; background: #17171d; border: 1px solid #3a3a44">
+        <div class="m-lab" style="color: #a9a9b3">Un chat: la IA opina</div>
+        <div id="m-b1" class="m-bub" style="right: 40px; top: 160px; background: #3a3a44">¿Por qué se traba la línea?</div>
+        <div id="m-b2" class="m-bub" style="left: 40px; top: 300px; background: #26262e; color: #d6d6dd">Podría ser que…</div>
+      </div>
+      <div id="m-c2" class="m-col" style="left: 980px; background: #ff1f3d; color: #050507">
+        <div class="m-lab">Un MCP: la IA opera</div>
+        <div id="m-t1" class="m-tool" style="top: 140px">Abre el modelo</div>
+        <div id="m-t3" class="m-tool" style="top: 240px">Lo hace correr</div>
+        <div id="m-t4" class="m-tool" style="top: 340px">Lee cada máquina</div>
+        <div id="m-t5" class="m-tool" style="top: 440px">Construye objetos</div>
+      </div>
+      <div id="m-def" class="m-abs"><span>Model Context Protocol (MCP):</span> protocolo abierto que estandariza cómo las aplicaciones de IA se conectan con herramientas y datos externos</div>
+    </div>
+
+    <div id="m-p2" class="m-p" data-layout-allow-overflow>
+      <div id="m-zero" class="m-abs" data-layout-allow-overflow><div id="m-zr"><div>0</div><div>1</div></div></div>
+      <div id="m-no" class="m-abs">MCP para FlexSim</div>
+      <div id="m-si" class="m-abs">Construimos el nuestro</div>
+      <div id="m-gh" data-layout-ignore><img src="assets/mcp/github.png" alt="" /></div>
+    </div>
+
+    <div id="m-p3" class="m-p" data-layout-allow-overflow>
+      <div id="m-h3" class="m-abs">Cómo funciona el puente</div>
+      <div id="m-line" data-layout-ignore></div>
+      <div class="m-node" style="left: 110px"><svg viewBox="0 0 100 100" width="96" height="96" data-layout-ignore><path d="M10 14h80v56H42L22 88V70H10z M28 34h44 M28 50h30"></path></svg><b>Asistente de IA</b><span>recibe tu pedido</span></div>
+      <div class="m-node" style="left: 560px"><svg viewBox="0 0 100 100" width="96" height="96" data-layout-ignore><path d="M28 28h44v44H28z M42 42h16v16H42z M40 10v18 M60 10v18 M40 72v18 M60 72v18 M10 40h18 M10 60h18 M72 40h18 M72 60h18"></path></svg><b>Servidor MCP</b><span>elige la herramienta</span></div>
+      <div class="m-node" style="left: 1010px"><svg viewBox="0 0 100 100" width="96" height="96" data-layout-ignore><path d="M36 8v24 M64 8v24 M24 32h52v18a26 26 0 0 1-52 0z M50 76v16"></path></svg><b>Conector</b><span>le pasa la orden</span></div>
+      <div class="m-node" style="left: 1460px"><svg viewBox="0 0 100 100" width="96" height="96" data-layout-ignore><path d="M8 88V48l24 14V48l24 14V24h34v64z M8 88h82"></path></svg><b>FlexSim</b><span>la ejecuta</span></div>
+      <div id="m-dot" data-layout-ignore></div>
+      <div id="m-term">Es como un mozo: <b>vos pedís</b>, la cocina prepara y <b>él te trae el plato.</b></div>
+    </div>
+
+    <div id="m-p4" class="m-p" data-layout-allow-overflow>
+      <div id="m-big" data-layout-allow-overflow></div>
+      <div id="m-bt" class="m-abs">herramientas del MCP</div>
+      <div id="m-bs" class="m-abs">en 8 categorías</div>
+      <div id="m-cats"></div>
+    </div>
+
+    <div id="m-p5" class="m-p" data-layout-allow-overflow>
+      <div id="m-h5" class="m-abs">La IA con las manos en FlexSim</div>
+      <div id="m-t2">
+        <div><b>create_objects</b>   <em>crea máquinas, colas y transportes</em></div>
+        <div><b>connect_objects</b>  <em>las conecta entre sí</em></div>
+        <div><b>attach_resource</b>  <em>asigna operarios y montacargas</em></div>
+        <div><b>set_distribution</b> <em>carga tiempos y distribuciones</em></div>
+        <div><b>run_experiments</b>  <em>corre réplicas y escenarios</em></div>
+        <div><b>get_statistics</b>   <em>devuelve los resultados</em></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Diapositivas 23–29 · Acto 4 · 73 tools verificadas en mcp_server/flexsim_mcp.py; categorías de etapas/ACTO4.
+    // D28: salidas reales de esta sesión de trabajo. D29: E1_FINAL.md:72, SUPUESTOS_v2.md:9.
+    // Mecánicas adaptadas del catálogo: strikethrough-replace, chat-message, tracing-beam, code-terminal-run, slot-machine-roll, headline-slam.
+    (function () {
+      const T = [0, 12, 27, 38, 53, 75.5];
+      const END = 90.5;
+      const tl = gsap.timeline({ paused: true });
+      const blurIn = (s, at, d) => tl.fromTo(s, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: d || 0.3, ease: "power4.out" }, at);
+      const slam = (s, at) => tl.fromTo(s, { opacity: 0, scale: 1.7, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, at);
+      const pop = (s, at) => tl.fromTo(s, { opacity: 0, scale: 0.75 }, { opacity: 1, scale: 1, duration: 0.14, ease: "power3.out" }, at);
+      const bar = (s, at, d) => tl.fromTo(s, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: d || 0.9, ease: "expo.out" }, at);
+
+      T.forEach((t, i) => {
+        const id = "#m-p" + i;
+        tl.set(id, { opacity: 1 }, t);
+        if (i < T.length - 1) tl.set(id, { opacity: 0 }, T[i + 1]);
+      });
+
+      // D23 · strikethrough-replace
+      tl.fromTo("#m-tab", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, 0.2);
+      blurIn("#m-why", 0.8);
+      blurIn("#m-old", 3.4);
+      bar("#m-strike", 5.2, 0.35);
+      tl.fromTo("#m-new", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 5.6);
+      blurIn("#m-goal", 7.4);
+
+      // D24 · chat-message
+      const a = T[1];
+      slam("#m-h1", a + 0.2);
+      blurIn("#m-c1", a + 1.2);
+      pop("#m-b1", a + 2.4);
+      pop("#m-b2", a + 3.8);
+      blurIn("#m-c2", a + 6);
+      ["#m-t1", "#m-t3", "#m-t4", "#m-t5"].forEach((s, i) => pop(s, a + 7.2 + i * 0.8));
+      blurIn("#m-def", a + 11);
+
+      // D25 · headline-slam
+      const b = T[2];
+      slam("#m-zero", b + 0.3);
+      blurIn("#m-no", b + 1.3);
+      slam("#m-si", b + 3.0);
+      tl.fromTo("#m-zr", { y: 0 }, { y: -550, duration: 0.7, ease: "back.out(1.6)" }, b + 4.4);
+      tl.to("#m-zero", { x: -480, y: 90, scale: 0.7, duration: 0.7, ease: "power3.inOut" }, b + 6);
+      tl.to("#m-no", { x: -480, y: -30, scale: 0.58, duration: 0.7, ease: "power3.inOut" }, b + 6);
+      tl.to("#m-si", { x: -480, y: -40, scale: 0.58, duration: 0.7, ease: "power3.inOut" }, b + 6);
+      tl.fromTo("#m-gh", { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, b + 6.3);
+
+      // D26 · tracing-beam + code-terminal-run
+      const c = T[3];
+      slam("#m-h3", c + 0.2);
+      const nodes = Array.prototype.slice.call(document.querySelectorAll(".m-node"));
+      const X = [266, 716, 1166, 1616];
+      nodes.forEach((n, i) => {
+        const at = c + 1.4 + i * 1.5;
+        tl.fromTo(n, { opacity: 0.25, y: 0 }, { opacity: 1, y: -18, duration: 0.3, ease: "power3.out" }, at);
+        tl.to(n, { borderColor: "#ff1f3d", duration: 0.2 }, at);
+        if (i < 3) tl.fromTo("#m-dot", { x: X[i] - 266 }, { x: X[i + 1] - 266, duration: 1.2, ease: "sine.inOut", immediateRender: i === 0 }, at + 0.3);
+      });
+      tl.to("#m-dot", { opacity: 0, duration: 0.2, ease: "power2.out" }, c + 7.2);
+      blurIn("#m-term", c + 8.2, 0.4);
+
+      // D27 · slot-machine-roll
+      const d = T[4];
+      const big = document.getElementById("m-big");
+      Array.from("73").forEach((ch, k) => {
+        const slot = document.createElement("span"); slot.className = "m-slot";
+        const r = document.createElement("span"); r.className = "m-reel";
+        let h = ""; for (let n = 0; n < 20; n++) h += "<b>" + (n % 10) + "</b>";
+        r.innerHTML = h + "<b>" + ch + "</b>"; slot.appendChild(r); big.appendChild(slot);
+        tl.fromTo(r, { y: 0 }, { y: -6000, duration: 1.6 + k * 0.2, ease: "expo.out" }, d + 0.4);
+      });
+      blurIn("#m-bt", d + 1.8);
+      blurIn("#m-bs", d + 2.6);
+      const CAT = [
+        [14, "Ciclo de vida y corrida", "run_to_time"], [12, "FlexScript y nodos", "get_node_value"],
+        [11, "Construcción del modelo", "create_objects"], [10, "Tablas y experimentos", "run_experiments"],
+        [7, "Dashboards y cámara", "dashboard_create"], [6, "ProcessFlow y lógica", "pf_add_activity"],
+        [7, "AGV y transporte", "agv_route"], [6, "Fluidos y personas", "person_create"],
+      ];
+      const box = document.getElementById("m-cats");
+      CAT.forEach((o, i) => {
+        const e = document.createElement("div"); e.className = "m-cat";
+        e.style.left = 580 + (i % 4) * 318 + "px"; e.style.top = 110 + Math.floor(i / 4) * 415 + "px";
+        e.innerHTML = "<i>" + o[0] + "</i><b>" + o[1] + "</b><span>" + o[2] + "</span>";
+        box.appendChild(e);
+        tl.fromTo(e, { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, d + 4 + i * 1.6);
+      });
+
+      // D28 · code-terminal-run con salidas reales
+      const e0 = T[5];
+      slam("#m-h5", e0 + 0.2);
+            document.querySelectorAll("#m-t2 div").forEach((l, i) => {
+        tl.fromTo(l, { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.15, ease: "power2.out" }, e0 + 1.4 + i * 1.9);
+      });
+
+      
+
+      window.__timelines["s07-mcp"] = tl;
+      void END;
+    })();
+  </script>
+</template>

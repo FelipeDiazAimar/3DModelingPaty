@@ -2,3 +2,15 @@
 INIT|hyperframes-init|OK|film/index.html
 INIT|skills|OK|.agents/skills (hyperframes + motion-graphics)
 INIT|etapas|OK|etapas/ACTO1-2,ACTO3,ACTO4,ACTO5,ACTO6,ACTO7
+ACTO1-esc1|hyperframes|OK|film/compositions/s01-chispa.html
+ACTO1-esc2|hyperframes|OK|film/compositions/s02-portada.html
+ACTO1-esc3|hyperframes-registry|OK|film/compositions/s03-integrantes.html
+ACTO1-esc4|hyperframes-registry|OK|film/compositions/s04-veredicto.html
+DOC|auditoria-datos|OK|DOCUMENTACION_VIDEO.md
+ACTO1-esc4b|hyperframes-registry|OK|film/compositions/s04-hipotesis.html
+ACTO1-subs|hyperframes|OK|film/compositions/s99-subs.html
+ACTO2|hyperframes+blender|OK|film/compositions/s05-blender.html
+ACTO3|hyperframes+mcp|OK|film/compositions/s06-flexsim.html
+ACTO3|grabacion-real+hyperframes|OK|film/compositions/s06-flexsim.html (corrida.mp4 desde 4,5 s)
+ACTO3|karaoke|OK|film/compositions/s06-karaoke.html (17 segmentos sobre la toma)
+ACTO4|hyperframes-registry|OK|film/compositions/s07-mcp.html

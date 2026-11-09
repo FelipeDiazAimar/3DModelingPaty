@@ -1,0 +1,270 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; background:#050507; font-family:"SF Pro Display",sans-serif; }
+    .s { position:absolute; inset:0; opacity:0; overflow:hidden; }
+    .e { position:absolute; white-space:nowrap; letter-spacing:-0.03em; line-height:1.15; }
+    .p { padding:14px 40px; border-radius:999px; font-weight:900; }
+    #k-box { position:absolute; left:210px; bottom:58px; width:1500px; text-align:center; opacity:0; z-index:5; }
+    #k-txt { display:inline-block; padding:10px 28px; border-radius:16px; background:rgba(5,5,7,.86); font-size:34px; font-weight:700; line-height:1.2; }
+    #k-txt .w { color:transparent; -webkit-text-fill-color:transparent; background-image:linear-gradient(90deg,#fff 0%,#fff 100%); -webkit-background-clip:text; background-clip:text; }
+  </style>
+  <div id="root" data-composition-id="s09-acto6" data-width="1920" data-height="1080" data-layout-allow-overlap>
+    <div id="s0" class="s" style="background:#050507">
+<div id="z1" class="e" style="left:0px;top:70px;font-size:96px;font-weight:900;color:#fff;width:1920px;text-align:center;">¿Qué distribución usa la simulación?</div>
+<div id="z20" class="e" style="left:110px;top:240px;font-size:62px;font-weight:800;color:#fff;">Materia prima</div>
+<div id="z30" class="e p" style="left:800px;top:232px;font-size:58px;background:#ff1f3d;color:#050507">Fija</div>
+<div id="z40" class="e" style="left:1230px;top:250px;font-size:38px;font-weight:500;color:#c9c9d2;">16 pallets por turno, dato de la planta</div>
+<div id="z21" class="e" style="left:110px;top:405px;font-size:62px;font-weight:800;color:#fff;">Tiempos de máquina</div>
+<div id="z31" class="e p" style="left:800px;top:397px;font-size:58px;background:#ff1f3d;color:#050507">Constantes</div>
+<div id="z41" class="e" style="left:1230px;top:415px;font-size:38px;font-weight:500;color:#c9c9d2;">son parámetros de cada equipo</div>
+<div id="z22" class="e" style="left:110px;top:570px;font-size:62px;font-weight:800;color:#fff;">Tiempo entre fallas</div>
+<div id="z32" class="e p" style="left:800px;top:562px;font-size:58px;background:#ff1f3d;color:#050507">Exponencial</div>
+<div id="z42" class="e" style="left:1230px;top:580px;font-size:38px;font-weight:500;color:#c9c9d2;">las fallas aparecen al azar</div>
+<div id="z23" class="e" style="left:110px;top:735px;font-size:62px;font-weight:800;color:#fff;">Reparación</div>
+<div id="z33" class="e p" style="left:800px;top:727px;font-size:58px;background:#ff1f3d;color:#050507">Lognormal</div>
+<div id="z43" class="e" style="left:1230px;top:745px;font-size:38px;font-weight:500;color:#c9c9d2;">muchas cortas y pocas muy largas</div>
+    </div>
+    <div id="s1" class="s" style="background:#050507">
+<div id="a1" class="e" style="left:0px;top:60px;font-size:76px;font-weight:900;color:#fff;width:1920px;text-align:center;">¿Los datos reales se ajustan a una curva conocida?</div>
+<div id="a2" class="e" style="left:0px;top:165px;font-size:44px;font-weight:500;color:#c9c9d2;width:1920px;text-align:center;">La prueba mide la mayor distancia entre los datos y la curva. Si supera el límite, se rechaza.</div>
+<div id="a30" class="e" style="left:110px;top:310px;font-size:76px;font-weight:900;color:#fff;">Arribos</div>
+<div id="a60" class="e b" style="left:520px;top:290px;width:513px;height:58px;background:#ff1f3d"></div>
+<div id="a70" class="e" style="left:1043px;top:292px;font-size:42px;font-weight:700;color:#fff;">Distancia 0,4126</div>
+<div id="a80" class="e b" style="left:520px;top:362px;width:241px;height:58px;background:#6a6a76"></div>
+<div id="a90" class="e" style="left:771px;top:364px;font-size:42px;font-weight:600;color:#c9c9d2;">Límite 0,1943</div>
+<div id="a50" class="e p" style="left:1500px;top:312px;font-size:54px;background:#ff1f3d;color:#050507">Rechazada</div>
+<div id="a31" class="e" style="left:110px;top:515px;font-size:76px;font-weight:900;color:#fff;">Paradas</div>
+<div id="a61" class="e b" style="left:520px;top:495px;width:174px;height:58px;background:#ff1f3d"></div>
+<div id="a71" class="e" style="left:704px;top:497px;font-size:42px;font-weight:700;color:#fff;">Distancia 0,1399</div>
+<div id="a81" class="e b" style="left:520px;top:567px;width:47px;height:58px;background:#6a6a76"></div>
+<div id="a91" class="e" style="left:577px;top:569px;font-size:42px;font-weight:600;color:#c9c9d2;">Límite 0,0382</div>
+<div id="a51" class="e p" style="left:1500px;top:517px;font-size:54px;background:#ff1f3d;color:#050507">Rechazada</div>
+<div id="a32" class="e" style="left:110px;top:720px;font-size:76px;font-weight:900;color:#fff;">Pesos</div>
+<div id="a62" class="e b" style="left:520px;top:700px;width:181px;height:58px;background:#ff1f3d"></div>
+<div id="a72" class="e" style="left:711px;top:702px;font-size:42px;font-weight:700;color:#fff;">Distancia 0,146</div>
+<div id="a82" class="e b" style="left:520px;top:772px;width:75px;height:58px;background:#6a6a76"></div>
+<div id="a92" class="e" style="left:605px;top:774px;font-size:42px;font-weight:600;color:#c9c9d2;">Límite 0,0608</div>
+<div id="a52" class="e p" style="left:1500px;top:722px;font-size:54px;background:#ff1f3d;color:#050507">Rechazada</div>
+    </div>
+    <div id="s2" class="s" style="background:#ff1f3d">
+<div id="b1" class="e" style="left:0px;top:70px;font-size:112px;font-weight:900;color:#050507;width:1920px;text-align:center;">Cómo corrimos la simulación</div>
+<div id="b20" class="e" style="left:110px;top:270px;width:820px;height:280px;border-radius:30px;background:#050507"></div>
+<div id="b30" class="e" style="left:160px;top:306px;font-size:120px;font-weight:900;color:#ff1f3d;">10</div>
+<div id="b40" class="e" style="left:160px;top:452px;font-size:50px;font-weight:600;color:#fff;">réplicas de 24 horas</div>
+<div id="b21" class="e" style="left:990px;top:270px;width:820px;height:280px;border-radius:30px;background:#050507"></div>
+<div id="b31" class="e" style="left:1040px;top:306px;font-size:120px;font-weight:900;color:#ff1f3d;">95 %</div>
+<div id="b41" class="e" style="left:1040px;top:452px;font-size:50px;font-weight:600;color:#fff;">intervalos de confianza</div>
+<div id="b22" class="e" style="left:110px;top:590px;width:820px;height:280px;border-radius:30px;background:#050507"></div>
+<div id="b32" class="e" style="left:160px;top:626px;font-size:120px;font-weight:900;color:#ff1f3d;">≈ 4 h</div>
+<div id="b42" class="e" style="left:160px;top:772px;font-size:50px;font-weight:600;color:#fff;">transitorio: la línea se llena</div>
+<div id="b23" class="e" style="left:990px;top:590px;width:820px;height:280px;border-radius:30px;background:#050507"></div>
+<div id="b33" class="e" style="left:1040px;top:636px;font-size:100px;font-weight:900;color:#ff1f3d;">54,9 vs 56,0</div>
+<div id="b43" class="e" style="left:1040px;top:772px;font-size:42px;font-weight:600;color:#fff;">t/día, modelo y planta real: −1,9 %</div>
+    </div>
+    <div id="s3" class="s" style="background:#f4f1ea">
+<div id="c1" class="e" style="left:0px;top:70px;font-size:108px;font-weight:900;color:#050507;width:1920px;text-align:center;">E1 · La planta como es hoy</div>
+<div id="c2" class="e" style="left:110px;top:300px;font-size:280px;font-weight:900;color:#ff1f3d;line-height:1;">75,3</div>
+<div id="c3" class="e" style="left:120px;top:590px;font-size:72px;font-weight:600;color:#050507;">pallets por día</div>
+<div id="c40" class="e" style="left:900px;top:270px;font-size:56px;font-weight:600;color:#55555f;">Cuello</div>
+<div id="c50" class="e" style="left:1240px;top:264px;font-size:68px;font-weight:900;color:#ff1f3d;">Mezcladoras</div>
+<div id="c41" class="e" style="left:900px;top:388px;font-size:56px;font-weight:600;color:#55555f;">Capacidad</div>
+<div id="c51" class="e" style="left:1240px;top:382px;font-size:68px;font-weight:900;color:#050507;">65,3 t/día</div>
+<div id="c42" class="e" style="left:900px;top:506px;font-size:56px;font-weight:600;color:#55555f;">Ocupación</div>
+<div id="c52" class="e" style="left:1240px;top:500px;font-size:68px;font-weight:900;color:#050507;">91 %</div>
+<div id="c43" class="e" style="left:900px;top:624px;font-size:56px;font-weight:600;color:#55555f;">Cola</div>
+<div id="c53" class="e" style="left:1240px;top:618px;font-size:68px;font-weight:900;color:#050507;">3,5 lotes</div>
+<div id="c44" class="e" style="left:900px;top:742px;font-size:56px;font-weight:600;color:#55555f;">Causa</div>
+<div id="c54" class="e" style="left:1240px;top:736px;font-size:68px;font-weight:900;color:#050507;">Lavado de 30 min</div>
+    </div>
+    <div id="s4" class="s" style="background:#050507">
+<div id="d1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#fff;width:1920px;text-align:center;">E2 · Formadoras más rápidas</div>
+<div id="d2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">982 → 1843 kg/h</div>
+<div id="d3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#a9a9b3;width:1920px;text-align:center;">Diferencia contra E1 · pallets por día · intervalo 95 %</div>
+<div id="d4a" class="e b" style="left:260px;top:610px;width:1400px;height:6px;background:#fff"></div>
+<div id="d4z" class="e b" style="left:412px;top:510px;width:6px;height:206px;background:#fff"></div>
+<div id="d4zt" class="e" style="left:401px;top:446px;font-size:56px;font-weight:900;color:#fff;">0</div>
+<div id="d4i" class="e b" style="left:1488px;top:574px;width:93px;height:78px;background:#ff1f3d"></div>
+<div id="d4m" class="e b" style="left:1530px;top:562px;width:10px;height:102px;background:#fff"></div>
+<div id="d4l" class="e" style="left:1258px;top:700px;font-size:58px;font-weight:800;color:#fff;width:230px;text-align:right;">13,8</div>
+<div id="d4h" class="e" style="left:1582px;top:700px;font-size:58px;font-weight:800;color:#fff;">15,0</div>
+<div id="d4c" class="e" style="left:1375px;top:446px;font-size:72px;font-weight:900;color:#ff1f3d;width:320px;text-align:center;">+14,4</div>
+<div id="d5" class="e p" style="left:430px;top:800px;font-size:60px;background:#ff1f3d;color:#050507">El cuello pasa al desencajado: 74,1 t/día</div>
+    </div>
+    <div id="s5" class="s" style="background:#12121a">
+<div id="e1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#fff;width:1920px;text-align:center;">E3 · Más materia prima</div>
+<div id="e2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">16 → 24 pallets por turno</div>
+<div id="e3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#a9a9b3;width:1920px;text-align:center;">Diferencia contra E2 · pallets por día · intervalo 95 %</div>
+<div id="e4a" class="e b" style="left:260px;top:610px;width:1400px;height:6px;background:#fff"></div>
+<div id="e4z" class="e b" style="left:957px;top:510px;width:6px;height:206px;background:#fff"></div>
+<div id="e4zt" class="e" style="left:946px;top:700px;font-size:56px;font-weight:900;color:#fff;">0</div>
+<div id="e4i" class="e b" style="left:750px;top:574px;width:280px;height:78px;background:#ff1f3d"></div>
+<div id="e4m" class="e b" style="left:885px;top:562px;width:10px;height:102px;background:#fff"></div>
+<div id="e4l" class="e" style="left:520px;top:700px;font-size:58px;font-weight:800;color:#fff;width:230px;text-align:right;">−0,3</div>
+<div id="e4h" class="e" style="left:1030px;top:700px;font-size:58px;font-weight:800;color:#fff;">+0,1</div>
+<div id="e4c" class="e" style="left:730px;top:446px;font-size:72px;font-weight:900;color:#ff1f3d;width:320px;text-align:center;">−0,1</div>
+<div id="e5" class="e p" style="left:380px;top:800px;font-size:60px;background:#ff1f3d;color:#050507">Cámaras de materia prima: 6,3 → 21,8 pallets</div>
+    </div>
+    <div id="s6" class="s" style="background:#f4f1ea">
+<div id="f1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#050507;width:1920px;text-align:center;">E4 · Batch más chico</div>
+<div id="f2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">1500 → 1200 kg</div>
+<div id="f3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#55555f;width:1920px;text-align:center;">Diferencia contra 1500 kg · pallets por día · intervalo 95 %</div>
+<div id="f4a" class="e b" style="left:260px;top:610px;width:1400px;height:6px;background:#050507"></div>
+<div id="f4z" class="e b" style="left:1457px;top:510px;width:6px;height:206px;background:#050507"></div>
+<div id="f4zt" class="e" style="left:1446px;top:446px;font-size:56px;font-weight:900;color:#050507;">0</div>
+<div id="f4i" class="e b" style="left:540px;top:574px;width:240px;height:78px;background:#ff1f3d"></div>
+<div id="f4m" class="e b" style="left:655px;top:562px;width:10px;height:102px;background:#050507"></div>
+<div id="f4l" class="e" style="left:310px;top:700px;font-size:58px;font-weight:800;color:#050507;width:230px;text-align:right;">−4,6</div>
+<div id="f4h" class="e" style="left:780px;top:700px;font-size:58px;font-weight:800;color:#050507;">−3,4</div>
+<div id="f4c" class="e" style="left:500px;top:446px;font-size:72px;font-weight:900;color:#ff1f3d;width:320px;text-align:center;">−4,0</div>
+<div id="f5" class="e p" style="left:420px;top:800px;font-size:64px;background:#ff1f3d;color:#050507">Con lavado, conviene el batch grande</div>
+    </div>
+    <div id="s7" class="s" style="background:#ff1f3d">
+<div id="g1" class="e" style="left:0px;top:110px;font-size:190px;font-weight:900;color:#050507;width:1920px;text-align:center;">1.º Formadoras</div>
+<div id="g2" class="e" style="left:0px;top:330px;font-size:190px;font-weight:900;color:#fff;width:1920px;text-align:center;">2.º Desencajado</div>
+<div id="g3" class="e" style="left:0px;top:590px;font-size:84px;font-weight:800;color:#050507;width:1920px;text-align:center;">Más materia prima sola no suma nada</div>
+<div id="g4" class="e p" style="left:470px;top:740px;font-size:72px;background:#050507;color:#fff">Intervalos, no corridas sueltas</div>
+    </div>
+    <div id="k-box" data-layout-ignore><span id="k-txt"></span></div>
+  </div>
+  <script>
+    // Acto 6 (D32–D38), 5:00. El equipo graba encima siguiendo el karaoke. Datos: E1_FINAL.md, summary_escenarios_v2.json, app/estadistica/page.tsx.
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const rv = (s, at) => tl.fromTo(s, { opacity: 0, y: 26, filter: "blur(14px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power4.out", immediateRender: true }, at);
+      tl.set("#s0",{opacity:1},0.000); tl.set("#s0",{opacity:0},22.000);
+      rv("#z1",0.600);
+      rv("#z20",0.600);
+      rv("#z30",0.600);
+      rv("#z40",0.600);
+      rv("#z21",6.103);
+      rv("#z31",6.103);
+      rv("#z41",6.103);
+      rv("#z22",9.921);
+      rv("#z32",9.921);
+      rv("#z42",9.921);
+      rv("#z23",16.547);
+      rv("#z33",16.547);
+      rv("#z43",16.547);
+      tl.set("#s1",{opacity:1},22.000); tl.set("#s1",{opacity:0},67.000);
+      rv("#a1",22.600);
+      rv("#a2",31.590);
+      rv("#a30",40.580);
+      rv("#a60",40.580);
+      rv("#a70",40.580);
+      rv("#a80",40.580);
+      rv("#a90",40.580);
+      rv("#a50",40.580);
+      rv("#a31",45.299);
+      rv("#a61",45.299);
+      rv("#a71",45.299);
+      rv("#a81",45.299);
+      rv("#a91",45.299);
+      rv("#a51",45.299);
+      rv("#a32",53.815);
+      rv("#a62",53.815);
+      rv("#a72",53.815);
+      rv("#a82",53.815);
+      rv("#a92",53.815);
+      rv("#a52",53.815);
+      tl.set("#s2",{opacity:1},67.000); tl.set("#s2",{opacity:0},105.000);
+      rv("#b1",67.600);
+      rv("#b20",67.600);
+      rv("#b30",67.600);
+      rv("#b40",67.600);
+      rv("#b21",67.600);
+      rv("#b31",67.600);
+      rv("#b41",67.600);
+      rv("#b22",67.600);
+      rv("#b32",67.600);
+      rv("#b42",67.600);
+      rv("#b23",67.600);
+      rv("#b33",67.600);
+      rv("#b43",67.600);
+      tl.set("#s3",{opacity:1},105.000); tl.set("#s3",{opacity:0},135.000);
+      rv("#c1",105.600);
+      rv("#c2",105.600);
+      rv("#c3",105.600);
+      rv("#c40",105.600);
+      rv("#c50",105.600);
+      rv("#c41",105.600);
+      rv("#c51",105.600);
+      rv("#c42",105.600);
+      rv("#c52",105.600);
+      rv("#c43",105.600);
+      rv("#c53",105.600);
+      rv("#c44",105.600);
+      rv("#c54",105.600);
+      tl.set("#s4",{opacity:1},135.000); tl.set("#s4",{opacity:0},195.000);
+      rv("#d1",135.600);
+      rv("#d2",135.600);
+      rv("#d3",150.832);
+      rv("#d4a",163.493);
+      rv("#d4z",163.493);
+      rv("#d4i",163.493);
+      rv("#d4m",163.493);
+      rv("#d4c",163.493);
+      rv("#d4zt",163.493);
+      rv("#d4l",171.656);
+      rv("#d4h",171.656);
+      rv("#d5",184.317);
+      tl.set("#s5",{opacity:1},195.000); tl.set("#s5",{opacity:0},240.000);
+      rv("#e1",195.600);
+      rv("#e2",202.778);
+      rv("#e3",210.567);
+      rv("#e4a",210.567);
+      rv("#e4z",210.567);
+      rv("#e4zt",210.567);
+      rv("#e4i",210.567);
+      rv("#e4m",210.567);
+      rv("#e4c",210.567);
+      rv("#e4l",218.356);
+      rv("#e4h",218.356);
+      rv("#e5",230.426);
+      tl.set("#s6",{opacity:1},240.000); tl.set("#s6",{opacity:0},280.000);
+      rv("#f1",240.600);
+      rv("#f2",240.600);
+      rv("#f3",251.718);
+      rv("#f4a",251.718);
+      rv("#f4z",251.718);
+      rv("#f4zt",251.718);
+      rv("#f4i",251.718);
+      rv("#f4m",251.718);
+      rv("#f4c",251.718);
+      rv("#f4l",264.360);
+      rv("#f4h",264.360);
+      rv("#f5",264.360);
+      tl.set("#s7",{opacity:1},280.000); tl.set("#s7",{opacity:0},305.000);
+      rv("#g1",280.600);
+      rv("#g2",280.600);
+      rv("#g3",285.829);
+      rv("#g4",294.245);
+      window.__timelines["s09-acto6"] = tl;
+      const HOST = 535.795237;
+      const SEGS = [[0.5, 5.553, "La materia prima llega fija: dieciséis pallets por turno."], [6.003, 9.371, "Los tiempos de máquina son constantes."], [9.821, 15.997, "La variación la ponen las fallas: exponencial, porque aparecen al azar."], [16.447, 21.5, "Y la reparación, lognormal: muchas cortas y pocas largas."], [22.5, 31.04, "Antes de simular miramos los datos reales de la planta y les hicimos pruebas de bondad de ajuste."], [31.49, 40.03, "Kolmogorov-Smirnov mide la mayor distancia entre los datos y la curva teórica; si pasa el límite, se rechaza."], [40.48, 44.749, "Los arribos llegan en ráfagas: la exponencial queda rechazada."], [45.199, 53.265, "Las paradas tienen cola pesada: tampoco ajustan a una lognormal, aunque es la que mejor se acerca."], [53.715, 62.255, "Y el peso de los pallets es una mezcla de productos, así que la normal también se rechaza."], [62.705, 66.5, "No forzamos una distribución porque sí: lo decimos."], [67.5, 75.581, "En el modelo, las fallas son la fuente de variación: tiempo entre fallas exponencial y reparación lognormal."], [76.031, 84.111, "Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento."], [84.561, 91.216, "La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio."], [91.666, 104.5, "El modelo da cincuenta y cuatro coma nueve toneladas por día y la planta, cincuenta y seis: menos uno coma nueve por ciento. Por eso es válido."], [105.5, 112.023, "Este es el escenario base: setenta y cinco coma tres pallets por día."], [112.473, 125.018, "El cuello son las mezcladoras: sesenta y cinco toneladas por día, noventa y uno por ciento ocupadas y una cola de tres coma cinco lotes."], [125.468, 134.5, "La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta."], [135.5, 150.282, "¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora."], [150.732, 162.943, "Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares."], [163.393, 171.106, "Son catorce coma cuatro pallets más por día: un diecinueve por ciento."], [171.556, 183.767, "El intervalo va de trece coma ocho a quince. No incluye el cero, así que la mejora es real."], [184.217, 194.5, "Pero el cuello se mueve: ahora manda el desencajado, con setenta y cuatro toneladas por día."], [195.5, 202.228, "Ahora lo obvio: si queremos producir más, traigamos más materia prima."], [202.678, 210.017, "Sobre las formadoras rápidas, veinticuatro pallets por turno en lugar de dieciséis."], [210.467, 217.806, "Contra el escenario anterior da menos cero coma uno pallets por día."], [218.256, 229.876, "El intervalo va de menos cero coma tres a más cero coma uno: incluye el cero, no hay diferencia."], [230.326, 239.5, "La materia prima se acumula: las cámaras pasan de seis a veintidós pallets en promedio."], [240.5, 251.168, "Después probamos un batch más chico: mil doscientos kilos en lugar de mil quinientos."], [251.618, 263.81, "Rinde cuatro pallets menos por día, porque con batches chicos se lava más veces por tonelada."], [264.26, 279.5, "El intervalo va de menos cuatro coma seis a menos tres coma cuatro. También es significativo: conviene el batch grande."], [280.5, 285.279, "La conclusión: primero formadoras, después desencajado."], [285.729, 293.695, "Traer más materia prima, por sí sola, no suma nada."], [294.145, 304.5, "Y todo esto lo sabemos porque comparamos intervalos de confianza, no corridas sueltas."]].map((s) => ({ t0: HOST + s[0], t1: HOST + s[1], text: s[2] }));
+      const box = document.getElementById("k-box"), txt = document.getElementById("k-txt");
+      let cur = null, spans = [], widths = [], total = 1;
+      function renderAt(t) {
+        const s = SEGS.find((x) => t >= x.t0 && t < x.t1);
+        if (!s) { box.style.opacity = 0; cur = null; return; }
+        box.style.opacity = 1;
+        if (cur !== s) {
+          cur = s;
+          txt.innerHTML = s.text.split(" ").map((w) => '<span class="w">' + w + "</span>").join(" ");
+          spans = Array.prototype.slice.call(txt.querySelectorAll(".w"));
+          widths = spans.map((sp) => sp.getBoundingClientRect().width + 8);
+          total = widths.reduce((a, b) => a + b, 0);
+        }
+        const target = Math.min(1, (t - s.t0) / ((s.t1 - s.t0) * 0.9)) * total;
+        let acc = 0;
+        for (let i = 0; i < spans.length; i++) {
+          const f = Math.max(0, Math.min(1, (target - acc) / (widths[i] - 8)));
+          const pc = (f * 100).toFixed(1);
+          spans[i].style.backgroundImage = "linear-gradient(90deg, #ff4d63 0%, #ff4d63 " + pc + "%, #ffffff " + pc + "%, #ffffff 100%)";
+          acc += widths[i];
+        }
+      }
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(0);
+    })();
+  </script>
+</template>

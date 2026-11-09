@@ -1,0 +1,64 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    /* rgb-glitch-text del catálogo, a tamaño de pantalla completa */
+    .hf-catalog-rgb-glitch-text {
+      position: absolute;
+      left: 110px;
+      top: 330px;
+      width: 1700px;
+      height: 420px;
+      font-size: 190px;
+      font-weight: 900;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      text-align: center;
+      opacity: 0;
+    }
+    .hf-catalog-rgb-glitch-text span,
+    .hf-catalog-rgb-glitch-text strong {
+      position: absolute;
+      inset: 0;
+      font-weight: 900;
+    }
+    .hf-catalog-rgb-glitch-text span:first-child {
+      color: #050507;
+      transform: translateX(var(--hf-glitch-red, 0px));
+    }
+    .hf-catalog-rgb-glitch-text span:nth-child(2) {
+      color: #ffd0d6;
+      transform: translateX(var(--hf-glitch-blue, 0px));
+    }
+    .hf-catalog-rgb-glitch-text strong {
+      color: #ffffff;
+    }
+  </style>
+  <div id="root" data-composition-id="s04-variable" data-width="1920" data-height="1080">
+    <div class="hf-catalog-rgb-glitch-text" data-layout-allow-overlap>
+      <span data-layout-allow-overlap>MEDIDA DE DESEMPEÑO</span>
+      <span data-layout-allow-overlap>MEDIDA DE DESEMPEÑO</span>
+      <strong data-layout-allow-overlap>MEDIDA DE DESEMPEÑO</strong>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const box = ".hf-catalog-rgb-glitch-text";
+      tl.fromTo(box, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.14, ease: "expo.out" }, 0.04);
+      [0.1, 0.7].forEach((at) => {
+        tl.fromTo(
+          box,
+          { "--hf-glitch-red": "0px", "--hf-glitch-blue": "0px" },
+          { "--hf-glitch-red": "-22px", "--hf-glitch-blue": "22px", duration: 0.06, repeat: 5, yoyo: true, ease: "steps(1)", immediateRender: false },
+          at,
+        );
+      });
+      window.__timelines["s04-variable"] = tl;
+    })();
+  </script>
+</template>

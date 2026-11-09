@@ -1,0 +1,46 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    /* grid-pixelate-wipe del catálogo */
+    #s04-grid {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+    }
+    #s04-grid .s04-cell {
+      background: #050507;
+    }
+  </style>
+  <div id="root" data-composition-id="s04-pixel" data-width="1920" data-height="1080">
+    <div id="s04-grid" data-layout-ignore></div>
+  </div>
+  <script>
+    // Cubre en 0.4 s y descubre en 0.4 s; el corte de fondo cae en el medio, sobre b53
+    (function () {
+      const grid = document.getElementById("s04-grid");
+      for (let i = 0; i < 144; i++) {
+        const c = document.createElement("div");
+        c.className = "s04-cell";
+        grid.appendChild(c);
+      }
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo(
+        ".s04-cell",
+        { scale: 0 },
+        { scale: 1.02, duration: 0.2, stagger: { amount: 0.2, from: "center" }, ease: "power2.inOut" },
+        0,
+      );
+      tl.to(".s04-cell", { scale: 0, duration: 0.2, stagger: { amount: 0.2, from: "edges" }, ease: "power2.inOut" }, 0.4);
+      window.__timelines["s04-pixel"] = tl;
+    })();
+  </script>
+</template>

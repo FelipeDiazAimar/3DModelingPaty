@@ -1,0 +1,91 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "SF Pro Display", sans-serif;
+      pointer-events: none;
+    }
+    #k-box {
+      position: absolute;
+      left: 210px;
+      bottom: 58px;
+      width: 1500px;
+      text-align: center;
+      opacity: 0;
+    }
+    #k-txt {
+      display: inline-block;
+      padding: 10px 28px;
+      border-radius: 16px;
+      background: rgba(5, 5, 7, 0.86);
+      color: #ffffff;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    /* barrido horizontal continuo: cada palabra se rellena de izquierda a derecha con un degradé de corte firme */
+    #k-txt .w {
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      background-image: linear-gradient(90deg, #ffffff 0%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+  </style>
+  <div id="root" data-composition-id="s06-karaoke" data-width="1920" data-height="1080">
+    <div id="k-box" data-layout-ignore><span id="k-txt"></span></div>
+  </div>
+  <script>
+    // Karaoke de la toma de FlexSim. Tiempos en segundos de la grabación (corrida.mp4); la toma arranca en el segundo 24 y va a 1,4x.
+    // Texto en lenguaje llano, para charlar. Datos: PENDIENTES.md (96/100 objetos), notas del propio tablero PATY_Tablero, SUPUESTOS_v2.md (P4 montacargas) y E1_FINAL.md (transitorio ≈ 4 h).
+    (function () {
+      const HOST = 149.533333, REC0 = 24, RATE = 1.4; // tiempo global = HOST + (segundo de la grabación - REC0) / RATE
+      const SEGS = [
+        [24, 33, "Acá está nuestra planta ya dentro de FlexSim, y al costado un tablero propio que se completa solo."],
+        [34, 47, "En la primera hoja vemos cuántos pallets terminados salen, comparados con lo que pide el programa."],
+        [47, 63, "La meta es de 36 pallets por día en cada línea. Más abajo, lo que produce cada máquina."],
+        [64, 77, "Después miramos dónde se acumula el material: las cámaras, las colas y lo que hay en proceso."],
+        [77, 90, "Si una máquina trabaja más lento que la anterior, ahí se forma la fila. Eso es lo que buscamos."],
+        [91, 103, "Las máquinas también se rompen: acá vemos cuántas veces se paró cada equipo y por cuánto tiempo."],
+        [103, 114, "Esas paradas salen de datos reales: cada cuánto falla cada equipo y cuánto tarda en repararse."],
+        [115, 127, "En velocidad vemos cuántos kilos por hora se producen, sobre la última hora simulada."],
+        [127, 139, "Y lo comparamos con la formadora: 982 kilos por hora de capacidad, contra 1843 del estándar."],
+        [140, 149, "El balance de masa cuida las cuentas: cuánta carne entra y cuánta sale en cajas."],
+        [149, 156, "Un pallet de materia prima son 1500 kilos; uno terminado, 144 cajas."],
+        [157, 166, "Cada montacargas tiene su cuenta de traslados."],
+        [166, 173, "Son cuatro, de la recepción a la expedición."],
+        [174, 180, "Calentamiento de cuatro horas, y la ocupación por estación."],
+      ].map((s) => ({ t0: HOST + (s[0] - REC0) / RATE, t1: HOST + (s[1] - REC0) / RATE, text: s[2] }));
+
+      const box = document.getElementById("k-box");
+      const txt = document.getElementById("k-txt");
+      let cur = null, spans = [], widths = [], total = 1;
+      function renderAt(t) {
+        const s = SEGS.find((x) => t >= x.t0 && t < x.t1);
+        if (!s) { box.style.opacity = 0; cur = null; return; }
+        box.style.opacity = 1;
+        if (cur !== s) {
+          cur = s;
+          txt.innerHTML = s.text.split(" ").map((w) => '<span class="w">' + w + "</span>").join(" ");
+          spans = Array.prototype.slice.call(txt.querySelectorAll(".w"));
+          widths = spans.map((sp) => sp.getBoundingClientRect().width + 8); // + el espacio entre palabras
+          total = widths.reduce((a, b) => a + b, 0);
+        }
+        // avance 0..1 sobre el 85 % de la frase, medido en píxeles de texto, en el orden de lectura
+        const target = Math.min(1, (t - s.t0) / ((s.t1 - s.t0) * 0.85)) * total;
+        let acc = 0;
+        for (let i = 0; i < spans.length; i++) {
+          const f = Math.max(0, Math.min(1, (target - acc) / (widths[i] - 8)));
+          const pc = (f * 100).toFixed(1);
+          spans[i].style.backgroundImage = "linear-gradient(90deg, #ff4d63 0%, #ff4d63 " + pc + "%, #ffffff " + pc + "%, #ffffff 100%)";
+          acc += widths[i];
+        }
+      }
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(0);
+      window.__timelines["s06-karaoke"] = gsap.timeline({ paused: true });
+    })();
+  </script>
+</template>

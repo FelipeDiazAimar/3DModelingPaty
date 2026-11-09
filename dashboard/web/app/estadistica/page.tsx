@@ -9,8 +9,8 @@ import { ecdf, boxplotStats, chi2Table, ksTable, expCDF, phi } from "@/lib/stats
 import { formatES } from "@/lib/format";
 import { IntervaloConfianzaE1 } from "@/components/E1";
 
-const WARMUP_H = 2.5; // informe: estado estable desde 2,5 h
-const META_PLANTA_PAL_H = 3; // 36 pallets/día por línea, para dos líneas
+const WARMUP_H = 4; // E1_FINAL.md: transitorio ≈ 4 h (Welch, corrida con lavado)
+const TABLERO_PLANTA_PAL_H = 64.9 / 24; // tablero real Sep–Oct, L7 + L8: 64,9 pallets/día
 
 const MACHINE_STATES = [
   { key: "proc", label: "Procesando", color: STATE_COLOR.proc },
@@ -391,18 +391,18 @@ export default function Estadistica() {
               }}
             />
             <div className="mt-2 rounded-xl bg-amber-50/70 p-3 text-[12px] leading-relaxed text-[#8a520a]">
-              <b>Efecto Restricción:</b> <b>Dato:</b> Formadora 18,33 s/caja = 982 kg/h nominales (SUPUESTOS T5). <b>Medición de esta corrida:</b> utilización calculada con las muestras acumuladas de la simulación en curso (sin descartar warm-up); la etapa con mayor utilización es la candidata a cuello de botella. El bloqueo aguas arriba y la ociosidad de envasado/robot son el efecto esperado si la formadora restringe el flujo; contrastar con Distribución de Estados en vivo.
+              <b>Efecto Restricción:</b> <b>Resultado E1 (10 réplicas, lavado de 30 min):</b> el cuello son las mezcladoras, con 65,3 t/día de capacidad y 91 % de ocupación; le sigue el desencajado con 74,1 t/día. <b>Medición de esta corrida:</b> utilización calculada con las muestras acumuladas de la simulación en curso (sin descartar el transitorio). Para identificar el cuello usar la capacidad implícita de la página Escenarios: túnel y estibado figuran ocupados porque tienen algo adentro, no porque limiten el flujo.
             </div>
           </Card>
 
           {/* Calentamiento y Steady State */}
-          <Card title="Período de Calentamiento (Warm-up)" sub="Pallets PT por hora, promedio móvil de 10 muestras (Estilo Welch)" right={<div className="flex items-center gap-2"><Tag kind="supuesto">Warm-up: 2,5 h</Tag><ChartGuide title="Período de calentamiento" shows="El ritmo de producción de pallets terminados por hora: la línea tenue es la tasa entre muestras y la marcada es su promedio móvil de 10 muestras." watch="La línea vertical marca el fin del warm-up estimado en 2,5 horas y la horizontal, la meta de 3 pallets por hora para ambas líneas. Observá si el ritmo se estabiliza y se acerca a la meta después del calentamiento." /></div>}>
+          <Card title="Período de Calentamiento (Warm-up)" sub="Pallets PT por hora, promedio móvil de 10 muestras (Estilo Welch)" right={<div className="flex items-center gap-2"><Tag kind="real">Transitorio: ≈ 4 h</Tag><ChartGuide title="Período de calentamiento" shows="El ritmo de producción de pallets terminados por hora: la línea tenue es la tasa entre muestras y la marcada es su promedio móvil de 10 muestras." watch="La línea vertical marca el fin del transitorio, de unas 4 horas según Welch, y la horizontal, los 2,7 pallets por hora del tablero real para ambas líneas. Observá si el ritmo se estabiliza después del calentamiento." /></div>}>
             <Chart option={{ legend: { top: 0, right: 0 }, xAxis: axisT, yAxis: axisV, series: [
               { name: "Instantáneo", type: "line", showSymbol: false, lineStyle: { opacity: 0.35 }, data: raw },
               { name: "Suavizado", type: "line", showSymbol: false, lineStyle: { width: 3 }, data: smooth,
                 markLine: { silent: true, symbol: "none", data: [
-                  { xAxis: WARMUP_H, name: "Fin de warm-up", label: { formatter: "Fin de warm-up (2,5 h)" }, lineStyle: { color: "#d9293b", width: 2 } },
-                  { yAxis: META_PLANTA_PAL_H, name: "Meta planta", label: { formatter: "Meta (3 pal/h)" }, lineStyle: { color: "#16a37f", width: 2 } },
+                  { xAxis: WARMUP_H, name: "Fin del transitorio", label: { formatter: "Fin del transitorio (≈ 4 h)" }, lineStyle: { color: "#d9293b", width: 2 } },
+                  { yAxis: TABLERO_PLANTA_PAL_H, name: "Tablero real", label: { formatter: "Tablero real (2,7 pal/h)" }, lineStyle: { color: "#16a37f", width: 2 } },
                 ] } },
             ] }} />
             <p className="text-[12px] text-muted">A partir de las 2,5 h la planta entra en régimen estable (3 pallets/h combinando ambas líneas).</p>

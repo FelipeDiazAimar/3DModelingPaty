@@ -10,8 +10,8 @@
 
 ## 2. Integrantes confirmados
 
-- No figuran nombres en el repo (`README.md`, `CONTEXTO_MASTER_SIMULACION.md` sin lista).
-- Completar antes del render: nombre + rol (Blender / FlexSim / web / stats).
+- Jeremias Micheloud, Felipe Diaz Aimar y Matias Buffa.
+- En pantalla van sin roles.
 
 ## 3. Resumen problema (ciclos, máquinas ciclo Elaborados)
 
@@ -36,7 +36,7 @@
 ## 6. Bullets guion voz IA
 
 - "Esta es la planta PATY San Jorge: del campo a la hamburguesa, en un gemelo digital vivo."
-- "Tres ciclos: faena, desposte y elaborados; ocho líneas que compiten por la mezcla."
+- "Tres ciclos: faena, desposte y elaborados. Simulamos las líneas siete y ocho."
 - "Modelamos cada máquina en Blender con IA: código que construye la planta pieza por pieza."
 - "Y en FlexSim la ponemos a producir: ¿cuántos kilos por hora, dónde se traba, qué pasa si sumamos un turno?"
 - "Acompáñennos: entramos a la planta."

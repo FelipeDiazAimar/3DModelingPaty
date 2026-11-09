@@ -12,7 +12,7 @@
 - [ ] 10 demo MCP en vivo
 - [ ] 11 presentación web
 - [ ] 12 camión + primera persona
-- [ ] 13 ciclo elaborados L1-L8
+- [ ] 13 ciclo elaborados (8 etapas, desencajado a estibado)
 - [ ] 14 gráficas cátedra (equipo en vivo)
 - [ ] 15 tres escenarios (equipo en vivo)
 - [ ] 16 saludo operario 3D

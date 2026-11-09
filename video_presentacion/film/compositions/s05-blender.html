@@ -1,0 +1,275 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #050507;
+      color: #ffffff;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    .s05-p {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      opacity: 0;
+    }
+    #s05-planta {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #s05-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(5, 5, 7, 0.92) 0%, rgba(5, 5, 7, 0.55) 55%, rgba(5, 5, 7, 0.1) 100%);
+    }
+    #s05-t0 {
+      position: absolute;
+      left: 110px;
+      top: 330px;
+      font-size: 250px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    #s05-s0 {
+      position: absolute;
+      left: 118px;
+      top: 610px;
+      font-size: 72px;
+      font-weight: 700;
+      color: #ff4d63;
+      white-space: nowrap;
+    }
+    #s05-term {
+      position: absolute;
+      left: 110px;
+      top: 110px;
+      width: 960px;
+      height: 860px;
+      padding: 40px 44px;
+      border-radius: 28px;
+      background: #14141a;
+      border: 1px solid #33333d;
+      font-family: "JetBrains Mono", monospace;
+    }
+    .s05-ln {
+      font-size: 42px;
+      line-height: 78px;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    .s05-ln b {
+      color: #ff4d63;
+      font-weight: 700;
+    }
+    #s05-big {
+      position: absolute;
+      left: 1140px;
+      top: 200px;
+      height: 200px;
+      display: flex;
+      font-size: 170px;
+      font-weight: 900;
+      line-height: 200px;
+      letter-spacing: -0.04em;
+      color: #ff1f3d;
+    }
+    .s05-slot {
+      display: inline-block;
+      width: 0.62em;
+      height: 200px;
+      overflow: hidden;
+    }
+    .s05-reel {
+      display: block;
+    }
+    .s05-reel b {
+      display: block;
+      height: 200px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .s05-info {
+      position: absolute;
+      left: 1140px;
+      font-size: 62px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    #s05-oper {
+      position: absolute;
+      left: 840px;
+      top: 0;
+      width: 1080px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #s05-o1 {
+      position: absolute;
+      left: 110px;
+      top: 200px;
+      font-size: 150px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .s05-stat {
+      position: absolute;
+      left: 110px;
+      font-size: 92px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+    .s05-stat span {
+      color: #ff1f3d;
+    }
+    #s05-luz-img {
+      position: absolute;
+      left: 0;
+      top: 240px;
+      width: 2300px;
+      height: 1311px;
+    }
+    #s05-l1 {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 260px;
+      padding-top: 40px;
+      background: #050507;
+      text-align: center;
+      font-size: 170px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+    }
+    #s05-l2 {
+      position: absolute;
+      left: 0;
+      top: 900px;
+      width: 1920px;
+      text-align: center;
+    }
+    #s05-l2 span {
+      display: inline-block;
+      padding: 16px 44px;
+      border-radius: 999px;
+      background: #ff1f3d;
+      color: #050507;
+      font-size: 56px;
+      font-weight: 900;
+    }
+  </style>
+  <div id="root" data-composition-id="s05-blender" data-width="1920" data-height="1080">
+    <div id="s05-p0" class="s05-p" data-layout-allow-overflow>
+      <img id="s05-planta" src="assets/renders/test/f0000.png" alt="" />
+      <div id="s05-scrim" data-layout-ignore></div>
+      <div id="s05-t0">Blender</div>
+      <div id="s05-s0">Aprendimos a usarlo para levantar la planta entera</div>
+    </div>
+    <div id="s05-p1" class="s05-p" data-layout-allow-overflow>
+      <div id="s05-term" data-layout-allow-overflow></div>
+      <div id="s05-big" data-layout-allow-overflow></div>
+      <div class="s05-info" id="s05-i0" style="top: 410px">objetos 3D</div>
+      <div class="s05-info" id="s05-i1" style="top: 560px">13 scripts de Python</div>
+      <div class="s05-info" id="s05-i2" style="top: 660px">+3400 líneas</div>
+    </div>
+    <div id="s05-p2" class="s05-p" data-layout-allow-overflow>
+      <video id="s05-oper" data-hidden="true" class="clip" data-start="26.266667" data-duration="7.5" data-playback-rate="0.4" data-track-index="1" muted playsinline src="assets/renders/operario.mp4"></video>
+      <div id="s05-o1">El operario</div>
+      <div class="s05-stat" id="s05-o2" style="top: 470px"><span>62</span> huesos</div>
+      <div class="s05-stat" id="s05-o3" style="top: 610px"><span>10</span> animaciones</div>
+    </div>
+    <div id="s05-p3" class="s05-p" data-layout-allow-overflow>
+      <img id="s05-luz-img" src="assets/planos/planta.png" alt="" />
+      <div id="s05-l1">Los planos de la planta</div>
+      <div id="s05-l2"><span>Los solicitamos para construir el modelo 3D</span></div>
+    </div>
+  </div>
+  <script>
+    // Diapositivas 18–21 · Acto 2 Blender · b231–303 · datos: blender/*.py, documentacion/03 y 05
+    (function () {
+      const T = [7.5, 15, 26.266667, 0]; // planos, Blender, código, operario
+      const END = 33.766667;
+      const tl = gsap.timeline({ paused: true });
+      const blurIn = (s, at, d) =>
+        tl.fromTo(s, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: d || 0.3, ease: "power4.out" }, at);
+      const slam = (s, at) =>
+        tl.fromTo(s, { opacity: 0, scale: 1.8, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, at);
+
+      ["#s05-p0", "#s05-p1", "#s05-p2", "#s05-p3"].forEach((id, i) => {
+        tl.set(id, { opacity: 1 }, T[i]);
+        tl.set(id, { opacity: 0 }, [15, 26.266667, 33.733, 7.5][i]);
+      });
+
+      // Diapo 18
+      tl.fromTo("#s05-planta", { scale: 1.02, x: 0 }, { scale: 1.16, x: -70, duration: 7.5, ease: "none" }, T[0]);
+      slam("#s05-t0", T[0] + 0.6);
+      blurIn("#s05-s0", T[0] + 1.6);
+
+      // Diapo 19 · la terminal se escribe sola, con los scripts reales
+      const LN = [
+        "$ <b>blender</b> -b --python",
+        "  construir_planta.py",
+        "  ├ f1_masas.py",
+        "  ├ f2_ciclo1.py",
+        "  ├ f3_ciclo2.py",
+        "  ├ f4_elaborados.py",
+        "  ├ f5_ambiente.py",
+        "  ├ f5_calles.py",
+        "  └ f5_servicios.py",
+        "$ <b>python</b> exportar_glb.py",
+      ];
+      const term = document.getElementById("s05-term");
+      LN.forEach((h, i) => {
+        const d = document.createElement("div");
+        d.className = "s05-ln";
+        d.innerHTML = h;
+        term.appendChild(d);
+        tl.fromTo(d, { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.12, ease: "power2.out" }, T[1] + 0.5 + i * 0.5);
+      });
+      const big = document.getElementById("s05-big");
+      for (const ch of "17.334") {
+        const slot = document.createElement("span");
+        slot.className = "s05-slot";
+        if (/\d/.test(ch)) {
+          const r = document.createElement("span");
+          r.className = "s05-reel";
+          let h = "";
+          for (let n = 0; n < 20; n++) h += "<b>" + (n % 10) + "</b>";
+          r.innerHTML = h + "<b>" + ch + "</b>";
+          slot.appendChild(r);
+          tl.fromTo(r, { y: 0 }, { y: -4000, duration: 2.2, ease: "expo.out" }, T[1] + 5.4);
+        } else {
+          slot.textContent = ch;
+          slot.style.width = "0.3em";
+        }
+        big.appendChild(slot);
+      }
+      blurIn("#s05-i0", T[1] + 6.2);
+      blurIn("#s05-i1", T[1] + 7.4);
+      blurIn("#s05-i2", T[1] + 8.4);
+
+      // Diapo 20
+      slam("#s05-o1", T[2] + 0.5);
+      blurIn("#s05-o2", T[2] + 2.2);
+      blurIn("#s05-o3", T[2] + 3.6);
+
+      // Diapo 21 · el resultado real del horneado
+      tl.fromTo("#s05-luz-img", { x: 0 }, { x: -380, duration: 7.5, ease: "none" }, T[3]);
+      slam("#s05-l1", T[3] + 0.5);
+      blurIn("#s05-l2", T[3] + 2.5);
+
+      window.__timelines["s05-blender"] = tl;
+    })();
+  </script>
+</template>

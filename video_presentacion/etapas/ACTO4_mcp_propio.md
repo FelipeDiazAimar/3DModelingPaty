@@ -15,9 +15,9 @@ Duración sugerida: 60–80 s. Ritmo: golpe de quiebre (placa +37,8 %) → ingen
 ## 1. Historia del quiebre (4 bullets)
 
 - El tablero HTML nativo de FlexSim (`Tools/TableroHTML`, 107 KB) ya medía solo: producción vs meta, colas, paradas, kg/h. Para *mostrar* alcanzaba; para *validar* no.
-- El modelo corría pero los números no cerraban: **+37,8 % vs tablero real** (placa de corte desde Acto 3). Un HTML estático no puede repreguntar, re-correr réplicas ni cazar la causa.
+- La primera corrida, sin lavado, no cerraba: **89,4 contra 64,9 pallets/día, +37,8 %** (+17 % en toneladas, 65,5 contra 56,0). Un HTML estático no puede repreguntar, re-correr réplicas ni cazar la causa.
 - No existía un MCP oficial de FlexSim que dejara a la IA operar el modelo. Decisión de vara alta: no quedarse con el HTML básico y construir el puente propio.
-- Nace el MCP del equipo (fork/base `github.com/FelipeDiazAimar/MCP_Flexsim`): la IA crea, corre, mide y corrige FlexSim en vivo, y con eso se validó E1 (10 réplicas E2/E3 reproducidas idénticas).
+- Nace el MCP del equipo (fork/base `github.com/FelipeDiazAimar/MCP_Flexsim`): la IA crea, corre, mide y corrige FlexSim en vivo. Con él se corrieron las 10 réplicas por escenario. Al sumar el lavado de 30 min por batch (dato de planta), E1 da 54,9 t/día contra 56,0 reales (−1,9 %) y el cuello resulta ser las mezcladoras (65,3 t/día, 91 % ocupadas), no la formadora.
 
 ## 2. Ingeniería del MCP (cómo funciona)
 
@@ -54,16 +54,20 @@ Duración sugerida: 60–80 s. Ritmo: golpe de quiebre (placa +37,8 %) → ingen
 
 ## 4. Qué mostrar en diapositiva animada
 
-1. **Placa de quiebre (5 s):** corte seco desde Acto 3, fondo negro + "+37,8 % vs tablero" en rojo. Boom en el beat.
+1. **Placa de quiebre (5 s):** corte seco desde Acto 3, fondo negro + "Primera corrida: +37,8 % contra el tablero" en rojo. Boom en el beat.
 2. **"No nos quedamos con el HTML básico" (5 s):** captura del tablero HTML achicándose / tachado visual, texto vara alta.
 3. **Diagrama ingeniería (15 s, build por capas):** `Agente IA → stdio → flexsim_mcp.py → FlexSimPy → FlexSim (127.0.0.1:8765)`. Cada capa entra en un beat; resaltar puerto al final. Terminal con `uv run mcp_server/flexsim_mcp.py` tipeándose (bloque `code-typing` del registry).
 4. **Demo 73 tools (25–30 s, captura real o mock):** tres viñetas en secuencia — a) telemetría en vivo (`run_to_time` + `get_statistics`, curva que crece); b) crear+conectar objetos en el 3D (`create_objects`, `connect_objects`); c) dashboard creado por la IA (`dashboard_create`). Contador animado 0→73 (`apple-money-count`-style).
-5. **Cierre-gancho (5 s):** "Y con esto, validamos." → whip-pan al Acto 5 (web inmersiva).
+5. **Validación (12 s):** lavado de 30 min → 54,9 contra 56,0 t/día (−1,9 %).
+6. **Veredicto (8 s):** `film/compositions/s04-veredicto.html`: se tacha "Formadora", entra "Mezcladoras" con las barras 65,3 / 74,1 / 87,2 t/día.
+7. **Cierre-gancho (3 s):** whip-pan al Acto 5 (web inmersiva).
 
 ## 5. Bullets guion voz IA (leer directo)
 
-- "El modelo corría. Pero daba treinta y siete coma ocho por ciento más que el tablero real. Un HTML lindo no te dice por qué."
+- "Treinta y siete coma ocho por ciento de más. Un HTML lindo no te dice por qué."
 - "No nos quedamos con el HTML básico. La vara era alta: queríamos preguntarle al modelo, no solo mirarlo."
 - "No existía un puente oficial. Así que construimos el nuestro: un servidor MCP que le da a la IA setenta y tres herramientas dentro de FlexSim."
 - "La IA abre el modelo, lo corre, lee cada máquina, crea objetos, conecta cintas y arma dashboards. Todo en vivo, todo verificable."
-- "Con este puente validamos el modelo. Y con el modelo validado, construimos la web. Miren."
+- "Con ese puente corrimos diez réplicas por escenario. Faltaba un dato de planta: treinta minutos de lavado por batch. Con el lavado, el modelo da cincuenta y cuatro coma nueve toneladas por día contra cincuenta y seis del tablero."
+- "Y el cuello no era la formadora. Eran las mezcladoras."
+- "Con el modelo validado, lo llevamos a la web. Miren."

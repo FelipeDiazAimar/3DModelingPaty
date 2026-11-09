@@ -9,5 +9,147 @@
   "media": {
     "autoProxy": true
   },
-  "authoringSkill": "hyperframes"
+  "authoringSkill": "hyperframes",
+  "registryItems": [
+    {
+      "name": "char-slam-explode",
+      "type": "hyperframes:component",
+      "target": "compositions/components/char-slam-explode.html"
+    },
+    {
+      "name": "camera-shake",
+      "type": "hyperframes:component",
+      "target": "compositions/components/camera-shake.html"
+    },
+    {
+      "name": "beat-accent",
+      "type": "hyperframes:component",
+      "target": "compositions/components/beat-accent.html"
+    },
+    {
+      "name": "mk-clone-wall-transition",
+      "type": "hyperframes:block",
+      "target": "compositions/mk-clone-wall-transition.html"
+    },
+    {
+      "name": "headline-slam",
+      "type": "hyperframes:component",
+      "target": "compositions/components/headline-slam.html"
+    },
+    {
+      "name": "ticker-takeover",
+      "type": "hyperframes:component",
+      "target": "compositions/components/ticker-takeover.html"
+    },
+    {
+      "name": "split-flap-board",
+      "type": "hyperframes:block",
+      "target": "compositions/split-flap-board.html"
+    },
+    {
+      "name": "rgb-glitch-text",
+      "type": "hyperframes:component",
+      "target": "compositions/components/rgb-glitch-text.html"
+    },
+    {
+      "name": "chromatic-aberration-wipe",
+      "type": "hyperframes:component",
+      "target": "compositions/components/chromatic-aberration-wipe.html"
+    },
+    {
+      "name": "grid-pixelate-wipe",
+      "type": "hyperframes:component",
+      "target": "compositions/components/grid-pixelate-wipe.html"
+    },
+    {
+      "name": "scan-band",
+      "type": "hyperframes:component",
+      "target": "compositions/components/scan-band.html"
+    },
+    {
+      "name": "shutter-slam",
+      "type": "hyperframes:component",
+      "target": "compositions/components/shutter-slam.html"
+    },
+    {
+      "name": "wireframe-portal-title",
+      "type": "hyperframes:block",
+      "target": "compositions/wireframe-portal-title/wireframe-portal-title.html"
+    },
+    {
+      "name": "vfx-shatter",
+      "type": "hyperframes:block",
+      "target": "compositions/vfx-shatter.html"
+    },
+    {
+      "name": "perspective-marquee",
+      "type": "hyperframes:component",
+      "target": "compositions/components/perspective-marquee.html"
+    },
+    {
+      "name": "beat-pulse-background",
+      "type": "hyperframes:component",
+      "target": "compositions/components/beat-pulse-background.html"
+    },
+    {
+      "name": "grain-overlay",
+      "type": "hyperframes:component",
+      "target": "compositions/components/grain-overlay.html"
+    },
+    {
+      "name": "slot-machine-roll",
+      "type": "hyperframes:component",
+      "target": "compositions/components/slot-machine-roll.html"
+    },
+    {
+      "name": "strikethrough-replace",
+      "type": "hyperframes:component",
+      "target": "compositions/components/strikethrough-replace.html"
+    },
+    {
+      "name": "velocity-throw-snap",
+      "type": "hyperframes:component",
+      "target": "compositions/components/velocity-throw-snap.html"
+    },
+    {
+      "name": "tracing-beam",
+      "type": "hyperframes:component",
+      "target": "compositions/components/tracing-beam.html"
+    },
+    {
+      "name": "apple-money-count",
+      "type": "hyperframes:block",
+      "target": "compositions/apple-money-count.html"
+    },
+    {
+      "name": "parallax-zoom",
+      "type": "hyperframes:component",
+      "target": "compositions/components/parallax-zoom.html"
+    },
+    {
+      "name": "marker-highlight",
+      "type": "hyperframes:component",
+      "target": "compositions/components/marker-highlight.html"
+    },
+    {
+      "name": "code-terminal-run",
+      "type": "hyperframes:component",
+      "target": "compositions/components/code-terminal-run.html"
+    },
+    {
+      "name": "chat-message",
+      "type": "hyperframes:component",
+      "target": "compositions/components/chat-message.html"
+    },
+    {
+      "name": "text-match-cut",
+      "type": "hyperframes:component",
+      "target": "compositions/components/text-match-cut.html"
+    },
+    {
+      "name": "logo-outro",
+      "type": "hyperframes:block",
+      "target": "compositions/logo-outro.html"
+    }
+  ]
 }

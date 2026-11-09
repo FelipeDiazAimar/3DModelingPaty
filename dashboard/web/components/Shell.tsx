@@ -1,4 +1,5 @@
 "use client";
+import { LogoPaty } from "./LogoPaty";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
@@ -88,7 +89,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
       <aside role="dialog" aria-label="Menú" className={`absolute inset-y-0 right-0 flex w-[84vw] max-w-[320px] flex-col bg-white p-4 shadow-[-20px_0_50px_-20px_rgba(15,27,45,.45)] transition-transform duration-250 ${open ? "translate-x-0" : "translate-x-full"}`} style={{ borderRadius: "28px 0 0 28px" }}>
         <div className="mb-3 flex items-center justify-between">
           <span className="flex items-center gap-2.5">
-            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-brand text-base font-extrabold text-white shadow-[0_8px_18px_-6px_rgba(217,41,59,.7)]">P</span>
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#050507] text-base font-extrabold text-white shadow-[0_8px_18px_-6px_rgba(217,41,59,.7)]"><LogoPaty /></span>
             <span className="leading-tight">
               <span className="block text-[15px] font-extrabold tracking-tight">PATY San Jorge</span>
               <span className="block text-[11px] font-medium text-muted">Gemelo digital</span>
@@ -176,19 +177,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <div className={home ? "pointer-events-none absolute inset-x-0 top-0 z-30" : "z-30"}>
         <header className={`flex flex-wrap items-start gap-2 px-3 py-2 md:items-center md:gap-3 md:px-4 md:py-3 ${home ? "[&>*]:pointer-events-auto" : ""}`}>
           <Link href="/" className={`shrink-0 items-center gap-2.5 pr-1 ${home ? "hidden md:flex" : "flex"}`}>
-            <span className="grid h-9 w-9 place-items-center rounded-2xl bg-brand text-base font-extrabold text-white shadow-[0_8px_18px_-6px_rgba(217,41,59,.7)] md:h-10 md:w-10">P</span>
+            <span className="grid h-9 w-9 place-items-center rounded-2xl bg-[#050507] text-base font-extrabold text-white shadow-[0_8px_18px_-6px_rgba(217,41,59,.7)] md:h-10 md:w-10"><LogoPaty /></span>
             <span className="hidden whitespace-nowrap leading-tight md:block">
               <span className="block text-[15px] font-extrabold tracking-tight">PATY San Jorge</span>
               <span className="block text-[11px] font-medium text-muted">Gemelo digital</span>
             </span>
           </Link>
-          {/* escritorio */}
-          <nav className="glass hidden min-w-0 items-center gap-0.5 overflow-x-auto p-1 min-[1800px]:flex" aria-label="Secciones">
-            {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="nav-link" aria-current={path === n.href ? "page" : undefined}>{n.label}</Link>
-            ))}
-          </nav>
-          <div className="hidden md:block min-[1800px]:hidden"><NavMenu /></div>
+          {/* escritorio: las secciones van siempre dentro del desplegable */}
+          <div className="hidden md:block"><NavMenu /></div>
           <div className="hidden md:block"><CineMenu /></div>
           {home && md && <div className="min-w-0"><KpiChips compact={!xl} fila={!xl} /></div>}
           {home && md && <BotonCaminar />}

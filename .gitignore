@@ -32,3 +32,13 @@ blender/*.blend
 blender/*.blend1
 # variante de mallas compartidas: FlexSim usa la unida (v10u); se regenera con blender/exportar_glb.py
 assets_v2/PATY_Planta_v10.glb
+
+# video de presentación: tomas y cuadros pesados (se regeneran; GitHub rechaza más de 100 MB)
+video_presentacion/film/.hyperframes/
+video_presentacion/film/.thumbnails/
+video_presentacion/film/assets/web/*.mp4
+video_presentacion/film/assets/flexsim/*.mp4
+video_presentacion/film/assets/renders/*/*
+!video_presentacion/film/assets/renders/test/
+video_presentacion/film/assets/renders/test/*
+!video_presentacion/film/assets/renders/test/f0000.png

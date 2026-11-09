@@ -31,13 +31,13 @@
 
 ## 3. Estructura del video (7 actos, 17 pasos, sin límite de duración)
 
-Reglas globales: voz IA en intro/desarrollo/transiciones, se CALLA en stats web (hablan compañeros en vivo). Teleprompter karaoke al pie: blanco que se barre en naranja al ritmo de lectura; anti-duplicación (si el texto ya está en diapositiva/pantalla, sin subtítulo). Transiciones cool y smooth, 3-5 tipos con causa (whip-pan, cinematic-zoom, morph, flood color, objeto-que-se-vuelve-mundo). 1920×1080, 30fps.
+Reglas globales: voz IA en intro/desarrollo/transiciones, se CALLA en stats web (hablan compañeros en vivo). Teleprompter karaoke al pie: blanco que se barre en rojo al ritmo de lectura; anti-duplicación (si el texto ya está en diapositiva/pantalla, sin subtítulo). Transiciones cool y smooth, 3-5 tipos con causa (whip-pan, cinematic-zoom, morph, flood color, objeto-que-se-vuelve-mundo). 1920×1080, 30fps.
 
 - ACTO 1 Apertura (IA): 1 portada (Línea hamburguesas Paty, planta San Jorge, problemática + integrantes) / 2 diapo problema general.
 - ACTO 2 Blender (IA): 3 viaje cinemático a Blender / 4 cómo modelamos con IA (operario.glb 62 huesos 10 clips, planta_luz horneado, scripts blender/).
 - ACTO 3 FlexSim (IA): 5 viaje a FlexSim (PLANTASJ.fsm) / 6 recorrido 3D breve / 7 stats nativas por encima con zoom in/out por solapa.
 - ACTO 4 Quiebre+MCP (IA): 8 diapo "no nos quedamos con HTML básico, vara alta" / 9 diapo qué-es-un-MCP + ingeniería propia (puerto + terminal Python, no existía oficial) / 10 demo 73 tools reales (telemetría tiempo real + crear objetos/conexiones/dashboards).
-- ACTO 5 Web inmersiva (IA): 11 presentación dashboard web (replica FlexSim en vivo, localhost:3000) / 12 camión que llega manejado por IA + primera persona a pie (F/G, bocina) / 13 ciclo elaborados L1-L8 de cerca.
+- ACTO 5 Web inmersiva (IA): 11 presentación dashboard web (replica FlexSim en vivo, localhost:3000) / 12 camión que llega manejado por IA + primera persona a pie (F/G, bocina) / 13 ciclo elaborados, 8 etapas de cerca.
 - ACTO 6 Stats+escenarios (EQUIPO en vivo, IA callada): 14 gráficas cátedra con zoom (kg/h ventana 1h, utilización, histogramas Paros/Pesos, MTBF Pareto, etc.) / 15 tres escenarios sobre base con cinemáticas + relato compañeros.
 - ACTO 7 Cierre: 16 saludo operario 3D / 17 diapo final (gracias, preguntas, repos MCP+proyecto, archivos clave para profesor).
 
@@ -46,7 +46,7 @@ Reglas globales: voz IA en intro/desarrollo/transiciones, se CALLA en stats web 
 1. Documentar cada etapa en `video_presentacion/etapas/ACTO{1..7}_*.md` (qué se muestra, quién habla, timestamps/beats, archivos fuente con ruta:línea).
 2. Decidir él cómo usar las skills (nuestras ideas de cinemáticas son ideas, él elige bloques del registry: `npx hyperframes catalog --tag transition --json`, `--tag camera`, `code-typing`, `data-chart`, `apple-money-count`, etc.).
 3. Armar beat sheet primero (escena, tiempo en grid, qué entra/sale, qué acarrea la transición, sonido), después construir.
-4. Guion doble: `guion_ia.md` (locución) + `guion_equipo.md` (3 compañeros, reparto por bloques, timing karaoke). Teleprompter con `performance.now()` por palabra, naranja #e08a1a, máx 2 líneas, drift <300ms.
+4. Guion doble: `guion_ia.md` (locución) + `guion_equipo.md` (3 compañeros, reparto por bloques, timing karaoke). Teleprompter con `performance.now()` por palabra, rojo #ff1f3d, máx 2 líneas, drift <300ms.
 5. Loguear progreso en `video_presentacion/progreso.log` formato `ACTO|SKILL|OK/FAIL|path`. Gate: no avanza de acto sin clip+audio+timing.
 6. Salida: `video_presentacion/tomas/`, `audio/`, `edit/`, `video_final.mp4` 1080p + checklist 17/17.
 

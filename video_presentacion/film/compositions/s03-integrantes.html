@@ -1,0 +1,203 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "SF Pro Display";
+      font-weight: 900;
+      src: url("assets/fonts/SF-Pro-Display-Black.otf") format("opentype");
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #050507;
+      font-family: "SF Pro Display", sans-serif;
+      font-weight: 900;
+    }
+    #s03-cam {
+      position: absolute;
+      inset: 0;
+    }
+    .s03-panel {
+      position: absolute;
+      left: -40px;
+      top: -40px;
+      width: 2000px;
+      height: 1160px;
+      overflow: hidden;
+      opacity: 0;
+    }
+    #s03-p1 {
+      background: #050507;
+      color: #ffffff;
+      --edge: rgba(255, 31, 61, 0.55);
+      --flash: #ff1f3d;
+    }
+    #s03-p2 {
+      background: #ff1f3d;
+      color: #050507;
+      --edge: rgba(5, 5, 7, 0.4);
+      --flash: #ffffff;
+    }
+    #s03-p3 {
+      background: #f4f1ec;
+      color: #d0001f;
+      --edge: rgba(5, 5, 7, 0.22);
+      --flash: #ff1f3d;
+    }
+    .s03-row {
+      position: absolute;
+      left: -300px;
+      white-space: nowrap;
+      font-size: 216px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--edge);
+    }
+    .s03-ring {
+      position: absolute;
+      left: 400px;
+      top: -20px;
+      width: 1200px;
+      height: 1200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--flash) 0%, transparent 68%);
+      opacity: 0;
+    }
+    .s03-name {
+      position: absolute;
+      left: 0;
+      width: 2000px;
+      text-align: center;
+      white-space: nowrap;
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+    }
+    .s03-g {
+      display: inline-block;
+      white-space: pre;
+    }
+    #s03-flash {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      background: #ffffff;
+      opacity: 0;
+    }
+  </style>
+  <div id="root" data-composition-id="s03-integrantes" data-width="1920" data-height="1080">
+    <div id="s03-cam">
+      <div id="s03-p1" class="s03-panel" data-layout-allow-overflow data-layout-allow-overlap data-t="BUFFA">
+        <div class="s03-ring"></div>
+        <div class="s03-name" data-layout-allow-overlap style="top: 276px; font-size: 330px">MATIAS</div>
+        <div class="s03-name" data-layout-allow-overlap style="top: 580px; font-size: 330px">BUFFA</div>
+      </div>
+      <div id="s03-p2" class="s03-panel" data-layout-allow-overflow data-layout-allow-overlap data-t="DIAZ AIMAR">
+        <div class="s03-ring"></div>
+        <div class="s03-name" data-layout-allow-overlap style="top: 330px; font-size: 262px">FELIPE</div>
+        <div class="s03-name" data-layout-allow-overlap style="top: 572px; font-size: 262px">DIAZ AIMAR</div>
+      </div>
+      <div id="s03-p3" class="s03-panel" data-layout-allow-overflow data-layout-allow-overlap data-t="MICHELOUD">
+        <div class="s03-ring"></div>
+        <div class="s03-name" data-layout-allow-overlap style="top: 324px; font-size: 276px">JEREMIAS</div>
+        <div class="s03-name" data-layout-allow-overlap style="top: 578px; font-size: 276px">MICHELOUD</div>
+      </div>
+    </div>
+    <div id="s03-flash"></div>
+  </div>
+  <script>
+    // Escena 3 · beats 24–36 · f338–505 · cambio de panel en b24/28/32 · impacto dos beats después
+    // Mecánica adaptada de char-slam-explode, beat-accent y mk-emphasis-type (catálogo Hyperframes)
+    (function () {
+      const CUTS = [0, 56 / 30, 112 / 30]; // f338, f394, f450
+      const DUR = 175 / 30; // el último panel sigue vivo mientras entra el muro
+      const LAND = 2 * 0.46875; // el impacto cae exactamente dos beats después del corte
+
+      // Tabla fija de dispersión de char-slam-explode (x, y, rotación normalizados)
+      const SCATTER = [
+        [-0.9, -0.038, 0.677], [0.61, 0.716, -0.967], [0.418, 0.575, 0.822], [-0.76, -0.451, 0.944],
+        [-0.621, 0.579, -0.215], [0.714, 0.437, -0.824], [0.577, 0.567, 0.464], [0.902, 0.346, 0.016],
+        [-0.526, 0.743, -0.275], [-0.571, -0.353, 0.954], [-0.666, 0.61, -0.075], [-0.122, 0.875, -0.783],
+        [-0.141, 0.726, -0.659], [0.606, -0.665, -0.713], [-0.962, 0.131, 0.307], [0.227, 0.813, -0.979],
+        [0.264, -0.754, -0.013], [-0.4, 0.903, 0.573], [0.393, 0.542, -0.992], [0.884, -0.313, -0.834],
+      ];
+      // Cada letra arranca fuera de cuadro, rotando entre los cuatro bordes
+      const fromEdge = (n, v) => [{ x: -2400, y: v[1] * 500 }, { x: 2400, y: v[1] * 500 }, { x: v[0] * 900, y: -1400 }, { x: v[0] * 900, y: 1400 }][n % 4];
+      const SHAKE = [[34, -22, 1], [-28, 18, -0.8], [22, 14, 0.6], [-16, -10, -0.4], [9, 6, 0.2], [-4, -3, 0], [0, 0, 0]];
+
+      document.querySelectorAll(".s03-panel").forEach((panel) => {
+        // Filas de apellido en contorno, detrás de todo
+        for (let r = 5; r >= 0; r--) {
+          const row = document.createElement("div");
+          row.className = "s03-row";
+          row.style.top = r * 196 - 10 + "px";
+          row.textContent = (panel.dataset.t + "  ").repeat(6);
+          panel.insertBefore(row, panel.firstChild);
+        }
+        // Letras sueltas
+        panel.querySelectorAll(".s03-name").forEach((name) => {
+          const txt = name.textContent;
+          name.textContent = "";
+          for (const ch of txt) {
+            const g = document.createElement("span");
+            g.className = "s03-g";
+            g.textContent = ch;
+            name.appendChild(g);
+          }
+        });
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      ["#s03-p1", "#s03-p2", "#s03-p3"].forEach((id, i) => {
+        const at = CUTS[i];
+        const end = i < 2 ? CUTS[i + 1] : DUR;
+        const hit = at + LAND;
+        const panel = document.querySelector(id);
+
+        tl.set(id, { opacity: 1 }, at);
+        if (i < 2) tl.set(id, { opacity: 0 }, end);
+
+        panel.querySelectorAll(".s03-row").forEach((row, r) => {
+          const dir = r % 2 ? 1 : -1;
+          tl.fromTo(row, { x: -260 * dir }, { x: 260 * dir, duration: end - at, ease: "none" }, at);
+        });
+
+        // Las letras flotan dispersas y se precipitan juntas hasta el impacto
+        panel.querySelectorAll(".s03-g").forEach((g, k) => {
+          const v = SCATTER[(k + i * 7) % SCATTER.length];
+          tl.fromTo(
+            g,
+            { ...fromEdge(k + i * 3, v), rotation: v[2] * 140, scale: 1.5 },
+            { x: 0, y: 0, rotation: 0, scale: 1, duration: LAND, ease: "power2.in" },
+            at,
+          );
+        });
+
+        // Impacto: el nombre rebota de escala, destello, anillo y sacudida
+        tl.fromTo(
+          panel.querySelectorAll(".s03-name"),
+          { scale: 1 },
+          { scale: 1.1, duration: 0.05, ease: "none", immediateRender: false },
+          hit,
+        );
+        tl.to(panel.querySelectorAll(".s03-name"), { scale: 1, duration: 0.28, ease: "expo.out" }, hit + 0.05);
+        tl.fromTo(
+          panel.querySelector(".s03-ring"),
+          { opacity: 0, scale: 0.3 },
+          { opacity: 1, scale: 1, duration: 0.06, ease: "none", immediateRender: false },
+          hit,
+        );
+        tl.to(panel.querySelector(".s03-ring"), { opacity: 0, scale: 1.7, duration: 0.35, ease: "power3.out" }, hit + 0.06);
+        tl.fromTo("#s03-flash", { opacity: 0.9 }, { opacity: 0, duration: 0.13, ease: "power2.out", immediateRender: false }, hit);
+        SHAKE.forEach((s, k) => {
+          tl.to("#s03-cam", { x: s[0], y: s[1], rotation: s[2], duration: 1 / 30, ease: "none" }, hit + k / 30);
+        });
+      });
+
+      window.__timelines["s03-integrantes"] = tl;
+    })();
+  </script>
+</template>

@@ -1,15 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html
+  lang="es"
+  data-composition-variables='[{"id":"s01-rotulo","type":"string","label":"Escena 1 · rótulo","default":"PATY"}]'
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
     <style>
-      /* Placeholders: replace all three with the film's own palette and display face. */
+      @font-face { font-family: "SF Pro Display"; font-weight: 900; src: url("assets/fonts/SF-Pro-Display-Black.otf") format("opentype"); }
+      @font-face { font-family: "SF Pro Display"; font-weight: 700; src: url("assets/fonts/SF-Pro-Display-Bold.otf") format("opentype"); }
+      @font-face { font-family: "SF Pro Display"; font-weight: 500; src: url("assets/fonts/SF-Pro-Display-Medium.otf") format("opentype"); }
       :root {
-        --ground: #000;
-        --ink: #ffffff;
-        --font-display: sans-serif;
+        --ink: #0b0b10;
+        --rojo: #ff1f3d;
+        --brand: #ff1f3d;
+        --accent: #ff1f3d;
+        --bg: #050507;
+        --fg: #ffffff;
+        --font-display: "SF Pro Display", sans-serif;
+        --font-body: "SF Pro Display", sans-serif;
+        --crema: #edebe4;
       }
       * {
         margin: 0;
@@ -22,21 +33,11 @@
         width: 1920px;
         height: 1080px;
         overflow: hidden;
-        background: var(--ground);
+        background: var(--ink);
       }
       #root {
         width: 100%;
         height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-display);
-      }
-      #title {
-        color: var(--ink);
-        font-size: 72px;
-        font-weight: 600;
-        letter-spacing: -0.03em;
       }
     </style>
   </head>
@@ -44,18 +45,287 @@
     <div
       id="root"
       data-composition-id="main"
-      data-start="0"
-      data-duration="10"
+      data-start="0.000000"
+      data-duration="884.795237"
       data-width="1920"
       data-height="1080"
     >
-      <h1 id="title" class="clip" data-start="0" data-duration="10" data-track-index="0">Title</h1>
-    </div>
+      <div
+        id="s01-chispa"
+        class="clip"
+        data-composition-id="s01-chispa"
+        data-composition-src="compositions/s01-chispa.html"
+        data-start="0.000000"
+        data-duration="7.5"
+        data-track-index="1"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s02-portada"
+        class="clip"
+        data-composition-id="s02-portada"
+        data-composition-src="compositions/s02-portada.html"
+        data-start="7.500000"
+        data-duration="11.266667"
+        data-track-index="1"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s03-integrantes"
+        class="clip"
+        data-composition-id="s03-integrantes"
+        data-composition-src="compositions/s03-integrantes.html"
+        data-start="18.766667"
+        data-duration="5.833333"
+        data-track-index="1"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="mk-clone-wall-transition"
+        class="clip"
+        data-composition-id="mk-clone-wall-transition"
+        data-composition-src="compositions/mk-clone-wall-transition.html"
+        data-start="24.366667"
+        data-duration="1.4"
+        data-track-index="2"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 5"
+      ></div>
+      <div id="s04-bg3" class="clip" data-start="105.033333" data-duration="3.733333" data-track-index="0" style="position:absolute;inset:0;background:#ff1f3d"></div>
+      <div
+        id="headline-slam"
+        class="clip"
+        data-composition-id="headline-slam"
+        data-composition-src="compositions/components/headline-slam.html"
+        data-start="36.066667"
+        data-duration="4.7"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        data-variable-values='{"text":"¿DÓNDE ESTÁ EL CUELLO DE BOTELLA?","accent_word_index":3,"accent":"green"}'
+      ></div>
+      <div
+        id="s04-variable"
+        class="clip"
+        data-composition-id="s04-variable"
+        data-composition-src="compositions/s04-variable.html"
+        data-start="105.033333"
+        data-duration="3.733333"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s04-pixel"
+        class="clip"
+        data-composition-id="s04-pixel"
+        data-composition-src="compositions/s04-pixel.html"
+        data-start="104.633333"
+        data-duration="0.8"
+        data-track-index="4"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 4"
+      ></div>
+      <div
+        id="split-flap-board"
+        class="clip"
+        data-composition-id="split-flap-board"
+        data-composition-src="compositions/split-flap-board.html"
+        data-start="108.766667"
+        data-duration="7.5"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        data-variable-values='{"boardText":"TONELADAS X DIA","cellCount":15,"flipDuration":0.07,"cellStagger":0.06}'
+      ></div>
+      <div
+        id="s04-sistema"
+        class="clip"
+        data-composition-id="s04-sistema"
+        data-composition-src="compositions/s04-sistema.html"
+        data-start="25.766667"
+        data-duration="10.3"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s04-cifras"
+        class="clip"
+        data-composition-id="s04-cifras"
+        data-composition-src="compositions/s04-cifras.html"
+        data-start="40.766667"
+        data-duration="15"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s04-real"
+        class="clip"
+        data-composition-id="s04-real"
+        data-composition-src="compositions/s04-real.html"
+        data-start="108.766667"
+        data-duration="7.5"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 3"
+      ></div>
+      <div
+        id="s04-hipotesis"
+        class="clip"
+        data-composition-id="s04-hipotesis"
+        data-composition-src="compositions/s04-hipotesis.html"
+        data-start="55.766667"
+        data-duration="49.266667"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s08-web"
+        class="clip"
+        data-composition-id="s08-web"
+        data-composition-src="compositions/s08-web.html"
+        data-start="363.461904"
+        data-duration="172.333333"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s10-cierre"
+        class="clip"
+        data-composition-id="s10-cierre"
+        data-composition-src="compositions/s10-cierre.html"
+        data-start="840.795237"
+        data-duration="37"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s05a-arranque"
+        class="clip"
+        data-composition-id="s05a-arranque"
+        data-composition-src="compositions/s05a-arranque.html"
+        data-start="116.266667"
+        data-duration="7"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="logo-outro"
+        class="clip"
+        data-composition-id="logo-outro"
+        data-composition-src="compositions/logo-outro.html"
+        data-start="877.795237"
+        data-duration="7"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s09-acto6"
+        class="clip"
+        data-composition-id="s09-acto6"
+        data-composition-src="compositions/s09-acto6.html"
+        data-start="535.795237"
+        data-duration="305"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s99-subs"
+        class="clip"
+        data-composition-id="s99-subs"
+        data-composition-src="compositions/s99-subs.html"
+        data-start="0.000000"
+        data-duration="884.795237"
+        data-track-index="9"
+        data-track-kind="captions"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 50"
+      ></div>
+      <div
+        id="s05-blender"
+        class="clip"
+        data-composition-id="s05-blender"
+        data-composition-src="compositions/s05-blender.html"
+        data-start="123.266667"
+        data-duration="26.266667"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s06-flexsim"
+        class="clip"
+        data-composition-id="s06-flexsim"
+        data-composition-src="compositions/s06-flexsim.html"
+        data-start="149.533333"
+        data-duration="123.428571"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div
+        id="s06-karaoke"
+        class="clip"
+        data-composition-id="s06-karaoke"
+        data-composition-src="compositions/s06-karaoke.html"
+        data-start="149.533333"
+        data-duration="111.428571"
+        data-track-index="8"
+        data-track-kind="captions"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 40"
+      ></div>
+      <div
+        id="s07-mcp"
+        class="clip"
+        data-composition-id="s07-mcp"
+        data-composition-src="compositions/s07-mcp.html"
+        data-start="272.961904"
+        data-duration="90.5"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      </div>
     <script>
-      const tl = gsap.timeline({ paused: true });
-      // Example: tl.fromTo("#title", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.18, ease: "power4.out" }, 0);
-      window.__timelines["main"] = tl;
-      tl.seek(0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
     </script>
   </body>
 </html>

@@ -1,50 +1,54 @@
-# ACTO 6 — Stats web + 3 escenarios (voz equipo en vivo)
+# ACTO 6 — Stats web + 3 escenarios (voz del equipo, grabada sobre el video)
 
-> Objetivo: mostrar que el modelo está validado estadísticamente y que los escenarios se comparan por intervalos, no por corridas sueltas. Todo lo dice el equipo en vivo; Claude callado.
+> Objetivo: mostrar que el modelo está validado y que los escenarios se comparan por intervalos, no por corridas sueltas. La IA calla. El video se entrega con esta parte muda y el karaoke; el equipo graba encima con el video terminado. Texto completo en `guiones/guion_equipo.md`.
+>
+> Corrida vigente: lavado de 30 min por batch (`datos_trazabilidad/e1_final/E1_FINAL.md`, última sección).
 
-## 1. Gráficas a explicar en vivo (orden)
+## 1. Gráficas a mostrar (orden)
 
-| # | Gráfica | Ruta web | Qué dice (1 frase) | Zoom en vivo |
+| # | Gráfica | Ruta web | Qué dice | Encuadre |
 |---|---|---|---|---|
-| 1 | Tasa estable post-warmup + meta planta | `/estadistica` (arriba; `WARMUP_H=2,5h`, `META 3 pal/h`) | Tras 2,5 h la tasa se aplana y sostiene ~36 pal/día/línea | Zoom eje T en 0–5 h para mostrar transitorio vs plano; fullscreen con click (Chart.tsx: `thin()` diezma a ~700 pts, `Esc` sale del fullscreen) |
-| 2 | Utilización + estados máquina | `/estadistica` (medio; `MACHINE_STATES: proc/blocked/starved/down/idle`) | Formadora ~alta pero no 100 %; `starved` avisa que el cuello migra a recepción en E2 | Hover tooltip oscuro por eje; señalar `starved` vs `blocked` con paleta `PALETTE` (rojo/azul/verde) |
-| 3 | ECDF / Boxplot / tests ajuste (KS, Chi²) | `/estadistica` (abajo; `lib/stats.ts: ecdf, boxplotStats, ksTable, chi2Table`) | La variabilidad entre réplicas es chica y el IC95 % con t=2,262 (9 gl) es angosto | Abrir tabla KS/Chi², leer solo p-valor y conclusión "no se rechaza" — no derivar fórmulas en vivo |
-| 4 | Tabla comparativa E1/E2/E3 + IC diferencia pareada | `/escenarios` (tabla `Stat {media, desv, h, ic_inf, ic_sup}`) | E2 suma poco y E3 no mueve la aguja (ver punto 2); la gracia es el IC del **delta**, no el valor puntual | Zoom fila `dif_pallets` / `dif_cajas`: mostrar si el IC incluye el cero o no |
-| 5 | Tope MP (texto fijo) | `/escenarios` (`tope_mp.texto`) | 16 pal × 1500 kg c/8 h = 72 t/día: techo que explica por qué E2 rinde poco | Leer el tag tal cual, sin improvisar números |
+| 1 | Histogramas y bondad de ajuste: Arribos, Paradas, Pesos | `/estadistica`, pestañas | K-S **rechaza** en los tres casos con α = 0,05: arribos no exponenciales (D = 0,4126 > 0,1943), paradas con cola pesada (D lognormal = 0,1399 > 0,0382), pesos no normales (D = 0,146 > 0,0608) | Zoom a la conclusión de cada pestaña |
+| 2 | Welch / transitorio | `/estadistica` | Transitorio de ≈ 4 h según `E1_FINAL.md` | Zoom a la curva y a la línea del transitorio |
+| 3 | E1 base y validación | `/escenarios`, botón E1 | 75,3 ± 0,7 pal/día; 54,9 t/día contra 56,0 reales (−1,9 %) | Zoom a la tarjeta E1 |
+| 4 | Cuello E1 | `/escenarios`, panel E1 | Mezcladoras: 65,3 t/día, 91 % ocupadas, cola 3,5 lotes | Zoom a la capacidad |
+| 5 | E2 | `/escenarios`, botón E2 | +14,4 pal/día (+19,1 %), IC [+13,8 ; +15,0]; cuello: desencajado | Zoom a la fila de diferencia |
+| 6 | E3 | `/escenarios`, botón E3 | −0,1 contra E2, IC [−0,3 ; +0,1]: incluye el cero | Zoom al IC contra E2 |
+| 7 | E4 | `/escenarios`, botón E4, lavado 30 min | −4,0 pal/día, IC [−4,6 ; −3,4] | Zoom a la diferencia |
 
-Componente común: `dashboard/web/components/Chart.tsx` (ECharts, `thin()` + `PALETTE`, click = fullscreen, `Esc` = salir).
+Componente común: `dashboard/web/components/Chart.tsx` (clic = pantalla completa, `Esc` = salir).
 
-## 2. 3 escenarios sobre base E1
+`/estadistica` ya muestra el transitorio de ≈ 4 h, la referencia real de 2,7 pal/h y el cuello vigente.
 
-Base E1 (`PLAN_E1_VALIDACION.md` §5 + `analizar_escenarios.py:22-26`): 10 réplicas, CRN (streams 60-87 desplazados), Stop/Warmup idénticos, t(0,975;9 gl)=2,262.
+## 2. Escenarios sobre la base E1
 
-| Esc | Qué cambia | Resultado | Archivos |
+Base (`E1_FINAL.md`, `public/e1/escenarios.json`): 10 réplicas de 24 h, arranque vacío, números aleatorios comunes (streams 60–87 desplazados), t(0,975; 9 gl) = 2,262.
+
+| Esc | Qué cambia | Pal/día | t/día | Diferencia (IC 95 %) | Cuello |
+|---|---|---|---|---|---|
+| **E1 Base** | Formadoras 982 kg/h, 16 pallets MP por turno, lavado 30 min | 75,3 | 54,9 | — | Mezcladoras, 65,3 t/día |
+| **E2 Formadoras rápidas** | Formadoras a 1843 kg/h (separación 3,27 → 1,554 m) | 89,7 | 65,3 | +14,4 [+13,8 ; +15,0] contra E1 | Desencajado, 74,1 t/día |
+| **E3 Más MP + E2** | E2 y 24 pallets de MP por turno | 89,6 | 65,8 | −0,1 [−0,3 ; +0,1] contra E2 | Desencajado |
+| **E4 Batch 1200 kg** | 1200 contra 1500 kg, con lavado de 30 min | — | — | −4,0 [−4,6 ; −3,4] contra 1500 kg | Mezcladoras |
+
+Regla de lectura (ET6 p.36): comparar **intervalos, no corridas**. Si el IC de la diferencia incluye el cero, no es significativo.
+
+E5 (MTTR ×1,25) no entra al video: se midió con el modelo sin lavado y no es comparable con E1.
+
+## 3. Reparto (total 5:00)
+
+| Bloque | Quién | Tiempo | Diapositivas |
 |---|---|---|---|
-| **E1 Base** | Fallas tablero, formadoras a 982 kg/h (nominal vs techo 1843) | Referencia: ~X pal/día, IC95 % angosto | `datos_trazabilidad/e1_final/raw_replicas.txt`, `replicas.csv`, `summary_e1.json`, `E1_FINAL.md` |
-| **E2 Más dotación** | Formadoras a 1843 kg/h (gap bandejas 3,27 → 1,554 m) | **+2,5 pal/día (+2,8 %), IC sin cero = real pero chico**; cámaras MP vacías → cuello pasa a recepción, falta MP | `raw_e2.txt` → `analizar_escenarios.py` → `summary_escenarios.json` (+ copia `dashboard/web/public/e1/`) |
-| **E3 Estrés fallas** | MTTR ×1,25 en formadoras y túneles (FOR 10,5→13,1 min; TUN 8,6→10,8 min) | **−6,5 cajas/día sobre ~13.100, IC incluye cero = sin cambio**; acumuladores absorben paros 10-20 min | `raw_e3.txt` → mismo pipeline; texto de lectura en `dashboard/web/app/escenarios/page.tsx:17-20 (LECTURA)` |
+| A. Validación estadística | Jeremias Micheloud | 1:30 | D32–D33 |
+| B. Base y E2 | Felipe Diaz Aimar | 1:30 | D34–D35 |
+| C. E3, E4 y cierre | Matias Buffa | 2:00 | D36–D38 |
 
-Regla de lectura (ET6 p.36): comparar **intervalos, no corridas**; si IC del delta incluye cero → "no significativo".
+## 4. Karaoke
 
-## 3. Reparto 3 compañeros + tiempos (total ~6-7 min)
+- Pista muda con el texto de `guion_equipo.md`, blanco que se barre en rojo `#ff1f3d`, máximo 2 líneas.
+- Sincronizado con la grabación de pantalla de cada bloque; drift menor a 300 ms.
+- Sin subtítulo cuando la frase ya está escrita en la pantalla de la web.
 
-| Bloque | Quién | Tiempo | Guion |
-|---|---|---|---|
-| A. Stats web | Compa 1 | 2:00 | Abre `/estadistica`, muestra warmup 2,5 h + meta 3 pal/h + estados. Cierra con "modelo estable y validado". |
-| B. Escenarios E1/E2 | Compa 2 | 2:00 | Abre `/escenarios`, lee fila E2 y `tope_mp`. Cierra con "más velocidad sin más MP no rinde". |
-| C. Escenario E3 + cierre | Compa 3 | 2:00-2:30 | Lee fila E3 + `LECTURA.E3`. Cierra con "sistema robusto a peor mantenimiento; intervalos, no corridas". |
-| Colchón preguntas | — | 0:30 | Solo si el docente pregunta; si no, corte seco al Acto 7. |
+## 5. Voz IA
 
-Cada uno maneja su propio mouse/scroll. Nadie lee párrafos: 1 gráfica = 2 frases máx.
-
-## 4. Teleprompter karaoke — regla
-
-- **Cuándo se activa:** solo si alguien se traba >3 s o se salta una cifra (ej. "+2,5", "72 t/día", "IC incluye cero"). El operador muestra **máx 1 línea** (la frase de "Qué dice" de la tabla §1 o `LECTURA.E2/E3`).
-- **Anti-dup:** una sola pantalla con teleprompter a la vez; los otros dos miran cámara/web, nunca leen en voz alta lo mismo. Prohibido repetir la línea del compañero: si ya se dijo, seguir a la gráfica siguiente.
-- **Formato línea:** `GRÁFICA → FRASE → SIGUIENTE` (ej. `E2 → +2,8 % real pero techo MP → pasar a E3`). Sin párrafos, sin código.
-
-## 5. Cuándo se calla Claude
-
-- **Durante todo el Acto 6:** voz 100 % equipo en vivo. Claude no narra, no lee cifras, no explica stats.
-- **Claude solo aparece:** si la web no carga (plan B: abrir `summary_escenarios.json` / `E1_FINAL.md` local) o si el docente pide un dato fuera de guion → el operador lo busca en silencio y lo pasa por teleprompter (1 línea), sin voz sintética.
-- **Fuera de eso:** micrófono Claude muteado; su texto nunca se graba en el video.
+Muteada durante todo el acto. Ningún texto de IA se graba en este tramo.

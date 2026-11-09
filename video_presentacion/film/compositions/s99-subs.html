@@ -1,0 +1,41 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "SF Pro Display", sans-serif;
+      pointer-events: none;
+    }
+    /* Temporal: número de diapositiva para referenciar cambios */
+    #s99-num {
+      position: absolute;
+      right: 30px;
+      bottom: 30px;
+      padding: 8px 20px;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #050507;
+      font-size: 34px;
+      font-weight: 900;
+    }
+  </style>
+  <div id="root" data-composition-id="s99-subs" data-width="1920" data-height="1080">
+    <div id="s99-num" data-layout-ignore>1</div>
+  </div>
+  <script>
+    // Número de diapositiva temporal. Los subtítulos quedan solo para el Acto 6 (voz del equipo).
+    (function () {
+      const DIAPOS = [[1, 0.000000], [2, 7.500000], [3, 18.766667], [4, 20.633333], [5, 22.500000], [6, 24.366667], [7, 25.766667], [8, 36.066667], [9, 40.766667], [10, 44.533333], [11, 48.266667], [12, 52.033333], [13, 55.766667], [14, 68.891667], [15, 84.829167], [16, 92.829167], [17, 105.033333], [18, 108.766667], [19, 116.266667], [20, 123.266667], [21, 130.766667], [22, 138.266667], [23, 149.533333], [24, 260.961904], [25, 272.961904], [26, 284.961904], [27, 299.961904], [28, 310.961904], [29, 325.961904], [30, 348.461904], [31, 363.461904], [32, 535.795237], [33, 557.795237], [34, 602.795237], [35, 640.795237], [36, 670.795237], [37, 730.795237], [38, 775.795237], [39, 815.795237], [40, 840.795237], [41, 852.795237], [42, 877.795237]];
+      const num = document.getElementById("s99-num");
+      function renderAt(t) {
+        let n = 1;
+        DIAPOS.forEach((d) => { if (t >= d[1] - 0.001) n = d[0]; });
+        num.textContent = n;
+      }
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(0);
+      window.__timelines["s99-subs"] = gsap.timeline({ paused: true });
+    })();
+  </script>
+</template>

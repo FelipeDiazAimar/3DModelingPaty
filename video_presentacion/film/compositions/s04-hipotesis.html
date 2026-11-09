@@ -1,0 +1,339 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #050507;
+      color: #ffffff;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    .s04h-p {
+      position: absolute;
+      inset: 0;
+    }
+    #s04h-p2,
+    #s04h-pw,
+    #s04h-p3 {
+      opacity: 0;
+    }
+    #s04h-p2 {
+      background: #ff1f3d;
+      color: #050507;
+    }
+    #s04h-title {
+      position: absolute;
+      left: 0;
+      top: 56px;
+      width: 1920px;
+      text-align: center;
+      font-size: 104px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+    .s04h-card {
+      position: absolute;
+      width: 400px;
+      height: 270px;
+      padding: 24px 28px;
+      border-radius: 26px;
+      background: #17171d;
+      border: 1px solid #33333d;
+    }
+    .s04h-glow {
+      position: absolute;
+      inset: -2px;
+      border: 5px solid #ff1f3d;
+      border-radius: 26px;
+      opacity: 0;
+    }
+    .s04h-n {
+      font-size: 32px;
+      font-weight: 700;
+      color: #8e8e99;
+    }
+    .s04h-ic {
+      position: absolute;
+      right: 22px;
+      top: 18px;
+      width: 104px;
+      height: 104px;
+    }
+    .s04h-ic path,
+    #s04h-big path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+    }
+    .s04h-name {
+      position: absolute;
+      left: 28px;
+      top: 126px;
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+    .s04h-val {
+      position: absolute;
+      left: 28px;
+      top: 198px;
+      width: 344px;
+      font-size: 36px;
+      font-weight: 500;
+      color: #d6d6dd;
+      white-space: nowrap;
+    }
+    #s04h-foot {
+      position: absolute;
+      left: 0;
+      top: 192px;
+      width: 1920px;
+      text-align: center;
+      font-size: 46px;
+      font-weight: 500;
+      color: #a9a9b3;
+      white-space: nowrap;
+    }
+    #s04h-big {
+      position: absolute;
+      left: 1410px;
+      top: 20px;
+      color: #050507;
+    }
+    #s04h-q {
+      position: absolute;
+      left: 170px;
+      top: 60px;
+      width: 1240px;
+      text-align: left;
+      font-size: 196px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1.05;
+      white-space: nowrap;
+    }
+    .s04h-bar {
+      position: absolute;
+      left: 180px;
+      height: 140px;
+    }
+    .s04h-bartxt {
+      position: absolute;
+      left: 214px;
+      height: 140px;
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 140px;
+      white-space: nowrap;
+    }
+    .s04h-cap {
+      position: absolute;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 140px;
+      white-space: nowrap;
+    }
+    #s04h-box {
+      position: absolute;
+      left: 0;
+      top: 750px;
+      width: 1920px;
+      text-align: center;
+      font-size: 76px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+    #s04h-claim {
+      position: absolute;
+      left: 0;
+      top: 60px;
+      width: 1920px;
+      text-align: center;
+      font-size: 104px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+    #s04h-mark-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    /* marker-highlight del catálogo */
+    #s04h-mark {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 2px;
+      height: 14px;
+      background: #ff1f3d;
+    }
+    .s04h-row { position: absolute; top: 310px; width: 540px; height: 470px; padding: 40px 36px; border-radius: 30px; background: #17171d; border: 2px solid #33333d; }
+    .s04h-row i { display: block; font-style: normal; font-size: 120px; font-weight: 900; line-height: 1; color: #ff1f3d; }
+    .s04h-row b { display: block; margin-top: 30px; font-size: 58px; font-weight: 800; line-height: 1.12; letter-spacing: -0.02em; }
+    .s04h-arr { position: absolute; top: 500px; font-size: 80px; font-weight: 900; color: #ff1f3d; }
+    #s04h-pw { background: #f4f1ec; color: #050507; }
+    #s04h-wt { position: absolute; left: 0; top: 70px; width: 1920px; text-align: center; font-size: 110px; font-weight: 900; letter-spacing: -0.04em; white-space: nowrap; }
+    #s04h-wn { position: absolute; left: 0; top: 240px; width: 1920px; text-align: center; font-size: 330px; font-weight: 900; line-height: 1; letter-spacing: -0.05em; color: #d0001f; }
+    #s04h-ws { position: absolute; left: 0; top: 590px; width: 1920px; text-align: center; font-size: 72px; font-weight: 700; white-space: nowrap; }
+    #s04h-wr { position: absolute; left: 0; top: 730px; width: 1920px; text-align: center; font-size: 64px; font-weight: 800; white-space: nowrap; }
+  </style>
+  <div id="root" data-composition-id="s04-hipotesis" data-width="1920" data-height="1080">
+    <div id="s04h-p1" class="s04h-p">
+      <div id="s04h-title">¿Cuál es la sospechosa?</div>
+      <div id="s04h-foot">Tiempo de proceso de cada etapa en el modelo</div>
+      <div id="s04h-grid"></div>
+    </div>
+    <div id="s04h-p2" class="s04h-p">
+      <svg id="s04h-big" width="330" height="330" viewBox="0 0 100 100" data-layout-ignore><path pathLength="1" d="M12 26h76v14H12z M30 40v14 M50 40v14 M70 40v14 M16 66a14 6 0 1 0 28 0a14 6 0 1 0-28 0 M56 66a14 6 0 1 0 28 0a14 6 0 1 0-28 0 M6 80h88 M6 88h88"></path></svg>
+      <div id="s04h-q">¿Formadora?</div>
+      <div id="s04h-b1" class="s04h-bar" style="top: 370px; width: 831px; background: #050507"></div>
+      <div id="s04h-t1" class="s04h-bartxt" style="top: 370px; color: #ffffff">982 kg/h</div>
+      <div id="s04h-c1" class="s04h-cap" style="top: 370px; left: 1050px">capacidad nominal</div>
+      <div id="s04h-b2" class="s04h-bar" style="top: 560px; width: 1560px; background: #ffffff"></div>
+      <div id="s04h-t2" class="s04h-bartxt" style="top: 560px">1843 kg/h</div>
+      <div id="s04h-c2" class="s04h-cap" style="top: 560px; left: 1160px">estándar de línea</div>
+      <div id="s04h-box">5 kg de hamburguesas cada 18,33 segundos</div>
+    </div>
+    <div id="s04h-pw" class="s04h-p">
+      <div id="s04h-wt">¿Por qué la formadora?</div>
+      <div id="s04h-wn">53 %</div>
+      <div id="s04h-ws">de su estándar: 982 de 1843 kg/h</div>
+      <div id="s04h-wr">La línea avanza al ritmo de su máquina más lenta</div>
+    </div>
+    <div id="s04h-p3" class="s04h-p">
+      <div id="s04h-claim">Una sospecha <span id="s04h-mark-wrap">se prueba<span id="s04h-mark" data-layout-ignore></span></span></div>
+      <div class="s04h-row" style="left: 90px"><i>1</i><b>La formadora frena la línea</b></div>
+      <div class="s04h-arr" style="left: 640px">→</div>
+      <div class="s04h-row" style="left: 700px"><i>2</i><b>Si la aceleramos, sale más producción</b></div>
+      <div class="s04h-arr" style="left: 1250px">→</div>
+      <div class="s04h-row" style="left: 1310px"><i>3</i><b>Para saberlo, simulamos la planta</b></div>
+    </div>
+  </div>
+  <script>
+    // Diapositivas 13–15 · cada elemento entra cuando la voz lo nombra
+    // Datos: SUPUESTOS_v2.md T2–T11 y :11 · Mecánica de parallax-zoom y marker-highlight
+    (function () {
+      const ICON = {
+        d: "M10 78h80v8H10z M18 86v6 M50 86v6 M82 86v6 M20 52h28v26H20z M52 52h28v26H52z M36 26h28v26H36z",
+        p: "M30 12h40l-10 26H40z M28 38h44v30H28z M72 46h18v14H72 M38 68v22 M62 68v22",
+        m: "M14 30h72v30a20 20 0 0 1-20 20H34a20 20 0 0 1-20-20z M6 50h88 M30 38l10 24 M50 38l10 24 M70 38l10 24",
+        f: "M12 26h76v14H12z M30 40v14 M50 40v14 M70 40v14 M16 66a14 6 0 1 0 28 0a14 6 0 1 0-28 0 M56 66a14 6 0 1 0 28 0a14 6 0 1 0-28 0 M6 80h88 M6 88h88",
+        t: "M10 72V42a40 30 0 0 1 80 0v30z M2 72h96 M50 30v24 M40 36l20 12 M60 36l-20 12",
+        e: "M24 30h52l6 48H18z M24 30l8-14h36l8 14 M34 52h32 M34 62h32",
+        c: "M16 44h68v44H16z M16 44L6 28h32l12 16 M84 44l10-16H62L50 44 M50 44v44",
+        r: "M16 90h38 M35 90V62 M30 62a5 5 0 1 0 10 0a5 5 0 1 0-10 0 M35 62l26-26 M56 36a5 5 0 1 0 10 0a5 5 0 1 0-10 0 M61 36l22 14 M83 50v16 M75 66h16",
+      };
+      const ETAPAS = [
+        ["Desencajado", "3500 s por pallet", "d", 1.4],
+        ["Picado", "900 s por batch", "p", 2.3],
+        ["Mezclado", "1200 s por batch", "m", 3.2],
+        ["Formado", "5 kg cada 18,33 s", "f", 4.1],
+        ["Túnel", "5 min de pasada", "t", 5.0],
+        ["Envasado", "150 paq/min", "e", 5.9],
+        ["Encajonado", "5 s por caja llena", "c", 6.8],
+        ["Estibado", "144 cajas por pallet", "r", 7.7],
+      ];
+      const SOSP = 3;
+      const grid = document.getElementById("s04h-grid");
+      ETAPAS.forEach((e, i) => {
+        const c = document.createElement("div");
+        c.className = "s04h-card";
+        c.id = "s04h-c" + (i + 10);
+        c.style.left = 110 + (i % 4) * 433 + "px";
+        c.style.top = 275 + Math.floor(i / 4) * 300 + "px";
+        c.innerHTML =
+          '<div class="s04h-n">0' + (i + 1) + '</div><svg class="s04h-ic" viewBox="0 0 100 100" data-layout-ignore><path pathLength="1" d="' + ICON[e[2]] + '"></path></svg>' +
+          '<div class="s04h-name">' + e[0] + '</div><div class="s04h-val">' + e[1] + '</div><div class="s04h-glow"></div>';
+        grid.appendChild(c);
+      });
+      const cards = Array.from(document.querySelectorAll(".s04h-card"));
+      const foc = cards[SOSP];
+
+      const tl = gsap.timeline({ paused: true });
+      const blurIn = (s, at, d) =>
+        tl.fromTo(s, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: d || 0.25, ease: "power4.out" }, at);
+      const shake = (at, a) =>
+        [[a, -a * 0.6], [-a * 0.8, a * 0.5], [a * 0.5, a * 0.3], [-a * 0.3, -a * 0.2], [0, 0]].forEach((s, k) => {
+          tl.to("#root", { x: s[0], y: s[1], duration: 1 / 30, ease: "none" }, at + k / 30);
+        });
+
+      // Diapositiva 13 · cada tarjeta entra cuando se la nombra
+      blurIn("#s04h-title", 0.1, 0.3);
+      blurIn("#s04h-foot", 0.9);
+      cards.forEach((c, i) => {
+        const at = ETAPAS[i][3];
+        tl.fromTo(c, { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, at);
+        tl.fromTo(c.querySelector(".s04h-ic path"), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1, ease: "power2.out" }, at + 0.1);
+      });
+
+      // Haz que recorre las ocho y se detiene en la sospechosa
+      const SCAN = 9.4;
+      cards.forEach((c, i) => {
+        const g = c.querySelector(".s04h-glow");
+        const at = SCAN + i * 0.1;
+        if (i === SOSP) return;
+        tl.fromTo(g, { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, at);
+      });
+      tl.fromTo(foc.querySelector(".s04h-glow"), { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "none" }, SCAN + SOSP * 0.1);
+      cards.forEach((c, i) => {
+        if (i !== SOSP) tl.to(c, { opacity: 0.22, duration: 0.3, ease: "power2.inOut" }, 10.6);
+      });
+      tl.to(foc, { backgroundColor: "#ff1f3d", borderColor: "#ff1f3d", duration: 0.2, ease: "power2.out" }, 10.6);
+      tl.to(foc.children, { opacity: 0, duration: 0.15, ease: "power2.in" }, 11.7);
+
+      // Zoom a través de la tarjeta (parallax-zoom)
+      const ZOOM = 11.9, DZ = 1.15;
+      const fx = 110 + 3 * 433 + 200, fy = 275 + 135;
+      tl.to(foc, { x: 960 - fx, y: 540 - fy, scale: 5.6, borderRadius: 0, duration: DZ, ease: "power2.inOut" }, ZOOM);
+      cards.forEach((c, i) => {
+        if (i === SOSP) return;
+        tl.to(c, { x: i % 4 < SOSP ? -500 : 500, y: i < 4 ? -300 : 300, scale: 0.6, opacity: 0, duration: DZ, ease: "power2.inOut" }, ZOOM);
+      });
+      tl.to(["#s04h-title", "#s04h-foot"], { opacity: 0, filter: "blur(12px)", duration: 0.3, ease: "power2.in" }, ZOOM);
+
+      // Diapositiva 14 · la evidencia, más lenta
+      const P2 = 13.125;
+      tl.set("#s04h-p1", { opacity: 0 }, P2);
+      tl.set("#s04h-p2", { opacity: 1 }, P2);
+      tl.fromTo("#s04h-q", { opacity: 0, scale: 1.6, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, P2);
+      shake(P2 + 0.2, 18);
+      tl.fromTo("#s04h-big path", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 2.2, ease: "power2.inOut" }, P2 + 0.3);
+      tl.fromTo("#s04h-b1", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 1, ease: "expo.out" }, 15.2);
+      blurIn("#s04h-t1", 16);
+      blurIn("#s04h-c1", 16.6);
+      tl.fromTo("#s04h-b2", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 1.2, ease: "expo.out" }, 19.5);
+      blurIn("#s04h-t2", 20.5);
+      blurIn("#s04h-c2", 21.1);
+      blurIn("#s04h-box", 24, 0.35);
+
+      // Por qué la formadora
+      const PW = 29.0625;
+      tl.set("#s04h-p2", { opacity: 0 }, PW);
+      tl.set("#s04h-pw", { opacity: 1 }, PW);
+      blurIn("#s04h-wt", PW + 0.1, 0.3);
+      tl.fromTo("#s04h-wn", { opacity: 0, scale: 1.7, filter: "blur(20px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.25, ease: "expo.out" }, PW + 0.6);
+      blurIn("#s04h-ws", PW + 1.2);
+      blurIn("#s04h-wr", PW + 3.2);
+      // Cómo se prueba, en tres pasos que se leen solos
+      const P3 = 37.0625;
+      tl.set("#s04h-pw", { opacity: 0 }, P3);
+      tl.set("#s04h-p3", { opacity: 1 }, P3);
+      shake(P3, 18);
+      tl.fromTo("#s04h-claim", { opacity: 0, scale: 1.3, filter: "blur(16px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.22, ease: "expo.out" }, P3);
+      tl.fromTo("#s04h-mark", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, P3 + 0.7);
+      document.querySelectorAll(".s04h-row").forEach((r, i) => {
+        tl.fromTo(r, { opacity: 0, y: 50, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, P3 + 1.2 + i * 1.4);
+      });
+      document.querySelectorAll(".s04h-arr").forEach((r, i) => {
+        tl.fromTo(r, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, P3 + 2 + i * 1.4);
+      });
+      window.__timelines["s04-hipotesis"] = tl;
+    })();
+  </script>
+</template>

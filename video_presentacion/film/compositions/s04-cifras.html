@@ -1,0 +1,209 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #050507;
+      font-family: "SF Pro Display", sans-serif;
+    }
+    .s04c-p {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      opacity: 0;
+    }
+    .s04c-num {
+      position: absolute;
+      left: 0;
+      top: 70px;
+      width: 1920px;
+      height: 270px;
+      display: flex;
+      justify-content: center;
+      font-size: 240px;
+      font-weight: 900;
+      line-height: 270px;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+    }
+    /* slot-machine-roll del catálogo: una cinta vertical por dígito */
+    .s04c-slot {
+      display: inline-block;
+      height: 270px;
+      overflow: hidden;
+    }
+    .s04c-reel {
+      display: block;
+    }
+    .s04c-reel b {
+      display: block;
+      height: 270px;
+      font-weight: 900;
+      text-align: center;
+    }
+    .s04c-art {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .s04c-d {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+    }
+    #s04c-nave {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1100px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #s04c-right {
+      position: absolute;
+      left: 1100px;
+      top: 0;
+      width: 820px;
+      height: 1080px;
+      background: #050507;
+    }
+    #s04c-h1 {
+      position: absolute;
+      left: 40px;
+      top: 200px;
+      font-size: 84px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+    #s04c-h2 {
+      position: absolute;
+      left: 42px;
+      top: 310px;
+      font-size: 56px;
+      font-weight: 700;
+      color: #ff4d63;
+    }
+    #s04c-plano {
+      position: absolute;
+      left: 30px;
+      top: 430px;
+      width: 760px;
+      height: 276px;
+    }
+    .s04c-lbl {
+      position: absolute;
+      left: 0;
+      top: 810px;
+      width: 1920px;
+      text-align: center;
+      font-size: 68px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  </style>
+  <div id="root" data-composition-id="s04-cifras" data-width="1920" data-height="1080">
+    <div class="s04c-p" data-layout-allow-overflow style="background: #050507; color: #ffffff" data-v="" data-l="">
+      <img id="s04c-nave" src="assets/renders/nave.png" alt="" />
+      <div id="s04c-right"><div id="s04c-h1">Sala de Elaborados</div><div id="s04c-h2">Líneas 7 y 8</div><img id="s04c-plano" src="assets/planos/sala_l78.png" alt="" /></div>
+    </div>
+    <div class="s04c-p" data-layout-allow-overflow style="background: #f4f1ec; color: #d0001f" data-v="1500 kg" data-l="por cada batch de mezcla" data-art="mix"></div>
+    <div class="s04c-p" data-layout-allow-overflow style="background: #ff1f3d; color: #050507" data-v="16" data-l="pallets de materia prima por turno" data-art="pal"></div>
+    <div class="s04c-p" data-layout-allow-overflow style="background: #050507; color: #ff1f3d" data-v="72 t" data-l="de materia prima que entran por día" data-art="tru"></div>
+  </div>
+  <script>
+    // Diapositivas 9–12 · ocho beats por cifra · diapo 9 con render real de planta_v10.glb (tools/render_glb.py)
+    (function () {
+      const CUTS = [0, 113 / 30, 225 / 30, 338 / 30];
+      const END = 450 / 30;
+      const START = 1223 / 30;
+      const H = 270;
+      const NS = "http://www.w3.org/2000/svg";
+      const MIX = "M14 30h72v30a20 20 0 0 1-20 20H34a20 20 0 0 1-20-20z M6 50h88 M30 38l10 24 M50 38l10 24 M70 38l10 24 M30 80v12 M70 80v12";
+      const PAL = "M10 78h80v8H10z M18 86v6 M50 86v6 M82 86v6 M20 52h28v26H20z M52 52h28v26H52z M36 26h28v26H36z";
+      const TRU = "M6 26h62v44H6z M68 40h18l10 14v16H68 M16 76a8 8 0 1 0 16 0a8 8 0 1 0-16 0 M70 76a8 8 0 1 0 16 0a8 8 0 1 0-16 0";
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#s04c-nave", { scale: 1 }, { scale: 1.07, duration: 113 / 30, ease: "none", transformOrigin: "50% 50%" }, 0);
+
+      function art(p, at) {
+        const kind = p.dataset.art;
+        if (!kind) return;
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("class", "s04c-art");
+        svg.setAttribute("width", "1920");
+        svg.setAttribute("height", "1080");
+        svg.setAttribute("data-layout-ignore", "");
+        const add = (d, x, y, s) => {
+          const g = document.createElementNS(NS, "g");
+          g.setAttribute("transform", "translate(" + x + " " + y + ") scale(" + s + ")");
+          const q = document.createElementNS(NS, "path");
+          q.setAttribute("d", d);
+          q.setAttribute("pathLength", "1");
+          q.setAttribute("class", "s04c-d");
+          g.appendChild(q);
+          svg.appendChild(g);
+          return q;
+        };
+        let items = [];
+        if (kind === "mix") items = [add(MIX, 760, 370, 4)];
+        if (kind === "pal") for (let i = 0; i < 16; i++) items.push(add(PAL, 300 + (i % 8) * 165, 370 + Math.floor(i / 8) * 205, 1.7));
+        if (kind === "tru") for (let i = 0; i < 3; i++) items.push(add(TRU, 300 + i * 460, 400, 3.4));
+        p.appendChild(svg);
+        if (kind === "tru") {
+          // los camiones entran andando desde la izquierda, con traqueteo
+          items.forEach((q, i) => {
+            tl.fromTo(q, { x: -640 }, { x: 0, duration: 2.1, ease: "power2.out" }, at + 0.25 + i * 0.25);
+            tl.fromTo(q, { y: 0 }, { y: -1.4, duration: 0.09, ease: "sine.inOut", yoyo: true, repeat: 21 }, at + 0.25 + i * 0.25);
+          });
+          return;
+        }
+        items.forEach((q, i) => {
+          tl.fromTo(q, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: kind === "pal" ? 0.5 : 1.2, ease: "power2.inOut" }, at + 0.5 + i * (kind === "pal" ? 0.16 : 0.4));
+        });
+      }
+
+      document.querySelectorAll(".s04c-p").forEach((p, i) => {
+        const at = CUTS[i];
+        const end = i < 3 ? CUTS[i + 1] : END;
+        const num = document.createElement("div");
+        num.className = "s04c-num";
+        for (const ch of p.dataset.v) {
+          const slot = document.createElement("span");
+          slot.className = "s04c-slot";
+          if (/\d/.test(ch)) slot.style.width = ch === "1" ? "0.5em" : "0.64em";
+          if (/\d/.test(ch)) {
+            const reel = document.createElement("span");
+            reel.className = "s04c-reel";
+            let html = "";
+            for (let n = 0; n < 20; n++) html += "<b>" + (n % 10) + "</b>";
+            reel.innerHTML = html + "<b>" + ch + "</b>";
+            slot.appendChild(reel);
+          } else {
+            slot.textContent = ch === " " ? " " : ch;
+          }
+          num.appendChild(slot);
+        }
+        const lbl = document.createElement("div");
+        lbl.className = "s04c-lbl";
+        lbl.textContent = p.dataset.l;
+        p.appendChild(num);
+        p.appendChild(lbl);
+
+        tl.set(p, { opacity: 1 }, at);
+        if (i < 3) tl.set(p, { opacity: 0 }, end);
+        p.querySelectorAll(".s04c-reel").forEach((r, k) => {
+          tl.fromTo(r, { y: 0 }, { y: -20 * H, duration: 1.2 + k * 0.12, ease: "expo.out" }, at);
+        });
+        tl.fromTo(lbl, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" }, at + 0.7);
+        art(p, at);
+      });
+
+      window.__timelines["s04-cifras"] = tl;
+    })();
+  </script>
+</template>
