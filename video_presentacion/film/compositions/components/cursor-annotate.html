@@ -323,7 +323,8 @@
             cursorT += span + (i < strokes.length - 1 ? HOP : 0);
           });
           var T_LIFT = cursorT;
-          var T_EXIT = Math.max(T_LIFT + ASIDE_TIME, duration - EXIT_TIME);
+          // local: la lapicera se va apenas termina el trazo; la tinta queda hasta el final del clip.
+          var T_EXIT = T_LIFT + ASIDE_TIME;
 
           // The stroke as drawn by stroke-time f: its samples up to f, the last one interpolated.
           function drawnTo(s, f) {
@@ -437,7 +438,7 @@
               return { p: mix(endPoint, ASIDE, aside(a)), lift: Math.min(1, a * 2.5) };
             }
             return {
-              p: mix(ASIDE, END, leave(clamp01((t - T_EXIT) / (duration - T_EXIT)))),
+              p: mix(ASIDE, END, leave(clamp01((t - T_EXIT) / EXIT_TIME))),
               lift: 1,
             };
           }

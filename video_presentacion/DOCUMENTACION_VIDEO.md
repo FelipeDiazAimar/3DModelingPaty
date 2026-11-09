@@ -213,3 +213,5 @@ Decisión: no se montaron los blocks en `index.html` (traen marca Figma/HeyGen y
 **s09-acto6 #s8 (Conclusión, local 290 a 315; abs 825,8 a 850,8 s).** `caption-kinetic-slam` (adaptado, no montado: trae un texto fijo en inglés): cada palabra de "1.º Formadoras", "2.º Desencajado" (local 290,7 y 291,5 s, paso 0,28 s) e "Intervalos, no corridas sueltas" (local 304,3 s, paso 0,22 s) entra desde un lado distinto (arriba con rebote, izquierda, derecha, escala), con SF Pro Display como el resto.
 
 Validación: `npx hyperframes check --json` sin errores (solo avisos previos) y snapshots revisados en 152,2, 194,6, 309,5, 313,5, 460,5, 655,3, 818,8, 827,8 y 841,3 s.
+
+Ajuste del 9/11/2026: en la toma de FlexSim se quitaron los recuadros rojos (`q-ring`) y quedó solo el trazo a mano de `cursor-annotate`, que ahora se mantiene hasta que se va el rótulo (193,5 a 210,5 s); en E1 el trazo sobre el 91 % queda hasta el final de la diapositiva (654,1 a 670,8 s). La lapicera se retira apenas termina de dibujar (cambio local en `compositions/components/cursor-annotate.html`).
