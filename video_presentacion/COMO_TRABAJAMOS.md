@@ -15,7 +15,7 @@ Video de presentación de la simulación de Elaborados (líneas 7 y 8). Se hace 
 
 - Estilo React Bits: agresivo, fondos que cambian, rojo `#ff1f3d`, SF Pro Display. Catálogo de HyperFrames en cada diapositiva, sin repetir siempre los mismos efectos.
 - La voz cuenta un relato y no lee la diapositiva, en lenguaje común y con los términos de la cátedra (por ejemplo, "medida de desempeño"). Sin siglas sin explicar.
-- Karaoke con barrido horizontal y letra chica en la toma de FlexSim, en la web y en el Acto 6, donde el equipo graba su voz encima.
+- Karaoke con barrido horizontal y letra chica en la toma de FlexSim y en el Acto 6, donde el equipo graba su voz encima.
 - Primero se cuenta qué se hace en Elaborados, después el problema. El relato va de la sospecha (la formadora) al hallazgo (las mezcladoras).
 
 ## Archivos
@@ -62,7 +62,7 @@ Efecto: mecánica del catálogo de HyperFrames usada o adaptada. La voz y los ti
 | 29 | 73 herramientas del MCP | `slot-machine-roll` |
 | 30 | Herramientas de creación y conexión | `perspective-marquee` |
 | 31 | Idea de la web: celular y PC | `app-showcase`, `parallax-device-dive` |
-| 32 | Web: cinemáticas y gráficas con dato resaltado | Zoom con foco y karaoke |
+| 32 | Web: cinemáticas y gráficas con dato resaltado | Zoom con foco y dato resaltado |
 | 33 | Distribuciones de la simulación | `shutter-slam` |
 | 34 | Pruebas de ajuste | Barras, sellos y barrido |
 | 35 | Cómo corrimos la simulación | Tarjetas 3D, `number-wheel` |

@@ -1,6 +1,6 @@
 # Guion IA (actos 1-5, 7)
 
-Locución definitiva. Cifras verificadas en `DOCUMENTACION_VIDEO.md`. La voz cuenta un relato: no lee lo que ya está escrito en la diapositiva. Hay karaoke en la toma de FlexSim, en la web (D31) y en el Acto 6.
+Locución definitiva. Cifras verificadas en `DOCUMENTACION_VIDEO.md`. La voz cuenta un relato: no lee lo que ya está escrito en la diapositiva. Hay karaoke en la toma de FlexSim y en el Acto 6, donde habla el equipo. En la web habla la IA, sin subtítulos.
 
 Los actos 1 y 2 están en beats del grid. Desde el Acto 3 los tiempos son duraciones objetivo y se fijan en beats al construir cada acto.
 

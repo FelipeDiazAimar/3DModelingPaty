@@ -176,3 +176,7 @@ Nueva diapositiva D31 (idea de la web, mecánica de `parallax-device-dive`). En 
 ## 21. Vista móvil en D31
 
 Antes de la PC, tres celulares en abanico (mecánica del bloque `app-showcase`) con capturas reales de la web en diseño móvil (`assets/web/st/m1-m3.png`). Dura 17 s.
+
+## 22. Web sin subtítulos
+
+En la diapositiva de la web habla la IA, así que se quitó el karaoke de toda esa diapositiva. Las etiquetas con el dato de cada gráfica siguen.
