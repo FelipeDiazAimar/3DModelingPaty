@@ -12,6 +12,8 @@
     #k-box { position:absolute; left:210px; bottom:58px; width:1500px; text-align:center; opacity:0; z-index:5; }
     #k-txt { display:inline-block; padding:10px 28px; border-radius:16px; background:rgba(5,5,7,.86); font-size:34px; font-weight:700; line-height:1.2; }
     #k-txt .w { color:transparent; -webkit-text-fill-color:transparent; background-image:linear-gradient(90deg,#fff 0%,#fff 100%); -webkit-background-clip:text; background-clip:text; }
+    .tk { position:absolute; left:0; top:0; width:1920px; height:1080px; object-fit:cover; opacity:0; }
+    .tkl { position:absolute; left:40px; top:20px; font-size:26px; font-weight:700; letter-spacing:0.02em; opacity:0; }
   </style>
   <div id="root" data-composition-id="s09-acto6" data-width="1920" data-height="1080" data-layout-allow-overlap>
     <div id="s0" class="s" style="background:#050507">
@@ -85,6 +87,8 @@
 <div id="c54" class="e" style="left:1240px;top:736px;font-size:68px;font-weight:900;color:#050507;">Lavado de 30 min</div>
     </div>
     <div id="s4" class="s" style="background:#050507">
+<video id="v-e2" class="clip tk" data-start="134.64" data-duration="60.76" data-playback-rate="0.24" muted playsinline src="assets/flexsim/e2.mp4" data-layout-ignore></video>
+<div id="v-e2l" class="tkl" style="color:#a9a9b3" data-layout-ignore>Toma real · FlexSim · E2 a las 4 h simuladas</div>
 <div id="d1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#fff;width:1920px;text-align:center;">E2 · Formadoras más rápidas</div>
 <div id="d2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">982 → 1843 kg/h</div>
 <div id="d3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#a9a9b3;width:1920px;text-align:center;">Diferencia contra E1 · pallets por día · intervalo 95 %</div>
@@ -99,6 +103,8 @@
 <div id="d5" class="e p" style="left:430px;top:800px;font-size:60px;background:#ff1f3d;color:#050507">El cuello pasa al desencajado: 74,1 t/día</div>
     </div>
     <div id="s5" class="s" style="background:#12121a">
+<video id="v-e3" class="clip tk" data-start="194.64" data-duration="45.76" data-playback-rate="0.32" muted playsinline src="assets/flexsim/e3.mp4" data-layout-ignore></video>
+<div id="v-e3l" class="tkl" style="color:#a9a9b3" data-layout-ignore>Toma real · FlexSim · E3 a las 4 h simuladas</div>
 <div id="e1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#fff;width:1920px;text-align:center;">E3 · Más materia prima</div>
 <div id="e2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">16 → 24 pallets por turno</div>
 <div id="e3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#a9a9b3;width:1920px;text-align:center;">Diferencia contra E2 · pallets por día · intervalo 95 %</div>
@@ -113,6 +119,8 @@
 <div id="e5" class="e p" style="left:380px;top:800px;font-size:60px;background:#ff1f3d;color:#050507">Cámaras de materia prima: 6,3 → 21,8 pallets</div>
     </div>
     <div id="s6" class="s" style="background:#f4f1ea">
+<video id="v-e4" class="clip tk" data-start="239.64" data-duration="40.76" data-playback-rate="0.36" muted playsinline src="assets/flexsim/e4.mp4" data-layout-ignore></video>
+<div id="v-e4l" class="tkl" style="color:#55555f" data-layout-ignore>Toma real · FlexSim · E4 a las 4 h simuladas</div>
 <div id="f1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#050507;width:1920px;text-align:center;">E4 · Batch más chico</div>
 <div id="f2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">1500 → 1200 kg</div>
 <div id="f3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#55555f;width:1920px;text-align:center;">Diferencia contra 1500 kg · pallets por día · intervalo 95 %</div>
@@ -320,6 +328,8 @@
       rv("#g3",295.829);
       rv("#g4",304.245);
 
+      // Tomas reales de FlexSim (E2–E4) de fondo: aparecen con un acercamiento lento.
+      [["e2", 135.2, 0.3], ["e3", 195.2, 0.3], ["e4", 240.2, 0.24]].forEach((v) => { tl.fromTo("#v-" + v[0], { opacity: 0, scale: 1.12 }, { opacity: v[2], scale: 1, duration: 2.4, ease: "power2.out" }, v[1]); tl.fromTo("#v-" + v[0] + "l", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, v[1] + 0.6); });
       // Extras por diapositiva: barras que crecen y sellos (Rechazada), tarjetas que giran en 3D, ruedas de números, intervalos que se abren.
       const NS = [0, 22, 67, 105, 135, 195, 240, 280, 290];
       const stamp = (s, at, sl) => { tl.fromTo(s, { scale: 3.2, rotation: -14 }, { scale: 1, rotation: -3, duration: 0.22, ease: "power4.in" }, at); [[16,-10],[-12,8],[7,5],[0,0]].forEach((q, k) => tl.to(sl, { x: q[0], y: q[1], duration: 1 / 30, ease: "none" }, at + 0.22 + k / 30)); };

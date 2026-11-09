@@ -183,4 +183,17 @@ En la diapositiva de la web habla la IA, así que se quitó el karaoke de toda e
 
 ## 23. Consigna de la cátedra
 
-Agregados: rubro y actividad (`s03b-rubro`), escenario base con turnos, recursos y capacidades (`s04b-base`, datos de `SUPUESTOS_v2.md`), marcado de la cola en la corrida y tabla comparativa de E1 a E4 (Acto 6). Elaborados se acortó de 44 a 20 s. PATY se mantiene porque es una marca y no el nombre de la empresa. Pendiente: ejecución de E2, E3 y E4 (ver `PROMPT_ESCENARIOS.md`).
+Agregados: rubro y actividad (`s03b-rubro`), escenario base con turnos, recursos y capacidades (`s04b-base`, datos de `SUPUESTOS_v2.md`), marcado de la cola en la corrida y tabla comparativa de E1 a E4 (Acto 6). Elaborados se acortó de 44 a 20 s. PATY se mantiene porque es una marca y no el nombre de la empresa. La ejecución de E2, E3 y E4 se agregó el 9/11/2026 (sección 24).
+
+## 24. Tomas de FlexSim de E2, E3 y E4
+
+Tomas reales de la corrida de cada escenario alternativo, sumadas a sus diapositivas del Acto 6 (`compositions/s09-acto6.html`, `#s4`, `#s5` y `#s6`) sin cambiar ninguna duración.
+
+- **Modelo:** copia de `PLANTASJ.fsm` en una carpeta temporal (el original no se modificó), abierta en FlexSim 2026. Base: E1 con lavado de 30 min (`SetupTime` 1800 s en `MezA/B_L7/L8`), 10 cargas por batch y 16 pallets por turno. Fuentes de la configuración: `SUPUESTOS_v2.md` (líneas 124 y 125) y `datos_trazabilidad/e1_final/E1_FINAL.md`.
+- **E2:** `entrySpacePadding` de `CintaFormA/B_L7/L8` de 3,27 a 1,554 m.
+- **E3:** E2 más 24 pallets de materia prima por turno: en el calendario de `SrcCamionesMP`, cantidad 2 en las filas pares (2 a 16). Verificado: 24 pallets recibidos a las 4 h simuladas.
+- **E4:** desde E1 (separación 3,27 m), `splitquantity` de las 4 mezcladoras de 10 a 8 cargas (8 × 150 kg = 1200 kg por batch), tiempo de ciclo de `Desencajado_L7/L8` de 3500 a 2800 s y de `Picadora_L7/L8` de 900 a 720 s (×0,8), y 20 pallets por turno (cantidad 2 en las filas 4, 8, 12 y 16). Verificado: 20 pallets recibidos a las 4 h. El lavado de 30 min se mantiene.
+- **Corrida:** réplica 1 (`repId` = 1, fallas encendidas), publicador apagado (`pubOff` = 1). Cada escenario se corrió hasta las 4 h simuladas (fin del transitorio) a velocidad 4000 y se grabaron 15 s a velocidad 12, es decir de las 4:00 a las 4:05 h simuladas, con el tablero `PATY_Tablero` a la vista.
+- **Grabación:** `ffmpeg` de FlexSim con `gdigrab` del escritorio recortado sin la barra de tareas (2418 × 1360 desde x = 142), escalado a 1920 × 1080, 30 fps, `-draw_mouse 0`, H.264 (`h264_nvenc`, 8 Mb/s). Archivos: `assets/flexsim/e2.mp4` (1,2 MB), `e3.mp4` (1,2 MB) y `e4.mp4` (1,3 MB). No se versionan (`.gitignore`).
+- **En la diapositiva:** cada toma va de fondo a pantalla completa, en cámara lenta para cubrir la diapositiva sin repetirse (velocidad 0,24 en E2, 0,32 en E3 y 0,36 en E4), con opacidad 0,3 en las diapositivas oscuras y 0,24 en la clara (E4), entrada con acercamiento lento y el rótulo "Toma real · FlexSim · Ex a las 4 h simuladas" arriba a la izquierda. Títulos, intervalo, sello y karaoke quedan encima, sin cambios de posición ni de tiempos.
+- **Validación:** `npx hyperframes check --json` sin errores nuevos (solo avisos `nested_media_start_basis_ambiguous`, iguales a los de los otros videos del proyecto). Para que el chequeo no fallara se copiaron a `assets/` las tomas que no se versionan (`flexsim/corrida.mp4`, `web/web.mp4` y `web/lote.mp4`, desde la carpeta compartida "Videos Simulación"). Snapshots en 674,8, 710,8, 738,8, 760,8, 790,8 y 812,8 s: la toma se ve detrás y el texto se lee.

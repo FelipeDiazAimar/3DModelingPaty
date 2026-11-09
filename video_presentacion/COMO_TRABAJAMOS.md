@@ -67,7 +67,7 @@ Efecto: mecánica del catálogo de HyperFrames usada o adaptada. La voz y los ti
 | 34 | Pruebas de ajuste | Barras, sellos y barrido |
 | 35 | Cómo corrimos la simulación | Tarjetas 3D, `number-wheel` |
 | 36 | E1, de la formadora a las mezcladoras | `number-wheel` |
-| 37–39 | E2, E3 y E4 | Intervalos animados y sellos |
+| 37–39 | E2, E3 y E4 | Intervalos animados y sellos, sobre la toma real de FlexSim de cada escenario |
 | 40 | Conclusión de los escenarios | Tarjetas 3D y pallets que caen y se apilan |
 | 41 | Conclusiones generales | Filas 3D, `shutter-slam` |
 | 42 | Agradecimiento, operario que saluda y baila | Renders reales de Blender |
