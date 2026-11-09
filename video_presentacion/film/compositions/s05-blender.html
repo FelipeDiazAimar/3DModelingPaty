@@ -168,6 +168,7 @@
       font-size: 56px;
       font-weight: 900;
     }
+      .cw { position:absolute; left:-1950px; top:0; width:1920px; height:1080px; z-index:9; }
   </style>
   <div id="root" data-composition-id="s05-blender" data-width="1920" data-height="1080">
     <div id="s05-p0" class="s05-p" data-layout-allow-overflow>
@@ -194,6 +195,7 @@
       <div id="s05-l1">Los planos de la planta</div>
       <div id="s05-l2"><span>Los solicitamos para construir el modelo 3D</span></div>
     </div>
+  <div id="cw-r" class="cw" style="background:#ff1f3d" data-layout-ignore></div><div id="cw-c" class="cw" style="background:#00e5ff" data-layout-ignore></div><div id="cw-w" class="cw" style="background:#fff" data-layout-ignore></div>
   </div>
   <script>
     // Diapositivas 18–21 · Acto 2 Blender · b231–303 · datos: blender/*.py, documentacion/03 y 05
@@ -269,6 +271,11 @@
       slam("#s05-l1", T[3] + 0.5);
       blurIn("#s05-l2", T[3] + 2.5);
 
+      // chromatic-aberration-wipe del catálogo, entrada a los planos
+      [["#cw-r", 0], ["#cw-c", 0.05], ["#cw-w", 0.1]].forEach((p) => {
+        tl.fromTo(p[0], { x: 0 }, { x: 1950, duration: 0.2, ease: "power3.in" }, 7.28 + p[1]);
+        tl.to(p[0], { x: 3900, duration: 0.25, ease: "power3.out" }, 7.5 + p[1]);
+      });
       window.__timelines["s05-blender"] = tl;
     })();
   </script>

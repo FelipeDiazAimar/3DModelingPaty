@@ -28,3 +28,47 @@ Video de presentación de la simulación de Elaborados (líneas 7 y 8). Se hace 
 | `guiones/guion_equipo.md` | Texto del Acto 6, con tiempos y quién lee |
 | `DOCUMENTACION_VIDEO.md` | Datos verificados, decisiones y cambios |
 | `etapas/` | Planificación original por acto |
+
+## Ficha de diapositivas
+
+Efecto: mecánica del catálogo de HyperFrames usada o adaptada. La voz y los tiempos están en `guiones/`; las fuentes de los datos, en `DOCUMENTACION_VIDEO.md`.
+
+| # | Muestra | Efecto |
+|---|---|---|
+| 1 | Chispa inicial y rótulo PATY | Shader WebGL propio |
+| 2 | Portada, Planta Elaborados | Revelado por palabras |
+| 3–5 | Integrantes por apellido | Letras desde los bordes |
+| 6 | Transición | `mk-clone-wall-transition` |
+| 7 | Las 8 etapas | Trazado de línea en SVG |
+| 8 | ¿Dónde está el cuello de botella? | `headline-slam` |
+| 9 | Nave y plano de Elaborados | `scan-band` |
+| 10–12 | 1500 kg, 16 pallets, 72 t, camiones andando | `slot-machine-roll` |
+| 13 | Tiempos de las 8 etapas | `parallax-zoom` |
+| 14 | ¿Formadora? 982 contra 1843 kg/h | Barras y sacudida |
+| 15 | Por qué la formadora: 53 % | `rgb-glitch-text` |
+| 16 | Tres pasos para probar la sospecha | `marker-highlight`, `velocity-throw-snap` |
+| 17 | Medida de desempeño | Fondo y transición propios |
+| 18 | Tablero real: 56,0 t/día, ¿es válido? | `split-flap-board` |
+| 19 | Por dónde arrancamos a simular | `grid-pixelate-wipe` |
+| 20 | Planos de la planta | `chromatic-aberration-wipe` |
+| 21 | Blender | Revelado sobre render real |
+| 22 | Código que construye la planta | `code-terminal-run` |
+| 23 | FlexSim en vivo con karaoke | Toma real |
+| 24 | Conclusiones de la simulación | `rgb-glitch-text` |
+| 25 | Por qué hacía falta el MCP | `strikethrough-replace` |
+| 26 | Qué es un MCP | `chat-message` |
+| 27 | De 0 a 1, captura de GitHub | `headline-slam` y rueda de dígitos |
+| 28 | Cómo funciona el puente | `tracing-beam` |
+| 29 | 73 herramientas del MCP | `slot-machine-roll` |
+| 30 | Herramientas de creación y conexión | `perspective-marquee` |
+| 31 | Idea de la web: celular y PC | `app-showcase`, `parallax-device-dive` |
+| 32 | Web: cinemáticas y gráficas con dato resaltado | Zoom con foco y karaoke |
+| 33 | Distribuciones de la simulación | `shutter-slam` |
+| 34 | Pruebas de ajuste | Barras, sellos y barrido |
+| 35 | Cómo corrimos la simulación | Tarjetas 3D, `number-wheel` |
+| 36 | E1, de la formadora a las mezcladoras | `number-wheel` |
+| 37–39 | E2, E3 y E4 | Intervalos animados y sellos |
+| 40 | Conclusión de los escenarios | `confetti` |
+| 41 | Conclusiones generales | Filas 3D, `shutter-slam` |
+| 42 | Agradecimiento, operario que saluda y baila | Renders reales de Blender |
+| 43 | Cierre con logo | `logo-outro`, `confetti` |

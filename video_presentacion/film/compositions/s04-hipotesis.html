@@ -333,6 +333,9 @@
       document.querySelectorAll(".s04h-arr").forEach((r, i) => {
         tl.fromTo(r, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.25, ease: "power3.out" }, P3 + 2 + i * 1.4);
       });
+      // rgb-glitch-text del catálogo sobre el 53 %
+      [[14,"10px 0 #00e5ff,-10px 0 #ff00aa"],[-10,"-12px 0 #00e5ff,12px 0 #ff00aa"],[6,"6px 0 #00e5ff,-6px 0 #ff00aa"],[0,"0 0 #000"]].forEach((q, k) => tl.to("#s04h-wn", { x: q[0], textShadow: q[1], duration: 2 / 30, ease: "none" }, PW + 0.95 + k * 2 / 30));
+      document.querySelectorAll(".s04h-row").forEach((r, i) => tl.fromTo(r, { rotationY: -75, transformPerspective: 1100, transformOrigin: "0% 50%" }, { rotationY: 0, duration: 0.55, ease: "back.out(1.4)" }, P3 + 1.2 + i * 1.4));
       window.__timelines["s04-hipotesis"] = tl;
     })();
   </script>

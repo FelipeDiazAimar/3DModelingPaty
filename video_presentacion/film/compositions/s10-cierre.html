@@ -15,6 +15,8 @@
     #c-rl { top:670px; font-size:38px; font-weight:600; color:#a9a9b3; }
     #c-r { top:724px; font-size:44px; font-weight:800; line-height:1.35; color:#ff4d63; }
     #c-pie { top:940px; font-size:34px; font-weight:500; color:#a9a9b3; }
+      .sh { position:absolute; left:0; width:1920px; height:540px; background:#ff1f3d; z-index:9; }
+    
   </style>
   <div id="root" data-composition-id="s10-cierre" data-width="1920" data-height="1080">
     <div id="q">
@@ -36,6 +38,7 @@
       <div id="c-r" class="c">github.com/FelipeDiazAimar/3DModelingPaty<br />github.com/FelipeDiazAimar/MCP_Flexsim</div>
       <div id="c-pie" class="c">Simulación · UTN · noviembre 2026</div>
     </div>
+  <div id="sh1" class="sh" style="top:-540px" data-layout-ignore></div><div id="sh2" class="sh" style="top:1080px" data-layout-ignore></div>
   </div>
   <script>
     (function () {
@@ -47,6 +50,12 @@
       tl.set("#q", { opacity: 0 }, D);
       tl.set("#op", { opacity: 1 }, D);
       rv("#c-th", D + 0.5); rv("#c-n", D + 3); rv("#c-rl", D + 6); rv("#c-r", D + 6.2); rv("#c-pie", D + 10);
+      // shutter-slam del catálogo hacia el agradecimiento; marker-highlight en cada conclusión
+      ["#q-1","#q-2","#q-3","#q-4"].forEach((s, i) => tl.fromTo(s, { rotationX: -70, transformPerspective: 900, transformOrigin: "50% 100%" }, { rotationX: 0, duration: 0.5, ease: "back.out(1.5)" }, [0.9,3.3,5.9,8.5][i]));
+      tl.fromTo("#sh1", { y: 0 }, { y: 540, duration: 0.2, ease: "power4.in" }, D - 0.22);
+      tl.fromTo("#sh2", { y: 0 }, { y: -540, duration: 0.2, ease: "power4.in" }, D - 0.22);
+      tl.to("#sh1", { y: 0, duration: 0.3, ease: "power3.out" }, D + 0.02);
+      tl.to("#sh2", { y: 0, duration: 0.3, ease: "power3.out" }, D + 0.02);
       window.__timelines["s10-cierre"] = tl;
     })();
   </script>

@@ -2,14 +2,14 @@
 
 Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D32 a D38). La IA calla todo el acto. Cifras verificadas en `DOCUMENTACION_VIDEO.md`.
 
-## D32 · Jeremias Micheloud · 8:59 (22 s)
+## D32 · Jeremias Micheloud · 9:04 (22 s)
 
 1. La materia prima llega fija: dieciséis pallets por turno.
 2. Los tiempos de máquina son constantes.
 3. La variación la ponen las fallas: exponencial, porque aparecen al azar.
 4. Y la reparación, lognormal: muchas cortas y pocas largas.
 
-## D33 · Jeremias Micheloud · 9:21 (45 s)
+## D33 · Jeremias Micheloud · 9:26 (45 s)
 
 1. Antes de simular miramos los datos reales de la planta y les hicimos pruebas de bondad de ajuste.
 2. Kolmogorov-Smirnov mide la mayor distancia entre los datos y la curva teórica; si pasa el límite, se rechaza.
@@ -18,20 +18,20 @@ Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D3
 5. Y el peso de los pallets es una mezcla de productos, así que la normal también se rechaza.
 6. No forzamos una distribución porque sí: lo decimos.
 
-## D34 · Jeremias Micheloud · 10:06 (38 s)
+## D34 · Jeremias Micheloud · 10:11 (38 s)
 
 1. En el modelo, las fallas son la fuente de variación: tiempo entre fallas exponencial y reparación lognormal.
 2. Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento.
 3. La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio.
 4. El modelo da cincuenta y cuatro coma nueve toneladas por día y la planta, cincuenta y seis: menos uno coma nueve por ciento. Por eso es válido.
 
-## D35 · Felipe Diaz Aimar · 10:44 (30 s)
+## D35 · Felipe Diaz Aimar · 10:49 (30 s)
 
 1. Este es el escenario base: setenta y cinco coma tres pallets por día.
 2. Sospechábamos de la formadora, pero el cuello real son las mezcladoras: noventa y uno por ciento ocupadas y una cola de tres coma cinco lotes.
 3. La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta.
 
-## D36 · Felipe Diaz Aimar · 11:14 (60 s)
+## D36 · Felipe Diaz Aimar · 11:19 (60 s)
 
 1. ¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora.
 2. Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares.
@@ -39,7 +39,7 @@ Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D3
 4. El intervalo va de trece coma ocho a quince. No incluye el cero, así que la mejora es real.
 5. Pero el cuello se mueve: ahora manda el desencajado, con setenta y cuatro toneladas por día.
 
-## D37 · Matias Buffa · 12:14 (45 s)
+## D37 · Matias Buffa · 12:19 (45 s)
 
 1. Ahora lo obvio: si queremos producir más, traigamos más materia prima.
 2. Sobre las formadoras rápidas, veinticuatro pallets por turno en lugar de dieciséis.
@@ -47,13 +47,13 @@ Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D3
 4. El intervalo va de menos cero coma tres a más cero coma uno: incluye el cero, no hay diferencia.
 5. La materia prima se acumula: las cámaras pasan de seis a veintidós pallets en promedio.
 
-## D38 · Matias Buffa · 12:59 (40 s)
+## D38 · Matias Buffa · 13:04 (40 s)
 
 1. Después probamos un batch más chico: mil doscientos kilos en lugar de mil quinientos.
 2. Rinde cuatro pallets menos por día, porque con batches chicos se lava más veces por tonelada.
 3. El intervalo va de menos cuatro coma seis a menos tres coma cuatro. También es significativo: conviene el batch grande.
 
-## D39 · Matias Buffa · 13:39 (25 s)
+## D39 · Matias Buffa · 13:44 (25 s)
 
 1. La conclusión: primero formadoras, después desencajado.
 2. Traer más materia prima, por sí sola, no suma nada.

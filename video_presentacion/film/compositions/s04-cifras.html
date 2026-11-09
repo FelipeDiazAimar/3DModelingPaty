@@ -105,11 +105,12 @@
       font-weight: 700;
       white-space: nowrap;
     }
+      #s04c-sc { position:absolute; left:0; top:0; width:1100px; height:10px; background:#ff1f3d; box-shadow:0 0 60px 26px rgba(255,31,61,.55); opacity:0; }
   </style>
   <div id="root" data-composition-id="s04-cifras" data-width="1920" data-height="1080">
     <div class="s04c-p" data-layout-allow-overflow style="background: #050507; color: #ffffff" data-v="" data-l="">
       <img id="s04c-nave" src="assets/renders/nave.png" alt="" />
-      <div id="s04c-right"><div id="s04c-h1">Sala de Elaborados</div><div id="s04c-h2">Líneas 7 y 8</div><img id="s04c-plano" src="assets/planos/sala_l78.png" alt="" /></div>
+      <div id="s04c-sc" data-layout-ignore></div><div id="s04c-right"><div id="s04c-h1">Sala de Elaborados</div><div id="s04c-h2">Líneas 7 y 8</div><img id="s04c-plano" src="assets/planos/sala_l78.png" alt="" /></div>
     </div>
     <div class="s04c-p" data-layout-allow-overflow style="background: #f4f1ec; color: #d0001f" data-v="1500 kg" data-l="por cada batch de mezcla" data-art="mix"></div>
     <div class="s04c-p" data-layout-allow-overflow style="background: #ff1f3d; color: #050507" data-v="16" data-l="pallets de materia prima por turno" data-art="pal"></div>
@@ -203,6 +204,9 @@
         art(p, at);
       });
 
+      // scan-band del catálogo: barrido sobre la nave
+      tl.fromTo("#s04c-sc", { y: -30, opacity: 1 }, { y: 1090, opacity: 1, duration: 1.7, ease: "none" }, 0.25);
+      tl.set("#s04c-sc", { opacity: 0 }, 1.96);
       window.__timelines["s04-cifras"] = tl;
     })();
   </script>

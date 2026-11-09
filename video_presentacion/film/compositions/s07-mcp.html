@@ -76,6 +76,7 @@
     .m-b { position: absolute; left: 210px; height: 150px; }
     .m-bt { position: absolute; left: 250px; height: 150px; font-size: 72px; font-weight: 900; line-height: 150px; white-space: nowrap; color: #ffffff; }
     #m-pc { left: 0; top: 730px; width: 1920px; text-align: center; font-size: 120px; font-weight: 900; letter-spacing: -0.04em; color: #d0001f; }
+      #m-mq { position:absolute; left:0; top:915px; white-space:nowrap; font-family:'JetBrains Mono',monospace; font-size:40px; color:#ff4d63; opacity:.75; transform-origin:50% 50%; }
   </style>
   <div id="root" data-composition-id="s07-mcp" data-width="1920" data-height="1080">
     <div id="m-p0" class="m-p" data-layout-allow-overflow data-layout-allow-overlap>
@@ -131,6 +132,7 @@
 
     <div id="m-p5" class="m-p" data-layout-allow-overflow>
       <div id="m-h5" class="m-abs">La IA con las manos en FlexSim</div>
+      <div id="m-mq" data-layout-ignore>flexsim_create_objects  ·  flexsim_connect_objects  ·  flexsim_run_experiments  ·  flexsim_get_statistics  ·  flexsim_set_distribution  ·  flexsim_attach_resource  ·  flexsim_pf_add_activity  ·  flexsim_agv_route  ·  flexsim_table_read  ·  flexsim_dashboard_create  ·  flexsim_create_objects  ·  flexsim_connect_objects  ·  flexsim_run_experiments  ·  flexsim_get_statistics  ·  flexsim_set_distribution  ·  flexsim_attach_resource  ·  flexsim_pf_add_activity  ·  flexsim_agv_route  ·  flexsim_table_read  ·  flexsim_dashboard_create</div>
       <div id="m-t2">
         <div><b>create_objects</b>   <em>crea máquinas, colas y transportes</em></div>
         <div><b>connect_objects</b>  <em>las conecta entre sí</em></div>
@@ -239,6 +241,8 @@
 
       
 
+      // perspective-marquee del catálogo con nombres reales de herramientas
+      tl.fromTo("#m-mq", { x: 300 }, { x: -2600, duration: 15, ease: "none" }, T[5]);
       window.__timelines["s07-mcp"] = tl;
       void END;
     })();
