@@ -20,7 +20,11 @@
     .m-col { position: absolute; top: 230px; width: 830px; height: 570px; border-radius: 30px; padding: 34px 40px; }
     .m-lab { font-size: 58px; font-weight: 900; letter-spacing: -0.03em; }
     .m-bub { position: absolute; padding: 20px 34px; border-radius: 28px; font-size: 44px; font-weight: 500; white-space: nowrap; }
-    .m-tool { position: absolute; left: 40px; padding: 16px 34px; border-radius: 999px; background: #050507; color: #ffffff; font-size: 46px; font-weight: 700; white-space: nowrap; }
+    .m-tool { position: absolute; left: 40px; padding: 12px 30px; border-radius: 999px; background: #050507; color: #ffffff; font-family: "JetBrains Mono", monospace; font-size: 32px; font-weight: 700; white-space: nowrap; }
+    .m-tool i, .m-th i, .m-ans i { font-style: normal; color: #ff4d63; margin-right: 10px; }
+    .m-ux { position: absolute; right: 40px; top: 130px; padding: 16px 30px; border-radius: 28px 28px 6px 28px; background: #050507; color: #ffffff; font-size: 36px; font-weight: 500; white-space: nowrap; }
+    .m-th { position: absolute; left: 40px; top: 206px; font-size: 34px; font-weight: 600; white-space: nowrap; }
+    .m-ans { position: absolute; left: 40px; top: 486px; font-size: 40px; font-weight: 800; white-space: nowrap; }
     #m-def { left: 110px; top: 825px; width: 1700px; text-align: center; font-size: 50px; font-weight: 700; line-height: 1.2; white-space: normal; }
     #m-def span { color: #ff4d63; }
 
@@ -97,10 +101,12 @@
       </div>
       <div id="m-c2" class="m-col" style="left: 980px; background: #ff1f3d; color: #050507">
         <div class="m-lab">Un MCP: la IA opera</div>
-        <div id="m-t1" class="m-tool" style="top: 140px">Abre el modelo</div>
-        <div id="m-t3" class="m-tool" style="top: 240px">Lo hace correr</div>
-        <div id="m-t4" class="m-tool" style="top: 340px">Lee cada máquina</div>
-        <div id="m-t5" class="m-tool" style="top: 440px">Construye objetos</div>
+        <div id="m-ux" class="m-ux">Armá el modelo y corré los experimentos</div>
+        <div id="m-th" class="m-th"><i>✳</i> Claude está pensando…</div>
+        <div id="m-t1" class="m-tool" style="top: 250px"><i>✓</i> flexsim_create_objects</div>
+        <div id="m-t3" class="m-tool" style="top: 324px"><i>✓</i> flexsim_connect_objects</div>
+        <div id="m-t4" class="m-tool" style="top: 398px"><i>✓</i> flexsim_run_experiments</div>
+        <div id="m-ans" class="m-ans"><i>✳</i> Listo: corrió y trae los datos</div>
       </div>
       <div id="m-def" class="m-abs"><span>Model Context Protocol (MCP):</span> protocolo abierto que estandariza cómo las aplicaciones de IA se conectan con herramientas y datos externos</div>
     </div>
@@ -146,7 +152,7 @@
   <script>
     // Diapositivas 23–29 · Acto 4 · 73 tools verificadas en mcp_server/flexsim_mcp.py; categorías de etapas/ACTO4.
     // D28: salidas reales de esta sesión de trabajo. D29: E1_FINAL.md:72, SUPUESTOS_v2.md:9.
-    // Mecánicas adaptadas del catálogo: strikethrough-replace, chat-message, tracing-beam, code-terminal-run, slot-machine-roll, headline-slam.
+    // Mecánicas adaptadas del catálogo: strikethrough-replace, chat-message, claude-exchange (D24), tracing-beam, code-terminal-run, slot-machine-roll, headline-slam.
     (function () {
       const T = [0, 12, 27, 38, 53, 75.5];
       const END = 90.5;
@@ -185,7 +191,12 @@
       pop("#m-b1", a + 2.4);
       pop("#m-b2", a + 3.8);
       blurIn("#m-c2", a + 6);
-      ["#m-t1", "#m-t3", "#m-t4", "#m-t5"].forEach((s, i) => pop(s, a + 7.2 + i * 0.8));
+      // claude-exchange: pedido, "pensando" y herramientas reales del MCP
+      pop("#m-ux", a + 7);
+      tl.fromTo("#m-th", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.25, ease: "power2.out" }, a + 7.7);
+      tl.to("#m-th", { opacity: 0, duration: 0.2 }, a + 8.7);
+      ["#m-t1", "#m-t3", "#m-t4"].forEach((s, i) => pop(s, a + 8.8 + i * 0.7));
+      blurIn("#m-ans", a + 10.6, 0.3);
       blurIn("#m-def", a + 11);
 
       // D25 · headline-slam

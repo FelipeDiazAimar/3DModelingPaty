@@ -185,6 +185,31 @@
       "name": "app-showcase",
       "type": "hyperframes:block",
       "target": "compositions/app-showcase.html"
+    },
+    {
+      "name": "data-chart",
+      "type": "hyperframes:block",
+      "target": "compositions/data-chart.html"
+    },
+    {
+      "name": "cursor-annotate",
+      "type": "hyperframes:component",
+      "target": "compositions/components/cursor-annotate.html"
+    },
+    {
+      "name": "caption-kinetic-slam",
+      "type": "hyperframes:component",
+      "target": "compositions/components/caption-kinetic-slam.html"
+    },
+    {
+      "name": "screen-flow-carousel",
+      "type": "hyperframes:component",
+      "target": "compositions/components/screen-flow-carousel.html"
+    },
+    {
+      "name": "claude-exchange",
+      "type": "hyperframes:block",
+      "target": "compositions/claude-exchange.html"
     }
   ]
 }

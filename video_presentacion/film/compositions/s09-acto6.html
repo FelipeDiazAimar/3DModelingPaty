@@ -12,6 +12,9 @@
     #k-box { position:absolute; left:210px; bottom:58px; width:1500px; text-align:center; opacity:0; z-index:5; }
     #k-txt { display:inline-block; padding:10px 28px; border-radius:16px; background:rgba(5,5,7,.86); font-size:34px; font-weight:700; line-height:1.2; }
     #k-txt .w { color:transparent; -webkit-text-fill-color:transparent; background-image:linear-gradient(90deg,#fff 0%,#fff 100%); -webkit-background-clip:text; background-clip:text; }
+    .kw { display:inline-block; }
+    .gl { position:absolute; top:262px; width:2px; height:610px; background:#050507; opacity:0; }
+    .gt { position:absolute; top:880px; width:120px; margin-left:-60px; text-align:center; font-size:30px; font-weight:700; color:#55555f; opacity:0; }
     .tk { position:absolute; left:0; top:0; width:1920px; height:1080px; object-fit:cover; opacity:0; }
     .tkl { position:absolute; left:40px; top:20px; font-size:26px; font-weight:700; letter-spacing:0.02em; opacity:0; }
   </style>
@@ -140,6 +143,11 @@
 <div id="h0620" class="e" style="left:620px;top:205px;font-size:42px;font-weight:700;color:#55555f;">Pallets por día</div>
 <div id="h01270" class="e" style="left:1270px;top:205px;font-size:42px;font-weight:700;color:#55555f;">IC 95 %</div>
 <div id="h01560" class="e" style="left:1560px;top:205px;font-size:42px;font-weight:700;color:#55555f;">t/día</div>
+<div class="gl" id="gl0" style="left:619px"></div><div class="gt" id="gt0" style="left:620px">0</div>
+<div class="gl" id="gl1" style="left:752px"></div><div class="gt" id="gt1" style="left:753px">25</div>
+<div class="gl" id="gl2" style="left:885px"></div><div class="gt" id="gt2" style="left:886px">50</div>
+<div class="gl" id="gl3" style="left:1018px"></div><div class="gt" id="gt3" style="left:1019px">75</div>
+<div class="gl" id="gl4" style="left:1151px"></div><div class="gt" id="gt4" style="left:1152px">100</div>
 <div id="h20" class="e" style="left:90px;top:289px;font-size:64px;font-weight:900;color:#050507;">E1</div>
 <div id="h30" class="e" style="left:200px;top:299px;font-size:40px;font-weight:600;color:#050507;">Base</div>
 <div id="h40" class="e b" style="left:620px;top:275px;width:401px;height:96px;background:#050507"></div>
@@ -166,10 +174,10 @@
 <div id="h73" class="e" style="left:1560px;top:784px;font-size:64px;font-weight:900;color:#050507;">—</div>
     </div>
     <div id="s8" class="s" style="background:#ff1f3d">
-<div id="g1" class="e" style="left:0px;top:110px;font-size:190px;font-weight:900;color:#050507;width:1920px;text-align:center;">1.º Formadoras</div>
-<div id="g2" class="e" style="left:0px;top:330px;font-size:190px;font-weight:900;color:#fff;width:1920px;text-align:center;">2.º Desencajado</div>
+<div id="g1" class="e" style="left:0px;top:110px;font-size:190px;font-weight:900;color:#050507;width:1920px;text-align:center;"><span class="kw">1.º</span> <span class="kw">Formadoras</span></div>
+<div id="g2" class="e" style="left:0px;top:330px;font-size:190px;font-weight:900;color:#fff;width:1920px;text-align:center;"><span class="kw">2.º</span> <span class="kw">Desencajado</span></div>
 <div id="g3" class="e" style="left:0px;top:590px;font-size:84px;font-weight:800;color:#050507;width:1920px;text-align:center;">Más materia prima sola no suma nada</div>
-<div id="g4" class="e p" style="left:470px;top:740px;font-size:72px;background:#050507;color:#fff">Intervalos, no corridas sueltas</div>
+<div id="g4" class="e p" style="left:470px;top:740px;font-size:72px;background:#050507;color:#fff"><span class="kw">Intervalos,</span> <span class="kw">no</span> <span class="kw">corridas</span> <span class="kw">sueltas</span></div>
     </div>
     <div id="k-box" data-layout-ignore><span id="k-txt"></span></div>
   </div>
@@ -354,6 +362,14 @@
       (function(){ const b = document.getElementById("s8"); for (let i = 0; i < 32; i++) { const e = document.createElement("div"); const c = i % 16; e.style.cssText = "position:absolute;left:" + (32 + c * 117) + "px;top:" + (i < 16 ? 936 : 862) + "px;width:107px;height:66px;background:#a80016;border:3px solid #050507;border-radius:6px"; b.appendChild(e); const at = T[8][1] + ((i * 7) % 32) * 0.035; tl.fromTo(e, { y: -1250, rotation: (i % 5) * 7 - 14, opacity: 1 }, { y: 0, rotation: 0, opacity: 1, duration: 0.85, ease: "bounce.out", immediateRender: true }, at); tl.to(e, { opacity: 0.22, duration: 0.5 }, T[8][2] - 0.4); } })();
       for (let i = 0; i < 4; i++) tl.fromTo("#h4" + i, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.8, ease: "expo.out" }, NS[7] + 0.5 + i * 0.22);
       for (let i = 0; i < 4; i++) tl.fromTo("#h2" + i, { x: -260 }, { x: 0, duration: 0.5, ease: "expo.out" }, NS[7] + 0.5 + i * 0.22);
+      // data-chart (adaptado): ejes y líneas de guía a la misma escala de las barras (5,325 px por pallet), detrás de las barras
+      for (let i = 0; i < 5; i++) { tl.fromTo("#gl" + i, { scaleY: 0, opacity: 0.18, transformOrigin: "50% 100%" }, { scaleY: 1, opacity: 0.18, duration: 0.6, ease: "expo.out" }, NS[7] + 0.5 + i * 0.12); tl.fromTo("#gt" + i, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, NS[7] + 0.9 + i * 0.12); }
+      // caption-kinetic-slam (adaptado): cada palabra entra de un lado distinto, en el momento de la voz
+      const slamW = (sel, at, gap) => document.querySelectorAll(sel + " .kw").forEach((w, i) => {
+        const m = [{ y: -120 }, { x: -300 }, { x: 300 }, { scale: 0.4 }][i % 4];
+        tl.fromTo(w, { opacity: 0, ...m }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.24, ease: m.y ? "back.out(1.7)" : m.scale ? "back.out(2.2)" : "expo.out" }, at + i * gap);
+      });
+      slamW("#g1", NS[8] + 0.7, 0.28); slamW("#g2", NS[8] + 1.5, 0.28); slamW("#g4", NS[8] + 14.3, 0.22);
       window.__timelines["s09-acto6"] = tl;
       const HOST = 535.795237;
       const SEGS = [[0.5, 5.553, "La materia prima llega fija: dieciséis pallets por turno."], [6.003, 9.371, "Los tiempos de máquina son constantes."], [9.821, 15.997, "La variación la ponen las fallas: exponencial, porque aparecen al azar."], [16.447, 21.5, "Y la reparación, lognormal: muchas cortas y pocas largas."], [22.5, 31.04, "Antes de simular miramos los datos reales de la planta y les hicimos pruebas de bondad de ajuste."], [31.49, 40.03, "Kolmogorov-Smirnov mide la mayor distancia entre los datos y la curva teórica; si pasa el límite, se rechaza."], [40.48, 44.749, "Los arribos llegan en ráfagas: la exponencial queda rechazada."], [45.199, 53.265, "Las paradas tienen cola pesada: tampoco ajustan a una lognormal, aunque es la que mejor se acerca."], [53.715, 62.255, "Y el peso de los pallets es una mezcla de productos, así que la normal también se rechaza."], [62.705, 66.5, "No forzamos una distribución porque sí: lo decimos."], [67.5, 75.581, "En el modelo, las fallas son la fuente de variación: tiempo entre fallas exponencial y reparación lognormal."], [76.031, 84.111, "Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento."], [84.561, 91.216, "La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio."], [91.666, 104.5, "El modelo da cincuenta y cuatro coma nueve toneladas por día y la planta, cincuenta y seis: menos uno coma nueve por ciento. Por eso es válido."], [105.5, 112.023, "Este es el escenario base: setenta y cinco coma tres pallets por día."], [112.473, 125.018, "Sospechábamos de la formadora, pero el cuello real son las mezcladoras: noventa y uno por ciento ocupadas y una cola de tres coma cinco lotes."], [125.468, 134.5, "La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta."], [135.5, 150.282, "¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora."], [150.732, 162.943, "Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares."], [163.393, 171.106, "Son catorce coma cuatro pallets más por día: un diecinueve por ciento."], [171.556, 183.767, "El intervalo va de trece coma ocho a quince. No incluye el cero, así que la mejora es real."], [184.217, 194.5, "Pero el cuello se mueve: ahora manda el desencajado, con setenta y cuatro toneladas por día."], [195.5, 202.228, "Ahora lo obvio: si queremos producir más, traigamos más materia prima."], [202.678, 210.017, "Sobre las formadoras rápidas, veinticuatro pallets por turno en lugar de dieciséis."], [210.467, 217.806, "Contra el escenario anterior da menos cero coma uno pallets por día."], [218.256, 229.876, "El intervalo va de menos cero coma tres a más cero coma uno: incluye el cero, no hay diferencia."], [230.326, 239.5, "La materia prima se acumula: las cámaras pasan de seis a veintidós pallets en promedio."], [240.5, 251.168, "Después probamos un batch más chico: mil doscientos kilos en lugar de mil quinientos."], [251.618, 263.81, "Rinde cuatro pallets menos por día, porque con batches chicos se lava más veces por tonelada."], [264.26, 279.5, "El intervalo va de menos cuatro coma seis a menos tres coma cuatro. También es significativo: conviene el batch grande."], [280.5, 289.5, "Comparando todo: las formadoras rápidas rinden noventa pallets por día; la base, setenta y cinco; y el batch chico, setenta y uno."], [290.5, 295.279, "La conclusión: primero formadoras, después desencajado."], [295.729, 303.695, "Traer más materia prima, por sí sola, no suma nada."], [304.145, 314.5, "Y todo esto lo sabemos porque comparamos intervalos de confianza, no corridas sueltas."]].map((s) => ({ t0: HOST + s[0], t1: HOST + s[1], text: s[2] }));

@@ -8,6 +8,12 @@
     .ca { position: absolute; left: 0; top: 76px; width: 1920px; text-align: center; opacity: 0; z-index: 3; }
     .ca span { display: inline-block; padding: 14px 40px; border-radius: 18px; background: #ff1f3d; color: #050507; font-size: 50px; font-weight: 900; letter-spacing: -0.02em; white-space: nowrap; }
     .w8-chip { position: absolute; left: 50px; top: 14px; padding: 6px 26px; border-radius: 999px; background: #050507; color: #fff; font-size: 38px; font-weight: 800; white-space: nowrap; opacity: 0; z-index: 3; }
+    #w8-cr { position: absolute; inset: 0; z-index: 3; overflow: hidden; background: #050507; opacity: 0; }
+    #w8-crt { position: absolute; left: 0; top: 70px; width: 1920px; text-align: center; font-size: 96px; font-weight: 900; letter-spacing: -0.04em; white-space: nowrap; color: #fff; }
+    .w8-cs { position: absolute; left: 480px; top: 290px; width: 960px; height: 540px; border-radius: 22px; overflow: hidden; border: 3px solid #3a3a44; box-shadow: 0 30px 70px rgba(0,0,0,.6); opacity: 0; }
+    .w8-cs img { width: 960px; height: 540px; display: block; }
+    .w8-cc { position: absolute; left: 0; top: 890px; width: 1920px; text-align: center; opacity: 0; }
+    .w8-cc span { display: inline-block; padding: 12px 44px; border-radius: 999px; background: #ff1f3d; color: #050507; font-size: 52px; font-weight: 900; white-space: nowrap; }
     #w8-wipe { position: absolute; inset: 0; background: #ff1f3d; transform: scaleX(0); z-index: 4; }
   </style>
   <div id="root" data-composition-id="s08-web" data-width="1920" data-height="1080" data-layout-allow-overflow data-layout-allow-overlap>
@@ -57,6 +63,19 @@
     <div id="ca19" class="ca" data-layout-ignore><span>Mezclado: 91 % ocupado, 65,3 t/día: el cuello</span></div>
     <div id="ca20" class="ca" data-layout-ignore><span>El lavado sube la ocupación de 85 % a 91 %</span></div>
     <div id="ca21" class="ca" data-layout-ignore><span>E2: 89,7 pallets por día, la mejor opción</span></div>
+    <div id="w8-cr" data-layout-ignore>
+      <div id="w8-crt">Los apartados de la web</div>
+      <div class="w8-cs"><img src="assets/web/st/prod_6.5.png" alt="" /></div>
+      <div class="w8-cs"><img src="assets/web/st/par_6.5.png" alt="" /></div>
+      <div class="w8-cs"><img src="assets/web/st/col_6.5.png" alt="" /></div>
+      <div class="w8-cs"><img src="assets/web/st/vel_6.5.png" alt="" /></div>
+      <div class="w8-cs"><img src="assets/web/st/esc_6.5.png" alt="" /></div>
+      <div class="w8-cc"><span>Producción</span></div>
+      <div class="w8-cc"><span>Paradas</span></div>
+      <div class="w8-cc"><span>Colas y WIP</span></div>
+      <div class="w8-cc"><span>Velocidad</span></div>
+      <div class="w8-cc"><span>Escenarios</span></div>
+    </div>
     <div id="w8-c-elab" class="w8-chip" data-layout-ignore>Elaborados, en vivo</div>
     <div id="w8-c-lote" class="w8-chip" data-layout-ignore>Seguir un lote</div>
     <div id="w8-c-prod" class="w8-chip" data-layout-ignore>Producción</div>
@@ -124,6 +143,24 @@
       stop(19,131.333,3.000,-453.1,-406.2,1.472);
       stop(20,134.333,3.000,-453.1,-384.2,1.472);
       stop(21,137.333,3.000,-453.1,-509.8,1.472);
+      // screen-flow-carousel (mecánica adaptada): riel horizontal con lanzamiento y asentado, capturas reales; sobre el final de "Seguir un lote"
+      {
+        const C0 = 61.8, CUE = [63.3, 64.5, 65.7, 66.9], OUT = 68.1;
+        const sc = Array.from(document.querySelectorAll(".w8-cs")), cc = Array.from(document.querySelectorAll(".w8-cc"));
+        const pose = (i, k) => { const d = i - k; return { x: d * 1040, scale: d === 0 ? 1 : 0.7, opacity: Math.abs(d) > 1 ? 0 : d === 0 ? 1 : 0.4 }; };
+        tl.fromTo("#w8-cr", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, C0);
+        tl.fromTo("#w8-crt", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, C0 + 0.2);
+        sc.forEach((e, i) => {
+          tl.fromTo(e, { ...pose(i, 0), y: 40 }, { ...pose(i, 0), y: 0, duration: 0.6, ease: "power3.out" }, C0 + 0.2);
+          CUE.forEach((t, k) => tl.fromTo(e, pose(i, k), { ...pose(i, k + 1), duration: 0.8, ease: "power3.out" }, t));
+        });
+        cc.forEach((e, i) => {
+          const a = i === 0 ? C0 + 0.6 : CUE[i - 1] + 0.3;
+          tl.fromTo(e, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.25, ease: "expo.out" }, a);
+          if (i < cc.length - 1) tl.to(e, { opacity: 0, duration: 0.15 }, CUE[i] - 0.05);
+        });
+        tl.set("#w8-cr", { opacity: 0 }, OUT);
+      }
       wipe(20.000);
       wipe(68.333);
       wipe(77.333);

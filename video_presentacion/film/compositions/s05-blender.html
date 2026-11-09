@@ -172,6 +172,9 @@
     #s05-cam { position:absolute; inset:0; transform-origin:50% 50%; }
       #s05-wire { position:absolute; left:0; top:0; width:1920px; height:1080px; object-fit:cover; }
       #s05-t0 span { display:inline-block; }
+      #s05-card { position:absolute; left:860px; top:735px; width:880px; height:250px; border-radius:18px; overflow:hidden; border:3px solid #ff1f3d; box-shadow:0 30px 70px rgba(0,0,0,.65), 18px 18px 0 rgba(255,31,61,.35); opacity:0; background:#050507; }
+      #s05-card img { position:absolute; left:0; top:0; width:100%; height:100%; object-fit:cover; }
+      #s05-card span { position:absolute; left:18px; bottom:14px; padding:6px 20px; border-radius:999px; background:#ff1f3d; color:#050507; font-size:32px; font-weight:900; }
   </style>
   <div id="root" data-composition-id="s05-blender" data-width="1920" data-height="1080">
     <div id="s05-p0" class="s05-p" data-layout-allow-overflow>
@@ -179,6 +182,7 @@
       <div id="s05-scrim" data-layout-ignore></div>
       <div id="s05-t0"><span>B</span><span>l</span><span>e</span><span>n</span><span>d</span><span>e</span><span>r</span></div>
       <div id="s05-s0">Aprendimos a usarlo para levantar la planta entera</div>
+      <div id="s05-card" data-layout-ignore><img src="assets/renders/planta_luz.jpg" alt="" /><span>Render de Blender</span></div>
     </div>
     <div id="s05-p1" class="s05-p" data-layout-allow-overflow>
       <div id="s05-term" data-layout-allow-overflow></div>
@@ -224,6 +228,9 @@
       tl.fromTo("#s05-scrim", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power2.out" }, B0 + 2.8);
       document.querySelectorAll("#s05-t0 span").forEach((c, i) => tl.fromTo(c, { opacity: 0, y: 340, rotationY: 90, transformPerspective: 800 }, { opacity: 1, y: 0, rotationY: 0, duration: 0.55, ease: "back.out(1.7)" }, B0 + 3.1 + i * 0.07));
       tl.fromTo("#s05-s0", { opacity: 0, x: -180, filter: "blur(16px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, B0 + 4);
+      // ui-3d-reveal (mecánica adaptada): tarjeta con perspectiva que se endereza con el render real
+      tl.fromTo("#s05-card", { opacity: 0, rotationY: -55, rotationX: 18, x: 240, scale: 0.8, transformPerspective: 1400, transformOrigin: "0% 50%" }, { opacity: 1, rotationY: -14, rotationX: 6, x: 0, scale: 1, duration: 0.9, ease: "expo.out" }, B0 + 4.8);
+      tl.to("#s05-card", { rotationY: -4, rotationX: 2, duration: 1.8, ease: "none" }, B0 + 5.7);
 
       // Diapo 19 · la terminal se escribe sola, con los scripts reales
       const LN = [
