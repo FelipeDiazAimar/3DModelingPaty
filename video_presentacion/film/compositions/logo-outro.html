@@ -53,6 +53,7 @@
           </svg>
         </div>
 
+        <div id="lo-conf"></div>
         <div class="text-container">
           <div class="tagline">Simulación de líneas de hamburguesas</div>
           <div class="url-pill">
@@ -203,6 +204,9 @@
             textStartTime + 0.4,
           );
 
+          // Confeti del catálogo (confetti): partículas sembradas con gravedad
+          (function(){var box=document.getElementById("lo-conf");var cols=["#ff1f3d","#ffffff","#ff4d63","#d0001f"];var seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647;}
+          for(var i=0;i<90;i++){var e=document.createElement("div");e.style.cssText="position:absolute;left:960px;top:430px;width:"+(8+rnd()*12)+"px;height:"+(14+rnd()*16)+"px;background:"+cols[i%4]+";opacity:0;z-index:4";box.appendChild(e);var a=rnd()*6.283,v=350+rnd()*700;tl.fromTo(e,{x:0,y:0,opacity:1,rotation:0},{x:Math.cos(a)*v,y:Math.sin(a)*v*0.7+620,rotation:rnd()*900,duration:2.2+rnd()*1.2,ease:"power2.out"},1.25);tl.to(e,{opacity:0,duration:.5},3.4+rnd()*1.2);}})();
           window.__timelines = window.__timelines || {};
           window.__timelines["logo-outro"] = tl;
         })();

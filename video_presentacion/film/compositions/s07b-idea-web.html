@@ -1,0 +1,55 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; background:#050507; color:#fff; font-family:"SF Pro Display",sans-serif; perspective:1400px; }
+    #i-a { position:absolute; left:0; top:300px; width:1920px; text-align:center; font-size:100px; font-weight:800; letter-spacing:-.04em; white-space:nowrap; }
+    #i-b { position:absolute; left:0; top:440px; width:1920px; text-align:center; font-size:170px; font-weight:900; letter-spacing:-.05em; white-space:nowrap; color:#ff1f3d; }
+    #i-c { position:absolute; left:0; top:70px; width:1920px; text-align:center; font-size:84px; font-weight:900; letter-spacing:-.04em; white-space:nowrap; opacity:0; }
+    #i-box { position:absolute; left:110px; top:430px; width:360px; height:220px; border-radius:26px; background:#17171d; border:3px solid #ff1f3d; text-align:center; line-height:220px; font-size:72px; font-weight:900; opacity:0; }
+    #i-dev { position:absolute; left:640px; top:200px; width:1170px; height:760px; border-radius:30px; background:#1b1b22; border:3px solid #4a4a55; opacity:0; transform-origin:50% 50%; padding:46px 16px 16px; box-shadow:0 40px 120px rgba(255,31,61,.35); }
+    #i-dev i { position:absolute; left:26px; top:16px; width:14px; height:14px; border-radius:50%; background:#ff1f3d; box-shadow:26px 0 0 #fff,52px 0 0 #6a6a76; }
+    #i-dev img { width:100%; height:100%; display:block; border-radius:12px; object-fit:cover; }
+    .dp { position:absolute; left:470px; top:534px; width:18px; height:18px; border-radius:50%; background:#ff1f3d; opacity:0; }
+    #i-tag { position:absolute; left:0; top:985px; width:1920px; text-align:center; font-size:50px; font-weight:800; opacity:0; color:#ff4d63; }
+  </style>
+  <div id="root" data-composition-id="s07b-idea-web" data-width="1920" data-height="1080" data-layout-allow-overlap data-layout-allow-overflow>
+    <div id="i-a">Toda la información ya sale de FlexSim.</div>
+    <div id="i-b">¿Por qué quedarnos ahí?</div>
+    <div id="i-c">La planta, en tiempo real, en cualquier navegador</div>
+    <div id="i-box">FlexSim</div>
+    <div class="dp" id="dp0"></div>
+    <div class="dp" id="dp1"></div>
+    <div class="dp" id="dp2"></div>
+    <div class="dp" id="dp3"></div>
+    <div class="dp" id="dp4"></div>
+    <div class="dp" id="dp5"></div>
+    <div class="dp" id="dp6"></div>
+    <div class="dp" id="dp7"></div>
+    <div class="dp" id="dp8"></div>
+    <div class="dp" id="dp9"></div>
+    <div id="i-dev" data-layout-ignore><i></i><img src="assets/web/st/home.png" alt="" /></div>
+    <div id="i-tag">Una aplicación propia que muestra la simulación mientras corre</div>
+  </div>
+  <script>
+    // Idea de la web. Mecánica adaptada de parallax-device-dive: el dispositivo sube y la cámara entra por su pantalla.
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#i-a", { opacity: 0, y: 30, filter: "blur(14px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power4.out" }, 0.2);
+      tl.fromTo("#i-b", { opacity: 0, scale: 2.4, filter: "blur(30px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 1.7);
+      [[26,-16],[-20,12],[12,8],[-6,-4],[0,0]].forEach((s, k) => tl.to("#i-b", { x: s[0], y: s[1], duration: 1 / 30, ease: "none" }, 2 + k / 30));
+      tl.to(["#i-a", "#i-b"], { opacity: 0, y: -80, filter: "blur(20px)", duration: 0.3, ease: "power2.in" }, 4.1);
+      tl.fromTo("#i-c", { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, 4.5);
+      tl.fromTo("#i-box", { opacity: 0, x: -200 }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out" }, 4.6);
+      tl.fromTo("#i-dev", { opacity: 0, y: 420, scale: 0.8, rotationX: 28 }, { opacity: 1, y: 0, scale: 1, rotationX: 0, duration: 0.9, ease: "power3.out" }, 4.9);
+      for (let i = 0; i < 10; i++) {
+        tl.fromTo("#dp" + i, { opacity: 0, x: 0, y: (i % 3 - 1) * 60 }, { opacity: 1, duration: 0.05 }, 5.6 + i * 0.22);
+        tl.to("#dp" + i, { x: 300, y: (i % 3 - 1) * -40, duration: 0.5, ease: "power2.in" }, 5.65 + i * 0.22);
+        tl.to("#dp" + i, { opacity: 0, duration: 0.05 }, 6.13 + i * 0.22);
+      }
+      tl.fromTo("#i-tag", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 6.4);
+      tl.to(["#i-c", "#i-box", "#i-tag"], { opacity: 0, duration: 0.3, ease: "power2.in" }, 9.7);
+      tl.to("#i-dev", { x: -190, y: -40, scale: 2.5, duration: 2.1, ease: "power4.in" }, 9.9);
+      tl.set("#i-dev", { borderRadius: 0 }, 11.8);
+      window.__timelines["s07b-idea-web"] = tl;
+    })();
+  </script>
+</template>

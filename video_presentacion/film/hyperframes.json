@@ -150,6 +150,36 @@
       "name": "logo-outro",
       "type": "hyperframes:block",
       "target": "compositions/logo-outro.html"
+    },
+    {
+      "name": "parallax-device-dive",
+      "type": "hyperframes:component",
+      "target": "compositions/components/parallax-device-dive.html"
+    },
+    {
+      "name": "multi-device-splay",
+      "type": "hyperframes:component",
+      "target": "compositions/components/multi-device-splay.html"
+    },
+    {
+      "name": "number-wheel",
+      "type": "hyperframes:component",
+      "target": "compositions/components/number-wheel.html"
+    },
+    {
+      "name": "confetti",
+      "type": "hyperframes:component",
+      "target": "compositions/components/confetti.html"
+    },
+    {
+      "name": "weight-wave",
+      "type": "hyperframes:block",
+      "target": "compositions/weight-wave.html"
+    },
+    {
+      "name": "ui-3d-reveal",
+      "type": "hyperframes:block",
+      "target": "compositions/ui-3d-reveal.html"
     }
   ]
 }

@@ -105,6 +105,7 @@
       blurIn("#s06-b2", V + 3.6);
       blurIn("#s06-t1", V + 6.2);
       slam("#s06-pct", V + 8.6);
+      [[10,-6],[-8,4],[6,3],[-3,-2],[0,0]].forEach((q, k) => tl.to("#s06-pct", { x: q[0], y: q[1], textShadow: k < 4 ? "6px 0 #00e5ff, -6px 0 #ff00aa" : "0 0 #000", duration: 2 / 30, ease: "none" }, V + 8.9 + k * 2 / 30));
       window.__timelines["s06-flexsim"] = tl;
     })();
   </script>

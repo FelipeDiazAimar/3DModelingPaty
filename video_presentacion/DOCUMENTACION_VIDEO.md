@@ -168,3 +168,7 @@ Diapositivas propias en `compositions/s09-acto6.html`, 5:00, con karaoke para qu
 ## 19. Revisión completa del 8/11/2026
 
 Cambios pedidos diapositiva por diapositiva. Portada sin "San Jorge"; integrantes por apellido; D7 y D8 invertidas (primero el proceso, después el problema); nave D9 con cuadro fijo para quitar el parpadeo del render; camiones de D12 andando; nueva diapositiva "por qué la formadora" (53 % = 982/1843); nueva "por dónde arrancamos a simular"; D24 pasa a conclusiones de la corrida vigente (`E1_FINAL.md:72-73`), no se tocó el modelo; se quitaron la validación y el veredicto del bloque MCP; definición formal de MCP; captura real del repositorio; D31 con zoom y subtítulos; nueva diapositiva de distribuciones (`SUPUESTOS_v2.md:12,15,120`); D34 sin la comparación con la planta; conclusiones finales; operario a la derecha con baile (`renders/baile.mp4`, clip Dance); cierre con el bloque `logo-outro`.
+
+## 20. Idea de la web, zooms y animaciones
+
+Nueva diapositiva D31 (idea de la web, mecánica de `parallax-device-dive`). En la web, cada apartado usa cuadros reales de `secciones.mp4` (`assets/web/st/`) con zoom exacto a cada gráfica o tabla, dato resaltado y etiqueta; los valores salen de esos mismos cuadros. Acto 6: barras que crecen, sellos, tarjetas 3D, ruedas de números (`number-wheel`) e intervalos animados. E1 aclara que se sospechaba de la formadora y la simulación marcó las mezcladoras. Cierre con confeti (`confetti`). Logo PATY también en la web.
