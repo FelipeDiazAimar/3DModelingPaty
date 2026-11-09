@@ -9,10 +9,12 @@ Los actos 1 y 2 están en beats del grid. Desde el Acto 3 los tiempos son duraci
 | D1 chispa | b0–16 | (sin voz) | SIN VOZ |
 | D2 portada | b16–40 | Simulación de líneas de hamburguesas Paty. | HABLA |
 | D3–D6 integrantes y muro | b40–55 | (música e impactos) | SIN VOZ |
+| Rubro | 5 s | Es una industria frigorífica. Y en su sector de elaborados se hacen hamburguesas congeladas. | HABLA |
 | D7 problema | b55–65 | En toda planta hay un lugar donde la producción se frena. Encontrarlo es nuestro problema. | HABLA |
 | D8 sistema | b65–87 | La carne entra en pallets, atraviesa ocho etapas y sale convertida en cajas de hamburguesas. Las líneas siete y ocho hacen ese viaje en paralelo, todos los días. | HABLA |
 | D9 nave | b87–95 | Todo pasa dentro de esta nave. | HABLA |
 | D10–D12 escala | b95–119 | La mezcla se prepara en tandas grandes. En cada turno llegan los camiones con la materia prima, y a lo largo del día entra mucha más carne de la que parece. | HABLA |
+| Escenario base | 10 s | Este es el punto de partida: tres turnos continuos, dieciséis pallets por turno, dos líneas iguales y cuatro montacargas. Contra esto vamos a comparar todo lo demás. | HABLA |
 | D13 sospechosa | b119–147 | Cada máquina tiene su propio ritmo, y la línea entera avanza al ritmo de la más lenta. La pregunta es cuál. | HABLA |
 | D14 evidencia | b147–181 | Todas las miradas iban a la formadora, la máquina que le da forma a las hamburguesas. Trabaja bastante por debajo de lo que marca el estándar de la línea. | HABLA |
 | D15 por qué la formadora | 8 s | ¿Por qué ella? Porque rinde apenas la mitad de su estándar, y una línea avanza al ritmo de su máquina más lenta. | HABLA |

@@ -1,0 +1,40 @@
+<template>
+  <style>
+    #root { position:absolute; inset:0; overflow:hidden; background:#f4f1ec; color:#050507; font-family:"SF Pro Display",sans-serif; perspective:1500px; }
+    #r-k { position:absolute; left:0; top:90px; width:1920px; text-align:center; font-size:56px; font-weight:700; color:#d0001f; }
+    #r-t { position:absolute; left:0; top:175px; width:1920px; text-align:center; font-size:170px; font-weight:900; letter-spacing:-.05em; white-space:nowrap; }
+    #r-t span { display:inline-block; }
+    #r-c { position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:1500px 600px; }
+    .r-b { position:absolute; top:470px; width:500px; height:220px; border-radius:30px; background:#17171d; color:#fff; text-align:center; line-height:220px; font-size:72px; font-weight:900; letter-spacing:-.03em; }
+    .r-a { position:absolute; top:530px; font-size:90px; font-weight:900; color:#d0001f; }
+    #r-b2 { background:#ff1f3d; color:#050507; }
+    #r-s { position:absolute; left:0; top:790px; width:1920px; text-align:center; font-size:54px; font-weight:800; white-space:nowrap; }
+  </style>
+  <div id="root" data-composition-id="s03b-rubro" data-width="1920" data-height="1080" data-layout-allow-overflow>
+    <div id="r-k">Rubro</div>
+    <div id="r-t">Industria frigorífica</div>
+    <div id="r-c" data-layout-allow-overflow>
+      <div id="r-b0" class="r-b" style="left:90px">Faena</div>
+      <div id="r-a0" class="r-a" style="left:620px">→</div>
+      <div id="r-b1" class="r-b" style="left:710px">Desposte</div>
+      <div id="r-a1" class="r-a" style="left:1240px">→</div>
+      <div id="r-b2" class="r-b" style="left:1330px">Elaborados</div>
+    </div>
+    <div id="r-s">Actividad: hamburguesas congeladas · simulamos las líneas 7 y 8</div>
+  </div>
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      const t = document.getElementById("r-t");
+      t.innerHTML = Array.from(t.textContent).map((c) => "<span>" + (c === " " ? "&nbsp;" : c) + "</span>").join("");
+      tl.fromTo("#r-k", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, 0.1);
+      document.querySelectorAll("#r-t span").forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 200, rotationX: -95, transformPerspective: 900 }, { opacity: 1, y: 0, rotationX: 0, duration: 0.45, ease: "back.out(1.7)" }, 0.2 + i * 0.022));
+      [0, 1, 2].forEach((i) => tl.fromTo("#r-b" + i, { opacity: 0, x: -500, rotationY: 60, transformPerspective: 1100 }, { opacity: 1, x: 0, rotationY: 0, duration: 0.55, ease: "expo.out" }, 1.1 + i * 0.4));
+      [0, 1].forEach((i) => tl.fromTo("#r-a" + i, { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.2, ease: "power3.out" }, 1.4 + i * 0.4));
+      tl.to("#r-c", { scale: 1.12, x: -60, duration: 1.8, ease: "power2.inOut" }, 2.5);
+      tl.to(["#r-b0", "#r-b1", "#r-a0", "#r-a1"], { opacity: 0.25, duration: 0.5 }, 2.5);
+      tl.fromTo("#r-s", { opacity: 0, y: 50, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power4.out" }, 2.9);
+      window.__timelines["s03b-rubro"] = tl;
+    })();
+  </script>
+</template>

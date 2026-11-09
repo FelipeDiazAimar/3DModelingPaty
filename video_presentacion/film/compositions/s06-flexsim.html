@@ -75,9 +75,15 @@
     }
     .s06-row { position: absolute; left: 120px; width: 1680px; font-size: 76px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
     .s06-row b { color: #ff1f3d; font-weight: 900; }
+    .q-ring { position:absolute; border:6px solid #ff1f3d; border-radius:18px; box-shadow:0 0 30px 8px rgba(255,31,61,.8); opacity:0; }
+    #q-l { position:absolute; left:40px; top:575px; width:1240px; text-align:center; opacity:0; }
+    #q-l span { display:inline-block; padding:12px 34px; border-radius:16px; background:#ff1f3d; color:#050507; font-size:50px; font-weight:900; }
   </style>
   <div id="root" data-composition-id="s06-flexsim" data-width="1920" data-height="1080">
     <video id="s06-vid" class="clip" data-start="0" data-duration="111.428571" data-media-start="24" data-playback-rate="1.4" muted playsinline src="assets/flexsim/corrida.mp4"></video>
+    <div id="q-1" class="q-ring" style="left:462px;top:425px;width:136px;height:90px" data-layout-ignore></div>
+    <div id="q-2" class="q-ring" style="left:452px;top:720px;width:156px;height:112px" data-layout-ignore></div>
+    <div id="q-l" data-layout-ignore><span>Acá se forma la cola: las mezcladoras</span></div>
     <div id="s06-t" data-layout-ignore>FlexSim en vivo</div>
     <div id="s06-p4" data-layout-allow-overflow>
       <div id="s06-q">Lo que nos dice la simulación</div>
@@ -106,6 +112,14 @@
       blurIn("#s06-t1", V + 6.2);
       slam("#s06-pct", V + 8.6);
       [[10,-6],[-8,4],[6,3],[-3,-2],[0,0]].forEach((q, k) => tl.to("#s06-pct", { x: q[0], y: q[1], textShadow: k < 4 ? "6px 0 #00e5ff, -6px 0 #ff00aa" : "0 0 #000", duration: 2 / 30, ease: "none" }, V + 8.9 + k * 2 / 30));
+      // Marca dónde se forma la cola, mientras se habla de colas
+      ["#q-1", "#q-2"].forEach((q, i) => {
+        tl.fromTo(q, { opacity: 0, scale: 2.4 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.6)" }, 29 + i * 0.18);
+        tl.to(q, { scale: 1.1, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 17 }, 29.6);
+        tl.to(q, { opacity: 0, duration: 0.3 }, 46);
+      });
+      tl.fromTo("#q-l", { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "expo.out" }, 29.4);
+      tl.to("#q-l", { opacity: 0, duration: 0.3 }, 46);
       window.__timelines["s06-flexsim"] = tl;
     })();
   </script>

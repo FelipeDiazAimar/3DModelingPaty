@@ -180,3 +180,7 @@ Antes de la PC, tres celulares en abanico (mecánica del bloque `app-showcase`) 
 ## 22. Web sin subtítulos
 
 En la diapositiva de la web habla la IA, así que se quitó el karaoke de toda esa diapositiva. Las etiquetas con el dato de cada gráfica siguen.
+
+## 23. Consigna de la cátedra
+
+Agregados: rubro y actividad (`s03b-rubro`), escenario base con turnos, recursos y capacidades (`s04b-base`, datos de `SUPUESTOS_v2.md`), marcado de la cola en la corrida y tabla comparativa de E1 a E4 (Acto 6). Elaborados se acortó de 44 a 20 s. PATY se mantiene porque es una marca y no el nombre de la empresa. Pendiente: ejecución de E2, E3 y E4 (ver `PROMPT_ESCENARIOS.md`).
