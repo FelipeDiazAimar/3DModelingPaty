@@ -1,0 +1,11 @@
+// Tools/TamPallet_L7 y Tools/TamPallet_L8 (relay en OnExit de EstA_L7 / EstA_L8; en _L8 se usa el stream 92 y EstA_L8).
+// Cada vez que el estibador entrega un pallet, sortea el próximo: peso al azar entre los 500 pallets reales de
+// datos_trazabilidad/fitting_series/pesos_PT_kg.csv (Tools/pesosPT, media 862,5 kg) y cantidad de cajas = peso / 5 kg.
+// Fija el objetivo del Combiner (Target Quantity de la lista de componentes y targetcomponentsum).
+Array w = model().find("Tools/pesosPT").value.split(",");
+int k = floor(uniform(0, 1, 91) * w.length) + 1;
+if (k > w.length) k = w.length;
+int cajas = round(stringtonum(w[k]) / 5.0);
+model().find("EstA_L7>variables/componentlist").subnodes[1].find("Target Quantity").value = cajas;
+model().find("EstA_L7>variables/targetcomponentsum").value = cajas;
+return cajas;

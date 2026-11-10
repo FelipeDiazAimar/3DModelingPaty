@@ -71,7 +71,7 @@ const BOTTLENECK_STAGES = [
   { stage: "Formadora F26 / F19", key: "formado", rate: "18,33 s / caja (982 kg/h)" },
   { stage: "Túnel de Congelado", key: "tunel", rate: "300 s / batch (cap. 60)" },
   { stage: "Envasadora Fripack", key: "envasado", rate: "4,0 s / caja (150 paq/min)" },
-  { stage: "Robot Estibador", key: "estibado", rate: "144 cajas / pal (60 s)" },
+  { stage: "Robot Estibador", key: "estibado", rate: "peso real ÷ 5 kg por pallet (≈ 173 cajas; 60 s)" },
 ];
 
 function ChartGuide({ title, shows, watch }: { title: string; shows: string; watch: string }) {

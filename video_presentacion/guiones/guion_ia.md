@@ -29,7 +29,7 @@ Los actos 1 y 2 están en beats del grid. Desde el Acto 3 los tiempos son duraci
 | D21 Colas y WIP | 0:28–0:47 | Después miramos dónde se acumula el material: las cámaras, las colas y lo que hay en proceso. Si una máquina trabaja más lento que la anterior, ahí se forma la fila. Eso es lo que buscamos. | HABLA |
 | D21 Paradas | 0:47–1:04 | Las máquinas también se rompen: acá vemos cuántas veces se paró cada equipo y por cuánto tiempo. Esas paradas salen de datos reales: cada cuánto falla cada equipo y cuánto tarda en repararse. | HABLA |
 | D21 Velocidad | 1:05–1:22 | En velocidad vemos cuántos kilos por hora se producen, sobre la última hora simulada. Y lo comparamos con la formadora: 982 kilos por hora de capacidad, contra 1843 del estándar. | HABLA |
-| D21 Balance de masa | 1:22–1:34 | El balance de masa cuida las cuentas: cuánta carne entra y cuánta sale en cajas. Un pallet de materia prima son 1500 kilos; uno terminado, 144 cajas. | HABLA |
+| D21 Balance de masa | 1:22–1:34 | El balance de masa cuida las cuentas: cuánta carne entra y cuánta sale en cajas. Un pallet de materia prima son 1500 kilos; uno terminado, unas ciento setenta cajas. | HABLA |
 | D21 Montacargas | 1:35–1:46 | Cada montacargas tiene su cuenta de traslados. Son cuatro, de la recepción a la expedición. | HABLA |
 | D21 Estadística | 1:47–1:51 | Calentamiento de cuatro horas, y la ocupación por estación. | HABLA |
 | D24 conclusiones | 12 s | Con todo esto, la simulación ya nos dice algo. Producimos casi cincuenta y cinco toneladas por día. La línea se frena en las mezcladoras, ocupadas el noventa y uno por ciento, por los treinta minutos de lavado de cada batch. La formadora no era el cuello. | HABLA |

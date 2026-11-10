@@ -1,0 +1,13 @@
+// Tools/ArrancaPallets (relay en OnExit de SrcCamionesMP): una vez por corrida salta 400*repId números de los streams 91 y 92
+// y sortea el tamaño del primer pallet de cada línea. Mismo esquema de detección de corrida nueva que ArrancaFallas
+// (Tools/palLast + marca a t = 1 s en Tools/PalMark). Los nodos hay que marcarlos con switch_flexscript(nodo, 1) antes de buildnodeflexscript.
+treenode lastN = model().find("Tools/palLast");
+if (Model.time < lastN.value) {
+	lastN.value = Model.time;
+	int rep = model().find("Tools/repId").value;
+	for (int k = 0; k < 400 * rep; k++) { uniform(0, 1, 91); uniform(0, 1, 92); }
+	delayednodefunction(model().find("Tools/TamPallet_L7"), 0, 0);
+	delayednodefunction(model().find("Tools/TamPallet_L8"), 0, 0);
+	delayednodefunction(model().find("Tools/PalMark"), 1, 0);
+}
+return 0;

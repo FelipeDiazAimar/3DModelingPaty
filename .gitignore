@@ -42,3 +42,5 @@ video_presentacion/film/assets/renders/*/*
 !video_presentacion/film/assets/renders/test/
 video_presentacion/film/assets/renders/test/*
 !video_presentacion/film/assets/renders/test/f0000.png
+video_presentacion/film/renders/
+video_presentacion/render.log

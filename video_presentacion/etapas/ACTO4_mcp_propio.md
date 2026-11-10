@@ -17,7 +17,7 @@ Duración sugerida: 60–80 s. Ritmo: golpe de quiebre (placa +37,8 %) → ingen
 - El tablero HTML nativo de FlexSim (`Tools/TableroHTML`, 107 KB) ya medía solo: producción vs meta, colas, paradas, kg/h. Para *mostrar* alcanzaba; para *validar* no.
 - La primera corrida, sin lavado, no cerraba: **89,4 contra 64,9 pallets/día, +37,8 %** (+17 % en toneladas, 65,5 contra 56,0). Un HTML estático no puede repreguntar, re-correr réplicas ni cazar la causa.
 - No existía un MCP oficial de FlexSim que dejara a la IA operar el modelo. Decisión de vara alta: no quedarse con el HTML básico y construir el puente propio.
-- Nace el MCP del equipo (fork/base `github.com/FelipeDiazAimar/MCP_Flexsim`): la IA crea, corre, mide y corrige FlexSim en vivo. Con él se corrieron las 10 réplicas por escenario. Al sumar el lavado de 30 min por batch (dato de planta), E1 da 54,9 t/día contra 56,0 reales (−1,9 %) y el cuello resulta ser las mezcladoras (65,3 t/día, 91 % ocupadas), no la formadora.
+- Nace el MCP del equipo (fork/base `github.com/FelipeDiazAimar/MCP_Flexsim`): la IA crea, corre, mide y corrige FlexSim en vivo. Con él se corrieron las 10 réplicas por escenario. Al sumar el lavado de 30 min por batch (dato de planta), E1 da 54,8 t/día contra 56,0 reales (−2,1 %) y 63,2 pallets contra 64,9 (−2,6 %), y el cuello resulta ser las mezcladoras (65,2 t/día, 91 % ocupadas), no la formadora.
 
 ## 2. Ingeniería del MCP (cómo funciona)
 
@@ -58,8 +58,8 @@ Duración sugerida: 60–80 s. Ritmo: golpe de quiebre (placa +37,8 %) → ingen
 2. **"No nos quedamos con el HTML básico" (5 s):** captura del tablero HTML achicándose / tachado visual, texto vara alta.
 3. **Diagrama ingeniería (15 s, build por capas):** `Agente IA → stdio → flexsim_mcp.py → FlexSimPy → FlexSim (127.0.0.1:8765)`. Cada capa entra en un beat; resaltar puerto al final. Terminal con `uv run mcp_server/flexsim_mcp.py` tipeándose (bloque `code-typing` del registry).
 4. **Demo 73 tools (25–30 s, captura real o mock):** tres viñetas en secuencia — a) telemetría en vivo (`run_to_time` + `get_statistics`, curva que crece); b) crear+conectar objetos en el 3D (`create_objects`, `connect_objects`); c) dashboard creado por la IA (`dashboard_create`). Contador animado 0→73 (`apple-money-count`-style).
-5. **Validación (12 s):** lavado de 30 min → 54,9 contra 56,0 t/día (−1,9 %).
-6. **Veredicto (8 s):** `film/compositions/s04-veredicto.html`: se tacha "Formadora", entra "Mezcladoras" con las barras 65,3 / 74,1 / 87,2 t/día.
+5. **Validación (12 s):** lavado de 30 min, arribos y pallets aleatorios → 54,8 contra 56,0 t/día (−2,1 %) y 63,2 contra 64,9 pallets/día (−2,6 %).
+6. **Veredicto (8 s):** `film/compositions/s04-veredicto.html`: se tacha "Formadora", entra "Mezcladoras" con las barras 65,2 / 74,2 / 87,2 t/día.
 7. **Cierre-gancho (3 s):** whip-pan al Acto 5 (web inmersiva).
 
 ## 5. Bullets guion voz IA (leer directo)

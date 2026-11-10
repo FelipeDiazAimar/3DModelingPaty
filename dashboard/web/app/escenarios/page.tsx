@@ -133,7 +133,7 @@ export default function Escenarios() {
         </Card>
       )}
 
-      <Card className="mb-4" title="E1 · Base (como es hoy)" sub="Modelo final L7 + L8 con fallas del tablero y lavado de 30 min por batch · 10 réplicas de 24 h" right={<><Tag kind="real">10 réplicas</Tag><Tag kind="real">Valida en toneladas (−1,9 %)</Tag></>}>
+      <Card className="mb-4" title="E1 · Base (como es hoy)" sub="Modelo final L7 + L8 con fallas del tablero, arribos y pallets aleatorios y lavado de 30 min por batch · 10 réplicas de 24 h" right={<><Tag kind="real">10 réplicas</Tag><Tag kind="real">Valida: −2,6 % en pallets, −2,1 % en toneladas</Tag></>}>
         {!d1 || !t || !v ? <div className="skeleton h-16 w-full" /> : (
           <div className="grid gap-3 text-[13px] md:grid-cols-4">
             <div><div className="text-muted">Planta [pallets/día]</div><div className="tnum text-[22px] font-extrabold">{f(t.media, 1)}</div><div className="text-[12px] text-muted">IC 95 % [{f(t.ic_inf, 1)} ; {f(t.ic_sup, 1)}]</div></div>

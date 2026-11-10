@@ -11,13 +11,13 @@
    "base": "E1",
    "cuello": {
     "etapa": "mezclado",
-    "cap_t": 65.25284885265195,
+    "cap_t": 65.1883033875443,
     "siguiente": "desencajado",
-    "cap_siguiente": 74.05714285714286
+    "cap_siguiente": 74.24188035502776
    },
    "cuello_base": {
     "etapa": "mezclado",
-    "cap_t": 65.25284885265195
+    "cap_t": 65.1883033875443
    },
    "afectadas": [
     "desencajado",
@@ -27,64 +27,64 @@
     {
      "id": "desencajado",
      "puntaje": 0.0,
-     "ocup_base": 97.22222222222221,
-     "ocup": 97.22222222222221,
+     "ocup_base": 96.98090277777777,
+     "ocup": 96.98090277777777,
      "d_ocup": 0.0,
      "cont_base": 0.97,
      "cont": 0.97,
      "stay_base": 3500.0,
      "stay": 3500.0,
      "d_stay": 0.0,
-     "cap_base": 74.05714285714286,
-     "cap": 74.05714285714286,
+     "cap_base": 74.24188035502776,
+     "cap": 74.24188035502776,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "picado",
      "puntaje": 0.0,
-     "ocup_base": 24.125578703703702,
-     "ocup": 24.125578703703702,
+     "ocup_base": 24.13946759259259,
+     "ocup": 24.13946759259259,
      "d_ocup": 0.0,
      "cont_base": 0.2425,
      "cont": 0.2425,
      "stay_base": 906.4,
      "stay": 906.4,
      "d_stay": 0.0,
-     "cap_base": 298.440629660723,
-     "cap": 298.440629660723,
+     "cap_base": 297.02264989882156,
+     "cap": 297.02264989882156,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "mezclado",
      "puntaje": 0.0,
-     "ocup_base": 91.1232638888889,
-     "ocup": 91.1232638888889,
+     "ocup_base": 90.97482638888889,
+     "ocup": 90.97482638888889,
      "d_ocup": 0.0,
      "cont_base": 2.7407500000000002,
      "cont": 2.7407500000000002,
      "stay_base": 2971.175,
      "stay": 2971.175,
      "d_stay": 0.0,
-     "cap_base": 65.25284885265195,
-     "cap": 65.25284885265195,
+     "cap_base": 65.1883033875443,
+     "cap": 65.1883033875443,
      "cola_base": 3.4840000000000004,
      "cola": 3.4840000000000004
     },
     {
      "id": "formado",
      "puntaje": 0.0,
-     "ocup_base": 63.561342592592595,
-     "ocup": 63.561342592592595,
+     "ocup_base": 63.433738425925924,
+     "ocup": 63.433738425925924,
      "d_ocup": 0.0,
      "cont_base": 8.567,
      "cont": 8.567,
      "stay_base": 285.6,
      "stay": 285.6,
      "d_stay": 0.0,
-     "cap_base": 87.24640424233078,
-     "cap": 87.24640424233078,
+     "cap_base": 87.23252918100657,
+     "cap": 87.23252918100657,
      "cola_base": null,
      "cola": null
     },
@@ -155,9 +155,9 @@
     {
      "id": "camara_mp",
      "puntaje": 0.0,
-     "rack_base": 6.35,
-     "rack": 6.35,
-     "rack_max": 17.0,
+     "rack_base": 6.434097222222223,
+     "rack": 6.434097222222223,
+     "rack_max": 15.0,
      "d_rack": 0.0
     }
    ],
@@ -404,9 +404,9 @@
     }
    },
    "rack": {
-    "base": 6.35,
-    "esc": 6.35,
-    "max": 17.0
+    "base": 6.434097222222223,
+    "esc": 6.434097222222223,
+    "max": 15.0
    },
    "cola_mez": {
     "base": 3.4840000000000004,
@@ -820,31 +820,31 @@
    },
    "texto": {
     "titulo": "El cuello son las mezcladoras (por el lavado de 30 min)",
-    "cuello": "Cada batch ocupa a la mezcladora 30 min más por el lavado: queda ocupada el 91 % del tiempo y su capacidad implícita es 65,3 t/día, por debajo de los 74,1 t/día del desencajado y de las 72 t/día que llegan. Delante de las mezcladoras se forma una cola de 3,5 lotes.",
+    "cuello": "Cada batch ocupa a la mezcladora 30 min más por el lavado: queda ocupada el 91 % del tiempo y su capacidad implícita es 65,2 t/día, por debajo de los 74,2 t/día del desencajado y de las 72 t/día que llegan.",
     "efectos": [
      {
       "etapa": "desencajado",
-      "txt": "Siguiente restricción: 97 % ocupado (3500 s por pallet y línea), 74,1 t/día. Si se arreglan las mezcladoras, el cuello pasa acá."
+      "txt": "Siguiente restricción: 97 % ocupado (3500 s por pallet y línea), 74,2 t/día. Si se arreglan las mezcladoras, el cuello pasa acá."
      },
      {
       "etapa": "formado",
-      "txt": "Ocupación 76 → 64 % respecto de la planta sin lavado: recibe menos cargas porque las mezcladoras no alcanzan a entregar."
+      "txt": "Ocupación 63 %: recibe menos cargas porque las mezcladoras no alcanzan a entregar."
      }
     ],
-    "conclusion": "La planta produce 75,3 pallets/día (54,9 t/día), a -1,9 % de las 56,0 t/día del tablero: el lavado de 30 min es lo que faltaba para que el modelo valide en toneladas."
+    "conclusion": "La planta produce 63,2 pallets/día (54,8 t/día): −2,6 % de los 64,9 pallets y −2,0 % de las 56,0 t/día del tablero. Con arribos y pallets aleatorios el modelo valida en pallets y en toneladas."
    }
   },
   "E2": {
    "base": "E1",
    "cuello": {
     "etapa": "desencajado",
-    "cap_t": 74.05714285714286,
+    "cap_t": 74.24188035502776,
     "siguiente": "mezclado",
-    "cap_siguiente": 86.73561984978281
+    "cap_siguiente": 86.793594635431
    },
    "cuello_base": {
     "etapa": "mezclado",
-    "cap_t": 65.25284885265195
+    "cap_t": 65.1883033875443
    },
    "afectadas": [
     "formado",
@@ -853,33 +853,33 @@
    "etapas": [
     {
      "id": "formado",
-     "puntaje": 19.801504629629633,
-     "ocup_base": 63.561342592592595,
-     "ocup": 43.75983796296296,
-     "d_ocup": -19.801504629629633,
+     "puntaje": 19.757812499999993,
+     "ocup_base": 63.433738425925924,
+     "ocup": 43.67592592592593,
+     "d_ocup": -19.757812499999993,
      "cont_base": 8.567,
      "cont": 5.7,
      "stay_base": 285.6,
      "stay": 160.225,
      "d_stay": -125.37500000000003,
-     "cap_base": 87.24640424233078,
-     "cap": 150.28432530863645,
+     "cap_base": 87.23252918100657,
+     "cap": 150.2023722011966,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "mezclado",
-     "puntaje": 11.606770833333346,
-     "ocup_base": 91.1232638888889,
-     "ocup": 79.51649305555554,
-     "d_ocup": -11.606770833333346,
+     "puntaje": 11.678240740740748,
+     "ocup_base": 90.97482638888889,
+     "ocup": 79.29658564814814,
+     "d_ocup": -11.678240740740748,
      "cont_base": 2.7407500000000002,
      "cont": 2.035,
      "stay_base": 2971.175,
      "stay": 1868.575,
      "d_stay": -1102.6000000000001,
-     "cap_base": 65.25284885265195,
-     "cap": 86.73561984978281,
+     "cap_base": 65.1883033875443,
+     "cap": 86.793594635431,
      "cola_base": 3.4840000000000004,
      "cola": 0.018
     },
@@ -918,32 +918,32 @@
     {
      "id": "desencajado",
      "puntaje": 0.0,
-     "ocup_base": 97.22222222222221,
-     "ocup": 97.22222222222221,
+     "ocup_base": 96.98090277777777,
+     "ocup": 96.98090277777777,
      "d_ocup": 0.0,
      "cont_base": 0.97,
      "cont": 0.97,
      "stay_base": 3500.0,
      "stay": 3500.0,
      "d_stay": 0.0,
-     "cap_base": 74.05714285714286,
-     "cap": 74.05714285714286,
+     "cap_base": 74.24188035502776,
+     "cap": 74.24188035502776,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "picado",
      "puntaje": 0.0,
-     "ocup_base": 24.125578703703702,
-     "ocup": 24.125578703703702,
+     "ocup_base": 24.13946759259259,
+     "ocup": 24.13946759259259,
      "d_ocup": 0.0,
      "cont_base": 0.2425,
      "cont": 0.2425,
      "stay_base": 906.4,
      "stay": 906.4,
      "d_stay": 0.0,
-     "cap_base": 298.440629660723,
-     "cap": 298.440629660723,
+     "cap_base": 297.02264989882156,
+     "cap": 297.02264989882156,
      "cola_base": null,
      "cola": null
     },
@@ -982,9 +982,9 @@
     {
      "id": "camara_mp",
      "puntaje": 0.0,
-     "rack_base": 6.35,
-     "rack": 6.35,
-     "rack_max": 17.0,
+     "rack_base": 6.434097222222223,
+     "rack": 6.434097222222223,
+     "rack_max": 15.0,
      "d_rack": 0.0
     }
    ],
@@ -1231,9 +1231,9 @@
     }
    },
    "rack": {
-    "base": 6.35,
-    "esc": 6.35,
-    "max": 17.0
+    "base": 6.434097222222223,
+    "esc": 6.434097222222223,
+    "max": 15.0
    },
    "cola_mez": {
     "base": 3.4840000000000004,
@@ -1241,31 +1241,31 @@
    },
    "texto": {
     "titulo": "Las formadoras rápidas liberan a las mezcladoras y el cuello pasa al desencajado",
-    "cuello": "Con las formadoras a 1843 kg/h el cuello deja de estar en las mezcladoras (65,3 t/día) y pasa al desencajado (74,1 t/día).",
+    "cuello": "Con las formadoras a 1843 kg/h el cuello deja de estar en las mezcladoras (65,2 t/día) y pasa al desencajado (74,2 t/día).",
     "efectos": [
      {
       "etapa": "mezclado",
-      "txt": "Ocupación 91 → 80 %, cola de entrada 3,5 → 0,0 lotes y estadía 2971 → 1869 s (18 min menos): la mezcladora sigue ocupada mientras entrega sus cargas y con la cinta más rápida termina antes. Capacidad 65,3 → 86,7 t/día."
+      "txt": "Ocupación 91 → 79 %. Capacidad 65,2 → 86,8 t/día."
      },
      {
       "etapa": "formado",
-      "txt": "Ocupación 64 → 44 %; cada lote pasa en 160 s en lugar de 286 s."
+      "txt": "Ocupación 63 → 44 %."
      }
     ],
-    "conclusion": "+14,4 pallets/día (+19,1 %), IC [+13,8 ; +15,0]: es la mejora grande. El techo nuevo es el desencajado (74,1 t/día)."
+    "conclusion": "+12,0 pallets/día (+19,0 %), IC [+10,8 ; +13,2]: es la mejora grande. El techo nuevo es el desencajado (74,2 t/día)."
    }
   },
   "E3": {
    "base": "E1",
    "cuello": {
     "etapa": "desencajado",
-    "cap_t": 76.46470122493604,
+    "cap_t": 76.44438881576288,
     "siguiente": "mezclado",
-    "cap_siguiente": 86.2722348647541
+    "cap_siguiente": 86.45647261702061
    },
    "cuello_base": {
     "etapa": "mezclado",
-    "cap_t": 65.25284885265195
+    "cap_t": 65.1883033875443
    },
    "afectadas": [
     "camara_mp",
@@ -1275,41 +1275,41 @@
    "etapas": [
     {
      "id": "camara_mp",
-     "puntaje": 61.76,
-     "rack_base": 6.35,
-     "rack": 21.79,
+     "puntaje": 61.08726851851854,
+     "rack_base": 6.434097222222223,
+     "rack": 21.70591435185186,
      "rack_max": 39.0,
-     "d_rack": 15.44
+     "d_rack": 15.271817129629635
     },
     {
      "id": "formado",
-     "puntaje": 19.556134259259267,
-     "ocup_base": 63.561342592592595,
-     "ocup": 44.00520833333333,
-     "d_ocup": -19.556134259259267,
+     "puntaje": 19.517071759259252,
+     "ocup_base": 63.433738425925924,
+     "ocup": 43.91666666666667,
+     "d_ocup": -19.517071759259252,
      "cont_base": 8.567,
      "cont": 5.713,
      "stay_base": 285.6,
      "stay": 159.65,
      "d_stay": -125.95000000000002,
-     "cap_base": 87.24640424233078,
-     "cap": 150.6559888784139,
+     "cap_base": 87.23252918100657,
+     "cap": 150.68770732749496,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "mezclado",
-     "puntaje": 11.17476851851853,
-     "ocup_base": 91.1232638888889,
-     "ocup": 79.94849537037037,
-     "d_ocup": -11.17476851851853,
+     "puntaje": 11.196180555555543,
+     "ocup_base": 90.97482638888889,
+     "ocup": 79.77864583333334,
+     "d_ocup": -11.196180555555543,
      "cont_base": 2.7407500000000002,
      "cont": 2.04025,
      "stay_base": 2971.175,
      "stay": 1864.825,
      "d_stay": -1106.3500000000001,
-     "cap_base": 65.25284885265195,
-     "cap": 86.2722348647541,
+     "cap_base": 65.1883033875443,
+     "cap": 86.45647261702061,
      "cola_base": 3.4840000000000004,
      "cola": 0.024
     },
@@ -1347,33 +1347,33 @@
     },
     {
      "id": "desencajado",
-     "puntaje": 0.8622685185185386,
-     "ocup_base": 97.22222222222221,
-     "ocup": 98.08449074074075,
-     "d_ocup": 0.8622685185185386,
+     "puntaje": 0.9334490740740762,
+     "ocup_base": 96.98090277777777,
+     "ocup": 97.91435185185185,
+     "d_ocup": 0.9334490740740762,
      "cont_base": 0.97,
      "cont": 0.9800000000000001,
      "stay_base": 3500.0,
      "stay": 3500.0,
      "d_stay": 0.0,
-     "cap_base": 74.05714285714286,
-     "cap": 76.46470122493604,
+     "cap_base": 74.24188035502776,
+     "cap": 76.44438881576288,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "picado",
-     "puntaje": 0.6597222222222227,
-     "ocup_base": 24.125578703703702,
-     "ocup": 24.785300925925927,
-     "d_ocup": 0.6597222222222227,
+     "puntaje": 0.6076388888888893,
+     "ocup_base": 24.13946759259259,
+     "ocup": 24.74710648148148,
+     "d_ocup": 0.6076388888888893,
      "cont_base": 0.2425,
      "cont": 0.2505,
      "stay_base": 906.4,
      "stay": 904.25,
      "d_stay": -2.1499999999999773,
-     "cap_base": 298.440629660723,
-     "cap": 290.4955565506574,
+     "cap_base": 297.02264989882156,
+     "cap": 290.33813149049416,
      "cola_base": null,
      "cola": null
     },
@@ -1653,8 +1653,8 @@
     }
    },
    "rack": {
-    "base": 6.35,
-    "esc": 21.79,
+    "base": 6.434097222222223,
+    "esc": 21.70591435185186,
     "max": 39.0
    },
    "cola_mez": {
@@ -1663,22 +1663,22 @@
    },
    "texto": {
     "titulo": "Después de E2, más materia prima no suma: el cuello es el desencajado",
-    "cuello": "Desencajado al 98 % (76,5 t/día). Llegan 108 t/día de MP (24 pallets por turno) pero solo se procesan unas 74 t: el resto espera en las cámaras.",
+    "cuello": "Desencajado al 98 % (76,4 t/día). Llegan 108 t/día de MP (24 pallets por turno) pero solo se procesan unas 74 t: el resto espera en las cámaras.",
     "efectos": [
      {
       "etapa": "camara_mp",
-      "txt": "Las cámaras de MP pasan de 6,3 a 21,8 pallets en promedio (máximo 39) y crecen durante el día: es la cola que provoca el cuello."
+      "txt": "Las cámaras de MP pasan de 6,4 a 21,7 pallets en promedio (máximo 39) y crecen durante el día: es la cola que provoca el cuello."
      },
      {
       "etapa": "formado",
-      "txt": "Ocupación 64 → 44 % (efecto de las formadoras de E2, no de la MP)."
+      "txt": "Ocupación 63 → 44 % (efecto de las formadoras de E2, no de la MP)."
      },
      {
       "etapa": "mezclado",
       "txt": "Ocupación 91 → 80 % (efecto de E2, no de la MP)."
      }
     ],
-    "conclusion": "-0,1 pallets/día contra E2 (IC [-0,3 ; +0,1], no distinguible de cero): la materia prima extra no suma nada. Para aprovecharla hay que ampliar el desencajado (más puestos o menos de 3500 s por pallet)."
+    "conclusion": "0,5 pallets/día contra E2 (IC [0,1 ; 0,9], 0,7 %): la materia prima extra casi no suma. Para aprovecharla hay que ampliar el desencajado (más puestos o menos de 3500 s por pallet)."
    }
   },
   "E4_L0": {
@@ -2927,13 +2927,13 @@
    "base": "1500 kg, lavado 30 min",
    "cuello": {
     "etapa": "mezclado",
-    "cap_t": 59.15048658814264,
+    "cap_t": 59.25312985173831,
     "siguiente": "desencajado",
-    "cap_siguiente": 74.05714285714286
+    "cap_siguiente": 74.26842798782488
    },
    "cuello_base": {
     "etapa": "mezclado",
-    "cap_t": 65.25284885265195
+    "cap_t": 65.1883033875443
    },
    "afectadas": [
     "camara_mp",
@@ -2942,41 +2942,41 @@
    "etapas": [
     {
      "id": "camara_mp",
-     "puntaje": 7.32,
-     "rack_base": 6.35,
-     "rack": 8.18,
-     "rack_max": 20.0,
-     "d_rack": 1.83
+     "puntaje": 7.2699537037037025,
+     "rack_base": 6.434097222222223,
+     "rack": 8.251585648148149,
+     "rack_max": 19.0,
+     "d_rack": 1.8174884259259256
     },
     {
      "id": "formado",
-     "puntaje": 3.4453125000000084,
-     "ocup_base": 63.561342592592595,
-     "ocup": 60.11603009259259,
-     "d_ocup": -3.4453125000000084,
+     "puntaje": 3.384837962962962,
+     "ocup_base": 63.433738425925924,
+     "ocup": 60.04890046296296,
+     "d_ocup": -3.384837962962962,
      "cont_base": 8.567,
      "cont": 8.14075,
      "stay_base": 285.6,
      "stay": 286.225,
      "d_stay": 0.625,
-     "cap_base": 87.24640424233078,
-     "cap": 87.45691002251635,
+     "cap_base": 87.23252918100657,
+     "cap": 87.45551847357727,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "mezclado",
-     "puntaje": 1.958043981481472,
-     "ocup_base": 91.1232638888889,
-     "ocup": 93.08130787037037,
-     "d_ocup": 1.958043981481472,
+     "puntaje": 1.9461805555555713,
+     "ocup_base": 90.97482638888889,
+     "ocup": 92.92100694444446,
+     "d_ocup": 1.9461805555555713,
      "cont_base": 2.7407500000000002,
      "cont": 2.0845,
      "stay_base": 2971.175,
      "stay": 2455.725,
      "d_stay": -515.4500000000003,
-     "cap_base": 65.25284885265195,
-     "cap": 59.15048658814264,
+     "cap_base": 65.1883033875443,
+     "cap": 59.25312985173831,
      "cola_base": 3.4840000000000004,
      "cola": 5.707
     },
@@ -3014,33 +3014,33 @@
     },
     {
      "id": "picado",
-     "puntaje": 0.09143518518518468,
-     "ocup_base": 24.125578703703702,
-     "ocup": 24.21701388888889,
-     "d_ocup": 0.09143518518518468,
+     "puntaje": 0.059606481481480955,
+     "ocup_base": 24.13946759259259,
+     "ocup": 24.199074074074073,
+     "d_ocup": 0.059606481481480955,
      "cont_base": 0.2425,
      "cont": 0.243,
      "stay_base": 906.4,
      "stay": 728.25,
      "d_stay": -178.14999999999998,
-     "cap_base": 298.440629660723,
-     "cap": 292.3470482756761,
+     "cap_base": 297.02264989882156,
+     "cap": 296.0430269188363,
      "cola_base": null,
      "cola": null
     },
     {
      "id": "desencajado",
-     "puntaje": 0.0,
-     "ocup_base": 97.22222222222221,
-     "ocup": 97.22222222222221,
-     "d_ocup": 0.0,
+     "puntaje": 0.03530092592590961,
+     "ocup_base": 96.98090277777777,
+     "ocup": 96.94560185185186,
+     "d_ocup": -0.03530092592590961,
      "cont_base": 0.97,
      "cont": 0.97,
      "stay_base": 3500.0,
      "stay": 2800.0,
      "d_stay": -700.0,
-     "cap_base": 74.05714285714286,
-     "cap": 74.05714285714286,
+     "cap_base": 74.24188035502776,
+     "cap": 74.26842798782488,
      "cola_base": null,
      "cola": null
     },
@@ -3320,9 +3320,9 @@
     }
    },
    "rack": {
-    "base": 6.35,
-    "esc": 8.18,
-    "max": 20.0
+    "base": 6.434097222222223,
+    "esc": 8.251585648148149,
+    "max": 19.0
    },
    "cola_mez": {
     "base": 3.4840000000000004,
@@ -3736,19 +3736,20 @@
    },
    "texto": {
     "titulo": "Con lavado de 30 min el cuello está en las mezcladoras",
-    "cuello": "Cada batch ocupa a la mezcladora 30 min más: con 1500 kg su capacidad implícita es 65,3 t/día, por debajo de los 74,1 t/día del desencajado. La cola de entrada de las mezcladoras pasa de 0,1 (sin lavado) a 3,5 lotes.",
+    "cuello": "Cada batch ocupa a la mezcladora 30 min más: con 1500 kg su capacidad implícita es 65,2 t/día, por debajo de los 74,2 t/día del desencajado.",
     "efectos": [
      {
       "etapa": "mezclado",
-      "txt": "Con 1200 kg hay 30 batches por día en lugar de 24 y se lava más veces: capacidad 65,3 → 59,2 t/día, ocupación 91 → 93 %; cola de entrada 3,5 → 5,7."
+      "txt": "Con 1200 kg hay 30 batches por día en lugar de 24 y se lava más veces: capacidad 65,2 → 59,3 t/día, ocupación 91 → 93 %."
      },
      {
       "etapa": "formado",
-      "txt": "Aguas abajo, formado queda ocupado el 64 % contra 76 % sin lavado: recibe menos cargas porque las mezcladoras no alcanzan a entregar."
+      "txt": "Aguas abajo, formado queda ocupado el 60 % (contra 63 %): recibe menos cargas porque las mezcladoras no alcanzan a entregar."
      }
     ],
-    "conclusion": "1200 kg rinde -4,0 pallets/día (-5,3 %) contra 1500 kg: el batch grande lava menos veces por tonelada (dato de planta)."
+    "conclusion": "1200 kg rinde -3,7 pallets/día (-5,9 %) contra 1500 kg: el batch grande lava menos veces por tonelada (dato de planta)."
    }
   }
- }
+ },
+ "nota": "E1, E2, E3 y E4 con lavado de 30 min: 10 réplicas del modelo con arribos y pallets aleatorios. E4 con lavado de 0 y 15 min: sensibilidad del modelo anterior (llegadas fijas, 5 réplicas). Medidos solo desencajado, picado, mezclado y formado; las demás etapas y las colas de entrada conservan el valor de la corrida anterior."
 }

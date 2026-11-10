@@ -3,14 +3,14 @@
 Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + `PATY_Techo_v3.glb`
 (cargados por OnModelOpen con ruta relativa a la carpeta del .fsm). Objetos lógicos ocultos sobre cada máquina.
 
-**Estado (7/11/2026): todos los supuestos de este documento son oficiales.** El usuario los adoptó como parámetros del modelo, incluidos los que antes figuraban como "razonables" (✅) o "gruesos" (✅); ya no hay supuestos pendientes de calibrar. Cada fila marca ✅. Lo que sigue sin medir en planta (por ejemplo el desencajado de 3500 s por pallet o el pallet de 720 kg) queda como **parámetro oficial del modelo**, no como dato medido, y las conclusiones se leen con ese alcance.
+**Estado (10/11/2026): todos los supuestos de este documento son oficiales.** El usuario los adoptó como parámetros del modelo, incluidos los que antes figuraban como "razonables" (✅) o "gruesos" (✅); ya no hay supuestos pendientes de calibrar. Cada fila marca ✅. Lo que sigue sin medir en planta (por ejemplo el desencajado de 3500 s por pallet o el pallet de 720 kg) queda como **parámetro oficial del modelo**, no como dato medido, y las conclusiones se leen con ese alcance.
 
 **Parámetros oficiales que fijan los resultados:**
 - Lavado de la mezcladora: **30 min por batch** (dato de planta).
 - Desencajado: **3500 s por pallet y línea** (2 operarios por mesada). Con el lavado, el cuello de E1 son las mezcladoras y este es el siguiente (74,1 t/día).
 - Formadoras: **982 kg/h nominal** (base, E1) y **1843 kg/h estándar de línea** (E2). Ambos valores son oficiales: el primero es la capacidad nominal de la máquina y el segundo el estándar de la línea, y E2 mide pasar de uno a otro.
-- Materia prima: **16 pallets de 1500 kg por turno** (72 t/día), llegadas fijas; tiempos de máquina constantes. La única variación del modelo son las fallas.
-- Pallet de producto terminado: **144 bandejas de 5 kg = 720 kg**. La métrica oficial de validación es **toneladas por día**; los pallets se informan, pero sin comparar uno a uno con el tablero (862,5 kg).
+- Materia prima: **16 pallets de 1500 kg por turno** (72 t/día). Los tiempos entre arribos se sortean de la **tabla empírica** de 49 puntos (`iat_cdf.csv`, media 2,62 min, CV 3,42; Monte Carlo con interpolación lineal; el turno arranca en 0, 8 y 16 h). Tiempos de máquina constantes. Las variaciones del modelo son las fallas, los arribos y el tamaño de los pallets.
+- Pallet de producto terminado: el peso se sortea de los **500 pallets reales** (`pesos_PT_kg.csv`, media 862,5 kg, desvío 153 kg, de 185 a 1250 kg) y las cajas del pallet son peso ÷ 5 kg (media ≈ 173). Se valida en **pallets y en toneladas por día** contra el tablero.
 - Régimen: **3 turnos continuos**, sin pausas ni cambios de formato; líneas 7 y 8 iguales, comparadas contra la planta completa.
 - Fallas: MTBF exponencial y MTTR lognormal (σ = 0,9) del tablero Sep–Oct.
 
@@ -23,13 +23,13 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 | Mezcladora (Separator) | el **batch** de 1500 kg se divide en **10 cargas de 150 kg** (cada carga ≤ 181 kg, límite de izaje de los carros) | ✅ tamaño de carga supuesto |
 | Formadora (Separator) | cada carga de 150 kg se divide en **30 bandejas/cajas de 5 kg** (una cada 18,33 s, ritmo de la formadora) | ✅ 5,0 kg/caja (SUP 236213) |
 | Formadora → túnel → envasado → encajonado → peso | 1 ítem = 1 caja de 5 kg | ✅ |
-| Robot estibador (Combiner) | **144 cajas por pallet** | ✅ SUP 236213 |
+| Robot estibador (Combiner) | **cajas por pallet = peso real sorteado ÷ 5 kg** (antes 144 fijas) | ✅ SUP 236213 |
 | Cámaras PT → expedición | 1 pallet PT | — |
 
 ## Tiempos y capacidades
 | # | Estación | Valor | Estado |
 |---|---|---|---|
-| T1 | Llegadas MP `SrcMP` empírica por hora desde `datos_trazabilidad/fitting_series/iat_cdf.csv` (49 pts) + `iat_empirica_hora.csv` (9h/10h/11h). Media global 2,62 min/mediana 1,03/CV 3,42; K-S rechaza exponencial (ET3 p.10-13: usar tabla `F⁻¹(u)`). **Oficial en el modelo: determinístico, 16 pallets cada 8 h** (la serie empírica queda como evidencia de ajuste, no se usa en las corridas). | ✅ |
+| T1 | Llegadas MP `SrcCamionesMP` (calendario de 48 filas) empírica por hora desde `datos_trazabilidad/fitting_series/iat_cdf.csv` (49 pts) + `iat_empirica_hora.csv` (9h/10h/11h). Media global 2,62 min/mediana 1,03/CV 3,42; K-S rechaza exponencial (ET3 p.10-13: usar tabla `F⁻¹(u)`). **Oficial en el modelo (desde 10/11/2026): los 16 arribos de cada turno se sortean con esa tabla** (`Tools/GenArribos`, stream 90); el modelo anterior usaba un arribo fijo cada 150 s. | ✅ |
 | T2 | Desencajado (mesada) | **3500 s por pallet** (se consume al ritmo de la línea; una caja cada 77,8 s), **2 operarios** | ✅ |
 | T3 | Picadora | 900 s por batch (≈6 t/h) | ✅ |
 | T4 | Mezcladora | 1200 s de mezcla por batch de 1500 kg | ✅ (20 min) |
@@ -39,7 +39,7 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 | T8 | Envasadora | 4 s por caja (≈10 paquetes/caja a 150 paq/min) | ✅ |
 | T9 | Encajonadora | 5 s por caja | ✅ |
 | T10 | Control de peso | **no modelado** (se quitó para liberar objetos de la licencia) | — |
-| T11 | Robot estibador | 60 s de cierre de pallet (film/etiqueta) tras 144 cajas (SUP L7/L8; E4 = 91 cajas, ver T5) | ✅ |
+| T11 | Robot estibador | 60 s de cierre de pallet (film/etiqueta) tras completar las cajas del pallet (peso real ÷ 5 kg, media ≈ 173; antes 144 fijas) | ✅ |
 | T12 | Paros por equipo-turno `turno_paros.csv` + `paros_eventos.csv`. MTTR empírica por (línea,equipo,turno TM/TT); fallback lognormal μ,σ de `ln(dur)`. MTBF = min operativos/eventos bajo SUPUESTO explícito 33d continuo 3T (47520 min/eventos). Ej L3 FOR 709 / EST 1828 / TUN 2795 min. Streams separados + semilla fija (ET4 p.19). Changeover 30-60 min sigue no modelado | ✅ |
 
 ## Personal y recursos
@@ -55,15 +55,15 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 ## Ruteo
 - Recepción reparte al azar entre cámaras MP congelado/enfriado; paletizado al azar entre PT congelado/enfriado.
 - Detector → envasadoras y peso → robots: **primera disponible** (por eso las máquinas B casi no trabajan: con estos tiempos una sola alcanza).
-- Racks PT: asignación "primer hueco" **sin exigir espacio físico** (el pallet con 144 cajas no entra en la altura de nivel por defecto).
+- Racks PT: asignación "primer hueco" **sin exigir espacio físico** (el pallet con ≈173 cajas no entra en la altura de nivel por defecto).
 
 ## Simplificaciones técnicas (no son de proceso)
 - Las cintas túnel→detector y rodillos peso→robot están en FlexSim (ocultas) sobre las de Blender; las cajas y hamburguesas estáticas de Blender no se exportan porque son dinámicas en FlexSim.
 - Cola `QPaletizado_Lx` a la salida de cada celda de estibado: ahí el montacargas recoge el pallet terminado.
 - Los objetos creados por script necesitan compilar su código: OnModelOpen recompila todos los nodos FlexScript al abrir.
 
-## Resultado de referencia (24 h, semilla por defecto)
-60 pallets MP recibidos · ~7.250 cajas/línea (≈36 t/línea) · 100 pallets PT expedidos.
+## Resultado de referencia (24 h, 10 réplicas)
+48 pallets MP recibidos · ~5.480 cajas/línea (≈27 t/línea) · 63,2 pallets PT/día en la planta.
 
 ## Visual y animación
 - Pallet MP = ítem `PalletMP` (forma `pallet_mp.glb`); tras la mezcladora el ítem pasa a ser una bandeja de hamburguesas (`hamburguesa.glb`, 0,40 x 0,40 x 0,025 m = 5 kg) y tras la encajonadora una caja PATY (`caja_pt.glb`, escalada a 0,32 x 0,25 x 0,20 m para que 144 cajas den un pallet de ~2 m).
@@ -119,9 +119,15 @@ Modelo: `PLANTASJ.fsm` (FlexSim 2026). Visual: `assets_v2/PATY_Planta_v5.glb` + 
 - Módulo `Tools/Fallas` + relay `Tools/ArrancaFallas` (código en `dashboard/flexsim/fallas.fls` y `arranca_fallas.fls`; no consumen objetos de licencia: siguen 96/100). Se registra en `Tools/OnOpenDashboard` y arranca solo una vez por corrida (OnExit de `SrcCamionesMP`).
 - Tiempo a la falla **exponencial** y reparación **lognormal** (σ = 0,9, media = MTTR) por equipo. MTBF y MTTR del tablero Sep–Oct (línea 3, MTBF bajo supuesto de 3 turnos continuos 33 d = 47520 min): formadoras 709,3 / 6,15 min, túneles 2795,3 / 8,65, envasadoras 4752 / 5,0, estibadores 1827,7 / 13,0; picadoras con el dato de planta (880 / 11,3, la línea 3 tiene un solo evento). Se aplican a los 14 equipos de L7 y L8 (formadoras A y B, túneles, envasadoras A y B, estibadores A, picadoras).
 - Las máquinas paradas pasan a estado "en falla" (se ve en la web). `Tools/fallOn = 0` apaga las fallas; `Tools/repId` elige la réplica (streams 60–87, desplazados `12·repId` números).
-- Las fallas bajan la producción menos de 1 % por día (los acumuladores las absorben): referencia de 24 h con lavado de 30 min = 75,3 ± 0,7 pallets y 54,9 t en la planta. Ver `datos_trazabilidad/e1_final/E1_FINAL.md`.
+- Las fallas bajan la producción menos de 1 % por día (los acumuladores las absorben): referencia de 24 h con lavado de 30 min = 63,2 ± 1,2 pallets y 54,8 t en la planta. Ver `datos_trazabilidad/e1_final/E1_FINAL.md` y `estocastico/`.
 - El publicador al dashboard usa el puerto de `Tools/pubPort` (3000 por defecto); `Tools/pubOff = 1` lo apaga para correr réplicas.
 - Escenarios: `Tools/mttrK` (factor sobre el MTTR de formadoras y túneles, 1 = base) para E5 (la prueba de fallas, antes E3); E2 y E3 se corren cambiando `entrySpacePadding` de `CintaFormA/B_Lx` (3,27 → 1,554 m) y se restaura a 3,27. Resultados en `datos_trazabilidad/e1_final/E1_FINAL.md`.
 - E4 se corre por script y se restaura: `splitquantity` de las mezcladoras (10 → 8 cargas), `cycletime` de desencajado y picadora (×0,8), cantidades del calendario de `SrcCamionesMP` (20 pallets por turno) y `setuptime` de las mezcladoras como lavado por batch. **El lavado es de 30 min (dato confirmado por el usuario el 7/11/2026) y es parte del modelo base**; 0 y 15 min se conservan solo como sensibilidad. El modelo base queda con lavado de 30 min (`SetupTime` 1800 s en `MezA/B_L7/L8`), 10 cargas y 16 pallets por turno.
-- Pallet real: 700–900 kg y unas 40 cajas (dato del usuario); el modelo arma pallets de 144 bandejas de 5 kg = 720 kg, dentro de ese rango. La comparación oficial con el tablero es en toneladas (54,9 contra 56,0 t/día, −1,9 %); en pallets da 75,3 contra 64,9 por el tamaño del pallet.
-- Dato del usuario: las líneas 7 y 8 trabajan por igual. La diferencia 25,8 contra 39,1 pallets/día del tablero no se explica por la planta; se compara contra las dos líneas juntas (64,9 pallets, 56,0 t/día). Con el lavado de 30 min por batch (confirmado) el modelo da 54,9 t/día contra 56,0 del tablero (−1,9 %): valida en toneladas. En pallets da 75,3 contra 64,9 (+16 %) por el tamaño del pallet del modelo (720 kg contra 862,5 kg reales).
+- Pallet de PT: el peso se sortea de los 500 pallets reales (media 862,5 kg) y las cajas son peso ÷ 5 kg. Comparación con el tablero: 54,8 contra 56,0 t/día (−2,1 %) y 63,2 contra 64,9 pallets/día (−2,6 %). Antes (pallet fijo de 720 kg): 54,9 t/día y 75,3 pallets/día (+16 %).
+- Dato del usuario: las líneas 7 y 8 trabajan por igual. La diferencia 25,8 contra 39,1 pallets/día del tablero no se explica por la planta; se compara contra las dos líneas juntas (64,9 pallets, 56,0 t/día). Con el lavado de 30 min por batch (confirmado), arribos aleatorios y pallets con peso real el modelo da 54,8 t/día contra 56,0 del tablero (−2,1 %) y 63,2 pallets/día contra 64,9 (−2,6 %): valida en las dos unidades.
+
+## Variación estocástica: arribos y pallets (10/11/2026)
+- **Nodos nuevos en `Tools`** (no consumen licencia): `iatX`/`iatP` (tabla de tiempos entre arribos), `pesosPT` (500 pesos reales), `GenArribos` (sortea los 48 arribos del día y los escribe en el calendario de `SrcCamionesMP`; se ejecuta con `executestring(getnodestr(...))` después de `resetmodel()` y se vuelve a resetear), `TamPallet_L7/L8` (relay en `OnExit` de `EstA_L7/L8`: sortea el objetivo del próximo pallet), `ArrancaPallets` (relay en `OnExit` de `SrcCamionesMP`: sortea el primer pallet de cada línea y salta los números de la réplica), `PalMark`, `palLast`. Código en `dashboard/flexsim/gen_arribos.fls`, `tam_pallet.fls` y `arranca_pallets.fls`. Los nodos se marcan con `switch_flexscript(nodo, 1)` y se registran en `Tools/OnOpenDashboard`.
+- **Streams:** 90 (arribos), 91 y 92 (pallets de L7 y L8), además de los 60–87 de las fallas. Cada réplica salta 48·k números del 90 y 400·k de los 91 y 92.
+- **Calendario de MP:** 48 filas (16 por turno × 3 turnos) más `ArrivalFin` a 86.400 s; antes 16 filas y repetición cada 8 h.
+- **Por qué esta forma:** el estudio de datos (K-S) rechazó una exponencial para los arribos (CV 3,42), así que se usa la tabla empírica por Monte Carlo; el peso del pallet no ajusta a una normal (mezcla y picos de 1250 kg) y se remuestrea la serie real.

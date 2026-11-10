@@ -55,4 +55,4 @@ Colores/categorías (web = FlexSim): Inactiva `#8b97a8`, Procesando `#16a37f`, B
 ## 5. Transiciones
 
 - **Blender → FlexSim (match-cut):** congelar frame orbital del GLB en Blender, corte seco al mismo encuadre en FlexSim parado; al hacer Run, leve push-in + sonido de arranque de línea. El truco vende "mismo modelo, ahora vivo" porque el GLB es literalmente el mismo.
-- **FlexSim → quiebre (Acto 4 validación):** cerrar sobre el tablero corriendo, corte seco a negro + placa histórica "Primera corrida: 89,4 contra 64,9 pallets/día, +37,8 %". No congelar el KPI en pantalla: el modelo actual, con lavado, marca 75,3. De ahí se entra al Acto 4 (MCP, réplicas, lavado de 30 min y veredicto).
+- **FlexSim → quiebre (Acto 4 validación):** cerrar sobre el tablero corriendo, corte seco a negro + placa histórica "Primera corrida: 89,4 contra 64,9 pallets/día, +37,8 %". No congelar el KPI en pantalla: el modelo actual, con lavado y arribos y pallets aleatorios, marca 63,2. De ahí se entra al Acto 4 (MCP, réplicas, lavado de 30 min y veredicto).

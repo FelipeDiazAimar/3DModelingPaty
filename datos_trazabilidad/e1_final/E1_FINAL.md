@@ -1,6 +1,20 @@
 # E1 base — modelo final PLANTASJ.fsm (L7 + L8), 10 réplicas
 
-> **Vigente: la última sección ("Lavado de 30 min y cuello de botella por escenario").** Las secciones anteriores describen la corrida histórica sin lavado (89,4 pallets/día) y se conservan como referencia de sensibilidad. Desde el 7/11/2026 el lavado de 30 min por batch y el resto de los supuestos son oficiales (`SUPUESTOS_v2.md`).
+> **Vigente: la sección "Modelo con arribos y pallets aleatorios (10/11/2026)" de más abajo.** Las secciones anteriores describen las corridas con llegadas fijas y pallet de 720 kg (75,3 pallets/día con lavado, 89,4 sin lavado) y se conservan como referencia.
+
+## Modelo con arribos y pallets aleatorios (10/11/2026; `estocastico/`)
+**Cambio de modelo:** (1) los 16 arribos de MP de cada turno se sortean con la tabla empírica de tiempos entre arribos (`iat_cdf.csv`); (2) el tamaño de cada pallet de PT sale de los 500 pesos reales (`pesos_PT_kg.csv`, media 862,5 kg) y las cajas son peso ÷ 5 kg. Todo lo demás igual (fallas exponencial + lognormal, lavado de 30 min, 982 kg/h). 10 réplicas de 24 h por escenario, mismos streams (60–87 fallas, 90 arribos, 91–92 pallets), diferencias pareadas con t(0,975; 9 gl) = 2,262. Datos crudos `estocastico/E1.txt`…`E4.txt`; análisis `estocastico/analizar_estocastico.py`.
+
+| Escenario | Pallets/día | t/día | Cambio contra E1 (pallets, IC 95 %) | Cuello |
+|---|---|---|---|---|
+| E1 base | 63,2 ± 1,2 | 54,8 ± 0,5 | — | mezcladoras (65,2 t/día, 91 %) |
+| E2 formadoras a 1843 kg/h | 75,2 ± 1,1 | 65,1 ± 0,4 | **+12,0** [+10,8 ; +13,2] (+19,0 %) | desencajado (74,2 t/día) |
+| E3 E2 + 24 pallets de MP por turno | 75,7 ± 1,0 | 65,6 ± 0,3 | +12,5 [+11,5 ; +13,5]; **+0,5 contra E2** [+0,1 ; +0,9] | desencajado (76,4 t/día); cámaras MP 6,4 → 21,7 pallets |
+| E4 batch 1200 kg (lavado 30 min) | 59,5 ± 1,0 | 51,9 ± 0,3 | **−3,7** [−4,4 ; −3,0] (−5,9 %) | mezcladoras (59,3 t/día, 93 %) |
+
+**Validación contra el tablero (Sep–Oct):** 63,2 ± 1,2 pallets/día contra 64,9 (−2,6 %) y 54,8 ± 0,5 t/día contra 56,0 (−2,1 %). Valida en pallets y en toneladas (antes solo en toneladas). Los reales quedan apenas fuera del IC 95 %, que es angosto porque la variación del modelo es chica; el error es menor a 3 %. kg por pallet simulado: 868 (real 862,5).
+**Cuello (capacidad implícita = entradas por día ÷ ocupación × kg por entrada):** E1: mezclado 65,2 < desencajado 74,2 < formado 87,2 t/día; la hipótesis inicial (formadora) queda refutada: la formadora está ocupada solo el 63 %. E2: desencajado 74,2 < mezclado 86,8; E3: desencajado 76,4 < mezclado 86,5; E4: mezclado 59,3 < desencajado 74,3.
+**Qué cambió respecto de las llegadas fijas:** las toneladas y los cuellos casi no se mueven (54,8 contra 54,9 t/día): el cuello son las mezcladoras y no depende de cuándo llegue la MP. Cambian los pallets, porque ahora pesan 868 kg en lugar de 720 (63,2 en lugar de 75,3 pallets/día), y E3 contra E2 pasa de −0,1 a +0,5 pallets/día.
 
 Reemplaza a `../e1_run/E1_BASE_24H.md`, que se hizo sobre una copia vieja de la línea 3 (`planta_sanjorge_v1_8.fsm`).
 Este informe es del **modelo final** (`PLANTASJ.fsm`, 96/100 objetos de licencia), corrido dentro de FlexSim sin copias.

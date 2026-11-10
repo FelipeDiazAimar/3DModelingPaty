@@ -1,129 +1,129 @@
 {
  "replicas": 10,
- "metodo": "mismas 10 réplicas (streams 60-87 desplazados por réplica) en todos los escenarios; diferencias pareadas con t(0,975; 9 gl)",
+ "metodo": "mismas 10 réplicas (streams 60-87 de fallas, 90 de arribos y 91-92 de pallets, desplazados por réplica) en todos los escenarios; arribos de MP con la tabla empírica y pallets de PT con los 500 pesos reales; diferencias pareadas con t(0,975; 9 gl)",
  "escenarios": {
   "E1": {
    "nombre": "Base",
-   "cambio": "Fallas del tablero, formadoras a 982 kg/h, 16 pallets de MP por turno y lavado de 30 min por batch (dato de planta)",
+   "cambio": "Fallas del tablero, arribos y pallets aleatorios, formadoras a 982 kg/h, 16 pallets de MP por turno y lavado de 30 min por batch (dato de planta)",
    "pallets": {
-    "media": 75.3,
-    "desv": 0.9486832980505138,
-    "h": 0.6786,
-    "ic_inf": 74.6214,
-    "ic_sup": 75.9786
+    "media": 63.2,
+    "desv": 1.6193277068654826,
+    "h": 1.158316778778586,
+    "ic_inf": 62.04168322122142,
+    "ic_sup": 64.35831677877859
    },
    "cajas": {
-    "media": 10985.7,
-    "desv": 131.11153013115717,
-    "h": 93.78502238822571,
-    "ic_inf": 10891.914977611776,
-    "ic_sup": 11079.485022388226
+    "media": 10967.5,
+    "desv": 151.66941389453285,
+    "h": 108.4902247992878,
+    "ic_inf": 10859.009775200711,
+    "ic_sup": 11075.990224799289
    },
    "ton": {
-    "media": 54.9285,
-    "desv": 0.6555576506557858,
-    "h": 0.4689251119411285,
-    "ic_inf": 54.459574888058874,
-    "ic_sup": 55.397425111941125
+    "media": 54.8375,
+    "desv": 0.7583470694726638,
+    "h": 0.5424511239964387,
+    "ic_inf": 54.29504887600356,
+    "ic_sup": 55.379951123996435
    }
   },
   "E2": {
    "nombre": "Formadoras más rápidas",
    "cambio": "Formadoras a 1843 kg/h (separación entre bandejas 3,27 → 1,554 m)",
    "pallets": {
-    "media": 89.7,
-    "desv": 0.48304589153964794,
-    "h": 0.3455262073996703,
-    "ic_inf": 89.35447379260033,
-    "ic_sup": 90.04552620739967
+    "media": 75.2,
+    "desv": 1.5491933384829668,
+    "h": 1.1081491596351098,
+    "ic_inf": 74.0918508403649,
+    "ic_sup": 76.30814915963511
    },
    "cajas": {
-    "media": 13062.3,
-    "desv": 72.8774465951039,
-    "h": 52.12976275756489,
-    "ic_inf": 13010.170237242435,
-    "ic_sup": 13114.429762757563
+    "media": 13028.5,
+    "desv": 115.30563251155118,
+    "h": 82.47894991208362,
+    "ic_inf": 12946.021050087917,
+    "ic_sup": 13110.978949912083
    },
    "ton": {
-    "media": 65.3115,
-    "desv": 0.36438723297551784,
-    "h": 0.26064881378782323,
-    "ic_inf": 65.05085118621217,
-    "ic_sup": 65.57214881378782
+    "media": 65.1425,
+    "desv": 0.576528162557759,
+    "h": 0.4123947495604203,
+    "ic_inf": 64.73010525043958,
+    "ic_sup": 65.55489474956042
    },
    "dif_pallets": {
-    "media": 14.4,
-    "desv": 0.8432740427115678,
-    "h": 0.6032,
-    "ic_inf": 13.796800000000001,
-    "ic_sup": 15.0032,
+    "media": 12.0,
+    "desv": 1.699673171197595,
+    "h": 1.2157884684434213,
+    "ic_inf": 10.78421153155658,
+    "ic_sup": 13.21578846844342,
     "cero_en_ic": false
    },
    "dif_cajas": {
-    "media": 2076.6,
-    "desv": 136.57818273794683,
-    "h": 97.69535839455219,
-    "ic_inf": 1978.9046416054478,
-    "ic_sup": 2174.2953583945523,
+    "media": 2061.0,
+    "desv": 144.84704576437403,
+    "h": 103.61013570881953,
+    "ic_inf": 1957.3898642911804,
+    "ic_sup": 2164.6101357088196,
     "cero_en_ic": false
    },
-   "dif_pallets_pct": 19.12350597609562,
-   "dif_cajas_pct": 18.90275540020208
+   "dif_pallets_pct": 18.987341772151897,
+   "dif_cajas_pct": 18.791885115112834
   },
   "E3": {
    "nombre": "Más materia prima + formadoras rápidas",
    "cambio": "E2 y 24 pallets de MP por turno en lugar de 16 (72 t/día en lugar de 48 pallets de 1500 kg)",
    "pallets": {
-    "media": 89.6,
-    "desv": 0.5163977794943223,
-    "h": 0.3693830532117032,
-    "ic_inf": 89.23061694678829,
-    "ic_sup": 89.9693830532117
+    "media": 75.7,
+    "desv": 1.3374935098492586,
+    "h": 0.9567187465498939,
+    "ic_inf": 74.7432812534501,
+    "ic_sup": 76.6567187465499
    },
    "cajas": {
-    "media": 13151.4,
-    "desv": 62.893560878678194,
-    "h": 44.988217353436,
-    "ic_inf": 13106.411782646564,
-    "ic_sup": 13196.388217353435
+    "media": 13125.7,
+    "desv": 88.40317993275028,
+    "h": 63.23543170375291,
+    "ic_inf": 13062.464568296247,
+    "ic_sup": 13188.935431703754
    },
    "ton": {
-    "media": 65.757,
-    "desv": 0.31446780439339,
-    "h": 0.2249410867671793,
-    "ic_inf": 65.53205891323283,
-    "ic_sup": 65.98194108676718
+    "media": 65.6285,
+    "desv": 0.44201589966375265,
+    "h": 0.3161771585187655,
+    "ic_inf": 65.31232284148123,
+    "ic_sup": 65.94467715851877
    },
    "dif_pallets": {
-    "media": 14.3,
-    "desv": 0.6749485577105528,
-    "h": 0.48279556750243674,
-    "ic_inf": 13.817204432497563,
-    "ic_sup": 14.782795567502438,
+    "media": 12.5,
+    "desv": 1.35400640077266,
+    "h": 0.9685305364313506,
+    "ic_inf": 11.53146946356865,
+    "ic_sup": 13.46853053643135,
     "cero_en_ic": false
    },
    "dif_cajas": {
-    "media": 2165.7,
-    "desv": 97.71392485777608,
-    "h": 69.89547464864945,
-    "ic_inf": 2095.8045253513505,
-    "ic_sup": 2235.595474648649,
+    "media": 2158.2,
+    "desv": 94.95238572861429,
+    "h": 67.9201258078929,
+    "ic_inf": 2090.279874192107,
+    "ic_sup": 2226.1201258078927,
     "cero_en_ic": false
    },
-   "dif_pallets_pct": 18.99070385126162,
-   "dif_cajas_pct": 19.713809770883962,
+   "dif_pallets_pct": 19.77848101265823,
+   "dif_cajas_pct": 19.67813995896968,
    "dif_vs_E2_pallets": {
-    "media": -0.1,
-    "desv": 0.31622776601683794,
-    "h": 0.22619999999999998,
-    "ic_inf": -0.3262,
-    "ic_sup": 0.12619999999999998,
-    "cero_en_ic": true
+    "media": 0.5,
+    "desv": 0.5270462766947299,
+    "h": 0.377,
+    "ic_inf": 0.123,
+    "ic_sup": 0.877,
+    "cero_en_ic": false
    }
   },
   "E5": {
    "nombre": "Prueba de fallas",
-   "cambio": "MTTR ×1,25 en formadoras y túneles (antiguo E3). Medido con el modelo anterior, sin lavado: no es comparable con E1 de hoy",
+   "cambio": "MTTR ×1,25 en formadoras y túneles (antiguo E3). Medido con el modelo anterior (llegadas fijas, sin lavado): no es comparable con E1 de hoy",
    "pallets": {
     "media": 89.4,
     "desv": 0.8432740427115678,
@@ -169,6 +169,6 @@
   "pallets_mp_dia": 48,
   "kg_dia": 72000,
   "cajas_dia": 14400,
-  "texto": "La materia prima de E1 y E2 entra a 16 pallets de 1500 kg cada 8 h: 72 t/día = 14.400 cajas de 5 kg por día para las dos líneas"
+  "texto": "La materia prima de E1 y E2 entra a 16 pallets de 1500 kg por turno (los tiempos entre arribos salen de la tabla empírica): 72 t/día = 14.400 cajas de 5 kg por día para las dos líneas"
  }
 }

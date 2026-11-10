@@ -1,7 +1,7 @@
 {
  "descripcion": "Batch de 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 20 pallets de 1200 kg por turno de recepción (mismas 72 t/día de MP). El lavado de la mezcladora por batch entra como tiempo de preparación (supuesto, no hay dato).",
  "replicas": 5,
- "nota": "5 réplicas por variante con los mismos streams; 1500 kg sin lavado = réplicas 1 a 5 de E1. IC con t(0,975; 4 gl) = 2,776.",
+ "nota": "Lavado de 30 min: 10 réplicas con el modelo actual (arribos y pallets aleatorios, mismos streams); 0 y 15 min: 5 réplicas del modelo anterior (llegadas fijas), solo como sensibilidad. IC con t(0,975; 9 gl) = 2,262 (4 gl: 2,776).",
  "filas": [
   {
    "lavado_min": 0,
@@ -71,33 +71,33 @@
    "lavado_min": 30,
    "n": 10,
    "pal_1500": {
-    "media": 75.3,
-    "desv": 0.9486832980505138,
-    "h": 0.6786,
-    "ic_inf": 74.6214,
-    "ic_sup": 75.9786
+    "media": 63.2,
+    "desv": 1.6193277068654826,
+    "h": 1.158316778778586,
+    "ic_inf": 62.04168322122142,
+    "ic_sup": 64.35831677877859
    },
    "pal_1200": {
-    "media": 71.3,
-    "desv": 0.48304589153964794,
-    "h": 0.3455262073996703,
-    "ic_inf": 70.95447379260033,
-    "ic_sup": 71.64552620739967
+    "media": 59.5,
+    "desv": 1.35400640077266,
+    "h": 0.9685305364313506,
+    "ic_inf": 58.53146946356865,
+    "ic_sup": 60.46853053643135
    },
    "dif_pal": {
-    "media": -4.0,
-    "desv": 0.816496580927726,
-    "h": 0.5840458886080784,
-    "ic_inf": -4.584045888608078,
-    "ic_sup": -3.4159541113919216,
+    "media": -3.7,
+    "desv": 0.9486832980505138,
+    "h": 0.6786,
+    "ic_inf": -4.3786000000000005,
+    "ic_sup": -3.0214000000000003,
     "cero_en_ic": false
    },
-   "cajas_1500": 10985.7,
-   "cajas_1200": 10391.8,
-   "dif_cajas_pct": -5.406118863613618,
-   "ton_1500": 54.9285,
-   "ton_1200": 51.959,
-   "dif_pal_pct": -5.312084993359889
+   "cajas_1500": 10967.5,
+   "cajas_1200": 10372.1,
+   "dif_cajas_pct": -5.428766811032593,
+   "ton_1500": 54.8375,
+   "ton_1200": 51.8605,
+   "dif_pal_pct": -5.8544303797468356
   }
  ]
 }

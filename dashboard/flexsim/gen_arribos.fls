@@ -1,0 +1,32 @@
+// Tools/GenArribos (texto en Tools/codArribos...): sortea los 48 arribos de MP del día (3 turnos x 16 pallets) con la tabla
+// empírica de tiempos entre arribos (datos_trazabilidad/fitting_series/iat_cdf.csv, 49 puntos) por inversa de la
+// acumulada con interpolación lineal. Tools/iatX = minutos, Tools/iatP = probabilidad acumulada. Escribe ArrivalTime
+// de las filas Arrival1..Arrival48 del calendario de SrcCamionesMP; cada turno arranca en 0, 8 y 16 h.
+// Réplica k: salta 48*k números del stream 90, así que las réplicas son independientes y se pueden repetir
+// (se corre dentro de la réplica: resetmodel(); executestring(codigo); resetmodel();).
+treenode T = model().find("Tools");
+Array xs = T.find("iatX").value.split(",");
+Array ps = T.find("iatP").value.split(",");
+int n = xs.length;
+treenode sch = node("MODEL:/SrcCamionesMP>variables/schedule");
+int rep = T.find("repId").value;
+for (int k = 0; k < 48 * rep; k++) uniform(0, 1, 90);
+double tsum = 0;
+for (int i = 1; i <= 48; i++) {
+	if ((i - 1) % 16 == 0) tsum = ((i - 1) / 16) * 28800;
+	sch.find("Arrival" + i).find("ArrivalTime").value = tsum;
+	double u = uniform(0, 1, 90);
+	double xm = 0;
+	double p1 = stringtonum(ps[1]);
+	if (u <= p1) { xm = u / p1 * stringtonum(xs[1]); }
+	else {
+		int j = 2;
+		while (j < n && u > stringtonum(ps[j])) j++;
+		double pa = stringtonum(ps[j-1]); double pb = stringtonum(ps[j]);
+		double xa = stringtonum(xs[j-1]); double xb = stringtonum(xs[j]);
+		xm = xa + (u - pa) / (pb - pa) * (xb - xa);
+	}
+	tsum = tsum + xm * 60;
+}
+sch.find("ArrivalFin").find("ArrivalTime").value = 86400;
+return 1;
