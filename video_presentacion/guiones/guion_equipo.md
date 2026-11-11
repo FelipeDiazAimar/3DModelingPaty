@@ -1,12 +1,12 @@
 # Guion equipo, Acto 6 (karaoke)
 
-Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D32 a D38). La IA calla todo el acto. Cifras verificadas en `DOCUMENTACION_VIDEO.md`.
+Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D32 a D38). La IA calla todo el acto. Cifras verificadas en `DOCUMENTACION_VIDEO.md`. No se compara contra valores de la planta.
 
 ## D32 · Jeremias Micheloud · 8:55 (22 s)
 
-1. La materia prima llega al azar: dieciséis pallets por turno, con la tabla real de arribos.
-2. Los tiempos de máquina son constantes.
-3. El peso de cada pallet sale de los quinientos reales, y las fallas son exponenciales.
+1. Los camiones llegan al azar: cantidad, tamaño y horario salen de datos reales.
+2. Tiempos fijos, salvo el ritmo diario de formado.
+3. Los pesos salen de pallets reales, y las fallas son exponenciales.
 4. Y la reparación, lognormal: muchas cortas y pocas largas.
 
 ## D33 · Jeremias Micheloud · 9:17 (45 s)
@@ -20,47 +20,47 @@ Se graba después, sobre el video terminado, siguiendo el barrido. Dura 5:00 (D3
 
 ## D34 · Jeremias Micheloud · 10:02 (38 s)
 
-1. En el modelo varían los arribos, el peso de los pallets y las fallas: exponencial entre fallas y lognormal en la reparación.
+1. En el modelo varían los camiones, el peso de los pallets, el ritmo de formado de cada día y las fallas.
 2. Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento.
 3. La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio.
-4. El modelo da cincuenta y cuatro coma ocho toneladas por día contra cincuenta y seis de la planta: menos dos coma uno por ciento. En pallets, menos dos coma seis. Por eso es válido.
+4. Y la entrada de materia prima cambia mucho de un día a otro, de ocho a ochenta batches: por eso los intervalos de confianza son anchos.
 
 ## D35 · Felipe Diaz Aimar · 10:40 (30 s)
 
-1. Este es el escenario base: sesenta y tres coma dos pallets por día.
-2. Sospechábamos de la formadora, pero el cuello real son las mezcladoras: noventa y uno por ciento ocupadas y sesenta y cinco toneladas de capacidad por día.
+1. Este es el escenario base: cuarenta y nueve coma uno pallets por día.
+2. Sospechábamos de la formadora, pero el cuello real son las mezcladoras: setenta y cinco por ciento ocupadas y sesenta coma cinco toneladas de capacidad por día.
 3. La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta.
 
 ## D36 · Felipe Diaz Aimar · 11:10 (60 s)
 
 1. ¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora.
 2. Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares.
-3. Son doce pallets más por día: un diecinueve por ciento.
-4. El intervalo va de diez coma ocho a trece coma dos. No incluye el cero, así que la mejora es real.
-5. Pero el cuello se mueve: ahora manda el desencajado, con setenta y cuatro toneladas por día.
+3. Son nueve pallets más por día: un diecinueve por ciento.
+4. El intervalo va de cuatro coma cinco a catorce coma uno. No incluye el cero, así que la mejora es real, aunque ancha.
+5. Pero el cuello se mueve: ahora manda el desencajado, con setenta y cuatro coma siete toneladas por día.
 
 ## D37 · Matias Buffa · 12:10 (45 s)
 
 1. Ahora lo obvio: si queremos producir más, traigamos más materia prima.
-2. Sobre las formadoras rápidas, veinticuatro pallets por turno en lugar de dieciséis.
-3. Contra el escenario anterior da apenas cero coma cinco pallets más por día.
-4. El intervalo va de cero coma uno a cero coma nueve: menos de uno por ciento, casi no suma.
-5. La materia prima se acumula: las cámaras pasan de seis a veintidós pallets en promedio.
+2. Sobre las formadoras rápidas, uno coma cinco veces la materia prima que entra.
+3. Contra el escenario anterior da tres coma seis pallets más por día.
+4. El intervalo va de menos cero coma tres a siete coma cinco: incluye el cero, así que no se distingue.
+5. La materia prima se acumula: las cámaras pasan de diecinueve a treinta pallets en promedio.
 
 ## D38 · Matias Buffa · 12:55 (40 s)
 
-1. Después probamos un batch más chico: mil doscientos kilos en lugar de mil quinientos.
-2. Rinde casi cuatro pallets menos por día, porque con batches chicos se lava más veces por tonelada.
-3. El intervalo va de menos cuatro coma cuatro a menos tres. También es significativo: conviene el batch grande.
+1. Después probamos un batch más grande: mil doscientos kilos, ocho cargas, en lugar de mil cincuenta, siete cargas.
+2. Rinde apenas cero coma seis pallets más por día, y esa diferencia no se distingue de cero.
+3. El intervalo va de cero a uno coma dos e incluye el cero: con este modelo, el tamaño del batch casi no cambia el resultado.
 
 ## D39 · Matias Buffa · 13:35 (10 s)
 
-1. Comparando todo: las formadoras rápidas rinden setenta y cinco pallets por día; la base, sesenta y tres; y el batch chico, sesenta.
+1. Comparando: base, cuarenta y nueve; formadoras rápidas, cincuenta y ocho; más materia prima, sesenta y dos; batch de 1200, cincuenta.
 
 ## D40 · Matias Buffa · 13:45 (25 s)
 
 1. La conclusión: primero formadoras, después desencajado.
-2. Traer más materia prima, por sí sola, casi no suma.
+2. Traer más materia prima, por sí sola, no se distingue de cero.
 3. Y todo esto lo sabemos porque comparamos intervalos de confianza, no corridas sueltas.
 
 ## Reglas

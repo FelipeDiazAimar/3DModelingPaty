@@ -1,32 +1,94 @@
-// Tools/GenArribos (texto en Tools/codArribos...): sortea los 48 arribos de MP del día (3 turnos x 16 pallets) con la tabla
-// empírica de tiempos entre arribos (datos_trazabilidad/fitting_series/iat_cdf.csv, 49 puntos) por inversa de la
-// acumulada con interpolación lineal. Tools/iatX = minutos, Tools/iatP = probabilidad acumulada. Escribe ArrivalTime
-// de las filas Arrival1..Arrival48 del calendario de SrcCamionesMP; cada turno arranca en 0, 8 y 16 h.
-// Réplica k: salta 48*k números del stream 90, así que las réplicas son independientes y se pueden repetir
-// (se corre dentro de la réplica: resetmodel(); executestring(codigo); resetmodel();).
+// Tools/GenArribos: sortea los arribos de MP del día a partir de los camiones reales de la planta (base dbelaborados, tabla palet
+// agrupada por remito, jul-nov 2026; datos_trazabilidad/fitting_series/).
+//  - K = camiones del día de la planta: remuestreo de camCnt (66 días, camiones de >=10 pallets), stream 94.
+//  - tamaño de cada camión: remuestreo de camSize (306 camiones), stream 95. L7+L8 reciben la fracción camFrac del camión
+//    (2/8 de las líneas, ajustada al consumo real de las dos líneas).
+//  - peso de cada pallet de MP: percentiles de pesos_mp_percentiles.csv (n=11.882, media 934 kg), stream 98. Un batch es MP + aditivos
+//    (lista técnica, base 1000 kg; la carne es ~88 %): batchKg (921 kg de MP) = 1 batch, así que cada camión aporta
+//    round(suma de pesos / batchKg) batches a la cola de las líneas.
+//  - primer camión: uniforme en las 2 primeras horas desde camOff (stream 97). Los siguientes salen con el gap real entre camiones
+//    (camGap, 240 valores, stream 96). El reloj 0 del modelo equivale a las 8:00.
+//  - dentro del camión: tiempo entre pallets de la tabla empírica iat_cdf.csv por inversa de la acumulada (stream 90).
+//  - ritmo de formado del día: multiplicador de ritmoM (246 corridas reales de L7 y L8), uno por línea (stream 99); modifica
+//    entrySpacePadding de las cintas de formado de esa línea: ritmo ∝ 1/(0,403 + padding).
+// El calendario de SrcCamionesMP tiene 80 filas (orden del árbol); se ordenan los tiempos y las filas que sobran quedan con Quantity 0.
+// Réplica k: salta 80*k números del stream 90, 14*k de los 95 y 96, 250*k del 98, k de los 94 y 97 y 2*k del 99.
 treenode T = model().find("Tools");
 Array xs = T.find("iatX").value.split(",");
 Array ps = T.find("iatP").value.split(",");
+Array sz = T.find("camSize").value.split(",");
+Array cn = T.find("camCnt").value.split(",");
+Array gp = T.find("camGap").value.split(",");
+Array pw = T.find("pesoMP").value.split(",");
+Array rm = T.find("ritmoM").value.split(",");
+double frac = T.find("camFrac").value;
+double off = T.find("camOff").value;
+double bkg = T.find("batchKg").value;
+double pb = T.find("padBase").value;
 int n = xs.length;
 treenode sch = node("MODEL:/SrcCamionesMP>variables/schedule");
 int rep = T.find("repId").value;
-for (int k = 0; k < 48 * rep; k++) uniform(0, 1, 90);
-double tsum = 0;
-for (int i = 1; i <= 48; i++) {
-	if ((i - 1) % 16 == 0) tsum = ((i - 1) / 16) * 28800;
-	sch.find("Arrival" + i).find("ArrivalTime").value = tsum;
-	double u = uniform(0, 1, 90);
-	double xm = 0;
-	double p1 = stringtonum(ps[1]);
-	if (u <= p1) { xm = u / p1 * stringtonum(xs[1]); }
-	else {
-		int j = 2;
-		while (j < n && u > stringtonum(ps[j])) j++;
-		double pa = stringtonum(ps[j-1]); double pb = stringtonum(ps[j]);
-		double xa = stringtonum(xs[j-1]); double xb = stringtonum(xs[j]);
-		xm = xa + (u - pa) / (pb - pa) * (xb - xa);
+for (int k = 0; k < 80 * rep; k++) uniform(0, 1, 90);
+for (int k = 0; k < 14 * rep; k++) { uniform(0, 1, 95); uniform(0, 1, 96); }
+for (int k = 0; k < 250 * rep; k++) uniform(0, 1, 98);
+for (int k = 0; k < rep; k++) { uniform(0, 1, 94); uniform(0, 1, 97); }
+for (int k = 0; k < 2 * rep; k++) uniform(0, 1, 99);
+for (int l = 7; l <= 8; l++) {
+	double m = stringtonum(rm[1 + floor(uniform(0, 1, 99) * rm.length)]);
+	double pad = (0.403 + pb) / m - 0.403;
+	model().find("CintaFormA_L" + l).find(">variables/entrySpacePadding").value = pad;
+	model().find("CintaFormB_L" + l).find(">variables/entrySpacePadding").value = pad;
+}
+int K = stringtonum(cn[1 + floor(uniform(0, 1, 94) * cn.length)]);
+if (K > 13) K = 13;
+double tstart = off + uniform(0, 1, 97) * 7200;
+Array tm = Array();
+for (int t = 1; t <= K; t++) {
+	int size = stringtonum(sz[1 + floor(uniform(0, 1, 95) * sz.length)]);
+	int share = round(size * frac);
+	if (share < 1) share = 1;
+	double wsum = 0;
+	for (int q = 1; q <= share; q++) {
+		double uw = uniform(0, 1, 98) * 100;
+		int iw = floor(uw);
+		if (iw > 99) iw = 99;
+		double w0 = stringtonum(pw[iw + 1]);
+		double w1 = stringtonum(pw[iw + 2]);
+		wsum = wsum + w0 + (uw - iw) * (w1 - w0);
 	}
-	tsum = tsum + xm * 60;
+	int nb = round(wsum / bkg);
+	if (nb < 1) nb = 1;
+	if (t > 1) tstart = tstart + stringtonum(gp[1 + floor(uniform(0, 1, 96) * gp.length)]) * 60;
+	double tt = tstart;
+	for (int p = 1; p <= nb; p++) {
+		if (tm.length >= 80) break;
+		if (tt < 86000) tm.push(tt);
+		double u = uniform(0, 1, 90);
+		double xm = 0;
+		double p1 = stringtonum(ps[1]);
+		if (u <= p1) { xm = u / p1 * stringtonum(xs[1]); }
+		else {
+			int j = 2;
+			while (j < n && u > stringtonum(ps[j])) j++;
+			double pa = stringtonum(ps[j-1]); double pbb = stringtonum(ps[j]);
+			double xa = stringtonum(xs[j-1]); double xb = stringtonum(xs[j]);
+			xm = xa + (u - pa) / (pbb - pa) * (xb - xa);
+		}
+		tt = tt + xm * 60;
+	}
+}
+tm.sort();
+double ult = off;
+for (int r = 1; r <= 80; r++) {
+	treenode row = sch.subnodes[r];
+	if (r <= tm.length) {
+		ult = tm[r];
+		row.find("ArrivalTime").value = ult;
+		row.find("Quantity").value = 1;
+	} else {
+		row.find("ArrivalTime").value = ult;
+		row.find("Quantity").value = 0;
+	}
 }
 sch.find("ArrivalFin").find("ArrivalTime").value = 86400;
-return 1;
+return tm.length;

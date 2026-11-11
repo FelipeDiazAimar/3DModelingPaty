@@ -69,7 +69,7 @@
     }
     #s04v-ref {
       position: absolute;
-      left: 1404px;
+      left: 1236px;
       top: 330px;
       width: 6px;
       height: 430px;
@@ -77,7 +77,7 @@
     }
     #s04v-reflbl {
       position: absolute;
-      left: 1240px;
+      left: 1072px;
       top: 268px;
       font-size: 40px;
       font-weight: 700;
@@ -108,30 +108,30 @@
     <div id="s04v-new" class="s04v-h" data-layout-allow-overlap>Mezcladoras</div>
 
     <div id="s04v-axis">Cuánto puede procesar cada etapa por día</div>
-    <div id="s04v-reflbl">72 t/día entran</div>
+    <div id="s04v-reflbl">≈58 t/día entran</div>
 
     <div class="s04v-name" style="top: 335px; color: #ff1f3d">Mezcladoras</div>
-    <div class="s04v-bar" id="s04v-b1" style="top: 335px; width: 783px; background: #ff1f3d"></div>
-    <div class="s04v-val" id="s04v-v1" style="top: 335px; width: 782px; color: #050507">65,2 t</div>
+    <div class="s04v-bar" id="s04v-b1" style="top: 335px; width: 726px; background: #ff1f3d"></div>
+    <div class="s04v-val" id="s04v-v1" style="top: 335px; width: 725px; color: #050507">60,5 t</div>
 
     <div class="s04v-name" style="top: 480px">Desencajado</div>
-    <div class="s04v-bar" id="s04v-b2" style="top: 480px; width: 889px"></div>
-    <div class="s04v-val" id="s04v-v2" style="top: 480px; width: 890px">74,2 t</div>
+    <div class="s04v-bar" id="s04v-b2" style="top: 480px; width: 896px"></div>
+    <div class="s04v-val" id="s04v-v2" style="top: 480px; width: 895px">74,7 t</div>
 
     <div class="s04v-name" style="top: 625px">Formadoras</div>
-    <div class="s04v-bar" id="s04v-b3" style="top: 625px; width: 1046px"></div>
-    <div class="s04v-val" id="s04v-v3" style="top: 625px; width: 1046px">87,2 t</div>
+    <div class="s04v-bar" id="s04v-b3" style="top: 625px; width: 1044px"></div>
+    <div class="s04v-val" id="s04v-v3" style="top: 625px; width: 1044px">87,0 t</div>
 
     <div id="s04v-ref" data-layout-ignore></div>
 
     <div id="s04v-pills">
-      <span id="s04v-p1" class="s04v-pill">91 % ocupadas</span>
-      <span id="s04v-p2" class="s04v-pill">Cola: 3,5 lotes</span>
+      <span id="s04v-p1" class="s04v-pill">75 % ocupadas</span>
+      <span id="s04v-p2" class="s04v-pill">Entrada: 8 a 80 batches/día</span>
       <span id="s04v-p3" class="s04v-pill">Lavado: 30 min por batch</span>
     </div>
   </div>
   <script>
-    // Escena 4e · b69–81 · datos: E1_FINAL.md:73 y cuellos.json (corrida con lavado, 10 réplicas)
+    // Escena 4e · b69–81 · datos: E1_FINAL.md y estocastico_camiones/analisis.json (10 réplicas)
     (function () {
       const B = 0.9375;
       const tl = gsap.timeline({ paused: true });

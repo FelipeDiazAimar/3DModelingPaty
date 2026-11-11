@@ -42,13 +42,13 @@ Efecto: mecánica del catálogo de HyperFrames usada o adaptada. La voz y los ti
 | 7 | Las 8 etapas | Trazado de línea en SVG |
 | 8 | ¿Dónde está el cuello de botella? | `headline-slam` |
 | 9 | Nave y plano de Elaborados | `scan-band` |
-| 10–12 | 1500 kg, 16 pallets, 72 t, camiones andando | `slot-machine-roll` |
+| 10–12 | 1050 kg, 55 batches por día, 58 t, camiones andando | `slot-machine-roll` |
 | 13 | Tiempos de las 8 etapas | `parallax-zoom` |
 | 14 | ¿Formadora? 982 contra 1843 kg/h | Barras y sacudida |
 | 15 | Por qué la formadora: 53 % | `rgb-glitch-text` |
 | 16 | Tres pasos para probar la sospecha | `marker-highlight`, `velocity-throw-snap` |
 | 17 | Medida de desempeño | Indicador animado, letras 3D y cámara orbital |
-| 18 | Tablero real: 56,0 t/día, ¿es válido? | `split-flap-board` |
+| 18 | Producción de la planta, ¿dónde se frena? | `split-flap-board` |
 | 19 | Por dónde arrancamos a simular | `grid-pixelate-wipe` |
 | 20 | Planos de la planta | Paneo del plano y `chromatic-aberration-wipe` de salida |
 | 21 | Blender | La planta pasa de alambre a sólida mientras baja la cámara |

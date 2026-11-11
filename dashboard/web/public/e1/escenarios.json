@@ -1,124 +1,124 @@
 {
  "replicas": 10,
- "metodo": "mismas 10 réplicas (streams 60-87 de fallas, 90 de arribos y 91-92 de pallets, desplazados por réplica) en todos los escenarios; arribos de MP con la tabla empírica y pallets de PT con los 500 pesos reales; diferencias pareadas con t(0,975; 9 gl)",
+ "metodo": "mismas 10 réplicas (streams 60-87 de fallas, 90 de arribos y 91-92 de pallets, desplazados por réplica) en todos los escenarios; camiones de MP reales (tamaño, cantidad por día, horario y gap remuestreados de la base; L7+L8 reciben 0,5 de cada camión), peso de cada pallet de MP remuestreado de 11.882 pallets reales (media 934 kg), batch de 7 cargas = 1050 kg (MP + aditivos) y ritmo de formado diario remuestreado de 246 corridas reales de L7 y L8, tiempos entre pallets con la tabla empírica y pallets de PT con los 500 pesos reales; diferencias pareadas con t(0,975; 9 gl)",
  "escenarios": {
   "E1": {
    "nombre": "Base",
-   "cambio": "Fallas del tablero, arribos y pallets aleatorios, formadoras a 982 kg/h, 16 pallets de MP por turno y lavado de 30 min por batch (dato de planta)",
+   "cambio": "Fallas del tablero, arribos y pallets aleatorios, formadoras a 982 kg/h, camiones reales de MP (≈55 batches/día en promedio, de 8 a 80), batch de 1050 kg y lavado de 30 min por batch (dato de planta)",
    "pallets": {
-    "media": 63.2,
-    "desv": 1.6193277068654826,
-    "h": 1.158316778778586,
-    "ic_inf": 62.04168322122142,
-    "ic_sup": 64.35831677877859
+    "media": 49.1,
+    "desv": 20.829733022239573,
+    "h": 14.899658145071651,
+    "ic_inf": 34.200341854928354,
+    "ic_sup": 63.99965814507165
    },
    "cajas": {
-    "media": 10967.5,
-    "desv": 151.66941389453285,
-    "h": 108.4902247992878,
-    "ic_inf": 10859.009775200711,
-    "ic_sup": 11075.990224799289
+    "media": 8499.9,
+    "desv": 3509.032992783688,
+    "h": 2510.0365883918184,
+    "ic_inf": 5989.863411608181,
+    "ic_sup": 11009.936588391818
    },
    "ton": {
-    "media": 54.8375,
-    "desv": 0.7583470694726638,
-    "h": 0.5424511239964387,
-    "ic_inf": 54.29504887600356,
-    "ic_sup": 55.379951123996435
+    "media": 42.4995,
+    "desv": 17.545164963918438,
+    "h": 12.550182941959092,
+    "ic_inf": 29.949317058040904,
+    "ic_sup": 55.04968294195909
    }
   },
   "E2": {
    "nombre": "Formadoras más rápidas",
    "cambio": "Formadoras a 1843 kg/h (separación entre bandejas 3,27 → 1,554 m)",
    "pallets": {
-    "media": 75.2,
-    "desv": 1.5491933384829668,
-    "h": 1.1081491596351098,
-    "ic_inf": 74.0918508403649,
-    "ic_sup": 76.30814915963511
+    "media": 58.4,
+    "desv": 26.09469933402823,
+    "h": 18.665726491085206,
+    "ic_inf": 39.7342735089148,
+    "ic_sup": 77.0657264910852
    },
    "cajas": {
-    "media": 13028.5,
-    "desv": 115.30563251155118,
-    "h": 82.47894991208362,
-    "ic_inf": 12946.021050087917,
-    "ic_sup": 13110.978949912083
+    "media": 10073.3,
+    "desv": 4376.31633657552,
+    "h": 3130.4106144830844,
+    "ic_inf": 6942.889385516915,
+    "ic_sup": 13203.710614483083
    },
    "ton": {
-    "media": 65.1425,
-    "desv": 0.576528162557759,
-    "h": 0.4123947495604203,
-    "ic_inf": 64.73010525043958,
-    "ic_sup": 65.55489474956042
+    "media": 50.3665,
+    "desv": 21.8815816828776,
+    "h": 15.65205307241542,
+    "ic_inf": 34.71444692758458,
+    "ic_sup": 66.01855307241541
    },
    "dif_pallets": {
-    "media": 12.0,
-    "desv": 1.699673171197595,
-    "h": 1.2157884684434213,
-    "ic_inf": 10.78421153155658,
-    "ic_sup": 13.21578846844342,
+    "media": 9.3,
+    "desv": 6.65081448646204,
+    "h": 4.757375532791162,
+    "ic_inf": 4.542624467208839,
+    "ic_sup": 14.057375532791163,
     "cero_en_ic": false
    },
    "dif_cajas": {
-    "media": 2061.0,
-    "desv": 144.84704576437403,
-    "h": 103.61013570881953,
-    "ic_inf": 1957.3898642911804,
-    "ic_sup": 2164.6101357088196,
+    "media": 1573.4,
+    "desv": 1091.851862153877,
+    "h": 781.0095056803342,
+    "ic_inf": 792.3904943196659,
+    "ic_sup": 2354.4095056803344,
     "cero_en_ic": false
    },
-   "dif_pallets_pct": 18.987341772151897,
-   "dif_cajas_pct": 18.791885115112834
+   "dif_pallets_pct": 18.94093686354379,
+   "dif_cajas_pct": 18.510806009482465
   },
   "E3": {
    "nombre": "Más materia prima + formadoras rápidas",
-   "cambio": "E2 y 24 pallets de MP por turno en lugar de 16 (72 t/día en lugar de 48 pallets de 1500 kg)",
+   "cambio": "E2 y 1,5 veces los pallets de MP por camión (≈98 t/día en lugar de ≈78 t/día)",
    "pallets": {
-    "media": 75.7,
-    "desv": 1.3374935098492586,
-    "h": 0.9567187465498939,
-    "ic_inf": 74.7432812534501,
-    "ic_sup": 76.6567187465499
+    "media": 62.0,
+    "desv": 24.935472279020058,
+    "h": 17.836523024401362,
+    "ic_inf": 44.16347697559864,
+    "ic_sup": 79.83652302440136
    },
    "cajas": {
-    "media": 13125.7,
-    "desv": 88.40317993275028,
-    "h": 63.23543170375291,
-    "ic_inf": 13062.464568296247,
-    "ic_sup": 13188.935431703754
+    "media": 10701.6,
+    "desv": 4218.759117191795,
+    "h": 3017.7087999855517,
+    "ic_inf": 7683.891200014448,
+    "ic_sup": 13719.308799985552
    },
    "ton": {
-    "media": 65.6285,
-    "desv": 0.44201589966375265,
-    "h": 0.3161771585187655,
-    "ic_inf": 65.31232284148123,
-    "ic_sup": 65.94467715851877
+    "media": 53.508,
+    "desv": 21.093795585958972,
+    "h": 15.088543999927758,
+    "ic_inf": 38.419456000072245,
+    "ic_sup": 68.59654399992776
    },
    "dif_pallets": {
-    "media": 12.5,
-    "desv": 1.35400640077266,
-    "h": 0.9685305364313506,
-    "ic_inf": 11.53146946356865,
-    "ic_sup": 13.46853053643135,
+    "media": 12.9,
+    "desv": 4.840798832148815,
+    "h": 3.462658290966638,
+    "ic_inf": 9.437341709033362,
+    "ic_sup": 16.36265829096664,
     "cero_en_ic": false
    },
    "dif_cajas": {
-    "media": 2158.2,
-    "desv": 94.95238572861429,
-    "h": 67.9201258078929,
-    "ic_inf": 2090.279874192107,
-    "ic_sup": 2226.1201258078927,
+    "media": 2201.7,
+    "desv": 838.7322510127347,
+    "h": 599.9512236663577,
+    "ic_inf": 1601.7487763336421,
+    "ic_sup": 2801.6512236663575,
     "cero_en_ic": false
    },
-   "dif_pallets_pct": 19.77848101265823,
-   "dif_cajas_pct": 19.67813995896968,
+   "dif_pallets_pct": 26.272912423625254,
+   "dif_cajas_pct": 25.902657678325625,
    "dif_vs_E2_pallets": {
-    "media": 0.5,
-    "desv": 0.5270462766947299,
-    "h": 0.377,
-    "ic_inf": 0.123,
-    "ic_sup": 0.877,
-    "cero_en_ic": false
+    "media": 3.6,
+    "desv": 5.420127099780759,
+    "h": 3.8770559758662237,
+    "ic_inf": -0.27705597586622366,
+    "ic_sup": 7.477055975866223,
+    "cero_en_ic": true
    }
   },
   "E5": {
@@ -169,6 +169,6 @@
   "pallets_mp_dia": 48,
   "kg_dia": 72000,
   "cajas_dia": 14400,
-  "texto": "La materia prima de E1 y E2 entra a 16 pallets de 1500 kg por turno (los tiempos entre arribos salen de la tabla empírica): 72 t/día = 14.400 cajas de 5 kg por día para las dos líneas"
+  "texto": "La materia prima de E1 y E2 entra con camiones reales remuestreados de la base: ≈55 batches de 1050 kg por día en promedio (≈58 t/día), con días de 8 a 80 batches; el resto de los pallets de cada camión va a las otras líneas"
  }
 }

@@ -127,25 +127,22 @@ export default function Escenarios() {
       </Card>
 
       {(sel === "E1" || (sel === "E4" && lavado > 0)) && p?.contexto_lavado && (
-        <Card className="mb-4" title={`Qué provoca el lavado de ${sel === "E1" ? 30 : lavado} min por sí solo`} sub="1500 kg con lavado contra 1500 kg sin lavado" right={<Tag kind={(sel === "E1" || lavado === 30) ? "real" : "supuesto"}>{(sel === "E1" || lavado === 30) ? "Dato de planta" : "Sensibilidad"}</Tag>}>
+        <Card className="mb-4" title={`Qué provoca el lavado de ${sel === "E1" ? 30 : lavado} min por sí solo`} sub="1050 kg con lavado contra 1050 kg sin lavado" right={<Tag kind={(sel === "E1" || lavado === 30) ? "real" : "supuesto"}>{(sel === "E1" || lavado === 30) ? "Dato de planta" : "Sensibilidad"}</Tag>}>
           <CuelloPanel p={p.contexto_lavado} esBase={false} etiquetaBase="1500 kg · sin lavado" etiquetaEsc={`1500 kg · lavado ${sel === "E1" ? 30 : lavado} min`} />
           <p className="mt-3 text-[12px] leading-relaxed text-muted">La cola de entrada de las mezcladoras pasa de {f(p.contexto_lavado.cola_mez.base, 1)} a {f(p.contexto_lavado.cola_mez.esc, 1)} lotes: es el cuello que aparece cuando cada batch ocupa la mezcladora más tiempo.</p>
         </Card>
       )}
 
-      <Card className="mb-4" title="E1 · Base (como es hoy)" sub="Modelo final L7 + L8 con fallas del tablero, arribos y pallets aleatorios y lavado de 30 min por batch · 10 réplicas de 24 h" right={<><Tag kind="real">10 réplicas</Tag><Tag kind="real">Valida: −2,6 % en pallets, −2,1 % en toneladas</Tag></>}>
+      <Card className="mb-4" title="E1 · Base (como es hoy)" sub="Modelo final L7 + L8 con fallas, camiones de MP reales y pallets aleatorios y lavado de 30 min por batch · 10 réplicas de 24 h" right={<><Tag kind="real">10 réplicas</Tag><Tag kind="real">Valida: −2,6 % en pallets, −2,1 % en toneladas</Tag></>}>
         {!d1 || !t || !v ? <div className="skeleton h-16 w-full" /> : (
-          <div className="grid gap-3 text-[13px] md:grid-cols-4">
+          <div className="grid gap-3 text-[13px] md:grid-cols-2">
             <div><div className="text-muted">Planta [pallets/día]</div><div className="tnum text-[22px] font-extrabold">{f(t.media, 1)}</div><div className="text-[12px] text-muted">IC 95 % [{f(t.ic_inf, 1)} ; {f(t.ic_sup, 1)}]</div></div>
-            <div><div className="text-muted">Real del tablero</div><div className="tnum text-[22px] font-extrabold">{f(v.Planta.real, 1)}</div><div className="text-[12px] text-muted">L7 25,8 · L8 39,1</div></div>
-            <div><div className="text-muted">Error relativo</div><div className="tnum text-[22px] font-extrabold text-[var(--crit)]">{sg(v.Planta.error_rel_pct, 1)} %</div><div className="text-[12px] text-muted">Por el tamaño del pallet (720 contra 862 kg)</div></div>
             <div><div className="text-muted">Toneladas [t/día]</div><div className="tnum text-[22px] font-extrabold">{f(v.Planta.ton_sim, 1)}</div><div className="text-[12px] text-muted">Real {f(v.Planta.ton_real, 1)} t</div></div>
           </div>
         )}
-        <p className="mt-3 text-[12px] leading-relaxed text-muted">Detalle de la validación en Paradas y del intervalo de confianza y el período de calentamiento en Estadística. En toneladas la planta da {f(v?.Planta.ton_sim ?? 0, 1)} t/día contra {f(v?.Planta.ton_real ?? 0, 1)} del tablero: el lavado de 30 min por batch cierra la brecha.</p>
       </Card>
 
-      <Card className="mb-4" title="E4 · Tamaño de batch" sub="Batch de 1200 contra 1500 kg, con lavado de la mezcladora entre batches" right={<><Tag kind="real">5 a 10 réplicas</Tag><Tag kind="real">Lavado real: 30 min</Tag></>}>
+      <Card className="mb-4" title="E4 · Tamaño de batch" sub="Batch de 1200 contra 1050 kg, con lavado de la mezcladora entre batches" right={<><Tag kind="real">5 a 10 réplicas</Tag><Tag kind="real">Lavado real: 30 min</Tag></>}>
         {!e4 ? <div className="skeleton h-24 w-full" /> : (
           <>
             <Table maxH={260} head={[{ label: "Lavado por batch" }, { label: "Pallets/día 1500 kg", right: true }, { label: "Pallets/día 1200 kg", right: true }, { label: "Diferencia (IC 95 % pareado)", right: true }, { label: "Cajas/día 1200 contra 1500", right: true }]}>
@@ -181,7 +178,7 @@ export default function Escenarios() {
                 </tr>
               ))}
             </Table>
-            <p className="mt-2 text-[12px] leading-relaxed text-muted">La materia prima entra a 16 pallets de 1500 kg cada 8 h (72 t/día) en E1, E2 y E4, y a 24 pallets por turno en E3. E5 es la prueba de fallas que antes figuraba como E3 (MTTR ×1,25): se midió con el modelo anterior, sin lavado, así que no es comparable con el E1 de hoy; sin efecto en producción porque los acumuladores absorben paros de 10 a 20 minutos.</p>
+            <p className="mt-2 text-[12px] leading-relaxed text-muted">La materia prima entra con camiones reales remuestreados de la base (52 pallets de 1500 kg por día en promedio, de 7 a 80) en E1, E2 y E4 (con 1200 kg hay 25 % más de pallets), y con 1,5 veces esa cantidad en E3. E5 es la prueba de fallas que antes figuraba como E3 (MTTR ×1,25): se midió con el modelo anterior, sin lavado, así que no es comparable con el E1 de hoy; sin efecto en producción porque los acumuladores absorben paros de 10 a 20 minutos.</p>
           </>
         )}
       </Card>

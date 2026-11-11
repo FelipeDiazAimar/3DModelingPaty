@@ -33,56 +33,56 @@ Regla: **ningún número entra al video sin una fuente del proyecto en la tabla 
 
 ## 3. Datos verificados (en pantalla o previstos)
 
-Rutas relativas a `FabricaPaty_SanJorge/`. Corrida vigente: lavado de 30 min, 7/11/2026.
+Rutas relativas a `FabricaPaty_SanJorge/`. Corrida vigente (10/11/2026): camiones reales remuestreados, batch de 1050 kg, lavado de 30 min. **No se compara contra valores de la planta.**
 
 | Dato | Valor | Fuente | Naturaleza |
 |---|---|---|---|
 | Nave | 150 × 70 m | `README.md:3` | Planta |
 | Líneas modeladas | L7 y L8 | `README.md:3`, `SUPUESTOS_v2.md` | Alcance del modelo |
-| Batch | 1500 kg | `SUPUESTOS_v2.md:12,22` | Dato del equipo |
-| Materia prima | 16 pallets por turno, 72 t/día; tiempos entre arribos de la tabla empírica (Monte Carlo) | `SUPUESTOS_v2.md:12`, `iat_cdf.csv` | Parámetro oficial, arribos aleatorios desde el 10/11 |
+| Batch | 1050 kg (7 cargas de 150 kg: MP + aditivos de la lista técnica) | `SUPUESTOS_v2.md`, `gen_arribos.fls` | Parámetro oficial |
+| Materia prima | Camiones reales remuestreados de la base de producción (cantidad por día, tamaño, hora del primer camión, gaps); 8 a 80 batches por día, ≈ 55 de media; L7 + L8 reciben 0,5 de cada camión (supuesto declarado); peso de cada pallet de MP remuestreado de 11.882 pallets reales (media 934 kg) | `SUPUESTOS_v2.md`, `dashboard/flexsim/gen_arribos.fls`, `fitting_series/` | Parámetro oficial desde el 10/11 |
 | Lavado de mezcladora | 30 min por batch | `SUPUESTOS_v2.md:9` | Dato de planta |
 | Etapas | Desencajado, picado, mezclado, formado, túnel, envasado, encajonado, estibado | `dashboard/web/public/e1/cuellos.json` | Modelo |
-| **Cuello de botella E1** | **Mezcladoras: 65,2 t/día, 91 % ocupadas** (siguiente: desencajado, 74,2 t/día) | `datos_trazabilidad/e1_final/E1_FINAL.md`, `estocastico/`, `cuellos.json` | Simulación, 10 réplicas |
-| Capacidad desencajado | 74,2 t/día (97 % ocupado), siguiente restricción | `cuellos.json` | Simulación |
-| Capacidad formado | 87,2 t/día (64 % ocupado) | `cuellos.json` | Simulación |
+| **Cuello de botella E1** | **Mezcladoras: 60,5 t/día, 75 % ocupadas** (siguiente: desencajado, 74,7 t/día) | `datos_trazabilidad/e1_final/E1_FINAL.md`, `estocastico_camiones/analisis.json` | Simulación, 10 réplicas |
+| Capacidad desencajado | 74,7 t/día (72 % ocupado), siguiente restricción | `analisis.json` | Simulación |
+| Capacidad formado | 87,0 t/día | `analisis.json` | Simulación |
 | Formadora | 982 kg/h base, 1843 kg/h en E2 | `SUPUESTOS_v2.md:11` | Parámetros oficiales |
 | Métrica oficial | Toneladas por día | `SUPUESTOS_v2.md:13`, `PENDIENTES.md:6` | Criterio de validación |
-| Tablero real | 56,0 t/día, 64,9 pallets/día (L7 + L8) | `SUPUESTOS_v2.md:127` | Dato real Sep–Oct |
-| E1 modelo | 54,8 t/día (−2,1 %), 63,2 ± 1,2 pallets/día (−2,6 % contra 64,9 reales) | `E1_FINAL.md` | Simulación |
+| Ritmo de formado | Multiplicador diario por línea remuestreado de 246 corridas reales de L7/L8 (sd ≈ 9 %) | `fitting_series/ritmo_formado_L7L8.csv` | Parámetro oficial |
+| E1 modelo | 49,1 ± 14,9 pallets/día, 42,5 ± 12,6 t/día, 879 kg por pallet de PT (IC anchos: la entrada varía de 8 a 80 batches/día) | `E1_FINAL.md`, `analisis.json` | Simulación |
 | Réplicas e IC | 10 réplicas de 24 h, IC 95 %, t = 2,262 | `E1_FINAL.md:9,13` | Método |
-| E2 | +12,0 pal/día (+19,0 %), IC [+10,8 ; +13,2]; cuello pasa al desencajado | `E1_FINAL.md` | Simulación |
-| E3 (nuevo) | E2 + 24 pallets MP por turno: 75,7 pal/día, +0,5 contra E2 (IC [+0,1 ; +0,9], +0,7 %) | `E1_FINAL.md` | Simulación |
-| E4 | 1200 contra 1500 kg con lavado: −4,0 [−4,6 ; −3,4] | `E1_FINAL.md:76` | Simulación |
+| E2 | 58,4 ± 18,7 pal/día; +9,3 pal/día contra E1 (+18,9 %), IC [+4,5 ; +14,1]; cuello pasa al desencajado (74,7 t/día) | `E1_FINAL.md` | Simulación |
+| E3 | E2 + 1,5× la materia prima: 62,0 ± 17,8 pal/día, +3,6 contra E2 (IC [−0,3 ; +7,5]: incluye el cero); cámaras de MP 19,4 → 30,3 pallets | `E1_FINAL.md` | Simulación |
+| E4 | Batch 1200 kg (8 cargas) contra 1050 kg (7 cargas): 49,7 ± 14,7 pal/día, +0,6 contra E1 (IC [−0,0 ; +1,2]: incluye el cero) | `E1_FINAL.md` | Simulación |
 | E5 (antes E3) | MTTR ×1,25: sin efecto; medido sin lavado | `PENDIENTES.md:22` | Simulación |
 
 ## 4. Correcciones aplicadas a `etapas/` y `guiones/`
 
-Estos valores venían de la corrida histórica sin lavado y ya se corrigieron en los documentos (`guion_ia.md`, `guion_equipo.md`, `ACTO1-2`, `ACTO3`, `ACTO4`, `ACTO6`, `checklist.md`, `PROMPT_VIDEO_PATY.md`). El 89,4 y el +37,8 % siguen solo como relato de la primera corrida. Bondad de ajuste: K-S rechaza en arribos, paradas y pesos, al revés de lo que decía el Acto 6.
+Estos valores venían de la corrida histórica sin lavado y ya se corrigieron en los documentos (`guion_ia.md`, `guion_equipo.md`, `ACTO1-2`, `ACTO3`, `ACTO4`, `ACTO6`, `checklist.md`, `PROMPT_VIDEO_PATY.md`). El 89,4 pallets/día sigue solo como relato de la primera corrida (todo constante, sin lavado); ya no se compara contra el tablero. Bondad de ajuste: K-S rechaza en arribos, paradas y pesos, al revés de lo que decía el Acto 6.
 
 | Dónde | Dice | Vigente |
 |---|---|---|
-| ACTO3 y `guion_ia.md` | 89 pallets por día | 63,2 pal/día, 54,8 t/día. El 89,4 es sin lavado (y con pallet de 720 kg) |
+| ACTO3 y `guion_ia.md` | 89 pallets por día | 49,1 ± 14,9 pal/día, 42,5 t/día. El 89,4 es la primera corrida (sin lavado, entradas fijas, pallet de 720 kg) |
 | ACTO3 §1 | "formadora (cuello declarado)" | Mezcladoras. La formadora fue la hipótesis inicial |
-| ACTO3, ACTO4 | +37,8 % vs tablero, como quiebre | Es real pero histórico: 89,4 contra 64,9 pallets, sin lavado. Con lavado, arribos y pallets aleatorios valida a −2,1 % en toneladas y −2,6 % en pallets |
-| ACTO3, ACTO4 | Se valida gracias al MCP y luego hipótesis de lavado | Confirmar el relato: la validación cierra con el lavado de 30 min, dato de planta |
-| ACTO6 §2 | E2 +2,5 pal/día (+2,8 %), cuello a recepción | +12,0 pal/día (+19,0 %), cuello al desencajado |
+| ACTO3, ACTO4 | Quiebre con la comparación contra el tablero | Se quitó la comparación: el quiebre es el número suelto de la primera corrida (89,4 pallets/día) y la necesidad de réplicas e intervalos |
+| ACTO3, ACTO4 | Se valida gracias al MCP y luego hipótesis de lavado | El relato ya no valida contra la planta: con el MCP se corren 10 réplicas por escenario y se leen intervalos |
+| ACTO6 §2 | E2 +2,5 pal/día (+2,8 %), cuello a recepción | +9,3 pal/día (+18,9 %), cuello al desencajado |
 | ACTO6 §2 | E3 es MTTR ×1,25 | E3 es más MP + E2. El MTTR pasó a E5 |
 | ACTO6 §2 | E2 "Más dotación" | Lo que cambia es la velocidad de formadoras a 1843 kg/h |
 | ACTO6 §1 | Warmup 2,5 h; ~36 pal/día/línea | `E1_FINAL.md` indica transitorio ≈ 4 h; revisar antes del Acto 6 |
 | ACTO5 y checklist | Ciclo L1–L8 | Son 8 etapas, de desencajado a estibado |
-| ACTO1-2 | Meta 3 pal/h como referencia | Es constante del tablero web (36 pal/día por línea). Se prefiere la referencia real: 56,0 t/día |
+| ACTO1-2 | Meta 3 pal/h como referencia | Es constante del tablero web (36 pal/día por línea); no se usa como validación |
 | CONTEXTO | MCP con 71 tools | 73 según conteo de ACTO4 |
 
 ## 5. Decisiones de relato
 
 - "UTN" en la portada, confirmado por el equipo.
-- Escena 4 solo plantea la hipótesis (¿Formadora?). El veredicto de mezcladoras se revela en el Acto 4, después de la validación con lavado.
+- Escena 4 solo plantea la hipótesis (¿Formadora?). El veredicto de mezcladoras se revela en el Acto 4. No hay validación contra datos de la planta.
 - Reparto del Acto 6: Jeremias (validación), Felipe (E1 y E2), Matias (E3, E4 y cierre).
 
 ## 6. Cambios en la web
 
-Con autorización del equipo se actualizó `dashboard/web/app/estadistica/page.tsx`: transitorio de ≈ 4 h, referencia real de 2,7 pal/h (64,9 / 24) y panel "Efecto Restricción" con el cuello vigente.
+Con autorización del equipo se actualizó `dashboard/web/app/estadistica/page.tsx`: transitorio de ≈ 4 h y panel "Efecto Restricción" con el cuello vigente (la referencia real de 2,7 pal/h de esa página ya no se usa para comparar).
 
 `WARMUP_H = 2.5` sigue en `dashboard/web/lib/derive.ts` para los promedios de la página Colas: cambiarlo altera cálculos, no solo texto.
 
@@ -111,7 +111,7 @@ Capturas reales de `PLANTASJ.fsm` por el MCP (`film/assets/flexsim/`): a 0 h y a
 | Objetos por clase | 14 procesadores, 8 separadores, 14 cintas, 10 operarios, 4 montacargas, 4 racks, 4 colas, 2 estibadores | `flexsim_inspect_model` |
 | Licencia | 96 de 100 objetos | `PENDIENTES.md:3` |
 | Hojas del tablero | 7 | Captura de `PATY_Tablero` |
-| Primera corrida, sin lavado | 89,4 contra 64,9 pallets/día, +37,8 % | `E1_FINAL.md:31` |
+| Primera corrida, sin lavado | 89,4 pallets/día (histórico; sin comparación con la planta) | `E1_FINAL.md` (secciones de modelos anteriores) |
 
 ## 10. Datos de las diapositivas de Blender
 
@@ -124,7 +124,7 @@ Capturas reales de `PLANTASJ.fsm` por el MCP (`film/assets/flexsim/`): a 0 h y a
 
 ## 7. Tiempos de proceso mostrados en la hipótesis
 
-Desencajado 3500 s por pallet, picado 900 s por batch, mezclado 1200 s por batch, formado 18,33 s por bandeja, túnel 5 min de pasada, envasado 150 paquetes por minuto, encajonado 5 s por caja llena, estibado de ≈173 cajas por pallet (peso real ÷ 5 kg; `SUPUESTOS_v2.md` T2–T11). El lavado no se muestra a propósito: se revela en el Acto 4.
+Desencajado 2450 s por batch (≈ 41 min), picado 630 s por batch (10,5 min), mezclado 840 s por batch (14 min), formado 18,33 s por bandeja, túnel 5 min de pasada, envasado 150 paquetes por minuto, encajonado 5 s por caja llena, estibado de ≈173 cajas por pallet (peso real ÷ 5 kg; `SUPUESTOS_v2.md` T2–T11). El lavado de 30 min se muestra solo como "+ 30 de lavado" en el mezclado.
 
 ## 12. Operario
 
@@ -132,10 +132,10 @@ El saludo del operario (`assets/renders/operario.mp4`) se reserva para la diapos
 
 ## 13. FlexSim en vivo (D21–D22)
 
-D21 es la grabación real de pantalla de PLANTASJ.fsm con el tablero (ilm/assets/flexsim/corrida.mp4, 3:00, recorte desde 4,5 s; la maneja el equipo y la locución va en guion_ia.md, 0:00–2:28). D22 es la primera corrida (89,4 contra 64,9 pallets/día, +37,8 %, E1_FINAL.md:31). Duración total del video: 5:17,5.
+D21 es la grabación real de pantalla de PLANTASJ.fsm con el tablero (ilm/assets/flexsim/corrida.mp4, 3:00, recorte desde 4,5 s; la maneja el equipo y la locución va en guion_ia.md, 0:00–2:28). D22 es la primera corrida (89,4 pallets/día, histórico). Duración total del video: 5:17,5.
 
 
-Karaoke de la toma de FlexSim (s06-karaoke.html): 17 frases con barrido rojo, una por vista. Datos: 96/100 objetos (PENDIENTES.md), notas del propio tablero (meta 36 pal/día/línea; formadora 982 y estándar 1843 kg/h; 1 pallet MP = 1 batch de 1500 kg, 1 pallet PT ≈ 173 cajas), 4 montacargas (SUPUESTOS_v2.md P4) y transitorio ≈ 4 h (E1_FINAL.md). Tiempos de cada hoja medidos sobre la grabación.
+Karaoke de la toma de FlexSim (s06-karaoke.html): 17 frases con barrido rojo, una por vista. Datos: 96/100 objetos (PENDIENTES.md), notas del propio tablero (meta 36 pal/día/línea; formadora 982 y estándar 1843 kg/h; 1 batch de 1050 kg, 1 pallet PT ≈ 173 cajas), 4 montacargas (SUPUESTOS_v2.md P4) y transitorio ≈ 4 h (E1_FINAL.md). Tiempos de cada hoja medidos sobre la grabación.
 
 
 ## 14. Diapositivas del MCP (D23–D30)
@@ -147,7 +147,7 @@ Karaoke de la toma de FlexSim (s06-karaoke.html): 17 frases con barrido rojo, un
 | Herramientas | 73 | `@mcp.tool` y `async def flexsim_` en `mcp_server/flexsim_mcp.py` (ambos 73) |
 | Categorías | 8: 14, 12, 11, 10, 7, 6, 7, 6 | `etapas/ACTO4_mcp_propio.md` |
 | Salidas de D28 | End: 8.00h, Time: 8.00h | Llamadas reales al MCP durante la producción del video |
-| Validación | 54,8 contra 56,0 t/día (−2,1 %); 63,2 contra 64,9 pallets/día (−2,6 %) | `E1_FINAL.md` |
+| Resultado del modelo | 49,1 ± 14,9 pal/día y 42,5 ± 12,6 t/día (sin comparación con la planta) | `E1_FINAL.md` |
 
 ## 15. Presupuesto de 15 minutos
 
@@ -167,7 +167,7 @@ Diapositivas propias en `compositions/s09-acto6.html`, 5:00, con karaoke para qu
 
 ## 19. Revisión completa del 8/11/2026
 
-Cambios pedidos diapositiva por diapositiva. Portada sin "San Jorge"; integrantes por apellido; D7 y D8 invertidas (primero el proceso, después el problema); nave D9 con cuadro fijo para quitar el parpadeo del render; camiones de D12 andando; nueva diapositiva "por qué la formadora" (53 % = 982/1843); nueva "por dónde arrancamos a simular"; D24 pasa a conclusiones de la corrida vigente (`E1_FINAL.md:72-73`), no se tocó el modelo; se quitaron la validación y el veredicto del bloque MCP; definición formal de MCP; captura real del repositorio; D31 con zoom y subtítulos; nueva diapositiva de distribuciones (`SUPUESTOS_v2.md:12,15,120`); D34 sin la comparación con la planta; conclusiones finales; operario a la derecha con baile (`renders/baile.mp4`, clip Dance); cierre con el bloque `logo-outro`.
+Cambios pedidos diapositiva por diapositiva. Portada sin "San Jorge"; integrantes por apellido; D7 y D8 invertidas (primero el proceso, después el problema); nave D9 con cuadro fijo para quitar el parpadeo del render; camiones de D12 andando; nueva diapositiva "por qué la formadora" (53 % = 982/1843); nueva "por dónde arrancamos a simular"; D24 pasa a conclusiones de la corrida vigente (`E1_FINAL.md`), no se tocó el modelo; se quitaron la validación y el veredicto del bloque MCP; definición formal de MCP; captura real del repositorio; D31 con zoom y subtítulos; nueva diapositiva de distribuciones (`SUPUESTOS_v2.md:12,15,120`); D34 sin la comparación con la planta; conclusiones finales; operario a la derecha con baile (`renders/baile.mp4`, clip Dance); cierre con el bloque `logo-outro`.
 
 ## 20. Idea de la web, zooms y animaciones
 
@@ -189,10 +189,10 @@ Agregados: rubro y actividad (`s03b-rubro`), escenario base con turnos, recursos
 
 Tomas reales de la corrida de cada escenario alternativo, sumadas a sus diapositivas del Acto 6 (`compositions/s09-acto6.html`, `#s4`, `#s5` y `#s6`) sin cambiar ninguna duración.
 
-- **Modelo:** copia de `PLANTASJ.fsm` en una carpeta temporal (el original no se modificó), abierta en FlexSim 2026. Base: E1 con lavado de 30 min (`SetupTime` 1800 s en `MezA/B_L7/L8`), 10 cargas por batch y 16 pallets por turno. Fuentes de la configuración: `SUPUESTOS_v2.md` (líneas 124 y 125) y `datos_trazabilidad/e1_final/E1_FINAL.md`.
+- **Modelo:** copia de `PLANTASJ.fsm` en una carpeta temporal (el original no se modificó), abierta en FlexSim 2026. Base: E1 con lavado de 30 min (`SetupTime` 1800 s en `MezA/B_L7/L8`). *(Las tomas son del modelo previo, con 10 cargas y 16 pallets por turno; las de E2 a E4 se regrabaron el 10/11 con el modelo de arribos aleatorios, y con el de camiones reales todavía no.)* Fuentes de la configuración: `SUPUESTOS_v2.md` (líneas 124 y 125) y `datos_trazabilidad/e1_final/E1_FINAL.md`.
 - **E2:** `entrySpacePadding` de `CintaFormA/B_L7/L8` de 3,27 a 1,554 m.
-- **E3:** E2 más 24 pallets de materia prima por turno: en el calendario de `SrcCamionesMP`, cantidad 2 en las filas pares (2 a 16). Verificado: 24 pallets recibidos a las 4 h simuladas.
-- **E4:** desde E1 (separación 3,27 m), `splitquantity` de las 4 mezcladoras de 10 a 8 cargas (8 × 150 kg = 1200 kg por batch), tiempo de ciclo de `Desencajado_L7/L8` de 3500 a 2800 s y de `Picadora_L7/L8` de 900 a 720 s (×0,8), y 20 pallets por turno (cantidad 2 en las filas 4, 8, 12 y 16). Verificado: 20 pallets recibidos a las 4 h. El lavado de 30 min se mantiene.
+- **E3:** E2 más más materia prima (en las tomas, 24 pallets por turno del modelo previo; en el modelo actual E3 es 1,5× la entrada de camiones).
+- **E4:** (toma del modelo previo: de 10 a 8 cargas, desencajado 2800 s, picadora 720 s). En el modelo actual: `splitquantity` de las 4 mezcladoras de 7 a 8 cargas (8 × 150 kg = 1200 kg por batch) y tiempos por batch ×8/7 (desencajado 2450 → 2800 s, picadora 630 → 720 s, mezclado 840 → 960 s). El lavado de 30 min se mantiene.
 - **Corrida:** réplica 1 (`repId` = 1, fallas encendidas), publicador apagado (`pubOff` = 1). Cada escenario se corrió hasta las 4 h simuladas (fin del transitorio) a velocidad 4000 y se grabaron 15 s a velocidad 12, es decir de las 4:00 a las 4:05 h simuladas, con el tablero `PATY_Tablero` a la vista.
 - **Grabación:** `ffmpeg` de FlexSim con `gdigrab` del escritorio recortado sin la barra de tareas (2418 × 1360 desde x = 142), escalado a 1920 × 1080, 30 fps, `-draw_mouse 0`, H.264 (`h264_nvenc`, 8 Mb/s). Archivos: `assets/flexsim/e2.mp4` (1,2 MB), `e3.mp4` (1,2 MB) y `e4.mp4` (1,3 MB). No se versionan (`.gitignore`).
 - **En la diapositiva:** cada toma va de fondo a pantalla completa, en cámara lenta para cubrir la diapositiva sin repetirse (velocidad 0,24 en E2, 0,32 en E3 y 0,36 en E4), con opacidad 0,3 en las diapositivas oscuras y 0,24 en la clara (E4), entrada con acercamiento lento y el rótulo "Toma real · FlexSim · Ex a las 4 h simuladas" arriba a la izquierda. Títulos, intervalo, sello y karaoke quedan encima, sin cambios de posición ni de tiempos.
@@ -208,8 +208,8 @@ Instalados con `npx hyperframes add`: `data-chart`, `cursor-annotate`, `caption-
 Decisión: no se montaron los blocks en `index.html` (traen marca Figma/HeyGen y formato vertical); se adaptó la mecánica dentro de cada composición. Ninguna duración ni `data-start` cambió. Sin números nuevos.
 
 **s06-flexsim (abs 193,53 a 196,5 s, local 29,0).** `cursor-annotate` (instalado, montado dos veces en index.html con data-variable-values, ids ann-s06-a y ann-s06-b, tracks 6 y 7): lápiz que traza a mano alzada un bucle blanco alrededor de cada mezcladora (mismas zonas que los anillos q-1 y q-2), a las 193,53 s y 193,71 s. Los anillos y el rótulo "Acá se forma la cola: las mezcladoras" se mantienen (el trazo los acompaña).
-**s09-acto6 #s3 (E1, abs 654,10 a 657,05 s, local 118,3).** `cursor-annotate` (mount ann-s09-e1, z-index 45): bucle rojo alrededor de "91 %" de Ocupación de las mezcladoras, cuando el karaoke dice "noventa y uno por ciento".
-**s09-acto6 #s7 (Comparación, local 280,5 a 290; abs 816,3 a 826,3 s).** `data-chart` (adaptado, no montado: el bloque instalado es una demo clara con datos propios): ejes y líneas de guía verticales en 0, 25, 50, 75 y 100 pallets por día, a la misma escala que las barras de la diapositiva (5,325 px por pallet), que ahora valen: E1 63,2; E2 75,2; E3 75,7; E4 59,5. Aparecen en local 281,1 a 282,3 s. Los valores 0 a 100 son solo la escala del eje.
+**s09-acto6 #s3 (E1, abs 654,10 a 657,05 s, local 118,3).** `cursor-annotate` (mount ann-s09-e1, z-index 45): bucle rojo alrededor del valor de Ocupación de las mezcladoras (ahora "75 %"), cuando el karaoke dice "setenta y cinco por ciento".
+**s09-acto6 #s7 (Comparación, local 280,5 a 290; abs 816,3 a 826,3 s).** `data-chart` (adaptado, no montado: el bloque instalado es una demo clara con datos propios): ejes y líneas de guía verticales en 0, 25, 50, 75 y 100 pallets por día, a la misma escala que las barras de la diapositiva (5,325 px por pallet), que ahora valen: E1 49,1; E2 58,4; E3 62,0; E4 49,7 (mismo ancho por pallet; ver la actualización del 10/11 con camiones reales). Aparecen en local 281,1 a 282,3 s. Los valores 0 a 100 son solo la escala del eje.
 **s09-acto6 #s8 (Conclusión, local 290 a 315; abs 825,8 a 850,8 s).** `caption-kinetic-slam` (adaptado, no montado: trae un texto fijo en inglés): cada palabra de "1.º Formadoras", "2.º Desencajado" (local 290,7 y 291,5 s, paso 0,28 s) e "Intervalos, no corridas sueltas" (local 304,3 s, paso 0,22 s) entra desde un lado distinto (arriba con rebote, izquierda, derecha, escala), con SF Pro Display como el resto.
 
 Validación: `npx hyperframes check --json` sin errores (solo avisos previos) y snapshots revisados en 152,2, 194,6, 309,5, 313,5, 460,5, 655,3, 818,8, 827,8 y 841,3 s.
@@ -217,13 +217,13 @@ Validación: `npx hyperframes check --json` sin errores (solo avisos previos) y 
 Ajuste del 9/11/2026: en la toma de FlexSim se quitaron los recuadros rojos (`q-ring`) y quedó solo el trazo a mano de `cursor-annotate`, que ahora se mantiene hasta que se va el rótulo (193,5 a 210,5 s); en E1 el trazo sobre el 91 % queda hasta el final de la diapositiva (654,1 a 670,8 s). La lapicera se retira apenas termina de dibujar (cambio local en `compositions/components/cursor-annotate.html`).
 
 
-## Actualización 10/11/2026: modelo con arribos y pallets aleatorios
+## Actualización 10/11/2026 (versión intermedia, superada por la de camiones reales): modelo con arribos y pallets aleatorios
 El modelo oficial (`PLANTASJ.fsm`) ahora sortea los tiempos entre arribos de MP con la tabla empírica y el peso de cada pallet de PT con los 500 pesos reales. Se re-corrieron E1 a E4 (10 réplicas, mismos streams) y cambiaron las cifras del Acto 6, del Acto 4 (validación y veredicto) y del cierre:
 
 | Cifra | Antes (llegadas fijas, pallet de 720 kg) | Ahora |
 |---|---|---|
 | E1 pallets/día · t/día | 75,3 · 54,9 | 63,2 ± 1,2 · 54,8 |
-| Validación contra el tablero | −1,9 % en toneladas (+16 % en pallets) | −2,1 % en toneladas y −2,6 % en pallets |
+| (se quitó la fila de validación contra el tablero) | — | — |
 | E2 contra E1 | +14,4 pal/día (+19,1 %), IC [+13,8 ; +15,0] | +12,0 pal/día (+19,0 %), IC [+10,8 ; +13,2] |
 | E3 contra E2 | −0,1 [−0,3 ; +0,1] (incluye el cero) | +0,5 [+0,1 ; +0,9] (+0,7 %: casi no suma) |
 | E4 1200 contra 1500 kg | −4,0 [−4,6 ; −3,4] | −3,7 [−4,4 ; −3,0] (−5,9 %) |
@@ -234,3 +234,22 @@ El modelo oficial (`PLANTASJ.fsm`) ahora sortea los tiempos entre arribos de MP 
 Escenas modificadas (HyperFrames): `s09-acto6` (cifras, ruedas de dígitos, intervalos, barras a 5,325 px por pallet, texto del karaoke), `s04-veredicto` (65,2 y 74,2 t), `s06-flexsim`, `s08-web`, `s10-cierre`, `s04-hipotesis`, `s04b-base`, `s06-karaoke` (≈173 cajas por pallet). Guiones: `guion_equipo.md` (D32 a D40) y `guion_ia.md` (D21). **El equipo tiene que volver a grabar la narración del Acto 6 con el guion nuevo**; los tiempos del karaoke no se tocaron y el video ya se re-renderizó con el texto nuevo. Las tomas de fondo de FlexSim de E2, E3 y E4 (`assets/flexsim/e2.mp4`, `e3.mp4`, `e4.mp4`, que no se versionan y solo estaban en la PC de Jeremías) **se regrabaron el 10/11/2026 con el modelo nuevo** (receta de la sección anterior más `Tools/GenArribos` después de `resetmodel()`; réplica 1, de las 4:00 a las 4:05 h simuladas a velocidad 20), capturando la ventana de FlexSim 2027 con `PrintWindow` (la pantalla estaba bloqueada) a ≈5 cuadros por segundo, interpolados a 30 fps con `ffmpeg` (1920 × 1080, H.264). Siguen sin versionarse. El MP4 renderizado con las cifras nuevas queda en `film/renders/Video_TPI_actualizado.mp4` (HyperFrames 0.9.20, `-q looks`, FFmpeg instalado con winget).
 
 **Narración provisional del Acto 6 (10/11/2026).** Para que el video no quede mudo en el Acto 6 se generó una narración sintética con la voz es-AR-TomasNeural (Edge TTS, la misma familia de voces de `assets/voz`), una frase por segmento del karaoke de `s09-acto6.html` (34 frases con el texto nuevo de `guion_equipo.md`), ubicada en el segundo exacto de cada una (film 536,3 a 850,3 s) y acelerada hasta 1,6x solo cuando la frase no entraba en su ventana. Archivo: `film/renders/Video_TPI_actualizado_voz_acto6.mp4` (el MP4 sin audio, `Video_TPI_actualizado.mp4`, queda como base). **Es una voz de reserva: el plan original es que los integrantes graben el Acto 6 siguiendo el karaoke**; cuando lo hagan, se reemplaza esa pista. El resto del video no tiene audio en el proyecto (la voz de la IA se agrega en edición).
+
+## Actualización 10/11/2026 (tarde): modelo con camiones reales remuestreados
+Se rehízo la entrada del modelo y se volvieron a correr E1 a E4 (10 réplicas de 24 h; `datos_trazabilidad/e1_final/estocastico_camiones/`). Cambios del modelo: camiones reales remuestreados de la base de producción (cantidad por día, tamaño, hora del primer camión de 8 a 10 h, gaps; L7 + L8 reciben 0,5 de cada camión, supuesto declarado), peso de cada pallet de MP remuestreado de 11.882 pallets reales (media 934 kg), batch de 7 cargas de 150 kg = 1050 kg (tiempos 2450 s, 630 s y 840 s), ritmo de formado diario remuestreado de 246 corridas reales de L7/L8, planta vacía al inicio y entrada de 8 a 80 batches por día (≈ 55 de media; por eso los IC son anchos). Siguen aleatorios las fallas, los tiempos entre pallets dentro del camión y el peso de los pallets de PT.
+**Regla del equipo: no se compara contra el tablero ni contra los valores reales de la planta**; se quitaron del video y de los documentos las comparaciones y las frases de validación.
+
+| Cifra | Antes (arribos de tabla, batch 1500 kg) | Ahora |
+|---|---|---|
+| E1 pallets/día · t/día | 63,2 ± 1,2 · 54,8 | 49,1 ± 14,9 · 42,5 ± 12,6 |
+| E2 contra E1 | +12,0 [+10,8 ; +13,2] | +9,3 [+4,5 ; +14,1] (+18,9 %) |
+| E3 | +0,5 contra E2 [+0,1 ; +0,9] (E3 = 24 pallets/turno) | +3,6 contra E2 [−0,3 ; +7,5], incluye el cero (E3 = 1,5× la MP) |
+| E4 | −3,7 [−4,4 ; −3,0] (1200 contra 1500 kg) | +0,6 [−0,0 ; +1,2], incluye el cero (1200 contra 1050 kg, 8 contra 7 cargas) |
+| Cuello E1 | mezcladoras 65,2 t/día, 91 % | mezcladoras 60,5 t/día, 75 %; siguiente desencajado 74,7 (formado 87,0) |
+| Cuello E2 | desencajado 74,2 | desencajado 74,7; le sigue mezclado 77,9 |
+| Cámaras de MP en E3 | 6,4 → 21,7 | 19,4 → 30,3 (máx 68) |
+| Comparación (pallets/día) | 63,2 · 75,2 · 75,7 · 59,5 | 49,1 · 58,4 · 62,0 · 49,7 |
+| Tiempos de la hipótesis | 58 min · 15 min · 20 + 30 min | 41 min por batch · 10,5 min · 14 + 30 min |
+
+Composiciones HyperFrames modificadas (sin re-renderizar; no cambió ninguna duración ni `data-start`): `s04-cifras` (1050 kg, 55 batches por día, 58 t de mezcla), `s04-real` (se quitó "Tablero real: 56,0 t/día" y "¿El modelo es válido?": ahora "Producción de la planta" y "¿Dónde se frena?"), `s04-veredicto` (barras 60,5 / 74,7 / 87,0 t a 12 px por tonelada, línea de referencia en ≈58 t/día, pills "75 % ocupadas" y "Entrada: 8 a 80 batches/día"), `s04b-base`, `s04-hipotesis` (tiempos por batch), `s06-flexsim` (42,5 t, 49,1 pallets, 75 %), `s06-karaoke` (batch de 1050 kg, siete cargas), `s08-web` (rótulos de E2 y cuello), `s10-cierre` (conclusiones sin "válido", +9 pallets) y `s09-acto6` (ruedas de dígitos, tarjeta de entrada de MP en lugar de la validación, intervalos de E2, E3 y E4 con la escala de cada eje recalculada, barras a 5,325 px por pallet para 49,1 · 58,4 · 62,0 · 49,7, IC de la tabla, texto del karaoke). Guiones: `guion_equipo.md` (D32 a D40) y `guion_ia.md`.
+**Pendiente de rodaje:** (1) hay que volver a grabar la narración del Acto 6 con el guion nuevo, y la voz sintética `Video_TPI_actualizado_voz_acto6.mp4` y el render `Video_TPI_actualizado.mp4` quedaron con las cifras anteriores hasta que se re-renderice; (2) los cuadros de la web de `s08-web` (`assets/web/st/*.png`) y el rótulo de cajas, fallas y kg del balance (ca1 a ca18) vienen de la corrida anterior y no coinciden con el modelo nuevo; hay que re-capturar la web; (3) las tomas de FlexSim de E2, E3 y E4 son del modelo previo; (4) el transitorio de ≈ 4 h se midió con el modelo anterior y no se repitió.

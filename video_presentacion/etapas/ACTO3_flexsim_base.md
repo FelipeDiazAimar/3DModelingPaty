@@ -9,8 +9,8 @@ Modelo `PLANTASJ.fsm`: planta completa como 1 solo GLB visual (`assets_v2/PATY_P
 Recorrido sugerido (vista orbital alta → baja, Run a ~7400x):
 
 1. **0–10 s — Plano general:** nave Elaborados 150×70 m con L7/L8 en paralelo. Decir: mismo GLB de Blender, ahora con lógica.
-2. **10–25 s — Recepción MP (oeste):** `SrcCamionesMP` → `QRecep` (16 pallets/turno cada 8 h). Zoom a cola recepción: acá nace el WIP.
-3. **25–40 s — Línea (seguir flujo L7):** Picadora → `MezA/B` (batch 1500 kg, 10 cargas) → carritos → Formadora → Túnel → Estuchadora → Envasadora → `EncA/EncB` → `QPaletizado_L7/L8` → expedición (muelles este, tandas 24 pal PT). Pausar 2 s en mezcladoras (ahí se forma la cola); no anticipar el veredicto, que se revela en el Acto 4.
+2. **10–25 s — Recepción MP (oeste):** `SrcCamionesMP` → `QRecep` (camiones reales remuestreados: de 8 a 80 batches por día, ≈ 55 de media). Zoom a cola recepción: acá nace el WIP.
+3. **25–40 s — Línea (seguir flujo L7):** Picadora → `MezA/B` (batch 1050 kg, 7 cargas) → carritos → Formadora → Túnel → Estuchadora → Envasadora → `EncA/EncB` → `QPaletizado_L7/L8` → expedición (muelles este, tandas 24 pal PT). Pausar 2 s en mezcladoras (ahí se forma la cola); no anticipar el veredicto, que se revela en el Acto 4.
 4. **40–50 s — Móviles:** montacargas + `OpDesencajado/Envasado_L7/L8` moviendo pallets/cajas. Vista cenital corta: se ve el ida y vuelta a muelles y básculas.
 5. **50–60 s — Cierre:** abrir Dashboard `PATY_Tablero` sobre el 3D corriendo. Gancho: "mientras produce, ya está midiendo".
 
@@ -22,11 +22,11 @@ Muestreo cada 10 s simulados (`Tools/Indicadores` → `Tools/indHist` + `Tools/i
 
 | Hoja | Qué significa | Zoom sugerido |
 |---|---|---|
-| **Producción** | PT acumulado L7+L8 + Meta punteada 3 pal/h (72/día); KPI pal/h PT ventana 4 h | Zoom a curva vs meta al final de 24 h |
+| **Producción** | PT acumulado L7+L8 + Meta punteada 3 pal/h (72/día, constante del tablero); KPI pal/h PT ventana 4 h | Zoom a curva vs meta al final de 24 h |
 | **Colas y WIP** | `content.average` en `QRecep`, `QPalL3/QPaletizado`; L, Lq | Zoom a pico de `QRecep` tras llegada de camión |
 | **Paradas** | Estado 20 (`STATE_DOWN`) por máquina, MTBF/MTTR FOR+TUN; `Tools/fallLog` | Zoom a barra FOR/TUN (las que más paran) |
 | **Velocidad** | kg/h L7/L8 ventana móvil 1 h: `(cajas ahora − cajas 1 h antes) × 5` | Zoom a la meseta de la corrida con lavado, sin citar un valor en voz |
-| **Balance de masa** | MP in vs PT out + mermas; batch 1500 kg trazable | Zoom a diferencia in/out de un batch |
+| **Balance de masa** | MP in vs PT out + mermas; batch 1050 kg trazable | Zoom a diferencia in/out de un batch |
 | **Montacargas** | Estados fleet por categoría/color (tabla abajo) | Zoom a torta de estados en hora pico |
 | **Estadística** | `staytime.average` + P95 esperas, `busy/(Stop−Warmup)` formadora, check Little `L≈λW` | Zoom a P95 (la media sola oculta picos) |
 
@@ -47,12 +47,12 @@ Colores/categorías (web = FlexSim): Inactiva `#8b97a8`, Procesando `#16a37f`, B
 ## 4. Bullets guion voz IA (leer directo)
 
 - "Este es el mismo 3D de Blender, pero ahora produce: cada cinta, cada máquina y cada montacargas simulan L7 y L8."
-- "Por el oeste entra la materia prima, dieciséis pallets por turno; por el este salen los pallets de hamburguesas."
-- "La mezcla va en tandas de mil quinientos kilos: picadora, mezcladoras, formadora, túnel de frío y envasado."
+- "Por el oeste entra la materia prima, en camiones que llegan como los reales: de ocho a ochenta batches por día; por el este salen los pallets de hamburguesas."
+- "La mezcla va en tandas de mil cincuenta kilos, siete cargas de ciento cincuenta: picadora, mezcladoras, formadora, túnel de frío y envasado."
 - "Mientras corre, el tablero mide solo: producción contra la meta, colas, paradas, kilos por hora y cada montacargas."
-- "La primera corrida dio ochenta y nueve pallets por día. El tablero real, sesenta y cinco. Ahí empezó el problema."
+- "La primera corrida dio ochenta y nueve pallets por día, con todo constante y sin lavado. Un solo número no alcanza para decidir: hacía falta medir con réplicas e intervalos."
 
 ## 5. Transiciones
 
 - **Blender → FlexSim (match-cut):** congelar frame orbital del GLB en Blender, corte seco al mismo encuadre en FlexSim parado; al hacer Run, leve push-in + sonido de arranque de línea. El truco vende "mismo modelo, ahora vivo" porque el GLB es literalmente el mismo.
-- **FlexSim → quiebre (Acto 4 validación):** cerrar sobre el tablero corriendo, corte seco a negro + placa histórica "Primera corrida: 89,4 contra 64,9 pallets/día, +37,8 %". No congelar el KPI en pantalla: el modelo actual, con lavado y arribos y pallets aleatorios, marca 63,2. De ahí se entra al Acto 4 (MCP, réplicas, lavado de 30 min y veredicto).
+- **FlexSim → quiebre (Acto 4 validación):** cerrar sobre el tablero corriendo, corte seco a negro + placa histórica "Primera corrida: 89,4 pallets/día (todo constante, sin lavado)". No congelar el KPI en pantalla: el modelo actual, con camiones reales remuestreados, pesos de pallet y ritmo de formado aleatorios, marca 49,1 ± 14,9 pallets/día. De ahí se entra al Acto 4 (MCP, réplicas y veredicto). No se compara contra valores de la planta.

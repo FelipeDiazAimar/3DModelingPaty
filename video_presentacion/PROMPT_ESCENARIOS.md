@@ -11,7 +11,7 @@ Antes de empezar leé `video_presentacion/COMO_TRABAJAMOS.md`, `SUPUESTOS_v2.md`
 **Configuración de cada escenario, partiendo de E1 (lavado de 30 min ya incluido):**
 - **E2, formadoras rápidas:** `entrySpacePadding` de `CintaFormA_Lx` y `CintaFormB_Lx` de 3,27 a 1,554 m (formadoras a 1843 kg/h).
 - **E3, más materia prima:** E2 más 24 pallets de materia prima por turno, en lugar de 16.
-- **E4, batch de 1200 kg:** `splitquantity` de las mezcladoras de 10 a 8 cargas; `cycletime` de desencajado y picadora ×0,8; 20 pallets de 1200 kg por turno de recepción.
+- **E4, batch de 1200 kg:** `splitquantity` de las mezcladoras de 7 a 8 cargas; tiempos por batch ×8/7 (modelo de camiones reales, 10/11).
 
 No inventes valores: si algo no coincide con esos documentos, avisame. No guardes los cambios en `PLANTASJ.fsm`: trabajá sobre una copia o restaurá los valores al terminar, y comprobá que E1 quede igual.
 

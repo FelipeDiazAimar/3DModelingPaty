@@ -1,93 +1,58 @@
 # E1 base — modelo final PLANTASJ.fsm (L7 + L8), 10 réplicas
 
-> **Vigente: la sección "Modelo con arribos y pallets aleatorios (10/11/2026)" de más abajo.** Las secciones anteriores describen las corridas con llegadas fijas y pallet de 720 kg (75,3 pallets/día con lavado, 89,4 sin lavado) y se conservan como referencia.
+> **Vigente: la sección "Modelo con camiones reales remuestreados (10/11/2026)".** Las secciones de más abajo describen corridas de modelos anteriores (llegadas fijas, pallet de 720 kg, lavado de 0 min) y se conservan como referencia del método; sus números ya no son los del modelo.
+> No se compara contra los valores de planta: los resultados se leen como mediciones del modelo, con sus intervalos de confianza.
 
-## Modelo con arribos y pallets aleatorios (10/11/2026; `estocastico/`)
-**Cambio de modelo:** (1) los 16 arribos de MP de cada turno se sortean con la tabla empírica de tiempos entre arribos (`iat_cdf.csv`); (2) el tamaño de cada pallet de PT sale de los 500 pesos reales (`pesos_PT_kg.csv`, media 862,5 kg) y las cajas son peso ÷ 5 kg. Todo lo demás igual (fallas exponencial + lognormal, lavado de 30 min, 982 kg/h). 10 réplicas de 24 h por escenario, mismos streams (60–87 fallas, 90 arribos, 91–92 pallets), diferencias pareadas con t(0,975; 9 gl) = 2,262. Datos crudos `estocastico/E1.txt`…`E4.txt`; análisis `estocastico/analizar_estocastico.py`.
+## Modelo con camiones reales remuestreados (10/11/2026; `estocastico_camiones/`)
+**Qué cambió en el modelo** (código en `dashboard/flexsim/gen_arribos.fls`, datos en `datos_trazabilidad/fitting_series/`):
+1. **Entrada de materia prima = camiones reales remuestreados** de la base de producción (jul–nov 2026, pallets agrupados por remito): cantidad de camiones por día (66 días), tamaño de cada camión (306 camiones), hora del primer camión (8 a 10 h) y gap entre camiones (240 valores). L7 + L8 reciben **0,5 de cada camión** (no 2/8 = 0,25): fracción ajustada para que las dos líneas reciban aproximadamente lo que consumen; es un **supuesto declarado**. El reloj 0 del modelo equivale a las 8:00.
+2. **Peso de cada pallet de MP** remuestreado de 11.882 pallets reales (media 934 kg; percentiles en `pesos_mp_percentiles.csv`). Un **batch = MP + aditivos** de la lista técnica = **7 cargas de 150 kg = 1050 kg** (antes 1500 kg y 10 cargas). Tiempos por batch: desencajado 2450 s, picadora 630 s, mezclado 840 s (más 1800 s de lavado).
+3. **Ritmo de formado de cada línea cada día**, remuestreado de 246 corridas reales de L7/L8 (multiplicador sobre la mediana, sd ≈ 9 %; `ritmo_formado_L7L8.csv`); modifica la separación de las cintas de formado de esa línea.
+4. **Siguen aleatorios:** las fallas (exponencial + lognormal), los tiempos entre pallets dentro del camión (tabla empírica de 49 puntos) y el peso de los pallets de PT (500 reales).
+5. **El día arranca con la planta vacía** (así se inicializa una simulación).
+6. **La entrada varía de 8 a 80 batches por día (≈ 55 de media)**, y por eso los intervalos de confianza son anchos.
 
-| Escenario | Pallets/día | t/día | Cambio contra E1 (pallets, IC 95 %) | Cuello |
+**Método:** 10 réplicas de 24 h por escenario, mismos streams (fallas 60–87; arribos 90 y 94–99; pallets de PT 91–92), diferencias pareadas con t(0,975; 9 gl) = 2,262. Datos crudos `E1.txt`…`E4.txt`; análisis `analizar_estocastico.py` → `analisis.json`; web `actualizar_web_estocastico.py`.
+
+| Escenario | Pallets/día | t/día | Cambio (pallets, IC 95 %) | Cuello |
 |---|---|---|---|---|
-| E1 base | 63,2 ± 1,2 | 54,8 ± 0,5 | — | mezcladoras (65,2 t/día, 91 %) |
-| E2 formadoras a 1843 kg/h | 75,2 ± 1,1 | 65,1 ± 0,4 | **+12,0** [+10,8 ; +13,2] (+19,0 %) | desencajado (74,2 t/día) |
-| E3 E2 + 24 pallets de MP por turno | 75,7 ± 1,0 | 65,6 ± 0,3 | +12,5 [+11,5 ; +13,5]; **+0,5 contra E2** [+0,1 ; +0,9] | desencajado (76,4 t/día); cámaras MP 6,4 → 21,7 pallets |
-| E4 batch 1200 kg (lavado 30 min) | 59,5 ± 1,0 | 51,9 ± 0,3 | **−3,7** [−4,4 ; −3,0] (−5,9 %) | mezcladoras (59,3 t/día, 93 %) |
+| E1 base | 49,1 ± 14,9 | 42,5 ± 12,6 | — | mezcladoras (60,5 t/día); siguiente desencajado (74,7) |
+| E2 formadoras a 1843 kg/h | 58,4 ± 18,7 | 50,4 | **+9,3** [+4,5 ; +14,1] contra E1 (+18,9 %) | desencajado (74,7 t/día); le sigue mezclado (77,9) |
+| E3 E2 + 1,5× materia prima | 62,0 ± 17,8 | 53,5 | +12,9 [+9,4 ; +16,4] contra E1; **+3,6 [−0,3 ; +7,5] contra E2** (no distinguible de cero) | desencajado (75,2 t/día); cámaras de MP 19,4 → 30,3 pallets (máx 68) |
+| E4 batch 1200 kg (8 cargas) contra base 1050 kg (7 cargas) | 49,7 ± 14,7 | 42,9 | **+0,6 [−0,0 ; +1,2]** contra E1 (no distinguible de cero) | mezcladoras (61,6 t/día) |
 
-**Validación contra el tablero (Sep–Oct):** 63,2 ± 1,2 pallets/día contra 64,9 (−2,6 %) y 54,8 ± 0,5 t/día contra 56,0 (−2,1 %). Valida en pallets y en toneladas (antes solo en toneladas). Los reales quedan apenas fuera del IC 95 %, que es angosto porque la variación del modelo es chica; el error es menor a 3 %. kg por pallet simulado: 868 (real 862,5).
-**Cuello (capacidad implícita = entradas por día ÷ ocupación × kg por entrada):** E1: mezclado 65,2 < desencajado 74,2 < formado 87,2 t/día; la hipótesis inicial (formadora) queda refutada: la formadora está ocupada solo el 63 %. E2: desencajado 74,2 < mezclado 86,8; E3: desencajado 76,4 < mezclado 86,5; E4: mezclado 59,3 < desencajado 74,3.
-**Qué cambió respecto de las llegadas fijas:** las toneladas y los cuellos casi no se mueven (54,8 contra 54,9 t/día): el cuello son las mezcladoras y no depende de cuándo llegue la MP. Cambian los pallets, porque ahora pesan 868 kg en lugar de 720 (63,2 en lugar de 75,3 pallets/día), y E3 contra E2 pasa de −0,1 a +0,5 pallets/día.
+- **E1:** 879 kg por pallet de PT; cámara de MP en promedio 19,4 pallets (máx 54). Capacidad implícita (entradas por día ÷ ocupación × kg por entrada): mezclado 60,5 < desencajado 74,7 < formado 87,0 t/día. La hipótesis inicial (formadora) queda refutada.
+- **E2:** la mejora es real pero con intervalo ancho (±4,8 pallets en la diferencia); el cuello pasa al desencajado.
+- **E3:** 1,5× materia prima sobre E2 no suma de forma clara (IC contra E2 incluye el cero); la MP se acumula en cámaras y el desencajado es el techo.
+- **E4:** pasar de 7 a 8 cargas por batch (1050 → 1200 kg; desencajado 2800 s, picadora 720 s, mezclado 960 s: ×8/7) no cambia el resultado de forma distinguible de cero.
+- **Por qué los IC son anchos:** la entrada de MP cambia mucho de un día a otro (de 8 a 80 batches), y esa variación domina la de las réplicas (s ≈ 21 pallets/día en E1). Las diferencias pareadas la cancelan en parte, porque todos los escenarios usan los mismos días de entrada.
+- Limitaciones: horizonte terminante de 24 h arrancando vacío; fracción 0,5 del camión supuesta; tiempos de máquina constantes; el transitorio de ≈ 4 h se midió con el modelo anterior y no se repitió con éste.
 
-Reemplaza a `../e1_run/E1_BASE_24H.md`, que se hizo sobre una copia vieja de la línea 3 (`planta_sanjorge_v1_8.fsm`).
-Este informe es del **modelo final** (`PLANTASJ.fsm`, 96/100 objetos de licencia), corrido dentro de FlexSim sin copias.
-
-## Método
-- 10 réplicas independientes de **24 h** (terminante, arranca vacío), `PLANTASJ.fsm` sin cambios de lógica.
-- **Fallas aleatorias** (módulo `Tools/Fallas`, sin objetos de licencia): tiempo a la falla exponencial con el MTBF del tablero, reparación lognormal (σ = 0,9) con el MTTR del tablero (ver `SUPUESTOS_v2.md`).
-- Los streams de FlexSim son solo 0–99: se usaron los 60–87 y cada réplica salta `12·réplica` números de cada uno, así que las réplicas son independientes y se pueden repetir las mismas secuencias en otros escenarios (números aleatorios comunes).
-- Medidas: pallets terminados por línea (entrada a `QPaletizado_Lx`), cajas por línea, minutos de paro por equipo y muestreo horario.
+## Método (común a todas las corridas)
+- 10 réplicas independientes de **24 h** (terminante, arranca vacío), `PLANTASJ.fsm` sin cambios de lógica entre réplicas.
+- **Fallas aleatorias** (módulo `Tools/Fallas`, sin objetos de licencia): tiempo a la falla exponencial con el MTBF del tablero de paros, reparación lognormal (σ = 0,9) con el MTTR (ver `SUPUESTOS_v2.md`).
+- Los streams de FlexSim son solo 0–99: cada réplica salta cantidades fijas de números de cada stream, así que las réplicas son independientes y se pueden repetir las mismas secuencias en otros escenarios (números aleatorios comunes).
+- Medidas: pallets terminados por línea (entrada a `QPaletizado_Lx`), cajas por línea, tiempo por estado de cada estación y cámara de MP.
 - IC 95 %: t(0,975; 9 gl) = 2,262. n necesario para h ≤ 2 %: n = (1,96·s / 0,02·media)².
-- Datos: `raw_replicas.txt` (salida cruda de FlexSim), `replicas.csv`, `summary_e1.json`; se procesan con `analizar_e1.py`.
 
-## Resultados (24 h)
-| Medida | Media | s | IC 95 % | h/media |
-|---|---|---|---|---|
-| Pallets L7 | 44,6 | 0,52 | [44,23 ; 44,97] | 0,83 % |
-| Pallets L8 | 44,8 | 0,42 | [44,50 ; 45,10] | 0,67 % |
-| Pallets planta | 89,4 | 0,84 | [88,80 ; 90,00] | 0,67 % (P95 = 90) |
-| Cajas L7 / L8 | 6535 / 6561 | 150 / 177 | — | 0,74 % / 0,86 % |
+## Welch (modelo anterior)
+Con la producción de cajas por hora (promedio de las 10 réplicas, ventana 3) el transitorio duraba ≈ 4 h: es el llenado de la línea desde vacía. Como la corrida es terminante de 24 h arrancando vacía, ese transitorio queda dentro de las medidas.
 
-En régimen (horas 3–23) el modelo produce ≈ 50 pallets/día por línea; las 24 h arrancando vacío pierden unas 3 h de llenado.
-
-## Validación contra el tablero (pallets/día medios por línea, Sep–Oct, FITTING §E)
-| | Real | Sim | Error | ¿Real ∈ IC? |
-|---|---|---|---|---|
-| L7 | 25,8 | 44,6 | +72,9 % | No |
-| L8 | 39,1 | 44,8 | +14,6 % | No |
-| Planta | 64,9 | 89,4 | +37,8 % | No |
-| Toneladas L7 | 22,3 | 32,7 | +46,6 % | — |
-| Toneladas L8 | 33,7 | 32,8 | −2,7 % | — |
-
-**El modelo no valida en pallets** (criterio TP-D p.4: revisar supuestos antes de recomendar). Causas identificadas:
-1. **Unidad:** el modelo arma pallets de 144 cajas × 5 kg = 720 kg; el pallet real pesa 862,5 kg de media (FITTING §C). En toneladas la línea 8 queda a −2,7 %.
-2. **Diferencia entre líneas del tablero:** las dos líneas trabajan por igual (dato del usuario), así que la brecha 25,8 contra 39,1 no la explica la planta; hay que revisar cómo se asignan los pallets por línea en el tablero. La comparación válida es contra las dos líneas juntas: 89,4 contra 64,9 pallets/día (+37,8 %) y, en toneladas, 65,5 contra 56,0 (+17 %).
-3. **Las fallas casi no cambian la producción** (pérdida < 1 % diario): los acumuladores entre estaciones amortiguan paros de 5–15 min. El cuello real es la formadora a 982 kg/h; la brecha 982 contra 1843 kg/h sigue sin conciliarse (SUPUESTOS T5).
-
-## Welch
-Con la producción de cajas por hora (promedio de las 10 réplicas, ventana 3) el transitorio dura ≈ 4 h: es el llenado de la línea desde vacía. Como E1 es terminante de 24 h arrancando vacío, ese transitorio queda dentro de las medidas.
-
-## Verificación del módulo de fallas
+## Verificación del módulo de fallas (modelo anterior)
 Paros simulados contra lo que implican las entradas (min/día, media de 10 réplicas): formadoras 37,7 (esperado 49,5), túneles 16,6 (8,9), envasadoras 6,7 (6,1), estibadores 17,1 (20,3), picadoras 26,1 (36,5). La dispersión entre réplicas es grande (pocos eventos por día), así que las diferencias están dentro del ruido.
 
-## Escenarios E2 y E3 (mismas 10 réplicas, diferencias pareadas; `analizar_escenarios.py`, `summary_escenarios.json`)
-| Escenario | Cambio | Pallets/día planta | Diferencia contra E1 (IC 95 %) |
-|---|---|---|---|
-| E1 base | — | 89,4 ± 0,6 | — |
-| E2 más dotación | Formadoras a 1843 kg/h (separación entre bandejas 3,27 → 1,554 m) | 91,9 ± 0,2 | **+2,5** [+1,9 ; +3,1] (+2,8 %) |
-| E3 estrés por fallas | MTTR ×1,25 en formadoras y túneles (`Tools/mttrK` = 1,25) | 89,4 ± 0,6 | 0,0 (cajas −6,5 [−15,2 ; +2,2]) → sin efecto |
+## Modelo con arribos y pallets aleatorios (10/11/2026, versión intermedia; `estocastico/`)
+Antes de los camiones reales, los 16 arribos de MP de cada turno se sorteaban con la tabla empírica de tiempos entre arribos y el pallet de PT con los 500 pesos reales (batch 1500 kg, 10 cargas, desencajado 3500 s, picadora 900 s, mezclado 1200 s). Resultados de esa versión: E1 63,2 ± 1,2 pallets/día y 54,8 t/día; E2 75,2; E3 75,7; E4 (1200 contra 1500 kg) 59,5; cuello mezcladoras 65,2 t/día. Quedan en `estocastico/` como referencia; no son comparables con los de arriba porque la entrada era fija (48 arribos por día, 72 t/día) y de ahí sus IC angostos.
 
-- **E2:** la mejora es real pero chica porque el techo pasa a ser la materia prima: entran 16 pallets de 1500 kg cada 8 h = 72 t/día = 14.400 cajas/día y las cámaras de MP quedan en cero. Para aprovechar una formadora más rápida hay que traer más materia prima.
-- **E3:** el sistema resiste reparaciones 25 % más largas porque los acumuladores absorben paros de 10–20 min.
-- **E4 (batch 1200 contra 1500 kg, `analizar_e4.py`, `summary_e4.json`):** 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 20 pallets de 1200 kg por turno de recepción (mismas 72 t/día). El lavado de la mezcladora por batch entra como tiempo de preparación (`setuptime`); **no hay dato**, así que se prueba con 0, 15 y 30 min.
+## Escenarios con llegadas fijas (historial, `summary_escenarios.json`)
+- E2 (formadoras a 1843 kg/h): +2,5 pallets/día sin lavado, porque el techo era la materia prima (16 pallets de 1500 kg cada 8 h).
+- E3 (MTTR ×1,25 en formadoras y túneles; hoy E5): sin efecto, los acumuladores absorben paros de 10–20 min.
+- E4 con lavado de 0, 15 y 30 min: con lavado, el batch grande rendía más (menos lavados por tonelada); sin lavado, +1,3 % por el arranque desde vacío. El lavado de 30 min por batch es dato de planta y quedó en el modelo base.
+- Se comprobó que con `mttrK = 1` el modelo reproduce exactamente la réplica 1 (mismas fallas y mismas cajas); en esa verificación se corrigió un arranque duplicado de las fallas al reabrir el modelo.
 
-| Lavado | Cajas/día 1500 kg | Cajas/día 1200 kg | 1200 contra 1500 |
-|---|---|---|---|
-| 0 min | 13.196 | 13.361 | +1,3 % |
-| 15 min | 12.476 | 12.004 | −3,8 % |
-| 30 min | 11.140 | 10.501 | −5,7 % |
-
-  Con lavado, el batch grande rinde más (menos lavados por tonelada). Con 15 min las 10 réplicas dan el mismo valor en ambas variantes: el cuello son las mezcladoras y las fallas no pasan por ahí. Con 0 y 30 min es una réplica. La ventaja del 1200 kg sin lavado es un efecto del arranque desde vacío.
-- Antes de correr los escenarios se comprobó que con `mttrK = 1` el modelo reproduce exactamente la réplica 1 de E1 (mismas fallas y 6594/6602 cajas). En esa verificación apareció y se corrigió un arranque duplicado de las fallas cuando el modelo se reabría (el relay quedaba registrado dos veces); las corridas E1 no estaban afectadas.
-
-## Pendiente (cerrado el 7/11/2026)
-Sin pendientes abiertos. El lavado de 30 min por batch es dato de planta y quedó en el modelo; la asignación de pallets por línea del tablero, la variación de llegadas y tiempos de máquina y el tiempo de desencajado se cerraron como parámetros oficiales (ver `SUPUESTOS_v2.md`).
-
-## Lavado de 30 min y cuello de botella por escenario (corrida del 7/11/2026; `analizar_cuellos.py`, `actualizar_summary_e1.py`, `raw_cuellos/`)
-**El lavado de 30 min por batch es dato de planta** y pasa a ser parte del modelo base (`SetupTime` 1800 s en las 4 mezcladoras). Todo lo anterior de este informe (89,4 pallets/día, brecha +17 % en toneladas, E2/E3/E4 con lavado 0) corresponde al modelo sin lavado; las corridas sin lavado quedan en `raw_cuellos/sin_lavado/` como sensibilidad. Se repitieron E1, E2 y E3 (10 réplicas cada uno, mismos streams) y E4 (1500 y 1200 kg con lavado de 30 min, 10 réplicas; 0 y 15 min, 5 réplicas), guardando por estación el tiempo en cada estado, el contenido, la estadía y las colas. **E3 pasa a ser "más materia prima + E2"**; el antiguo E3 (MTTR ×1,25) queda como E5 (medido sin lavado).
+## Lavado de 30 min y cuello de botella (corrida del 7/11/2026 con llegadas fijas; `analizar_cuellos.py`, `raw_cuellos/`)
+**El lavado de 30 min por batch es dato de planta** y es parte del modelo base (`SetupTime` 1800 s en las 4 mezcladoras). Las corridas sin lavado quedan en `raw_cuellos/sin_lavado/` como sensibilidad.
 - **Capacidad implícita** = entradas por día ÷ ocupación (procesando + bloqueada) × kg por entrada. El cuello es la etapa de menor capacidad. Túnel y estibado no compiten: su "procesando" solo indica que tienen algo adentro.
-- **E1 (validación):** 75,3 ± 0,7 pallets/día y 54,9 t/día contra 56,0 del tablero (−1,9 %): valida en toneladas. En pallets +16 % por el tamaño del pallet (720 contra 862,5 kg). El IC es muy angosto (tiempos constantes), así que el real queda ≈ 0,6 t fuera.
-- **E1 (cuello):** las mezcladoras (65,3 t/día, 91 % ocupadas, cola de 3,5 lotes); siguiente: desencajado (74,1 t/día).
-- **E2:** +14,4 pallets/día (+19,1 %, IC [+13,8 ; +15,0]). Mezclado 91 → 80 % y formado 64 → 44 % de ocupación; el cuello pasa al desencajado.
-- **E3 (E2 + 24 pallets de MP por turno):** 89,6 pallets/día; −0,1 contra E2 (no distinguible de cero). Las cámaras de MP pasan de 6,3 a 21,8 pallets promedio: el desencajado impide aprovechar la MP extra.
-- **E4 (diferencia 1200 − 1500 kg, IC pareado):** lavado 30 min −4,0 [−4,6 ; −3,4] (10 réplicas); 15 min −2,4 [−3,1 ; −1,7]; sin lavado +1,8 [+1,2 ; +2,4] (latencia, 5 réplicas).
-- Limitaciones: horizonte terminante de 24 h arrancando vacío; tiempos de máquina constantes; la serie horaria (Welch) y los paros de la web son de la corrida sin lavado.
-- **Serie horaria y paros con lavado** (mismas 10 réplicas, `raw_replicas.txt`): el transitorio sigue en ≈ 4 h y los paros no cambian (las fallas usan los mismos streams y no dependen del lavado): formadoras 37,7 min/día (esperado 49,5), túneles 16,6 (8,9), envasadoras 6,7 (6,1), estibadores 17,1 (20,3), picadoras 26,1 (36,5); la corrida sin lavado queda en `raw_cuellos/sin_lavado/raw_replicas_sin_lavado.txt`.
+- En ese modelo (llegadas fijas, pallet de 720 kg): E1 75,3 pallets/día y 54,9 t/día con cuello en mezcladoras (65,3 t/día) y siguiente el desencajado (74,1); E2 +14,4 pallets/día; E3 (E2 + más MP) −0,1; E4 −4,0 con lavado 30 min.
 - **Ley de Little por estación** (`summary_little.json`): λ·W / L entre 0,94 y 1,04 en 10 de las 12 estaciones; en formadoras +7 % y en mezcladoras +14–18 %, porque el ítem se divide dentro de la estación (batch → cargas → bandejas) y FlexSim mide la estadía por ítem que sale.
+- Limitaciones de esa corrida: horizonte terminante de 24 h arrancando vacío; tiempos de máquina constantes.

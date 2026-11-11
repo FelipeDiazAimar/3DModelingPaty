@@ -1,7 +1,7 @@
 "use client";
 import { Chart } from "@/components/Chart";
 import { Card, Empty, Page, PageHead, Tag, Table } from "@/components/Ui";
-import { ValidacionE1, ParosSimulados } from "@/components/E1";
+import { ParosSimulados } from "@/components/E1";
 import { MACHINES } from "@/lib/layout";
 import { utilization } from "@/lib/derive";
 import { useHist, useLatest } from "@/lib/store";
@@ -138,7 +138,6 @@ export default function Paradas() {
         <p className="mt-2 text-[12px] text-muted">Régimen oficial: 3 turnos continuos (MTBF = 47520 min / eventos). MTTR en FlexSim como lognormal por equipo (ET6 p.12,22).</p>
       </Card>
 
-      <ValidacionE1 />
       <ParosSimulados />
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">

@@ -1,5 +1,5 @@
 {
- "descripcion": "Batch de 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 20 pallets de 1200 kg por turno de recepción (mismas 72 t/día de MP). El lavado de la mezcladora por batch entra como tiempo de preparación (supuesto, no hay dato).",
+ "descripcion": "Batch de 1200 kg = 8 cargas por batch, desencajado y picadora al 80 % del tiempo y 25 % más de pallets de 1200 kg por camión (mismas toneladas de MP). El lavado de la mezcladora por batch entra como tiempo de preparación (supuesto, no hay dato).",
  "replicas": 5,
  "nota": "Lavado de 30 min: 10 réplicas con el modelo actual (arribos y pallets aleatorios, mismos streams); 0 y 15 min: 5 réplicas del modelo anterior (llegadas fijas), solo como sensibilidad. IC con t(0,975; 9 gl) = 2,262 (4 gl: 2,776).",
  "filas": [
@@ -71,33 +71,33 @@
    "lavado_min": 30,
    "n": 10,
    "pal_1500": {
-    "media": 63.2,
-    "desv": 1.6193277068654826,
-    "h": 1.158316778778586,
-    "ic_inf": 62.04168322122142,
-    "ic_sup": 64.35831677877859
+    "media": 49.1,
+    "desv": 20.829733022239573,
+    "h": 14.899658145071651,
+    "ic_inf": 34.200341854928354,
+    "ic_sup": 63.99965814507165
    },
    "pal_1200": {
-    "media": 59.5,
-    "desv": 1.35400640077266,
-    "h": 0.9685305364313506,
-    "ic_inf": 58.53146946356865,
-    "ic_sup": 60.46853053643135
+    "media": 49.7,
+    "desv": 20.532088706867274,
+    "h": 14.686751021243602,
+    "ic_inf": 35.0132489787564,
+    "ic_sup": 64.38675102124361
    },
    "dif_pal": {
-    "media": -3.7,
-    "desv": 0.9486832980505138,
-    "h": 0.6786,
-    "ic_inf": -4.3786000000000005,
-    "ic_sup": -3.0214000000000003,
-    "cero_en_ic": false
+    "media": 0.6,
+    "desv": 0.8432740427115678,
+    "h": 0.6032,
+    "ic_inf": -0.0031999999999999806,
+    "ic_sup": 1.2031999999999998,
+    "cero_en_ic": true
    },
-   "cajas_1500": 10967.5,
-   "cajas_1200": 10372.1,
-   "dif_cajas_pct": -5.428766811032593,
-   "ton_1500": 54.8375,
-   "ton_1200": 51.8605,
-   "dif_pal_pct": -5.8544303797468356
+   "cajas_1500": 8499.9,
+   "cajas_1200": 8577.4,
+   "dif_cajas_pct": 0.911775432652151,
+   "ton_1500": 42.4995,
+   "ton_1200": 42.887,
+   "dif_pal_pct": 1.2219959266802443
   }
  ]
 }
