@@ -1,0 +1,10 @@
+// Relay (OnExit de SrcPalletsVacios, que sale a t=0): arranca Tools/Cinematica en cada corrida nueva (el reloj del modelo retrocede).
+treenode T = model().find("Tools");
+treenode l = T.find("cinLast");
+if (Model.time < l.value) {
+	T.find("cinT0").value = realtime();
+	T.find("cinPR").value = 0;
+	delayednodefunction(T.find("Cinematica"), 0, 0);
+}
+l.value = Model.time;
+return 0;
