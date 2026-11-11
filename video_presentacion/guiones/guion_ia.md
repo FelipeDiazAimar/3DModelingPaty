@@ -24,14 +24,13 @@ Los actos 1 y 2 están en beats del grid. Desde el Acto 3 los tiempos son duraci
 | D20 planos | b231–247 | Empezamos por el principio: le pedimos a la planta los planos de Elaborados. | HABLA |
 | D19 Blender | b247–263 | Con ellos levantamos la planta completa en Blender, que tuvimos que aprender a usar para esto. | HABLA |
 | D20 código | b263–287 | No la dibujamos a mano. Con ayuda de la IA escribimos el código que la construye, sector por sector, hasta tener cada máquina en su lugar. | HABLA |
-| D21 intro | 0:00–0:06 | Acá está nuestra planta ya dentro de FlexSim, y al costado un tablero propio que se completa solo. | HABLA |
-| D21 Producción | 0:07–0:27 | En la primera hoja vemos cuántos pallets terminados salen, comparados con lo que pide el programa. La meta es de 36 pallets por día en cada línea. Más abajo, lo que produce cada máquina. | HABLA |
-| D21 Colas y WIP | 0:28–0:47 | Después miramos dónde se acumula el material: las cámaras, las colas y lo que hay en proceso. Si una máquina trabaja más lento que la anterior, ahí se forma la fila. Eso es lo que buscamos. | HABLA |
-| D21 Paradas | 0:47–1:04 | Las máquinas también se rompen: acá vemos cuántas veces se paró cada equipo y por cuánto tiempo. Esas paradas salen de datos reales: cada cuánto falla cada equipo y cuánto tarda en repararse. | HABLA |
-| D21 Velocidad | 1:05–1:22 | En velocidad vemos cuántos kilos por hora se producen, sobre la última hora simulada. Y lo comparamos con la formadora: 982 kilos por hora de capacidad, contra 1843 del estándar. | HABLA |
-| D21 Balance de masa | 1:22–1:34 | El balance de masa cuida las cuentas: cuánta carne entra y cuánta sale en cajas. Un batch son mil cincuenta kilos, siete cargas; un pallet terminado, unas ciento setenta cajas. | HABLA |
-| D21 Montacargas | 1:35–1:46 | Cada montacargas tiene su cuenta de traslados. Son cuatro, de la recepción a la expedición. | HABLA |
-| D21 Estadística | 1:47–1:51 | Calentamiento de cuatro horas, y la ocupación por estación. | HABLA |
+| D21 Producción | 0:00–0:08 | La planta en FlexSim y, al costado, nuestro tablero: pallets terminados contra la meta del programa. | HABLA |
+| D21 Colas y WIP | 0:08–0:16 | Después, dónde se acumula el material: cámaras, colas y lo que hay en proceso. Ahí se forma la fila. | HABLA |
+| D21 Paradas | 0:16–0:24 | Las máquinas también se rompen: cuántas veces se paró cada equipo y por cuánto tiempo, con datos reales. | HABLA |
+| D21 Velocidad | 0:24–0:32 | En velocidad, los kilos por hora: la formadora tiene 982 de capacidad, contra 1843 del estándar. | HABLA |
+| D21 Balance de masa | 0:32–0:40 | El balance de masa cuida las cuentas: un batch son mil cincuenta kilos, siete cargas. | HABLA |
+| D21 Montacargas | 0:40–0:48 | Cada montacargas tiene su cuenta de traslados: son cuatro, de la recepción a la expedición. | HABLA |
+| D21 Estadística | 0:48–0:56 | Y las estadísticas: calentamiento de cuatro horas y ocupación de cada estación. | HABLA |
 | D24 conclusiones | 12 s | Con todo esto, la simulación ya nos dice algo. Producimos unas cuarenta y dos toneladas y media por día, con mucha variación porque la entrada de camiones cambia de un día a otro. La línea se frena en las mezcladoras, ocupadas el setenta y cinco por ciento, por los treinta minutos de lavado de cada batch. La formadora no era el cuello. | HABLA |
 | D25 necesidad | 12 s | Un tablero muestra lo que pasa, pero cada escenario son diez réplicas: abrir, correr, copiar los datos y comparar, todo a mano. Queríamos pedírselo a una inteligencia artificial y que lo hiciera ella. | HABLA |
 | D26 qué es un MCP | 15 s | Para eso existe el MCP: un protocolo abierto que estandariza cómo las aplicaciones de inteligencia artificial se conectan con herramientas y datos externos. En un chat, la IA solo opina. Con un MCP, puede abrir el programa, hacerlo correr y medirlo. | HABLA |
