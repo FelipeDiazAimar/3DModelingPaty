@@ -14,7 +14,7 @@ import { useStore } from "./store";
 import type { Snapshot } from "./types";
 
 export type V3 = [number, number, number];
-export type CineId = "planta" | "elaborados" | "l7" | "lote" | "paradas" | "cuello" | "resumen";
+export type CineId = "planta" | "elaborados" | "l7" | "lote" | "paradas" | "cuello" | "resumen" | "e2" | "e3" | "e4";
 export type Escena = "camion_abre" | "camion_sale";
 
 export interface Shot {
@@ -29,7 +29,11 @@ export interface Shot {
   titulo: string;
   texto?: string;
   graficas?: boolean;   // abre las gráficas de la máquina
+  fase?: "Problema" | "Propuesta" | "Corrida" | "Cambio" | "Conclusión"; // etapa del caso de escenario
+  panel?: Panel;        // barras de resultados del estudio (no son datos en vivo)
+  sinFicha?: boolean;   // no muestra la ficha en vivo (los números del momento son del modelo base)
 }
+export interface Panel { titulo: string; barras: { label: string; valor: number; ref?: number; unidad: string; marca?: boolean }[]; max: number; nota?: string }
 
 export const CINES: { id: CineId; label: string; sub: string; icon: "factory" | "meat" | "chart" | "layers" | "target" }[] = [
   { id: "planta", label: "Toda la planta", sub: "Ciclo 1, Ciclo 2 y Elaborados", icon: "factory" },
@@ -38,6 +42,9 @@ export const CINES: { id: CineId; label: string; sub: string; icon: "factory" | 
   { id: "lote", label: "Seguir un lote", sub: "Tiempo en cada etapa (Little)", icon: "layers" },
   { id: "paradas", label: "Paradas y gráficas", sub: "Cada máquina con sus gráficas", icon: "chart" },
   { id: "resumen", label: "Pallet a la caja + gráficas", sub: "Recorrido de L7 y gráficas de las máquinas clave", icon: "meat" },
+  { id: "e2", label: "E2 · Formadoras rápidas", sub: "Problema, propuesta, corrida y conclusión", icon: "target" },
+  { id: "e3", label: "E3 · Más materia prima", sub: "Problema, propuesta, corrida y conclusión", icon: "target" },
+  { id: "e4", label: "E4 · Batch de 1200 kg", sub: "Problema, propuesta, corrida y conclusión", icon: "target" },
   { id: "cuello", label: "Cuello de botella", sub: "Dónde se frena la línea", icon: "target" },
 ];
 
@@ -92,6 +99,45 @@ const RESUMEN: Shot[] = [
 
 const PARADAS: Shot[] = ["Desencajado_L7", "Picadora_L7", "MezA_L7", "FormA_L7", "FormB_L7", "Tunel_L7", "EnvA_L7", "EncA_L7", "EstA_L7"]
   .map((id) => ({ maquina: id, viaje: 3, pausa: 10, titulo: `${byId(id)?.label ?? id} · L7`, graficas: true }));
+
+
+/* ---------- casos de escenario (E2 a E4): problema, propuesta, corrida, cambio y conclusión ----------
+ * Las tomas de "Problema" muestran el modelo base en vivo. Los paneles de resultados son del estudio
+ * (10 réplicas de 24 h, mismas semillas, IC 95 % con t de Student de 9 g. l.), no datos en vivo. */
+const CAP_E1: Panel = { titulo: "Capacidad implícita por etapa · E1 (t/día)", max: 100, barras: [
+  { label: "Desencajado", valor: 74.7, unidad: "t/día" }, { label: "Mezclado", valor: 60.5, unidad: "t/día", marca: true }, { label: "Formado", valor: 87.0, unidad: "t/día" }],
+  nota: "La etapa de menor capacidad marca el ritmo de la planta." };
+const prod = (titulo: string, filas: [string, number, boolean?][]): Panel => ({ titulo, max: 70,
+  barras: filas.map(([label, valor, marca]) => ({ label, valor, unidad: "pallets", marca })) });
+const E2: Shot[] = [
+  { maquina: "MezA_L7", viaje: 3, pausa: 8, fase: "Problema", titulo: "El cuello de la planta: el mezclado", texto: "Cada batch ocupa la mezcladora 30 min más por el lavado: 75 % ocupada y apenas 60,5 t/día de capacidad.", graficas: true, panel: CAP_E1 },
+  { maquina: "FormA_L7", viaje: 3, pausa: 7, fase: "Problema", titulo: "Y las formadoras trabajan a 982 kg/h", texto: "Nominal de 982 kg/h contra 1843 kg/h del estándar de línea: pasan buena parte del tiempo bloqueadas.", graficas: true },
+  { maquina: "FormA_L7", viaje: 2, pausa: 6, fase: "Propuesta", titulo: "Formadoras al estándar: 1843 kg/h", texto: "Es el ritmo para el que está pensada la línea. Se cambia solo el ritmo de formado; el resto del modelo queda igual.", sinFicha: true },
+  { maquina: "Tunel_L7", viaje: 3, pausa: 7, fase: "Corrida", titulo: "Corrida: 10 réplicas de 24 h", texto: "Mismas semillas que el caso base, así que la diferencia sale del cambio y no del azar.", sinFicha: true, panel: prod("Pallets por día (promedio de 10 réplicas)", [["E1 · Base", 49.1], ["E2 · Formadoras", 58.4, true]]) },
+  { maquina: "Desencajado_L7", viaje: 3, pausa: 8, fase: "Cambio", titulo: "El cuello se corre al desencajado", texto: "Antes limitaba el mezclado (60,5 t/día); ahora el desencajado, con 74,7 t/día, y el mezclado sube a 77,9.", sinFicha: true,
+    panel: { titulo: "Capacidad implícita por etapa · E2 (t/día)", max: 100, barras: [{ label: "Desencajado", valor: 74.7, unidad: "t/día", marca: true }, { label: "Mezclado", valor: 77.9, ref: 60.5, unidad: "t/día" }], nota: "Referencia (gris): mezclado en E1, 60,5 t/día." } },
+  { pos: [62, -62, 44], target: [-5, -2, 0], viaje: 4, pausa: 9, fase: "Conclusión", titulo: "Conclusión: +9,3 pallets por día", texto: "Intervalo de confianza del 95 %: +4,5 a +14,1 (+18,9 %). La mejora es real y el siguiente límite es el desencajado.", sinFicha: true,
+    panel: prod("Producción por día · E2", [["E1 · Base", 49.1], ["E2 · Formadoras", 58.4, true]]) },
+];
+const E3: Shot[] = [
+  { maquina: "Desencajado_L7", viaje: 3, pausa: 8, fase: "Problema", titulo: "Con E2, el techo es el desencajado", texto: "Consume la materia prima pallet a pallet: 74,7 t/día. Si llega más MP, ¿rinde más la planta?", graficas: true },
+  { maquina: "RackMPCongelado", viaje: 3, pausa: 7, fase: "Problema", titulo: "La cámara de MP recibe lo que traen los camiones", texto: "En el caso base se acumulan unos 19 pallets promedio esperando ser consumidos.", graficas: true },
+  { maquina: "SrcCamionesMP", pos: [-99, -3, 10], target: [-84, -20, 1.6], viaje: 3, pausa: 6, fase: "Propuesta", titulo: "E2 más 1,5 veces la materia prima", texto: "Llegan más camiones de MP al día, con las formadoras ya rápidas.", sinFicha: true },
+  { maquina: "Tunel_L7", viaje: 3, pausa: 7, fase: "Corrida", titulo: "Corrida: 10 réplicas de 24 h", texto: "Mismas semillas; se compara contra E1 y, sobre todo, contra E2.", sinFicha: true, panel: prod("Pallets por día (promedio de 10 réplicas)", [["E1 · Base", 49.1], ["E2 · Formadoras", 58.4], ["E3 · +1,5× MP", 62.0, true]]) },
+  { maquina: "RackMPCongelado", viaje: 3, pausa: 8, fase: "Cambio", titulo: "La materia prima se acumula en cámara", texto: "Pasa de 19,4 a 30,3 pallets promedio (máximo 68): entra más de lo que el desencajado consume.", sinFicha: true,
+    panel: { titulo: "Pallets de MP en cámara (promedio)", max: 40, barras: [{ label: "E2", valor: 19.4, unidad: "pallets" }, { label: "E3", valor: 30.3, unidad: "pallets", marca: true }] } },
+  { pos: [62, -62, 44], target: [-5, -2, 0], viaje: 4, pausa: 9, fase: "Conclusión", titulo: "Conclusión: más MP no suma de forma clara", texto: "Contra E2: +3,6 pallets, con intervalo de −0,3 a +7,5 (incluye el cero). Primero hay que ampliar el desencajado.", sinFicha: true,
+    panel: prod("Producción por día · E3", [["E1 · Base", 49.1], ["E2 · Formadoras", 58.4], ["E3 · +1,5× MP", 62.0, true]]) },
+];
+const E4: Shot[] = [
+  { maquina: "MezA_L7", viaje: 3, pausa: 8, fase: "Problema", titulo: "Cada batch paga un lavado de 30 min", texto: "Con batch de 1050 kg (7 cargas de 150 kg) la mezcladora lava seguido: 75 % ocupada y es el cuello.", graficas: true, panel: CAP_E1 },
+  { maquina: "Picadora_L7", viaje: 3, pausa: 6, fase: "Propuesta", titulo: "Batch más grande: 1200 kg", texto: "8 cargas por batch en lugar de 7: menos lavados por tonelada. Desencajado, picado y mezclado escalan ×8/7.", sinFicha: true },
+  { maquina: "Tunel_L7", viaje: 3, pausa: 7, fase: "Corrida", titulo: "Corrida: 10 réplicas de 24 h", texto: "Mismas semillas que el caso base.", sinFicha: true, panel: prod("Pallets por día (promedio de 10 réplicas)", [["E1 · Base", 49.1], ["E4 · Batch 1200 kg", 49.7, true]]) },
+  { maquina: "MezA_L7", viaje: 3, pausa: 8, fase: "Cambio", titulo: "El cuello sigue siendo el mezclado", texto: "Pasa de 60,5 a 61,6 t/día: cada batch tarda más en mezclarse y lo que se ahorra en lavados casi se compensa.", sinFicha: true,
+    panel: { titulo: "Mezclado: capacidad implícita (t/día)", max: 100, barras: [{ label: "E1 · 1050 kg", valor: 60.5, unidad: "t/día" }, { label: "E4 · 1200 kg", valor: 61.6, unidad: "t/día", marca: true }] } },
+  { pos: [62, -62, 44], target: [-5, -2, 0], viaje: 4, pausa: 9, fase: "Conclusión", titulo: "Conclusión: +0,6 pallets, sin efecto claro", texto: "Intervalo de −0,0 a +1,2: no se distingue de cero. Cambiar el tamaño del batch no resuelve el cuello.", sinFicha: true,
+    panel: prod("Producción por día · E4", [["E1 · Base", 49.1], ["E4 · Batch 1200 kg", 49.7, true]]) },
+];
 
 const pct = (v: number) => `${Math.round(v * 100)} %`;
 
@@ -164,6 +210,9 @@ export function armarCine(id: CineId, h: Snapshot[]): Shot[] {
     case "lote": return lote(h);
     case "paradas": return PARADAS;
     case "resumen": return RESUMEN;
+    case "e2": return E2;
+    case "e3": return E3;
+    case "e4": return E4;
     case "cuello": return cuello(h);
   }
 }

@@ -261,3 +261,15 @@ Composiciones HyperFrames modificadas (sin re-renderizar; no cambió ninguna dur
 - **Desplazamiento:** todo lo posterior se movió 55,428571 s hacia adelante en el tiempo. Nuevos inicios: `s07-mcp` 232,533; `s07b-idea-web` 323,033; `s08-web` 340,033; `s09-acto6` 480,367 (`HOST` de su karaoke actualizado); `ann-s09-e1` 598,667; `s10-cierre` 795,367; `logo-outro` 832,367. Duración total: 839,367 s (13:59,4). `s99-subs` (numeración de diapositivas) reajustado.
 - **Narración que hay que grabar de nuevo:** Acto 3 (las 7 frases de `s06-karaoke.html`) y Acto 6 (el desplazamiento de 55,43 s invalida los audios sintéticos ya generados, que usaban `adelay=536295`; el nuevo es `adelay=480367`).
 - **Render:** `film/renders/Video_TPI_actualizado.mp4` se volvió a renderizar con esta línea de tiempo (sin voz).
+
+## Correcciones del 11/11/2026 (segunda tanda)
+
+- **Diapo 1:** logo P que se arma con cinco piezas (caída, rodado y subida) y estallido final (`s01-chispa.html`).
+- **Diapo 18, 30, 33, 43:** flechas separadas, frase del pie más profesional, capturas de los celulares centradas con datos relevantes, y la conclusión del Acto 6 sin hablar del desencajado.
+- **Diapo 28:** dos ventanas de escritorio al estilo de la app de Claude (no celular), armadas a mano porque el catálogo solo trae `claude-exchange` en vertical.
+- **Diapo 29:** `ui-3d-reveal` adaptado (`compositions/ui-3d-mcp.html`): la P reemplaza el logo de Figma y el editor lista las herramientas del MCP.
+- **Diapo 34:** cinemática nueva "Pallet a la caja + gráficas" (`assets/web/cine_resumen.mp4`, grabada con reloj virtual) y 22 paradas con capturas nuevas, zoom in/out y `cursor-annotate` en 8 de ellas. Las capturas salen de la reproducción a media corrida: los textos solo llevan cifras fijas.
+- **Diapo 42:** `data-chart` (`data-chart-esc.html`) con pallets y toneladas por día de E1 a E4.
+- **Nuevas diapos 44 a 46 (`s09c-casos.html`):** una cinemática de la web por caso (E2, E3 y E4) con problema, propuesta, corrida, cambio y conclusión. Las tomas de problema usan el modelo base en vivo; los paneles de barras son resultados del estudio (10 réplicas de 24 h, IC 95 %), no datos en vivo. Se grabaron en `assets/web/ce2.mp4`, `ce3.mp4` y `ce4.mp4` (ignorados por git). Cierre y logo final quedaron como diapos 47 a 49; el video pasó de 839 a 964 s.
+- **Efecto global:** viñeta estática suave sobre todo el video.
+- **Efectos del catálogo que no se usaron, con motivo:** los de fondo animado con shader (aurora, plasma, nebula, etc.) restan legibilidad a las capturas de la planta; los de redes sociales (x-post, instagram, tiktok, spotify, reddit) no corresponden al rubro; los mapas (us-map, world-map, spain-map) no tienen relación con la planta; `grain-overlay` se animaba por CSS, que no es seek-determinista en el render; el resto de transiciones se evaluaron contra las ya usadas (shutter, wipe, glitch, shatter) para no saturar.

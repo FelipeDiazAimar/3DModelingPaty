@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -276,6 +276,33 @@ function Graficas({ id }: { id: string }) {
   );
 }
 
+/** Barras de resultados del estudio, con animación de entrada. */
+function PanelCaso({ p }: { p: NonNullable<Shot["panel"]> }) {
+  const [on, setOn] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setOn(true), 150); return () => clearTimeout(t); }, []);
+  const f = (v: number) => v.toLocaleString("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  return (
+    <div className="glass w-[min(440px,92vw)] p-4">
+      <div className="text-[13px] font-extrabold leading-tight">{p.titulo}</div>
+      <div className="mt-3 flex flex-col gap-3">
+        {p.barras.map((b) => (
+          <div key={b.label}>
+            <div className="flex items-baseline justify-between text-[12px] font-bold">
+              <span>{b.label}</span>
+              <span className="tnum text-[16px] font-extrabold">{f(b.valor)} <span className="text-[11px] font-semibold text-muted">{b.unidad}</span></span>
+            </div>
+            <div className="relative mt-1 h-3 overflow-hidden rounded-full bg-[#e6ecf4]">
+              {b.ref !== undefined && <div className="absolute inset-y-0 left-0 rounded-full bg-[#aab3c2]" style={{ width: `${(b.ref / p.max) * 100}%` }} />}
+              <div className="absolute inset-y-0 left-0 rounded-full transition-[width] duration-[1400ms] ease-out" style={{ width: on ? `${(b.valor / p.max) * 100}%` : "0%", background: b.marca ? "#ff1f3d" : "#050507", opacity: b.ref !== undefined ? 0.85 : 1 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      {p.nota && <div className="mt-3 text-[11.5px] leading-snug text-muted">{p.nota}</div>}
+    </div>
+  );
+}
+
 export function CineOverlay() {
   const id = useCine((s) => s.id);
   const shots = useCine((s) => s.shots);
@@ -292,6 +319,7 @@ export function CineOverlay() {
         <div key={idx} className="glass cine-in px-4 py-3">
           <div className="mb-1 flex items-center gap-2 text-[11px] font-bold text-muted">
             <span className="text-brand">{c.label}</span>
+            {shot.fase && <span className="rounded-full bg-brand px-2 py-0.5 text-white">{shot.fase}</span>}
             <span className="tnum">{idx + 1} / {shots.length}</span>
             <button onClick={stop} className="pointer-events-auto ml-auto rounded-full bg-ink px-2.5 py-0.5 text-[11px] font-bold text-white hover:opacity-90">Detener</button>
           </div>
@@ -299,12 +327,17 @@ export function CineOverlay() {
           {shot.texto && <div className="mt-0.5 text-[13px] leading-snug text-muted">{shot.texto}</div>}
         </div>
       </div>
-      {shot.maquina && (
+      {shot.panel && (
+        <div key={`p${idx}`} className="cine-in absolute right-4 top-[96px] hidden md:block">
+          <PanelCaso p={shot.panel} />
+        </div>
+      )}
+      {shot.maquina && !shot.sinFicha && (
         <div key={`f${idx}`} className="cine-in absolute left-[76px] top-[96px] hidden md:block">
           <Ficha id={shot.maquina} />
         </div>
       )}
-      {shot.maquina && shot.graficas && (
+      {shot.maquina && shot.graficas && !shot.panel && (
         <div key={`g${idx}`} className="cine-in absolute right-4 top-[96px] max-h-[calc(100%-200px)] overflow-hidden">
           <Graficas id={shot.maquina} />
         </div>
