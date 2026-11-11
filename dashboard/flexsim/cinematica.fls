@@ -1,8 +1,9 @@
-// Tools/Cinematica: recorrido automático de la cámara 3D al dar play. Cada cinP segundos reales (8) la cámara vuela de un punto
-// de Tools/cinW ("x,y,z,rx,ry,rz;...") al siguiente (suavizado), se queda el resto del tiempo y al final vuelve al primero.
-// flyto con duración 1 salta de golpe (la duración no es en ms: 100 tarda ~1 min), por eso se interpola a mano ~30 veces por segundo
-// real; el intervalo entre llamadas se ajusta a la velocidad de la corrida. Requiere una vista en PERSPECTIVA designada con
-// clic derecho > "Set as (sv)" (sv()). Tools/cinOn = 0 apaga la cinemática.
+// Tools/Cinematica: recorrido automatico de la camara 3D (APAGADO por defecto: Tools/cinOn = 0).
+// Con cinOn = 1 el modelo llama flyto(sv(), ...) desde sus eventos; en las pruebas eso hizo que el reloj de la barra de
+// herramientas de FlexSim dejara de repintarse durante la corrida (con cinOn = 0 avanza bien), asi que el recorrido se hace
+// desde afuera al grabar (flyto por el MCP). Unidad de la duracion de flyto: decimas de segundo (60 = 6 s; 1 = salto instantaneo).
+// Requiere una vista en PERSPECTIVA designada con clic derecho > "Set as (sv)".
+// Puntos en Tools/cinW ("x,y,z,rx,ry,rz;..."), cinP = segundos reales por tramo (8).
 treenode T = model().find("Tools");
 if (T.find("cinOn").value <= 0) return 0;
 double P = T.find("cinP").value;
@@ -11,20 +12,22 @@ int n = W.length;
 double rt = realtime();
 double el = rt - T.find("cinT0").value;
 int k = floor(el / P);
-double f = (el - k * P) / (P * 0.75);
-if (f > 1) f = 1;
-f = f * f * (3 - 2 * f);
-Array a = W[1 + k % n].split(",");
-Array b = W[1 + (k + 1) % n].split(",");
-double x0 = stringtonum(a[1]); double y0 = stringtonum(a[2]); double z0 = stringtonum(a[3]); double rx0 = stringtonum(a[4]); double ry0 = stringtonum(a[5]); double rz0 = stringtonum(a[6]);
-double x1 = stringtonum(b[1]); double y1 = stringtonum(b[2]); double z1 = stringtonum(b[3]); double rx1 = stringtonum(b[4]); double ry1 = stringtonum(b[5]); double rz1 = stringtonum(b[6]);
-flyto(sv(), 1, x0 + (x1 - x0) * f, y0 + (y1 - y0) * f, z0 + (z1 - z0) * f, rx0 + (rx1 - rx0) * f, ry0 + (ry1 - ry0) * f, rz0 + (rz1 - rz0) * f);
+double ck = T.find("cinK").value;
+int tgt = -1;
+int dur = 0;
+if (ck <= -2) { tgt = 1; dur = 1; T.find("cinK").value = -1; }
+else if (ck <= -1) { tgt = 2; dur = floor(P * 7.5); T.find("cinK").value = 0; }
+else if (k > ck) { tgt = 1 + (k + 1) % n; dur = floor(P * 7.5); T.find("cinK").value = k; }
+if (tgt > 0) {
+	Array w = W[tgt].split(",");
+	flyto(sv(), dur, stringtonum(w[1]), stringtonum(w[2]), stringtonum(w[3]), stringtonum(w[4]), stringtonum(w[5]), stringtonum(w[6]));
+}
 double pr = T.find("cinPR").value;
 double ratio = 4;
 if (pr > 0 && rt > pr) ratio = (Model.time - T.find("cinPS").value) / (rt - pr);
 if (ratio < 0.5) ratio = 0.5;
-double d = 0.033 * ratio;
-if (d < 0.005) d = 0.005;
+double d = 0.25 * ratio;
+if (d < 0.05) d = 0.05;
 T.find("cinPS").value = Model.time;
 T.find("cinPR").value = rt;
 delayednodefunction(model().find("Tools/Cinematica"), d, 0);

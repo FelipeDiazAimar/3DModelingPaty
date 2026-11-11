@@ -4,6 +4,7 @@ treenode l = T.find("cinLast");
 if (Model.time < l.value) {
 	T.find("cinT0").value = realtime();
 	T.find("cinPR").value = 0;
+	T.find("cinK").value = -2;
 	delayednodefunction(T.find("Cinematica"), 0, 0);
 }
 l.value = Model.time;
