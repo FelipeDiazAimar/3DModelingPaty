@@ -36,7 +36,7 @@ while (i4 < n && H[i4][1] < ult[1] - 4) i4++;
 double dt4 = n > 0 ? ult[1] - H[i4][1] : 0;
 double r4 = dt4 > 0 ? (ult[3] - H[i4][3]) / dt4 : 0; // igual que ratePalletsHour de la web
 double cumpl = horas >= 1 ? 100 * ult[3] / meta : 0; // sin sentido en la primera hora
-string S = getnodestr(tl.find("tableroHead")) + "<div class='pt'><div class='top'><div class='tt'>PATY San Jorge · Elaborados L7 y L8 <span>" + string.fromNum(horas, 2) + " h simuladas</span><i class='ab' data-auto='1' onmousedown='patyAuto(1)'>&#9654;</i><i id='ct' style='display:none' data-t='" + string.fromNum(model().find("Tools/cinT0").value, 3) + "' data-p='" + string.fromNum(model().find("Tools/cinP").value, 2) + "' data-st='" + string.fromNum(Model.time, 3) + "' data-rt='" + string.fromNum(realtime(), 3) + "'></i></div><div class='kpis'>";
+string S = getnodestr(tl.find("tableroHead")) + "<div class='pt'><div class='top'><div class='tt'>PATY San Jorge · Elaborados L7 y L8 <i class='ab' data-auto='1' onmousedown='patyAuto(1)'>&#9654;</i><i class='ab' data-rst='1' onmousedown='patyReset()'>&#8634;</i><span>" + string.fromNum(horas, 2) + " h simuladas</span><i id='ct' style='display:none' data-t='" + string.fromNum(model().find("Tools/cinT0").value, 3) + "' data-p='" + string.fromNum(model().find("Tools/cinP").value, 2) + "' data-st='" + string.fromNum(Model.time, 3) + "' data-rt='" + string.fromNum(realtime(), 3) + "'></i></div><div class='kpis'>";
 S = S + "<div class='k'><b>" + string.fromNum(ult[3], 0) + "</b><span>Pallets PT expedidos</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(r4, 2) + "</b><span>pal/h PT (ventana 4 h)</span></div>";
 S = S + "<div class='k'><b>" + string.fromNum(cumpl, 0) + " %</b><span>Cumplimiento (meta 36 pal/día/línea)</span></div>";
