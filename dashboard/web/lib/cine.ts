@@ -14,7 +14,7 @@ import { useStore } from "./store";
 import type { Snapshot } from "./types";
 
 export type V3 = [number, number, number];
-export type CineId = "planta" | "elaborados" | "l7" | "lote" | "paradas" | "cuello" | "resumen" | "e2" | "e3" | "e4";
+export type CineId = "planta" | "elaborados" | "l7" | "lote" | "paradas" | "cuello" | "resumen" | "e2" | "e3" | "e4" | "e2r" | "e3r" | "e4r";
 export type Escena = "camion_abre" | "camion_sale";
 
 export interface Shot {
@@ -45,6 +45,9 @@ export const CINES: { id: CineId; label: string; sub: string; icon: "factory" | 
   { id: "e2", label: "E2 · Formadoras rápidas", sub: "Problema, propuesta, corrida y conclusión", icon: "target" },
   { id: "e3", label: "E3 · Más materia prima", sub: "Problema, propuesta, corrida y conclusión", icon: "target" },
   { id: "e4", label: "E4 · Batch de 1200 kg", sub: "Problema, propuesta, corrida y conclusión", icon: "target" },
+  { id: "e2r", label: "E2 · corrida y conclusión", sub: "Solo la corrida del escenario", icon: "target" },
+  { id: "e3r", label: "E3 · corrida y conclusión", sub: "Solo la corrida del escenario", icon: "target" },
+  { id: "e4r", label: "E4 · corrida y conclusión", sub: "Solo la corrida del escenario", icon: "target" },
   { id: "cuello", label: "Cuello de botella", sub: "Dónde se frena la línea", icon: "target" },
 ];
 
@@ -213,6 +216,9 @@ export function armarCine(id: CineId, h: Snapshot[]): Shot[] {
     case "e2": return E2;
     case "e3": return E3;
     case "e4": return E4;
+    case "e2r": return E2.slice(3);
+    case "e3r": return E3.slice(3);
+    case "e4r": return E4.slice(2);
     case "cuello": return cuello(h);
   }
 }
