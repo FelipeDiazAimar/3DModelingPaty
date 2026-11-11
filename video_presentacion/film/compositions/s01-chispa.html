@@ -37,6 +37,10 @@
       font-size: 38px;
       letter-spacing: -0.01em;
     }
+    #s01-lp { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+    .s01-lpc { position: absolute; left: 0; top: 0; width: 80px; height: 80px; opacity: 0; transform-origin: 50% 50%; will-change: transform; }
+    .s01-lpc svg { display: block; width: 80px; height: 80px; overflow: visible; }
+    #s01-ring { position: absolute; left: 0; top: 0; width: 80px; height: 80px; border-radius: 50%; border: 5px solid #ffffff; opacity: 0; transform-origin: 50% 50%; }
     #s01-pill-row {
       position: absolute;
       left: 0;
@@ -111,6 +115,14 @@
         <path class="s01-d" pathLength="1" d="M1620 464V534" />
       </g>
     </svg>
+    <div id="s01-lp" data-layout-ignore>
+      <div id="lp-a" class="s01-lpc"><svg viewBox="0 0 80 80"><path d="M0 0H80V80H0Z" fill="#ff1f3d" /></svg></div>
+      <div id="lp-b" class="s01-lpc"><svg viewBox="0 0 80 80"><path d="M0 0H40A40 40 0 0 1 80 40V80H0Z" fill="#ffffff" /></svg></div>
+      <div id="lp-c" class="s01-lpc"><svg viewBox="0 0 80 80"><path d="M0 0H80V80H0Z" fill="#d0001f" /></svg></div>
+      <div id="lp-d" class="s01-lpc"><svg viewBox="0 0 80 80"><path d="M0 0H80A40 40 0 0 1 40 40H0Z" fill="#ff4d63" /></svg></div>
+      <div id="lp-e" class="s01-lpc"><svg viewBox="0 0 80 80"><path d="M0 0H80V80H0Z" fill="#ff1f3d" /></svg></div>
+      <div id="s01-ring"></div>
+    </div>
     <div id="s01-pill-row">
       <div id="s01-pill">
         <span id="s01-ghost" data-var-text="s01-rotulo">PATY</span>
@@ -256,6 +268,36 @@
         );
       });
       tl.to("#s01-svg", { opacity: 0, filter: "blur(10px)", duration: 0.15, ease: "power2.in" }, FLOOD);
+
+      // Logo: cada pieza de la P cae desde una máquina a la cinta, viaja hasta el centro y sube a su lugar (cinco piezas, como en el cierre)
+      const LINE_Y = 540, SZ = 80, RIDE = 0.75, FIN = 1.5;
+      const pieces = [
+        // id, x de salida, y de salida (bajo el ícono de la máquina), x destino, y destino, aparece, viaje
+        ["lp-a", 300, 430, 900, 210, 3.15, 0.85],
+        ["lp-b", 1620, 435, 1020, 210, 3.55, 0.85],
+        ["lp-c", 760, 410, 900, 330, 4.0, 0.45],
+        ["lp-d", 1160, 420, 1020, 330, 4.4, 0.45],
+        ["lp-e", 120, 380, 900, 450, 4.9, 0.95],
+      ];
+      pieces.forEach(([id, x0, y0, xt, yt, at, ride]) => {
+        const sel = "#" + id;
+        const cy = LINE_Y - (SZ * RIDE) / 2;
+        tl.set(sel, { x: x0 - SZ / 2, y: y0 - SZ / 2, scale: 0, opacity: 0 }, 0);
+        tl.to(sel, { opacity: 1, scale: RIDE, duration: 0.18, ease: "back.out(2.2)" }, at);
+        tl.to(sel, { y: cy - SZ / 2, duration: 0.3, ease: "bounce.out" }, at + 0.1);
+        tl.to(sel, { x: xt - SZ / 2, duration: ride, ease: "power1.inOut" }, at + 0.42);
+        tl.to(sel, { y: yt - SZ / 2, scale: FIN, duration: 0.5, ease: "back.out(1.5)" }, at + 0.42 + ride);
+      });
+      // destello al cerrar la P y latido
+      const DONE = 4.9 + 0.42 + 0.95 + 0.5;
+      tl.set("#s01-ring", { x: 960 - SZ / 2, y: 330 - SZ / 2, scale: 0.6, opacity: 0 }, 0);
+      tl.fromTo("#s01-ring", { scale: 0.6, opacity: 0.9 }, { scale: 7, opacity: 0, duration: 0.7, ease: "power3.out" }, DONE - 0.05);
+      tl.to("#s01-lp", { scale: 1.05, transformOrigin: "960px 330px", duration: 0.12, ease: "power2.out" }, DONE - 0.05);
+      tl.to("#s01-lp", { scale: 1, duration: 0.4, ease: "back.out(2)" }, DONE + 0.07);
+      // con la inundación roja las piezas pasan a negro y blanco, y la P crece
+      tl.to(["#lp-a path", "#lp-c path", "#lp-e path"], { fill: "#050507", duration: 0.3, ease: "power2.inOut" }, FLOOD);
+      tl.to(["#lp-b path", "#lp-d path"], { fill: "#ffffff", duration: 0.3, ease: "power2.inOut" }, FLOOD);
+      tl.to("#s01-lp", { scale: 1.16, transformOrigin: "960px 330px", duration: END - FLOOD, ease: "power1.out" }, FLOOD);
 
       window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
       renderAt(0);
