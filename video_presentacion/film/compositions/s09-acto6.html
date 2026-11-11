@@ -15,24 +15,31 @@
     .kw { display:inline-block; }
     .gl { position:absolute; top:262px; width:2px; height:610px; background:#050507; opacity:0; }
     .gt { position:absolute; top:880px; width:120px; margin-left:-60px; text-align:center; font-size:30px; font-weight:700; color:#55555f; opacity:0; }
+    .vw { position:absolute; left:0; top:0; width:1920px; height:1080px; object-fit:cover; opacity:0; z-index:6; }
+    #vs-sub { position:absolute; left:560px; bottom:100px; width:1300px; text-align:center; z-index:8; opacity:0; }
+    #vs-sub span { display:inline-block; padding:10px 28px; border-radius:14px; background:rgba(5,5,7,.88); color:#fff; font-size:40px; font-weight:700; line-height:1.25; }
     .tk { position:absolute; left:0; top:0; width:1920px; height:1080px; object-fit:cover; opacity:0; }
     .tkl { position:absolute; left:40px; top:20px; font-size:26px; font-weight:700; letter-spacing:0.02em; opacity:0; }
   </style>
   <div id="root" data-composition-id="s09-acto6" data-width="1920" data-height="1080" data-layout-allow-overlap>
+<video id="vv2" class="clip vw" data-start="163.000" data-duration="49.600" data-media-start="0" data-playback-rate="1.25" muted playsinline src="assets/web/ce2.mp4" data-layout-ignore></video>
+<video id="vv3" class="clip vw" data-start="259.700" data-duration="51.200" data-media-start="0" data-playback-rate="1.25" muted playsinline src="assets/web/ce3.mp4" data-layout-ignore></video>
+<video id="vv4" class="clip vw" data-start="352.000" data-duration="43.200" data-media-start="0" data-playback-rate="1.25" muted playsinline src="assets/web/ce4.mp4" data-layout-ignore></video>
+<div id="vs-sub" data-layout-ignore><span id="vs-sub-t"></span></div>
     <div id="s0" class="s" style="background:#050507">
 <div id="z1" class="e" style="left:0px;top:70px;font-size:96px;font-weight:900;color:#fff;width:1920px;text-align:center;">¿Qué distribución usa la simulación?</div>
-<div id="z20" class="e" style="left:110px;top:240px;font-size:62px;font-weight:800;color:#fff;">Materia prima</div>
-<div id="z30" class="e p" style="left:800px;top:232px;font-size:58px;background:#ff1f3d;color:#050507">Al azar</div>
-<div id="z40" class="e" style="left:1230px;top:250px;font-size:38px;font-weight:500;color:#c9c9d2;">camiones, tamaños y pesos de datos reales</div>
-<div id="z21" class="e" style="left:110px;top:405px;font-size:62px;font-weight:800;color:#fff;">Tiempos de máquina</div>
-<div id="z31" class="e p" style="left:800px;top:397px;font-size:58px;background:#ff1f3d;color:#050507">Constantes</div>
-<div id="z41" class="e" style="left:1230px;top:415px;font-size:38px;font-weight:500;color:#c9c9d2;">salvo el ritmo de formado de cada día</div>
-<div id="z22" class="e" style="left:110px;top:570px;font-size:62px;font-weight:800;color:#fff;">Tiempo entre fallas</div>
+<div id="z20" class="e" style="left:110px;top:240px;font-size:62px;font-weight:800;color:#fff;">Llegadas de MP</div>
+<div id="z30" class="e p" style="left:800px;top:232px;font-size:58px;background:#ff1f3d;color:#050507">Empírica</div>
+<div id="z40" class="e" style="left:1340px;top:250px;width:540px;white-space:normal;line-height:1.15;font-size:32px;font-weight:500;color:#c9c9d2;">datos reales remuestreados; K-S rechaza la exponencial</div>
+<div id="z21" class="e" style="left:110px;top:405px;font-size:62px;font-weight:800;color:#fff;">Tiempos de proceso</div>
+<div id="z31" class="e p" style="left:800px;top:397px;font-size:58px;background:#ff1f3d;color:#050507">Determinísticos</div>
+<div id="z41" class="e" style="left:1340px;top:415px;width:540px;white-space:normal;line-height:1.15;font-size:32px;font-weight:500;color:#c9c9d2;">salvo el ritmo diario de formado (empírico)</div>
+<div id="z22" class="e" style="left:110px;top:570px;font-size:62px;font-weight:800;color:#fff;">Entre fallas (MTBF)</div>
 <div id="z32" class="e p" style="left:800px;top:562px;font-size:58px;background:#ff1f3d;color:#050507">Exponencial</div>
-<div id="z42" class="e" style="left:1230px;top:580px;font-size:38px;font-weight:500;color:#c9c9d2;">las fallas aparecen al azar</div>
-<div id="z23" class="e" style="left:110px;top:735px;font-size:62px;font-weight:800;color:#fff;">Reparación</div>
+<div id="z42" class="e" style="left:1340px;top:580px;width:540px;white-space:normal;line-height:1.15;font-size:32px;font-weight:500;color:#c9c9d2;">las fallas aparecen al azar, sin memoria</div>
+<div id="z23" class="e" style="left:110px;top:735px;font-size:62px;font-weight:800;color:#fff;">Reparación (MTTR)</div>
 <div id="z33" class="e p" style="left:800px;top:727px;font-size:58px;background:#ff1f3d;color:#050507">Lognormal</div>
-<div id="z43" class="e" style="left:1230px;top:745px;font-size:38px;font-weight:500;color:#c9c9d2;">muchas cortas y pocas muy largas</div>
+<div id="z43" class="e" style="left:1340px;top:745px;width:540px;white-space:normal;line-height:1.15;font-size:32px;font-weight:500;color:#c9c9d2;">muchas cortas y pocas muy largas (cola pesada)</div>
 <div id="sa" class="sh" style="left:0" data-layout-ignore></div><div id="sb" class="sh" style="left:960px" data-layout-ignore></div>
     </div>
     <div id="s1" class="s" style="background:#050507">
@@ -90,8 +97,6 @@
 <div id="c54" class="e" style="left:1240px;top:736px;font-size:68px;font-weight:900;color:#050507;">Lavado de 30 min</div>
     </div>
     <div id="s4" class="s" style="background:#050507">
-<video id="v-e2" class="clip tk" data-start="134.64" data-duration="60.76" data-playback-rate="0.24" muted playsinline src="assets/flexsim/e2.mp4" data-layout-ignore></video>
-<div id="v-e2l" class="tkl" style="color:#a9a9b3" data-layout-ignore>Toma real · FlexSim · E2 a las 4 h simuladas</div>
 <div id="d1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#fff;width:1920px;text-align:center;">E2 · Formadoras más rápidas</div>
 <div id="d2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">982 → 1843 kg/h</div>
 <div id="d3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#a9a9b3;width:1920px;text-align:center;">Diferencia contra E1 · pallets por día · intervalo 95 %</div>
@@ -106,8 +111,6 @@
 <div id="d5" class="e p" style="left:430px;top:800px;font-size:60px;background:#ff1f3d;color:#050507">El cuello pasa a la primera etapa: 74,7 t/día</div>
     </div>
     <div id="s5" class="s" style="background:#12121a">
-<video id="v-e3" class="clip tk" data-start="194.64" data-duration="45.76" data-playback-rate="0.32" muted playsinline src="assets/flexsim/e3.mp4" data-layout-ignore></video>
-<div id="v-e3l" class="tkl" style="color:#a9a9b3" data-layout-ignore>Toma real · FlexSim · E3 a las 4 h simuladas</div>
 <div id="e1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#fff;width:1920px;text-align:center;">E3 · Más materia prima</div>
 <div id="e2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">1,5 × la materia prima</div>
 <div id="e3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#a9a9b3;width:1920px;text-align:center;">Diferencia contra E2 · pallets por día · intervalo 95 %</div>
@@ -122,8 +125,6 @@
 <div id="e5" class="e p" style="left:380px;top:800px;font-size:60px;background:#ff1f3d;color:#050507">Cámaras de materia prima: 19 → 30 pallets</div>
     </div>
     <div id="s6" class="s" style="background:#f4f1ea">
-<video id="v-e4" class="clip tk" data-start="239.64" data-duration="40.76" data-playback-rate="0.36" muted playsinline src="assets/flexsim/e4.mp4" data-layout-ignore></video>
-<div id="v-e4l" class="tkl" style="color:#55555f" data-layout-ignore>Toma real · FlexSim · E4 a las 4 h simuladas</div>
 <div id="f1" class="e" style="left:0px;top:60px;font-size:108px;font-weight:900;color:#050507;width:1920px;text-align:center;">E4 · Batch más grande</div>
 <div id="f2" class="e" style="left:0px;top:210px;font-size:96px;font-weight:900;color:#ff1f3d;width:1920px;text-align:center;">1050 → 1200 kg</div>
 <div id="f3" class="e" style="left:0px;top:360px;font-size:48px;font-weight:500;color:#55555f;width:1920px;text-align:center;">Diferencia contra 1050 kg · pallets por día · intervalo 95 %</div>
@@ -336,8 +337,6 @@
       rv("#g3",295.829);
       rv("#g4",304.245);
 
-      // Tomas reales de FlexSim (E2–E4) de fondo: aparecen con un acercamiento lento.
-      [["e2", 135.2, 0], ["e3", 195.2, 0], ["e4", 240.2, 0]].forEach((v) => { tl.fromTo("#v-" + v[0], { opacity: 0, scale: 1.12 }, { opacity: v[2], scale: 1, duration: 2.4, ease: "power2.out" }, v[1]); tl.fromTo("#v-" + v[0] + "l", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, v[1] + 0.6); });
       // Extras por diapositiva: barras que crecen y sellos (Rechazada), tarjetas que giran en 3D, ruedas de números, intervalos que se abren.
       const NS = [0, 22, 67, 105, 135, 195, 240, 280, 290];
       const stamp = (s, at, sl) => { tl.fromTo(s, { scale: 3.2, rotation: -14 }, { scale: 1, rotation: -3, duration: 0.22, ease: "power4.in" }, at); [[16,-10],[-12,8],[7,5],[0,0]].forEach((q, k) => tl.to(sl, { x: q[0], y: q[1], duration: 1 / 30, ease: "none" }, at + 0.22 + k / 30)); };
@@ -370,6 +369,31 @@
         tl.fromTo(w, { opacity: 0, ...m }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.24, ease: m.y ? "back.out(1.7)" : m.scale ? "back.out(2.2)" : "expo.out" }, at + i * gap);
       });
       slamW("#g1", NS[8] + 0.7, 0.28); slamW("#g2", NS[8] + 1.5, 0.28); slamW("#g4", NS[8] + 14.3, 0.22);
+
+      // Video web de cada corrida antes de su conclusión (se inserta un hueco en la línea de tiempo y se corre todo lo posterior)
+      const GAPS = [[163.0, 49.6], [210.1, 51.2], [251.2, 43.2]];
+      for (let i = 2; i >= 0; i--) tl.shiftChildren(GAPS[i][1], true, GAPS[i][0]);
+      const vsub = (a, b, txt) => { tl.set("#vs-sub-t", { textContent: txt }, a); tl.fromTo("#vs-sub", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, a); tl.to("#vs-sub", { opacity: 0, duration: 0.15 }, b); };
+      tl.fromTo("#vv2", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 163.000); tl.to("#vv2", { opacity: 0, duration: 0.3, ease: "power2.in" }, 212.300);
+      vsub(163.300, 171.560, "Recordemos el problema: el cuello es el mezclado, ocupado el setenta y cinco por ciento.");
+      vsub(171.960, 179.433, "Y las formadoras trabajan a novecientos ochenta y dos kilos por hora, contra mil ochocientos cuarenta y tres de estándar.");
+      vsub(179.833, 185.732, "La propuesta: llevar las formadoras al estándar de línea.");
+      vsub(186.132, 193.605, "Corremos el modelo con ese cambio, veinticuatro horas, con las mismas semillas.");
+      vsub(194.005, 202.265, "El cuello se corre al desencajado, y el mezclado deja de limitar.");
+      vsub(202.665, 212.500, "Resultado: más pallets por día, con un intervalo de confianza que no incluye el cero.");
+      tl.fromTo("#vv3", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 259.700); tl.to("#vv3", { opacity: 0, duration: 0.3, ease: "power2.in" }, 310.600);
+      vsub(260.000, 268.400, "Con las formadoras rápidas, el techo pasa a ser el desencajado.");
+      vsub(268.800, 276.400, "La cámara de materia prima recibe lo que traen los camiones.");
+      vsub(276.800, 283.600, "La propuesta: sumar uno coma cinco veces la materia prima.");
+      vsub(284.000, 291.600, "Corremos diez réplicas de veinticuatro horas, con las mismas semillas.");
+      vsub(292.000, 300.400, "La materia prima se acumula en cámara: entra más de lo que el desencajado consume.");
+      vsub(300.800, 310.800, "Contra el escenario anterior, el intervalo incluye el cero: no se distingue.");
+      tl.fromTo("#vv4", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 352.000); tl.to("#vv4", { opacity: 0, duration: 0.3, ease: "power2.in" }, 394.900);
+      vsub(352.300, 360.700, "Cada batch paga un lavado de treinta minutos en la mezcladora.");
+      vsub(361.100, 367.900, "La propuesta: batch de mil doscientos kilos, ocho cargas en lugar de siete.");
+      vsub(368.300, 375.900, "Corremos el modelo con ese cambio, con las mismas semillas.");
+      vsub(376.300, 384.700, "El cuello sigue siendo el mezclado: lo que se ahorra en lavados casi se compensa.");
+      vsub(385.100, 395.100, "La diferencia es de cero coma seis pallets y no se distingue de cero.");
       window.__timelines["s09-acto6"] = tl;
       const HOST = 480.366666;
       const SEGS = [[0.5, 5.553, "Los camiones llegan al azar: cantidad, tamaño y horario salen de datos reales."], [6.003, 9.371, "Tiempos fijos, salvo el ritmo diario de formado."], [9.821, 15.997, "Los pesos salen de pallets reales, y las fallas son exponenciales."], [16.447, 21.5, "Y la reparación, lognormal: muchas cortas y pocas largas."], [22.5, 31.04, "Antes de simular miramos los datos reales de la planta y les hicimos pruebas de bondad de ajuste."], [31.49, 40.03, "Kolmogorov-Smirnov mide la mayor distancia entre los datos y la curva teórica; si pasa el límite, se rechaza."], [40.48, 44.749, "Los arribos llegan en ráfagas: la exponencial queda rechazada."], [45.199, 53.265, "Las paradas tienen cola pesada: tampoco ajustan a una lognormal, aunque es la que mejor se acerca."], [53.715, 62.255, "Y el peso de los pallets es una mezcla de productos, así que la normal también se rechaza."], [62.705, 66.5, "No forzamos una distribución porque sí: lo decimos."], [67.5, 75.581, "En el modelo varían los camiones, el peso de los pallets, el ritmo de formado de cada día y las fallas."], [76.031, 84.111, "Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento."], [84.561, 91.216, "La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio."], [91.666, 104.5, "Y la entrada de materia prima cambia mucho de un día a otro, de ocho a ochenta batches: por eso los intervalos de confianza son anchos."], [105.5, 112.023, "Este es el escenario base: cuarenta y nueve coma uno pallets por día."], [112.473, 125.018, "Sospechábamos de la formadora, pero el cuello real son las mezcladoras: setenta y cinco por ciento ocupadas y sesenta coma cinco toneladas de capacidad por día."], [125.468, 134.5, "La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta."], [135.5, 150.282, "¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora."], [150.732, 162.943, "Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares."], [163.393, 171.106, "Son nueve pallets más por día: un diecinueve por ciento."], [171.556, 183.767, "El intervalo va de cuatro coma cinco a catorce coma uno. No incluye el cero, así que la mejora es real, aunque ancha."], [184.217, 194.5, "Pero el cuello se mueve: ahora manda la primera etapa, donde se abren las cajas de materia prima, con setenta y cuatro coma siete toneladas por día."], [195.5, 202.228, "Ahora lo obvio: si queremos producir más, traigamos más materia prima."], [202.678, 210.017, "Sobre las formadoras rápidas, uno coma cinco veces la materia prima que entra."], [210.467, 217.806, "Contra el escenario anterior da tres coma seis pallets más por día."], [218.256, 229.876, "El intervalo va de menos cero coma tres a siete coma cinco: incluye el cero, así que no se distingue."], [230.326, 239.5, "La materia prima se acumula: las cámaras pasan de diecinueve a treinta pallets en promedio."], [240.5, 251.168, "Después probamos un batch más grande: mil doscientos kilos, ocho cargas, en lugar de mil cincuenta, siete cargas."], [251.618, 263.81, "Rinde apenas cero coma seis pallets más por día, y esa diferencia no se distingue de cero."], [264.26, 279.5, "El intervalo va de cero a uno coma dos e incluye el cero: con este modelo, el tamaño del batch casi no cambia el resultado."], [280.5, 289.5, "Comparando: base, cuarenta y nueve; formadoras rápidas, cincuenta y ocho; más materia prima, sesenta y dos; batch de 1200, cincuenta."], [290.5, 295.279, "La conclusión: lo que mueve la producción son las formadoras más rápidas."], [295.729, 303.695, "Más materia prima o un batch más grande, por sí solos, no se distinguen de cero."], [304.145, 314.5, "Y todo esto lo sabemos porque comparamos intervalos de confianza, no corridas sueltas."]].map((s) => ({ t0: HOST + s[0], t1: HOST + s[1], text: s[2] }));
