@@ -1,0 +1,5 @@
+{
+ "_nota": "Textos acortados para que la locución entre en la ventana de su diapositiva. El guion original (guiones/guion_ia.md) no se toca; para volver al original, borrar la entrada y correr cues.py.",
+ "D19 por dónde arrancamos": "¿Por dónde se empieza? Por los planos, luego el modelo en tres dimensiones, FlexSim, y al final, medir con réplicas.",
+ "D24 conclusiones": "La simulación ya nos dice algo: unas cuarenta y dos toneladas por día, con mucha variación. La línea se frena en las mezcladoras, por el lavado de cada batch. La formadora no era el cuello."
+}

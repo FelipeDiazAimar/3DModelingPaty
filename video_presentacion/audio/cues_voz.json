@@ -1,0 +1,698 @@
+[
+ {
+  "id": "D2 portada",
+  "grupo": "ia",
+  "inicio": 7.5,
+  "fin": 18.767,
+  "texto": "Simulación de líneas de hamburguesas Paty.",
+  "activo": true
+ },
+ {
+  "id": "Rubro",
+  "grupo": "ia",
+  "inicio": 25.767,
+  "fin": 30.767,
+  "texto": "Es una industria frigorífica. Y en su sector de elaborados se hacen hamburguesas congeladas.",
+  "activo": true
+ },
+ {
+  "id": "D8 sistema",
+  "grupo": "ia",
+  "inicio": 30.767,
+  "fin": 41.067,
+  "texto": "La carne entra en pallets, atraviesa ocho etapas y sale convertida en cajas de hamburguesas. Las líneas siete y ocho hacen ese viaje en paralelo, todos los días.",
+  "activo": true
+ },
+ {
+  "id": "D7 problema",
+  "grupo": "ia",
+  "inicio": 41.067,
+  "fin": 45.767,
+  "texto": "En toda planta hay un lugar donde la producción se frena. Encontrarlo es nuestro problema.",
+  "activo": true
+ },
+ {
+  "id": "D9 nave",
+  "grupo": "ia",
+  "inicio": 45.767,
+  "fin": 49.533,
+  "texto": "Todo pasa dentro de esta nave.",
+  "activo": true
+ },
+ {
+  "id": "D10–D12 escala",
+  "grupo": "ia",
+  "inicio": 49.533,
+  "fin": 60.767,
+  "texto": "La mezcla se prepara en tandas grandes. En cada turno llegan los camiones con la materia prima, y a lo largo del día entra mucha más carne de la que parece.",
+  "activo": true
+ },
+ {
+  "id": "Escenario base",
+  "grupo": "ia",
+  "inicio": 60.767,
+  "fin": 70.767,
+  "texto": "Este es el punto de partida: tres turnos continuos, camiones de materia prima que llegan como los reales, dos líneas iguales y cuatro montacargas. Contra esto vamos a comparar todo lo demás.",
+  "activo": true
+ },
+ {
+  "id": "D13 sospechosa",
+  "grupo": "ia",
+  "inicio": 70.767,
+  "fin": 83.892,
+  "texto": "Cada máquina tiene su propio ritmo, y la línea entera avanza al ritmo de la más lenta. La pregunta es cuál.",
+  "activo": true
+ },
+ {
+  "id": "D14 evidencia",
+  "grupo": "ia",
+  "inicio": 83.892,
+  "fin": 99.829,
+  "texto": "Todas las miradas iban a la formadora, la máquina que le da forma a las hamburguesas. Trabaja bastante por debajo de lo que marca el estándar de la línea.",
+  "activo": true
+ },
+ {
+  "id": "D15 por qué la formadora",
+  "grupo": "ia",
+  "inicio": 99.829,
+  "fin": 107.829,
+  "texto": "¿Por qué ella? Porque rinde apenas la mitad de su estándar, y una línea avanza al ritmo de su máquina más lenta.",
+  "activo": true
+ },
+ {
+  "id": "D16 cómo",
+  "grupo": "ia",
+  "inicio": 107.829,
+  "fin": 120.033,
+  "texto": "Pero una sospecha no alcanza. Para saberlo, había que construir la planta y hacerla producir.",
+  "activo": true
+ },
+ {
+  "id": "D16–D17 referencia",
+  "grupo": "ia",
+  "inicio": 120.033,
+  "fin": 131.267,
+  "texto": "Y para medirlo bien, no alcanza una corrida: hacen falta réplicas y un intervalo de confianza para cada resultado.",
+  "activo": true
+ },
+ {
+  "id": "D19 por dónde arrancamos",
+  "grupo": "ia",
+  "inicio": 131.267,
+  "fin": 138.267,
+  "texto": "¿Por dónde se empieza? Por los planos, luego el modelo en tres dimensiones, FlexSim, y al final, medir con réplicas.",
+  "activo": true
+ },
+ {
+  "id": "D20 planos",
+  "grupo": "ia",
+  "inicio": 138.267,
+  "fin": 145.767,
+  "texto": "Empezamos por el principio: le pedimos a la planta los planos de Elaborados.",
+  "activo": true
+ },
+ {
+  "id": "D19 Blender",
+  "grupo": "ia",
+  "inicio": 145.767,
+  "fin": 153.267,
+  "texto": "Con ellos levantamos la planta completa en Blender, que tuvimos que aprender a usar para esto.",
+  "activo": true
+ },
+ {
+  "id": "D20 código",
+  "grupo": "ia",
+  "inicio": 153.267,
+  "fin": 164.533,
+  "texto": "No la dibujamos a mano. Con ayuda de la IA escribimos el código que la construye, sector por sector, hasta tener cada máquina en su lugar.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 1",
+  "grupo": "ia",
+  "inicio": 164.933,
+  "fin": 172.133,
+  "texto": "La planta en FlexSim y, al costado, nuestro tablero: pallets terminados contra la meta del programa.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 2",
+  "grupo": "ia",
+  "inicio": 172.933,
+  "fin": 180.133,
+  "texto": "Después, dónde se acumula el material: cámaras, colas y lo que hay en proceso. Ahí se forma la fila.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 3",
+  "grupo": "ia",
+  "inicio": 180.933,
+  "fin": 188.133,
+  "texto": "Las máquinas también se rompen: cuántas veces se paró cada equipo y por cuánto tiempo, con datos reales.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 4",
+  "grupo": "ia",
+  "inicio": 188.933,
+  "fin": 196.133,
+  "texto": "En velocidad, los kilos por hora: la formadora tiene 982 de capacidad, contra 1843 del estándar.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 5",
+  "grupo": "ia",
+  "inicio": 196.933,
+  "fin": 204.133,
+  "texto": "El balance de masa cuida las cuentas: un batch son mil cincuenta kilos, siete cargas.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 6",
+  "grupo": "ia",
+  "inicio": 204.933,
+  "fin": 212.133,
+  "texto": "Cada montacargas tiene su cuenta de traslados: son cuatro, de la recepción a la expedición.",
+  "activo": true
+ },
+ {
+  "id": "D21 hoja 7",
+  "grupo": "ia",
+  "inicio": 212.933,
+  "fin": 220.133,
+  "texto": "Y las estadísticas: calentamiento de cuatro horas y ocupación de cada estación.",
+  "activo": true
+ },
+ {
+  "id": "D24 conclusiones",
+  "grupo": "ia",
+  "inicio": 220.533,
+  "fin": 232.533,
+  "texto": "La simulación ya nos dice algo: unas cuarenta y dos toneladas por día, con mucha variación. La línea se frena en las mezcladoras, por el lavado de cada batch. La formadora no era el cuello.",
+  "activo": true
+ },
+ {
+  "id": "D25 necesidad",
+  "grupo": "ia",
+  "inicio": 232.533,
+  "fin": 244.533,
+  "texto": "Un tablero muestra lo que pasa, pero cada escenario son diez réplicas: abrir, correr, copiar los datos y comparar, todo a mano. Queríamos pedírselo a una inteligencia artificial y que lo hiciera ella.",
+  "activo": true
+ },
+ {
+  "id": "D26 qué es un MCP",
+  "grupo": "ia",
+  "inicio": 244.533,
+  "fin": 259.533,
+  "texto": "Para eso existe el MCP: un protocolo abierto que estandariza cómo las aplicaciones de inteligencia artificial se conectan con herramientas y datos externos. En un chat, la IA solo opina. Con un MCP, puede abrir el programa, hacerlo correr y medirlo.",
+  "activo": true
+ },
+ {
+  "id": "D27 no existía",
+  "grupo": "ia",
+  "inicio": 259.533,
+  "fin": 270.533,
+  "texto": "Para FlexSim no había ninguno. Cero. Así que construimos el nuestro, y hoy es uno.",
+  "activo": true
+ },
+ {
+  "id": "D28 el puente",
+  "grupo": "ia",
+  "inicio": 270.533,
+  "fin": 285.533,
+  "texto": "Funciona como un puente: el asistente de inteligencia artificial hace un pedido, el servidor MCP elige la herramienta, la orden llega a FlexSim y el resultado vuelve a la conversación.",
+  "activo": true
+ },
+ {
+  "id": "D29 herramientas",
+  "grupo": "ia",
+  "inicio": 285.533,
+  "fin": 308.033,
+  "texto": "El MCP tiene setenta y tres herramientas propias, repartidas en ocho categorías: correr el modelo, leer sus datos, construir objetos, lanzar experimentos y hasta armar gráficos.",
+  "activo": true
+ },
+ {
+  "id": "D31 idea de la web",
+  "grupo": "ia",
+  "inicio": 308.033,
+  "fin": 325.033,
+  "texto": "Y si toda esa información ya salía de FlexSim, ¿por qué quedarnos ahí? Se nos ocurrió llevarla a una aplicación propia: en el celular, con la planta en la mano, y en cualquier navegador, para ver la simulación en tiempo real.",
+  "activo": true
+ },
+ {
+  "id": "web cinemática 1",
+  "grupo": "ia",
+  "inicio": 325.533,
+  "fin": 336.033,
+  "texto": "Esto es la web del gemelo digital: la planta en 3D con los datos del modelo, en vivo.",
+  "activo": true
+ },
+ {
+  "id": "web cinemática 2",
+  "grupo": "ia",
+  "inicio": 337.033,
+  "fin": 348.033,
+  "texto": "Seguimos el recorrido del pallet de materia prima hasta la caja.",
+  "activo": true
+ },
+ {
+  "id": "web cinemática 3",
+  "grupo": "ia",
+  "inicio": 349.033,
+  "fin": 361.033,
+  "texto": "En las máquinas clave se abren las gráficas de estados y de producción.",
+  "activo": true
+ },
+ {
+  "id": "web cinemática 4",
+  "grupo": "ia",
+  "inicio": 362.033,
+  "fin": 368.533,
+  "texto": "Después, cada apartado de la web muestra datos puntuales.",
+  "activo": true
+ },
+ {
+  "id": "D31 Producción",
+  "grupo": "ia",
+  "inicio": 376.033,
+  "fin": 387.633,
+  "texto": "Producción: cuántos pallets y cajas salen, comparados con lo programado.",
+  "activo": true
+ },
+ {
+  "id": "D31 Paradas",
+  "grupo": "ia",
+  "inicio": 387.633,
+  "fin": 399.233,
+  "texto": "Paradas: cuándo se frena cada máquina y qué tan seguido.",
+  "activo": true
+ },
+ {
+  "id": "D31 Velocidad",
+  "grupo": "ia",
+  "inicio": 399.233,
+  "fin": 407.633,
+  "texto": "Velocidad: los kilos por hora de cada línea contra su capacidad.",
+  "activo": true
+ },
+ {
+  "id": "D31 Estadística",
+  "grupo": "ia",
+  "inicio": 407.633,
+  "fin": 419.233,
+  "texto": "Estadística: ajustes de distribuciones e intervalos de confianza.",
+  "activo": true
+ },
+ {
+  "id": "D31 Escenarios",
+  "grupo": "ia",
+  "inicio": 419.233,
+  "fin": 433.767,
+  "texto": "Y escenarios: qué pasaría si cambiamos la planta. De eso hablamos ahora.",
+  "activo": true
+ },
+ {
+  "id": "A6 karaoke 01",
+  "grupo": "acto6",
+  "inicio": 434.267,
+  "fin": 439.32,
+  "texto": "Los camiones llegan al azar: cantidad, tamaño y horario salen de datos reales.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 02",
+  "grupo": "acto6",
+  "inicio": 439.77,
+  "fin": 443.138,
+  "texto": "Tiempos fijos, salvo el ritmo diario de formado.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 03",
+  "grupo": "acto6",
+  "inicio": 443.588,
+  "fin": 449.764,
+  "texto": "Los pesos salen de pallets reales, y las fallas son exponenciales.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 04",
+  "grupo": "acto6",
+  "inicio": 450.214,
+  "fin": 455.267,
+  "texto": "Y la reparación, lognormal: muchas cortas y pocas largas.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 05",
+  "grupo": "acto6",
+  "inicio": 456.267,
+  "fin": 464.807,
+  "texto": "Antes de simular miramos los datos reales de la planta y les hicimos pruebas de bondad de ajuste.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 06",
+  "grupo": "acto6",
+  "inicio": 465.257,
+  "fin": 473.797,
+  "texto": "Kolmogorov-Smirnov mide la mayor distancia entre los datos y la curva teórica; si pasa el límite, se rechaza.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 07",
+  "grupo": "acto6",
+  "inicio": 474.247,
+  "fin": 478.516,
+  "texto": "Los arribos llegan en ráfagas: la exponencial queda rechazada.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 08",
+  "grupo": "acto6",
+  "inicio": 478.966,
+  "fin": 487.032,
+  "texto": "Las paradas tienen cola pesada: tampoco ajustan a una lognormal, aunque es la que mejor se acerca.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 09",
+  "grupo": "acto6",
+  "inicio": 487.482,
+  "fin": 496.022,
+  "texto": "Y el peso de los pallets es una mezcla de productos, así que la normal también se rechaza.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 10",
+  "grupo": "acto6",
+  "inicio": 496.472,
+  "fin": 500.267,
+  "texto": "No forzamos una distribución porque sí: lo decimos.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 11",
+  "grupo": "acto6",
+  "inicio": 501.267,
+  "fin": 509.348,
+  "texto": "En el modelo varían los camiones, el peso de los pallets, el ritmo de formado de cada día y las fallas.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 12",
+  "grupo": "acto6",
+  "inicio": 509.798,
+  "fin": 517.878,
+  "texto": "Corrimos diez réplicas de veinticuatro horas y calculamos intervalos de confianza del noventa y cinco por ciento.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 13",
+  "grupo": "acto6",
+  "inicio": 518.328,
+  "fin": 524.983,
+  "texto": "La línea tarda unas cuatro horas en llenarse desde vacía: ese es el transitorio.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 14",
+  "grupo": "acto6",
+  "inicio": 525.433,
+  "fin": 538.267,
+  "texto": "Y la entrada de materia prima cambia mucho de un día a otro, de ocho a ochenta batches: por eso los intervalos de confianza son anchos.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 15",
+  "grupo": "acto6",
+  "inicio": 539.267,
+  "fin": 545.79,
+  "texto": "Este es el escenario base: cuarenta y nueve coma uno pallets por día.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 16",
+  "grupo": "acto6",
+  "inicio": 546.24,
+  "fin": 558.785,
+  "texto": "Sospechábamos de la formadora, pero el cuello real son las mezcladoras: setenta y cinco por ciento ocupadas y sesenta coma cinco toneladas de capacidad por día.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 17",
+  "grupo": "acto6",
+  "inicio": 559.235,
+  "fin": 568.267,
+  "texto": "La causa es el lavado de treinta minutos por cada batch, un dato que nos dio la planta.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 18",
+  "grupo": "acto6",
+  "inicio": 569.267,
+  "fin": 584.049,
+  "texto": "¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 19",
+  "grupo": "acto6",
+  "inicio": 584.499,
+  "fin": 596.71,
+  "texto": "Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 01",
+  "grupo": "acto6",
+  "inicio": 596.9,
+  "fin": 602.799,
+  "texto": "La propuesta: llevar las formadoras al estándar de línea.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 02",
+  "grupo": "acto6",
+  "inicio": 603.199,
+  "fin": 610.672,
+  "texto": "Corremos el modelo con ese cambio, veinticuatro horas, con las mismas semillas.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 03",
+  "grupo": "acto6",
+  "inicio": 611.072,
+  "fin": 619.332,
+  "texto": "El cuello se corre al desencajado, y el mezclado deja de limitar.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 04",
+  "grupo": "acto6",
+  "inicio": 619.732,
+  "fin": 629.567,
+  "texto": "Resultado: más pallets por día, con un intervalo de confianza que no incluye el cero.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 20",
+  "grupo": "acto6",
+  "inicio": 630.06,
+  "fin": 637.773,
+  "texto": "Son nueve pallets más por día: un diecinueve por ciento.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 21",
+  "grupo": "acto6",
+  "inicio": 638.223,
+  "fin": 650.434,
+  "texto": "El intervalo va de cuatro coma cinco a catorce coma uno. No incluye el cero, así que la mejora es real, aunque ancha.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 22",
+  "grupo": "acto6",
+  "inicio": 650.884,
+  "fin": 661.167,
+  "texto": "Pero el cuello se mueve: ahora manda la primera etapa, donde se abren las cajas de materia prima, con setenta y cuatro coma siete toneladas por día.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 23",
+  "grupo": "acto6",
+  "inicio": 662.167,
+  "fin": 668.895,
+  "texto": "Ahora lo obvio: si queremos producir más, traigamos más materia prima.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 24",
+  "grupo": "acto6",
+  "inicio": 669.345,
+  "fin": 676.684,
+  "texto": "Sobre las formadoras rápidas, uno coma cinco veces la materia prima que entra.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 05",
+  "grupo": "acto6",
+  "inicio": 676.767,
+  "fin": 683.567,
+  "texto": "La propuesta: sumar uno coma cinco veces la materia prima.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 06",
+  "grupo": "acto6",
+  "inicio": 683.967,
+  "fin": 691.567,
+  "texto": "Corremos diez réplicas de veinticuatro horas, con las mismas semillas.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 07",
+  "grupo": "acto6",
+  "inicio": 691.967,
+  "fin": 700.367,
+  "texto": "La materia prima se acumula en cámara: entra más de lo que el desencajado consume.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 08",
+  "grupo": "acto6",
+  "inicio": 700.767,
+  "fin": 710.767,
+  "texto": "Contra el escenario anterior, el intervalo incluye el cero: no se distingue.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 25",
+  "grupo": "acto6",
+  "inicio": 711.234,
+  "fin": 718.573,
+  "texto": "Contra el escenario anterior da tres coma seis pallets más por día.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 26",
+  "grupo": "acto6",
+  "inicio": 719.023,
+  "fin": 730.643,
+  "texto": "El intervalo va de menos cero coma tres a siete coma cinco: incluye el cero, así que no se distingue.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 27",
+  "grupo": "acto6",
+  "inicio": 731.093,
+  "fin": 740.267,
+  "texto": "La materia prima se acumula: las cámaras pasan de diecinueve a treinta pallets en promedio.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 28",
+  "grupo": "acto6",
+  "inicio": 741.267,
+  "fin": 751.935,
+  "texto": "Después probamos un batch más grande: mil doscientos kilos, ocho cargas, en lugar de mil cincuenta, siete cargas.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 09",
+  "grupo": "acto6",
+  "inicio": 751.967,
+  "fin": 758.767,
+  "texto": "La propuesta: batch de mil doscientos kilos, ocho cargas en lugar de siete.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 10",
+  "grupo": "acto6",
+  "inicio": 759.167,
+  "fin": 766.767,
+  "texto": "Corremos el modelo con ese cambio, con las mismas semillas.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 11",
+  "grupo": "acto6",
+  "inicio": 767.167,
+  "fin": 775.567,
+  "texto": "El cuello sigue siendo el mezclado: lo que se ahorra en lavados casi se compensa.",
+  "activo": false
+ },
+ {
+  "id": "A6 video 12",
+  "grupo": "acto6",
+  "inicio": 775.967,
+  "fin": 785.967,
+  "texto": "La diferencia es de cero coma seis pallets y no se distingue de cero.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 29",
+  "grupo": "acto6",
+  "inicio": 786.485,
+  "fin": 798.677,
+  "texto": "Rinde apenas cero coma seis pallets más por día, y esa diferencia no se distingue de cero.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 30",
+  "grupo": "acto6",
+  "inicio": 799.127,
+  "fin": 814.367,
+  "texto": "El intervalo va de cero a uno coma dos e incluye el cero: con este modelo, el tamaño del batch casi no cambia el resultado.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 31",
+  "grupo": "acto6",
+  "inicio": 815.367,
+  "fin": 824.367,
+  "texto": "Comparando: base, cuarenta y nueve; formadoras rápidas, cincuenta y ocho; más materia prima, sesenta y dos; batch de 1200, cincuenta.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 32",
+  "grupo": "acto6",
+  "inicio": 825.367,
+  "fin": 830.146,
+  "texto": "La conclusión: lo que mueve la producción son las formadoras más rápidas.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 33",
+  "grupo": "acto6",
+  "inicio": 830.596,
+  "fin": 838.562,
+  "texto": "Más materia prima o un batch más grande, por sí solos, no se distinguen de cero.",
+  "activo": false
+ },
+ {
+  "id": "A6 karaoke 34",
+  "grupo": "acto6",
+  "inicio": 839.012,
+  "fin": 849.367,
+  "texto": "Y todo esto lo sabemos porque comparamos intervalos de confianza, no corridas sueltas.",
+  "activo": false
+ },
+ {
+  "id": "D40 conclusiones",
+  "grupo": "ia",
+  "inicio": 849.867,
+  "fin": 861.867,
+  "texto": "En resumen: el cuello son las mezcladoras, acelerar las formadoras suma casi un veinte por ciento, con intervalos anchos, y todo lo probamos sin tocar la planta.",
+  "activo": true
+ },
+ {
+  "id": "D41 cierre",
+  "grupo": "ia",
+  "inicio": 861.867,
+  "fin": 878.167,
+  "texto": "Gracias por recorrer la planta con nosotros. El modelo, la página web y el programa que conecta a FlexSim con el asistente quedan en estos repositorios.",
+  "activo": true
+ }
+]

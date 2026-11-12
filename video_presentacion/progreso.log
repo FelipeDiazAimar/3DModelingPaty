@@ -14,3 +14,5 @@ ACTO3|hyperframes+mcp|OK|film/compositions/s06-flexsim.html
 ACTO3|grabacion-real+hyperframes|OK|film/compositions/s06-flexsim.html (corrida.mp4 desde 4,5 s)
 ACTO3|karaoke|OK|film/compositions/s06-karaoke.html (17 segmentos sobre la toma)
 ACTO4|hyperframes-registry|OK|film/compositions/s07-mcp.html
+Audio|cues+sfx+voz Fish|OK|video_presentacion/audio
+Recorte|14:45 + sfx animaciones|OK|video_presentacion/film/index.html

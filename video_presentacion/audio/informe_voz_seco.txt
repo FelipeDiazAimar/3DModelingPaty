@@ -1,0 +1,47 @@
+Informe de voz (estimado, sin API): 45 cues, 0 no entran ni a x1.3. Acortar el texto en guiones/guion_ia.md (y volver a correr cues.py) o alargar la diapositiva.
+
+OK   D2 portada                     inicio     7.5s  voz   2.9s  ventana  10.8s  tempo x1.00  42 caracteres
+OK   Rubro                          inicio    25.8s  voz   4.3s  ventana   4.5s  tempo x1.00  62 caracteres
+OK   D8 sistema                     inicio    30.8s  voz  11.1s  ventana   9.8s  tempo x1.13  161 caracteres
+OK   D7 problema                    inicio    41.1s  voz   5.0s  ventana   4.2s  tempo x1.20  73 caracteres
+OK   D9 nave                        inicio    45.8s  voz   2.1s  ventana   3.3s  tempo x1.00  30 caracteres
+OK   D10–D12 escala                 inicio    49.5s  voz  10.8s  ventana  10.7s  tempo x1.00  156 caracteres
+OK   Escenario base                 inicio    60.8s  voz   9.4s  ventana   9.5s  tempo x1.00  137 caracteres
+OK   D13 sospechosa                 inicio    70.8s  voz   7.4s  ventana  12.6s  tempo x1.00  107 caracteres
+OK   D14 evidencia                  inicio    83.9s  voz  10.6s  ventana  15.4s  tempo x1.00  154 caracteres
+OK   D15 por qué la formadora       inicio    99.8s  voz   7.7s  ventana   7.5s  tempo x1.03  112 caracteres
+OK   D16 cómo                       inicio   107.8s  voz   6.4s  ventana  11.7s  tempo x1.00  93 caracteres
+OK   D16–D17 referencia             inicio   120.0s  voz   7.9s  ventana  10.7s  tempo x1.00  114 caracteres
+OK   D19 por dónde arrancamos       inicio   131.3s  voz   8.0s  ventana   6.5s  tempo x1.23  116 caracteres
+OK   D20 planos                     inicio   138.3s  voz   5.2s  ventana   7.0s  tempo x1.00  76 caracteres
+OK   D19 Blender                    inicio   145.8s  voz   6.5s  ventana   7.0s  tempo x1.00  94 caracteres
+OK   D20 código                     inicio   153.3s  voz   9.5s  ventana  10.8s  tempo x1.00  138 caracteres
+OK   D21 hoja 1                     inicio   164.9s  voz   6.9s  ventana   6.7s  tempo x1.03  100 caracteres
+OK   D21 hoja 2                     inicio   172.9s  voz   6.9s  ventana   6.7s  tempo x1.03  100 caracteres
+OK   D21 hoja 3                     inicio   180.9s  voz   7.2s  ventana   6.7s  tempo x1.07  104 caracteres
+OK   D21 hoja 4                     inicio   188.9s  voz   6.6s  ventana   6.7s  tempo x1.00  96 caracteres
+OK   D21 hoja 5                     inicio   196.9s  voz   5.9s  ventana   6.7s  tempo x1.00  85 caracteres
+OK   D21 hoja 6                     inicio   204.9s  voz   6.3s  ventana   6.7s  tempo x1.00  91 caracteres
+OK   D21 hoja 7                     inicio   212.9s  voz   5.4s  ventana   6.7s  tempo x1.00  79 caracteres
+OK   D24 conclusiones               inicio   220.5s  voz  13.0s  ventana  11.5s  tempo x1.13  189 caracteres
+OK   D25 necesidad                  inicio   232.5s  voz  13.8s  ventana  11.5s  tempo x1.20  200 caracteres
+OK   D26 qué es un MCP              inicio   244.5s  voz  17.2s  ventana  14.5s  tempo x1.18  249 caracteres
+OK   D27 no existía                 inicio   259.5s  voz   5.7s  ventana  10.5s  tempo x1.00  82 caracteres
+OK   D28 el puente                  inicio   270.5s  voz  12.7s  ventana  14.5s  tempo x1.00  184 caracteres
+OK   D29 herramientas               inicio   285.5s  voz  12.2s  ventana  22.0s  tempo x1.00  177 caracteres
+OK   D30 en uso                     inicio   308.0s  voz   9.5s  ventana  14.5s  tempo x1.00  138 caracteres
+OK   D31 idea de la web             inicio   323.0s  voz  15.5s  ventana  16.5s  tempo x1.00  225 caracteres
+OK   web cinemática 1               inicio   340.5s  voz   5.9s  ventana  10.0s  tempo x1.00  85 caracteres
+OK   web cinemática 2               inicio   352.0s  voz   4.4s  ventana  10.5s  tempo x1.00  64 caracteres
+OK   web cinemática 3               inicio   364.0s  voz   4.9s  ventana  11.5s  tempo x1.00  71 caracteres
+OK   web cinemática 4               inicio   377.0s  voz   3.9s  ventana   6.0s  tempo x1.00  57 caracteres
+OK   D31 Producción                 inicio   391.0s  voz   5.0s  ventana  11.1s  tempo x1.00  72 caracteres
+OK   D31 Paradas                    inicio   402.6s  voz   3.9s  ventana  11.1s  tempo x1.00  56 caracteres
+OK   D31 Colas y WIP                inicio   414.2s  voz   4.5s  ventana  11.1s  tempo x1.00  65 caracteres
+OK   D31 Velocidad                  inicio   425.8s  voz   4.4s  ventana   7.9s  tempo x1.00  64 caracteres
+OK   D31 Balance de masa            inicio   434.2s  voz   4.3s  ventana  11.1s  tempo x1.00  62 caracteres
+OK   D31 Montacargas                inicio   445.8s  voz   3.1s  ventana   7.9s  tempo x1.00  45 caracteres
+OK   D31 Estadística                inicio   454.2s  voz   4.5s  ventana  11.1s  tempo x1.00  65 caracteres
+OK   D31 Escenarios                 inicio   465.8s  voz   5.0s  ventana  14.0s  tempo x1.00  72 caracteres
+OK   D40 conclusiones               inicio   939.4s  voz  11.1s  ventana  11.5s  tempo x1.00  161 caracteres
+OK   D41 cierre                     inicio   951.4s  voz  10.5s  ventana  24.5s  tempo x1.00  152 caracteres

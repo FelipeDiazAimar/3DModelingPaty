@@ -44,3 +44,10 @@ video_presentacion/film/assets/renders/test/*
 !video_presentacion/film/assets/renders/test/f0000.png
 video_presentacion/film/renders/
 video_presentacion/render.log
+
+# audio del video: pistas generadas (se regeneran con video_presentacion/audio/*.py), caché de voz y temporales
+video_presentacion/film/assets/audio/
+video_presentacion/audio/voz_cache/
+video_presentacion/audio/tmp/
+video_presentacion/audio/voz.wav
+video_presentacion/audio/preview_mezcla.mp3

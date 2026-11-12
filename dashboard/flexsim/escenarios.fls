@@ -1,0 +1,30 @@
+// Escenarios E1–E4 del gemelo (PLANTASJ.fsm). Ejecutar en la consola de FlexSim o con flexsim_execute_script.
+// Uso: pasar el nombre del escenario en `esc` ("E1", "E2", "E3", "E4") y correr. Antes reiniciar la corrida (Reiniciar).
+// E1 = base (padBase 3.27, camFrac 0.5, batch 1050 kg, 7 cargas). Siempre parte de E1 y luego aplica el cambio.
+// E2 = formadoras a 1843 kg/h: padBase 1.554 (la fórmula de GenArribos reescribe entrySpacePadding con ese valor).
+// E3 = E2 + 1,5× materia prima: camFrac 0.5 × 1.5 = 0.75 (fracción de cada camión que recibe L7+L8).
+// E4 = batch 1200 kg (8 cargas): batchKg 921 × 8/7 de MP por batch; splitquantity de mezcladoras 7 → 8;
+//      tiempos de ciclo × 8/7: desencajado 2450 → 2800 s, picadora 630 → 720 s, mezclado 840 → 960 s. Lavado 1800 s sin cambio.
+
+string esc = "E2";   // cambiar a "E1", "E2", "E3" o "E4"
+treenode T = model().find("Tools");
+
+// base E1
+T.find("padBase").value = 3.27;
+T.find("camFrac").value = 0.5;
+T.find("batchKg").value = 921;
+foreach (string m in {"MezA_L7", "MezB_L7", "MezA_L8", "MezB_L8"}) model().find(m).find(">variables/splitquantity").value = 7;
+foreach (string m in {"Desencajado_L7", "Desencajado_L8"}) model().find(m).find(">variables/cycletime").value = 2450;
+foreach (string m in {"Picadora_L7", "Picadora_L8"}) model().find(m).find(">variables/cycletime").value = 630;
+foreach (string m in {"MezA_L7", "MezB_L7", "MezA_L8", "MezB_L8"}) model().find(m).find(">variables/cycletime").value = 840;
+
+if (esc == "E2" || esc == "E3") T.find("padBase").value = 1.554;
+if (esc == "E3") T.find("camFrac").value = 0.75;
+if (esc == "E4") {
+	T.find("batchKg").value = 921 * 8 / 7;
+	foreach (string m in {"MezA_L7", "MezB_L7", "MezA_L8", "MezB_L8"}) model().find(m).find(">variables/splitquantity").value = 8;
+	foreach (string m in {"Desencajado_L7", "Desencajado_L8"}) model().find(m).find(">variables/cycletime").value = 2800;
+	foreach (string m in {"Picadora_L7", "Picadora_L8"}) model().find(m).find(">variables/cycletime").value = 720;
+	foreach (string m in {"MezA_L7", "MezB_L7", "MezA_L8", "MezB_L8"}) model().find(m).find(">variables/cycletime").value = 960;
+}
+return "escenario " + esc + " aplicado";

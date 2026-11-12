@@ -1,0 +1,2836 @@
+[
+ {
+  "t": 0.4,
+  "tipo": "riser",
+  "dur": 7.0
+ },
+ {
+  "t": 2.51,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 2.859,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 3.218,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 3.531,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 3.89,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 4.712,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 5.112,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 5.312,
+  "tipo": "pop",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 5.512,
+  "tipo": "pop",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 5.662,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 5.812,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 6.012,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 6.212,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 6.562,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 6.679,
+  "tipo": "pop",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 7.5,
+  "tipo": "hit",
+  "fuerza": 1.0
+ },
+ {
+  "t": 7.964,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 8.315,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 8.515,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 8.715,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 8.915,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 9.115,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 9.315,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 9.515,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 9.715,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 9.915,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 10.115,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 10.315,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 10.515,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 10.715,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 10.915,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 11.115,
+  "tipo": "tick",
+  "cuerpo": 0.5,
+  "auto": 1
+ },
+ {
+  "t": 12.182,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 12.534,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 13.94,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 14.643,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 15.346,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 18.159,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 18.767,
+  "tipo": "whoosh",
+  "dur": 0.45
+ },
+ {
+  "t": 19.866,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 20.633,
+  "tipo": "whoosh",
+  "dur": 0.45
+ },
+ {
+  "t": 21.733,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 22.5,
+  "tipo": "whoosh",
+  "dur": 0.45
+ },
+ {
+  "t": 23.6,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 24.367,
+  "tipo": "shatter",
+  "dur": 1.4
+ },
+ {
+  "t": 25.767,
+  "tipo": "whoosh",
+  "dur": 0.5
+ },
+ {
+  "t": 29.449,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 29.471,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 29.603,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 29.735,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 29.867,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 30.349,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 30.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 36,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 37.563,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 39.263,
+  "tipo": "draw",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 40.263,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 40.767,
+  "tipo": "riser",
+  "dur": 0.3
+ },
+ {
+  "t": 41.067,
+  "tipo": "hit",
+  "fuerza": 0.8
+ },
+ {
+  "t": 45.767,
+  "tipo": "tick"
+ },
+ {
+  "t": 49.533,
+  "tipo": "tick"
+ },
+ {
+  "t": 52.227,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 52.477,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 52.927,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 53.267,
+  "tipo": "tick"
+ },
+ {
+  "t": 55.633,
+  "tipo": "slide",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 55.993,
+  "tipo": "textin",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 56.493,
+  "tipo": "draw",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 56.693,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 57.033,
+  "tipo": "tick"
+ },
+ {
+  "t": 59.367,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 59.677,
+  "tipo": "textin",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 60.227,
+  "tipo": "draw",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 60.387,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 60.547,
+  "tipo": "draw",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 60.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 68.216,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 68.666,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 68.946,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 69.216,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 69.376,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 69.536,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 69.696,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 69.856,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 70.016,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 70.176,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 70.336,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 70.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 79.357,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 80.157,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 80.757,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 81.657,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 82.557,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 83.457,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 83.892,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 84.357,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 85.257,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 86.157,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 87.057,
+  "tipo": "draw",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 88.657,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 88.857,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 89.057,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 89.257,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 90.957,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 91.157,
+  "tipo": "slide",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 92.382,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 92.682,
+  "tipo": "draw",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 94.457,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 95.257,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 95.857,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 98.757,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 99.829,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 100.357,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 103.257,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 107.829,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 108.419,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 108.919,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 109.519,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 111.519,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 116.319,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 117.019,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 117.519,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 118.319,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 118.919,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 119.633,
+  "tipo": "glitch",
+  "dur": 0.8
+ },
+ {
+  "t": 120.033,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 124.017,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.077,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.137,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.197,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.257,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.317,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.377,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.437,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.497,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.517,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.557,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.577,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.617,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.637,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.677,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.697,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.737,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.757,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.797,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.817,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.857,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.877,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.937,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 124.997,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 125.057,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 125.117,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 125.177,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 125.237,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 125.297,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 125.357,
+  "tipo": "tick",
+  "suave": true
+ },
+ {
+  "t": 131.267,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 138.267,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 138.267,
+  "tipo": "ambiente",
+  "dur": 26.266
+ },
+ {
+  "t": 145.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 150.122,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 150.622,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 152.622,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 153.267,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 157.402,
+  "tipo": "popbig",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 157.622,
+  "tipo": "popbig",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 159.122,
+  "tipo": "draw",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 160.422,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 160.722,
+  "tipo": "slide",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 160.862,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 161.002,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 161.142,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 161.622,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 162.422,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 163.322,
+  "tipo": "slide",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 164.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 164.533,
+  "tipo": "hit",
+  "fuerza": 0.55
+ },
+ {
+  "t": 164.533,
+  "tipo": "ambiente",
+  "dur": 68.0
+ },
+ {
+  "t": 176.874,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 180.474,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 185.074,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 191.874,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 220.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 232.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 232.533,
+  "tipo": "hit",
+  "fuerza": 0.55
+ },
+ {
+  "t": 244.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 244.875,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 245.475,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 248.075,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 249.875,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 250.275,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 252.075,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 256.315,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 256.475,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 256.875,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 257.875,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 259.075,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 259.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 260.475,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 262.675,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 263.675,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 264.375,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 265.375,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 266.175,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 266.875,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 267.275,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 267.675,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 270.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 271.315,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 271.975,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 272.975,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 274.675,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 276.075,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 277.675,
+  "tipo": "slide",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 277.975,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 282.315,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 282.625,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 282.875,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 284.075,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 284.375,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 285.533,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 285.875,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 287.075,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 287.375,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 288.575,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 289.875,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 290.875,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 297.315,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 298.075,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 299.475,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 300.275,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 301.675,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 303.275,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 304.875,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 306.475,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 308.033,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 308.033,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 320.471,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 321.971,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 324.371,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 324.771,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 324.871,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 325.033,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 325.033,
+  "tipo": "hit",
+  "fuerza": 0.55
+ },
+ {
+  "t": 325.033,
+  "tipo": "ambiente",
+  "dur": 108.734
+ },
+ {
+  "t": 337.702,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 337.902,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 340.102,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 348.402,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 349.402,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 360.402,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 361.402,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 373.402,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 374.402,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 378.583,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 380.902,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 381.783,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 382.302,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 383.202,
+  "tipo": "slide",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 383.502,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 384.402,
+  "tipo": "slide",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 384.702,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 384.983,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 385.602,
+  "tipo": "slide",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 385.902,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 386.802,
+  "tipo": "slide",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 387.102,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 388.252,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 388.402,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 388.552,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 388.902,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 389.902,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 390.052,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 390.183,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 390.552,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 390.802,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 393.102,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 393.252,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 393.383,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 393.752,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 394.102,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 396.302,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 396.452,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 396.583,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 396.952,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 397.302,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 399.502,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 399.652,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 399.852,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 400.002,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 400.152,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 400.502,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 401.502,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 401.652,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 401.783,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 402.152,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 402.402,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 404.702,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 404.852,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 404.983,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 405.352,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 405.702,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 407.902,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 408.052,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 408.252,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 408.552,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 408.902,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 410.183,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 411.102,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 411.252,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 411.452,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 411.602,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 411.752,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 412.102,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 413.102,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 413.252,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 413.383,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 413.752,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 414.002,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 416.302,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 416.452,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 416.583,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 416.952,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 417.302,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 419.502,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 419.652,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 419.852,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 420.002,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 420.152,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 420.502,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 421.502,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 421.652,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 421.783,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 422.152,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 422.402,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 424.702,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 424.852,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 424.983,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 425.352,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 425.702,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 427.902,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 428.052,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 428.183,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 428.552,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 428.902,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 431.102,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 431.252,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 431.452,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 431.602,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 431.752,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 432.102,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 433.102,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 433.252,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 433.452,
+  "tipo": "popbig",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 433.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 433.767,
+  "tipo": "hit",
+  "fuerza": 0.55
+ },
+ {
+  "t": 433.929,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 434.479,
+  "tipo": "textin",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 439.982,
+  "tipo": "textin",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 443.8,
+  "tipo": "textin",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 450.426,
+  "tipo": "textin",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 455.519,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 455.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 456.479,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 465.469,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 474.358,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 474.558,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 474.808,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 475.408,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 479.178,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 479.528,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 480.128,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 487.694,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 488.043,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 488.643,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 500.519,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 500.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 501.079,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 501.359,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 501.479,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 501.639,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 501.919,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 538.519,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 538.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 539.379,
+  "tipo": "popbig",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 539.539,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 539.699,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 539.859,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 540.019,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 546.452,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 552.067,
+  "tipo": "scribble",
+  "dur": 1.6
+ },
+ {
+  "t": 568.519,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 568.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 569.479,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 584.711,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 596.767,
+  "tipo": "whoosh",
+  "dur": 0.5
+ },
+ {
+  "t": 596.767,
+  "tipo": "ambiente",
+  "dur": 32.9
+ },
+ {
+  "t": 597.012,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 602.911,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 603.311,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 610.784,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 611.184,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 619.444,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 619.844,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 629.479,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 629.679,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 630.272,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 630.772,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 631.172,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 631.372,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 638.435,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 651.096,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 661.419,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 661.667,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 662.379,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 669.557,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 676.767,
+  "tipo": "whoosh",
+  "dur": 0.5
+ },
+ {
+  "t": 676.767,
+  "tipo": "ambiente",
+  "dur": 34.1
+ },
+ {
+  "t": 683.679,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 684.079,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 691.679,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 692.079,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 700.479,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 700.879,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 710.679,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 710.879,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 711.446,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 711.945,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 712.345,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 712.545,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 719.235,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 731.305,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 740.519,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 740.767,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 741.479,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 751.967,
+  "tipo": "whoosh",
+  "dur": 0.5
+ },
+ {
+  "t": 751.967,
+  "tipo": "ambiente",
+  "dur": 34.1
+ },
+ {
+  "t": 758.879,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 759.279,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 766.879,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 767.279,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 775.679,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 776.079,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 785.879,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 786.079,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 786.697,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 787.197,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 787.597,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 787.797,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 799.339,
+  "tipo": "textin",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 814.619,
+  "tipo": "popbig",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 814.867,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 815.479,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 815.699,
+  "tipo": "pop",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 815.719,
+  "tipo": "grow",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 815.879,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 815.999,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 816.119,
+  "tipo": "pop",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 816.239,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 816.359,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 824.619,
+  "tipo": "swipe",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 824.867,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 825.479,
+  "tipo": "textin",
+  "cuerpo": 0.91,
+  "auto": 1
+ },
+ {
+  "t": 825.679,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 825.959,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 826.239,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 826.479,
+  "tipo": "pop",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 826.759,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 827.039,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 827.319,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 830.708,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 830.848,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 830.988,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 831.128,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 831.268,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 831.408,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 831.548,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 831.688,
+  "tipo": "pop",
+  "cuerpo": 1.0,
+  "auto": 1
+ },
+ {
+  "t": 839.224,
+  "tipo": "textin",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 839.499,
+  "tipo": "pop",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 839.719,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 839.939,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 849.867,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 849.867,
+  "tipo": "hit",
+  "fuerza": 0.7
+ },
+ {
+  "t": 861.867,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 876.632,
+  "tipo": "textin",
+  "cuerpo": 0.67,
+  "auto": 1
+ },
+ {
+  "t": 877.432,
+  "tipo": "swipe",
+  "cuerpo": 0.79,
+  "auto": 1
+ },
+ {
+  "t": 878.167,
+  "tipo": "whoosh",
+  "dur": 0.55
+ },
+ {
+  "t": 878.167,
+  "tipo": "hit",
+  "fuerza": 1.0
+ },
+ {
+  "t": 878.317,
+  "tipo": "shimmer",
+  "dur": 3.0
+ }
+]

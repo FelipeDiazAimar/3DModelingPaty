@@ -195,7 +195,7 @@
       };
       const KIND = ["cubo", "zoom", "sube", "barre"];
       tl.set("#m-p0", { opacity: 1 }, 0);
-      for (let i = 1; i < T.length; i++) tr("#m-p" + (i - 1), "#m-p" + i, T[i], KIND[i % 4]);
+      for (let i = 1; i < T.length - 1; i++) tr("#m-p" + (i - 1), "#m-p" + i, T[i], KIND[i % 4]);
 
       // D23 · strikethrough-replace
       tl.fromTo("#m-tab", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, 0.2);
