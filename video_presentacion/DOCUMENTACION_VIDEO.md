@@ -298,3 +298,11 @@ El video pasó de 983,4 s (16:23) a 885,2 s (**14:45**, tope pedido: 15:00). Rec
 Todos los `data-start`, `data-duration`, la numeración de diapositivas (`s99-subs`) y los tiempos de la voz y los efectos se recalcularon con el mismo mapa de recortes. Los respaldos del estado anterior no se versionaron: el proyecto original sigue en `origin/main` (`b1a177c`).
 **Para volver a un video más largo** hay que revertir esas cuatro escenas (git) y correr `audio/cues.py` de nuevo (las constantes de tiempo de ese script y las de `generar_efectos.py` están en 885,17 s).
 **Efectos de sonido:** ahora hay un efecto por cada aparición, movimiento y transición de las escenas animadas (≈ 490 eventos) y un ambiente de planta bajo las tomas de Blender, FlexSim y la web. Las diapositivas quietas del Acto 6 no tienen animaciones que sonorizar. Revisión del montaje: `hyperframes check` sin errores (lint, runtime, layout, motion, contraste, audio).
+
+
+## 13/11/2026 · Audios del equipo y tiempos
+- Se incorporaron las grabaciones del equipo (`audio/equipo/`, ver `audio/README.md`). La IA habla en las diapositivas que no son de las corridas; el equipo, en la toma de FlexSim, la web, E3, E4 y las conclusiones.
+- Duración final: 14:52 (891,9 s). Diapositiva 26 (conclusión de la simulación): 20,3 s, antes 12. Diapositiva 44 (conclusiones): 17,5 s, antes 12.
+- Web (diapositiva 34): la caminata por la planta va a 2,2x y el tramo de gráficos a 1x, para poder leerlos; los apartados duran lo que dura cada frase (60 s, antes 55).
+- Tiempos muertos recortados: diapositivas 36, 37, 38 y 43 ahora duran la voz de cada frase más 0,8 s.
+- Subtítulos de la web y de las corridas E2 a E4 con barrido karaoke. Falta el audio de E2 y del arranque de E3 (habla la IA).

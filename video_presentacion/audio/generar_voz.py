@@ -98,7 +98,7 @@ def main():
     CACHE.mkdir(exist_ok=True)
     SALIDA.mkdir(parents=True, exist_ok=True)
 
-    total = int((885.166666 + 1) * SR)
+    total = int((891.889 + 1) * SR)
     pista = np.zeros(total, dtype=np.float32)
     informe = []
     for c in cues:
@@ -132,6 +132,24 @@ def main():
     print("\n".join(cab + [l for l in lineas if l.startswith("LARGO") or a.seco and "x1.0" not in l][:60]))
     if a.seco:
         return
+    # Audios grabados por el equipo (equipo_clips.json, lo arma el script de montaje): se suman a la misma pista para que el ducking de la música los respete
+    eq = AQUI / "equipo_clips.json"
+    if eq.exists():
+        for c in json.loads(eq.read_text(encoding="utf-8")):
+            filtro = f"highpass=f=75,volume={c['gain_db']}dB"
+            if abs(c["tempo"] - 1) > 1e-3:
+                filtro += f",atempo={c['tempo']}"
+            filtro += ",alimiter=limit=0.9"
+            r = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{max(0, c['a'] - 0.15):.3f}", "-t", f"{c['b'] - c['a'] + 0.5:.3f}", "-i", str(AQUI / c["src"]), "-af", filtro,
+                                "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True)
+            x = np.frombuffer(r.stdout, dtype=np.float32).copy()
+            fi = int(0.03 * SR)
+            x[:fi] *= np.linspace(0, 1, fi)
+            x[-fi:] *= np.linspace(1, 0, fi)
+            i0 = int((c["t"] - 0.15 / c["tempo"]) * SR)
+            n = min(len(x), total - i0)
+            pista[i0:i0 + n] += x[:n]
+        print("Audios del equipo mezclados:", len(json.loads(eq.read_text(encoding="utf-8"))))
     pico = float(np.abs(pista).max()) or 1.0
     pista *= min(1.0, 0.89 / pico)
     escribir_wav(AQUI / "voz.wav", pista)

@@ -1,5 +1,9 @@
 {
  "_nota": "Textos acortados para que la locución entre en la ventana de su diapositiva. El guion original (guiones/guion_ia.md) no se toca; para volver al original, borrar la entrada y correr cues.py.",
  "D19 por dónde arrancamos": "¿Por dónde se empieza? Por los planos, luego el modelo en tres dimensiones, FlexSim, y al final, medir con réplicas.",
- "D24 conclusiones": "La simulación ya nos dice algo: unas cuarenta y dos toneladas por día, con mucha variación. La línea se frena en las mezcladoras, por el lavado de cada batch. La formadora no era el cuello."
+ "D24 conclusiones": "La simulación ya nos dice algo: unas cuarenta y dos toneladas por día, con mucha variación. La línea se frena en las mezcladoras, por el lavado de cada batch. La formadora no era el cuello.",
+ "D28 el puente": "Funciona como un puente: el asistente de inteligencia artificial hace un pedido, el servidor MCP elige la herramienta, la orden llega a FlexSim y el resultado vuelve a la conversación. En una frase: el asistente solicita, el servidor traduce y FlexSim ejecuta.",
+ "D13 sospechosa": "Cada máquina tiene su propio ritmo, y la línea entera avanza al ritmo de la más lenta. La pregunta es cuál. Son ocho etapas, y cada una tiene su velocidad.",
+ "D14 evidencia": "Todas las miradas iban a la formadora, la máquina que le da forma a las hamburguesas. Trabaja bastante por debajo de lo que marca el estándar de la línea: novecientos ochenta y dos kilos por hora, contra mil ochocientos cuarenta y tres.",
+ "D16 cómo": "Pero una sospecha no alcanza. Para saberlo, había que construir la planta y hacerla producir: armar un modelo de simulación y ver qué pasa."
 }

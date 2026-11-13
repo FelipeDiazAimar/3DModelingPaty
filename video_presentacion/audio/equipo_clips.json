@@ -1,0 +1,434 @@
+[
+ {
+  "id": "D21 hoja 1",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 3.7,
+  "b": 9.7,
+  "t": 165.083,
+  "tempo": 1.0,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D21 hoja 2",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 11.94,
+  "b": 18.1,
+  "t": 173.083,
+  "tempo": 1.0,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D21 hoja 3",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 20.0,
+  "b": 26.84,
+  "t": 181.083,
+  "tempo": 1.0,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D21 hoja 4",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 27.66,
+  "b": 34.92,
+  "t": 189.083,
+  "tempo": 1.0522,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D21 hoja 5",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 35.9,
+  "b": 42.26,
+  "t": 197.083,
+  "tempo": 1.0,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D21 hoja 6",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 43.72,
+  "b": 49.54,
+  "t": 205.083,
+  "tempo": 1.0,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D21 hoja 7",
+  "src": "equipo/tablero_flexsim.m4a",
+  "a": 51.72,
+  "b": 57.42,
+  "t": 213.083,
+  "tempo": 1.0,
+  "gain_db": 2.4
+ },
+ {
+  "id": "D24 a",
+  "src": "equipo/conclusion_simulacion.m4a",
+  "a": 0.62,
+  "b": 8.1,
+  "t": 220.933,
+  "tempo": 1.0,
+  "gain_db": 1.0
+ },
+ {
+  "id": "D24 b",
+  "src": "equipo/conclusion_simulacion.m4a",
+  "a": 8.42,
+  "b": 16.28,
+  "t": 228.763,
+  "tempo": 1.0,
+  "gain_db": 1.0
+ },
+ {
+  "id": "D24 c",
+  "src": "equipo/conclusion_simulacion.m4a",
+  "a": 16.88,
+  "b": 20.18,
+  "t": 236.973,
+  "tempo": 1.0,
+  "gain_db": 1.0
+ },
+ {
+  "id": "web cinemática 1",
+  "src": "equipo/web_cinematica.m4a",
+  "a": 1.92,
+  "b": 8.04,
+  "t": 334.123,
+  "tempo": 1.0,
+  "gain_db": 1.3
+ },
+ {
+  "id": "web cinemática 2",
+  "src": "equipo/web_cinematica.m4a",
+  "a": 20.74,
+  "b": 25.0,
+  "t": 347.423,
+  "tempo": 1.0,
+  "gain_db": 1.3
+ },
+ {
+  "id": "web cinemática 3",
+  "src": "equipo/web_cinematica.m4a",
+  "a": 40.28,
+  "b": 44.7,
+  "t": 365.723,
+  "tempo": 1.0,
+  "gain_db": 1.3
+ },
+ {
+  "id": "web cinemática 4",
+  "src": "equipo/web_cinematica.m4a",
+  "a": 61.94,
+  "b": 68.0,
+  "t": 393.323,
+  "tempo": 1.0,
+  "gain_db": 1.3
+ },
+ {
+  "id": "web carrusel",
+  "src": "equipo/web_cinematica.m4a",
+  "a": 77.5,
+  "b": 83.36,
+  "t": 404.469,
+  "tempo": 1.0,
+  "gain_db": 1.3
+ },
+ {
+  "id": "web sección 1",
+  "src": "equipo/web_apartados.m4a",
+  "a": 4.04,
+  "b": 6.55,
+  "t": 411.069,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 2",
+  "src": "equipo/web_apartados.m4a",
+  "a": 6.55,
+  "b": 8.44,
+  "t": 414.529,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 3",
+  "src": "equipo/web_apartados.m4a",
+  "a": 10.71,
+  "b": 12.98,
+  "t": 417.119,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 4",
+  "src": "equipo/web_apartados.m4a",
+  "a": 14.61,
+  "b": 17.43,
+  "t": 420.089,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 5",
+  "src": "equipo/web_apartados.m4a",
+  "a": 18.58,
+  "b": 21.13,
+  "t": 423.609,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 6",
+  "src": "equipo/web_apartados.m4a",
+  "a": 21.35,
+  "b": 23.68,
+  "t": 427.109,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 7",
+  "src": "equipo/web_apartados.m4a",
+  "a": 25.07,
+  "b": 28.08,
+  "t": 430.139,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 8",
+  "src": "equipo/web_apartados.m4a",
+  "a": 28.95,
+  "b": 31.13,
+  "t": 433.849,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 9",
+  "src": "equipo/web_apartados.m4a",
+  "a": 33.03,
+  "b": 35.07,
+  "t": 436.729,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 10",
+  "src": "equipo/web_apartados.m4a",
+  "a": 35.84,
+  "b": 39.25,
+  "t": 439.719,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 11",
+  "src": "equipo/web_apartados.m4a",
+  "a": 39.71,
+  "b": 42.44,
+  "t": 443.829,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 12",
+  "src": "equipo/web_apartados.m4a",
+  "a": 43.67,
+  "b": 45.93,
+  "t": 447.259,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 13",
+  "src": "equipo/web_apartados.m4a",
+  "a": 46.35,
+  "b": 50.02,
+  "t": 450.469,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 14",
+  "src": "equipo/web_apartados.m4a",
+  "a": 50.53,
+  "b": 53.18,
+  "t": 454.839,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 15",
+  "src": "equipo/web_apartados.m4a",
+  "a": 54.01,
+  "b": 56.03,
+  "t": 458.189,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 16",
+  "src": "equipo/web_apartados.m4a",
+  "a": 58.29,
+  "b": 62.1,
+  "t": 460.909,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 17",
+  "src": "equipo/web_apartados.m4a",
+  "a": 62.89,
+  "b": 64.73,
+  "t": 465.669,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 18",
+  "src": "equipo/web_apartados.m4a",
+  "a": 65.39,
+  "b": 68.52,
+  "t": 468.209,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "web sección 19",
+  "src": "equipo/web_apartados.m4a",
+  "a": 69.04,
+  "b": 71.39,
+  "t": 472.039,
+  "tempo": 1.0,
+  "gain_db": 0.0
+ },
+ {
+  "id": "A6 video 06",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 0.86,
+  "b": 5.3,
+  "t": 692.639,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 video 07",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 8.54,
+  "b": 14.22,
+  "t": 700.639,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 video 08",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 17.5,
+  "b": 24.3,
+  "t": 709.439,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 karaoke 25",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 27.8,
+  "b": 34.22,
+  "t": 719.906,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 karaoke 26",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 36.04,
+  "b": 44.44,
+  "t": 727.695,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 karaoke 27",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 47.98,
+  "b": 55.82,
+  "t": 739.765,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 karaoke 28",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 58.12,
+  "b": 67.6,
+  "t": 749.939,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 video 09",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 68.88,
+  "b": 73.72,
+  "t": 760.639,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 video 10",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 76.22,
+  "b": 79.32,
+  "t": 767.839,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 video 11",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 83.86,
+  "b": 89.22,
+  "t": 775.839,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 video 12",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 92.68,
+  "b": 97.14,
+  "t": 784.639,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 karaoke 29",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 103.32,
+  "b": 112.16,
+  "t": 795.157,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "A6 karaoke 30",
+  "src": "equipo/escenarios_E3_E4.m4a",
+  "a": 115.84,
+  "b": 127.54,
+  "t": 807.799,
+  "tempo": 1.0,
+  "gain_db": 7.8
+ },
+ {
+  "id": "D40 conclusiones",
+  "src": "equipo/conclusiones_finales.m4a",
+  "a": 0.8,
+  "b": 17.45,
+  "t": 851.389,
+  "tempo": 1.0,
+  "gain_db": 8.6
+ }
+]

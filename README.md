@@ -2,6 +2,8 @@
 
 Planta de elaborados (150 x 70 m, líneas L7 y L8) modelada en **Blender**, simulada en **FlexSim 2026** y visualizada en tiempo real en una **web** (Next.js + three.js).
 
+> **Entrega final del TPI:** ver [`ENTREGA.md`](ENTREGA.md) (documento, modelo, resultados y video).
+
 ## Qué hay en este repo
 | Carpeta / archivo | Contenido |
 |---|---|

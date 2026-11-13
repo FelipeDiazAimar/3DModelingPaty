@@ -20,7 +20,8 @@ RAIZ = AQUI.parent                      # video_presentacion/
 FILM = RAIZ / "film"
 COMP = FILM / "compositions"
 
-DUR_VIDEO = 983.366666                  # data-duration del root de index.html
+DUR_VIDEO = 891.889                  # data-duration del root de index.html
+S09 = 474.689                        # inicio de s09-acto6 (se corrió 12,42 s al alargar la toma de la web y quitar el negro final)
 
 
 def leer(p):
@@ -52,16 +53,36 @@ SLOTS = [
     ("D15 por qué la formadora", 17, 18), ("D16 cómo", 18, 19), ("D16–D17 referencia", 19, 21),
     ("D19 por dónde arrancamos", 21, 22), ("D20 planos", 22, 23), ("D19 Blender", 23, 24), ("D20 código", 24, 25),
     ("D24 conclusiones", 26, 27), ("D25 necesidad", 27, 28), ("D26 qué es un MCP", 28, 29), ("D27 no existía", 29, 30),
-    ("D28 el puente", 30, 31), ("D29 herramientas", 31, 32), ("D31 idea de la web", 33, 34),
+    ("D28 el puente", 30, 31), ("D31 idea de la web", 33, 34),
     ("D40 conclusiones", 44, 45), ("D41 cierre", 45, 46),
 ]
 
 # tramos donde se ve la planta (Blender, tablero de FlexSim, web y los tres videos de las corridas)
-AMBIENTE = [(138.267, 164.533), (164.533, 232.533), (325.033, 433.767),
-             (433.767 + 163.0, 433.767 + 195.9), (433.767 + 243.0, 433.767 + 277.1), (433.767 + 318.2, 433.767 + 352.3)]
+AMBIENTE = []  # sin ambiente de planta: bajo las tomas de FlexSim y la web se oía como el ventilador de la PC
 
 # Corrimiento que s09-acto6.html aplica con tl.shiftChildren al insertar los videos de las corridas.
 GAPS = [(163.0, 32.9), (210.1, 34.1), (251.2, 34.1)]
+
+
+def _wk():
+    s = leer(COMP / "s09-acto6.html")
+    blk = re.search(r"const WK = \[(.*?)\];", s, re.S).group(1)
+    return [tuple(float(x) for x in p) for p in re.findall(r"\[([\d.]+),([\d.]+)\]", blk)]
+
+
+WK = _wk()
+
+
+def warp(t):
+    """Misma función W que s09-acto6.html (interpolación lineal por tramos)."""
+    if t <= WK[0][0]:
+        return t
+    if t >= WK[-1][0]:
+        return WK[-1][1] + t - WK[-1][0]
+    for (a0, b0), (a1, b1) in zip(WK, WK[1:]):
+        if t <= a1:
+            return b1 if a1 == a0 else b0 + (t - a0) * (b1 - b0) / (a1 - a0)
+    return t
 
 
 def corrido(t):
@@ -70,12 +91,12 @@ def corrido(t):
 
 def segs_karaoke(archivo, host, corregir=False):
     s = leer(COMP / archivo)
-    m = re.search(r"const SEGS = \[(.*?)\]\s*\.map", s, re.S)
+    m = re.search(r"const SEGS_RAW = \[(.*?\]\s*)\]\s*;", s, re.S) or re.search(r"const SEGS = \[(.*?)\]\s*\.map", s, re.S)
     out = []
     for a, b, txt in re.findall(r'\[\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*"(.*?)"\s*\]', m.group(1), re.S):
         a, b = float(a), float(b)
         if corregir:
-            a, b = corrido(a), corrido(a) + (b - a)
+            a, b = warp(corrido(a)), warp(corrido(b))
         out.append((host + a, host + b, txt))
     return out
 
@@ -84,7 +105,7 @@ def segs_s08():
     s = leer(COMP / "s08-web.html")
     out = []
     for a, b, t in re.findall(r'^\s*sub\(([\d.]+),\s*([\d.]+),\s*"(.*?)"\);', s, re.M):
-        out.append((325.033333 + float(a), 325.033333 + float(b), t))
+        out.append((333.323 + float(a), 333.323 + float(b), t))
     return sorted(out)
 
 
@@ -92,7 +113,7 @@ def vsubs_acto6():
     s = leer(COMP / "s09-acto6.html")
     out = []
     for a, b, t in re.findall(r'^\s*vsub\(([\d.]+),\s*([\d.]+),\s*"(.*?)"\);', s, re.M):
-        out.append((433.766666 + float(a), 433.766666 + float(b), t))
+        out.append((S09 + warp(float(a)), S09 + warp(float(b)), t))
     return sorted(out)
 
 
@@ -111,32 +132,61 @@ def cues_voz():
             raise SystemExit(f"Falta la fila '{fila}' en guion_ia.md")
         add(fila, "ia", d[a], d[b], g[fila])
 
+    # Acto 4 (MCP): la IA recorre las categorías de herramientas a medida que aparecen en pantalla (panel de 285,5 s a 308 s)
+    add("D29 herramientas a", "ia", d[31] + 0.1, d[31] + 3.6, "Setenta y tres herramientas, en ocho categorías.")
+    add("D29 herramientas b", "ia", d[31] + 3.7, d[31] + 9.5, "Catorce son del ciclo de vida y la corrida del modelo, y doce de FlexScript y nodos.")
+    add("D29 herramientas c", "ia", d[31] + 9.7, d[31] + 15.3, "Once para construir el modelo, diez para tablas y experimentos y siete para dashboards y cámara.")
+    add("D29 herramientas d", "ia", d[31] + 15.5, d[31] + 22.0, "Y tres más: ProcessFlow, AGV y fluidos. Con todo eso, la IA crea máquinas, las conecta y corre réplicas sola.")
+    add("D27 GitHub", "ia", d[29] + 6.0, d[29] + 9.0, "Quedó subido a GitHub.")
+
     # Acto 3: una frase por hoja del tablero (el karaoke de la toma de FlexSim)
     for i, (a, b, t) in enumerate(segs_karaoke("s06-karaoke.html", 164.533333)):
-        add(f"D21 hoja {i + 1}", "ia", a, b, t)
+        add(f"D21 hoja {i + 1}", "equipo", a, b, t, activo=False)
 
     # Acto 5 (web): las 4 frases de la cinemática son subtítulos largos de la toma; cada apartado usa su fila del guion
     # en la ventana de su chip (los subtítulos cortos de 1,5 a 2,7 s de cada apartado son rótulos, no locución).
     for i, (a, b, t) in enumerate(x for x in segs_s08() if x[1] - x[0] >= 5):
-        add(f"web cinemática {i + 1}", "ia", a, b, t)
+        add(f"web cinemática {i + 1}", "equipo", a, b, t, activo=False)
     w = leer(COMP / "s08-web.html")
     chips = [(c, float(t)) for c, t in re.findall(r'^\s*chip\("(#w8-c-[a-z]+)",\s*([\d.]+)\);', w, re.M)]
     filas_web = {"prod": "D31 Producción", "par": "D31 Paradas", "col": "D31 Colas y WIP", "vel": "D31 Velocidad",
                  "mas": "D31 Balance de masa", "flo": "D31 Montacargas", "est": "D31 Estadística", "esc": "D31 Escenarios"}
-    fin_escena = 325.033333 + 108.733333
+    fin_escena = 333.323 + 141.365
     for i, (c, t) in enumerate(chips):
         clave = c.split("-")[-1]
         if clave not in filas_web:
             continue
-        ini = 325.033333 + t
-        fin = 325.033333 + chips[i + 1][1] if i + 1 < len(chips) else fin_escena
-        add(filas_web[clave], "ia", ini, fin, g[filas_web[clave]])
+        ini = 333.323 + t
+        fin = 333.323 + chips[i + 1][1] if i + 1 < len(chips) else fin_escena
+        add(filas_web[clave], "equipo", ini, fin, g[filas_web[clave]], activo=False)
 
     # Acto 6: voz del equipo (pista muda con karaoke). Se genera solo con --acto6 (voz de reserva).
-    for i, (a, b, t) in enumerate(segs_karaoke("s09-acto6.html", 433.766666, corregir=True)):
-        add(f"A6 karaoke {i + 1:02d}", "acto6", a, b, t, activo=False)
+    for i, (a, b, t) in enumerate(segs_karaoke("s09-acto6.html", S09, corregir=True)):
+        add(f"A6 karaoke {i + 1:02d}", "ia", a, b, t)
     for i, (a, b, t) in enumerate(vsubs_acto6()):
-        add(f"A6 video {i + 1:02d}", "acto6", a, b, t, activo=False)
+        add(f"A6 video {i + 1:02d}", "equipo", a, b, t, activo=False)
+
+    # Reparto de voz: la IA habla en las diapositivas y se calla durante las grabaciones de las corridas;
+    # el equipo dice la toma de FlexSim, la web y las diapositivas de las corridas E2 a E4 (diapositivas 39 a 41),
+    # y las diapositivas de conclusiones (la de la simulación, 26, y las generales, 44). Desde la 42 vuelve la IA, y después de las conclusiones hace el cierre.
+    d39, d42 = d[39], d[42]
+    FALTAN = {f"A6 karaoke {k}" for k in range(18, 25)} | {f"A6 video {k:02d}" for k in range(1, 6)}
+
+    def del_equipo(c):
+        i = c["id"]
+        # Sin audio del equipo todavía (faltan E2 y el arranque de E3): suena la voz de la IA hasta que lo graben.
+        if i in FALTAN:
+            return False
+        if i.startswith(("D21 hoja", "D24 conclusiones", "web cinemática", "D40 conclusiones")):
+            return True
+        if i.startswith("D31 ") and i != "D31 idea de la web":
+            return True
+        if i.startswith("A6 "):
+            return d39 - 0.01 <= c["inicio"] < d42 - 0.01
+        return False
+    for c in cues:
+        eq = del_equipo(c)
+        c["grupo"], c["activo"] = ("equipo", False) if eq else ("ia", True)
 
     cues.sort(key=lambda c: c["inicio"])
     return cues
@@ -183,7 +233,7 @@ def cues_sfx():
         if st:
             add(float(st.group(1)), "scribble", dur=1.6)
     for local in (163.0, 243.0, 318.2):          # entrada de cada video de corrida (E2, E3, E4)
-        add(433.766666 + local, "whoosh", dur=0.5)
+        add(S09 + warp(local), "whoosh", dur=0.5)
     # Ambiente de planta bajo las tomas de FlexSim, Blender y la web (rangos de index.html; ver README)
     for a, b in AMBIENTE:
         add(a, "ambiente", dur=round(b - a, 3))

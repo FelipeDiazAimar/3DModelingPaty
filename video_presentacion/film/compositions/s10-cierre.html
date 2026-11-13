@@ -28,10 +28,10 @@
     </div>
     <div id="op">
       <img id="c-pose" src="assets/renders/operario_pose.png" alt="" />
-      <video id="c-v1" class="clip" data-start="12" data-duration="3" muted playsinline src="assets/renders/operario.mp4"></video>
-      <video id="c-v2" class="clip" data-start="15" data-duration="3" muted playsinline src="assets/renders/operario.mp4"></video>
-      <video id="c-d1" class="clip" data-start="22.3" data-duration="3" muted playsinline src="assets/renders/baile.mp4"></video>
-      <video id="c-d2" class="clip" data-start="25.3" data-duration="3" muted playsinline src="assets/renders/baile.mp4"></video>
+      <video id="c-v1" class="clip" data-start="17.500" data-duration="3" muted playsinline src="assets/renders/operario.mp4"></video>
+      <video id="c-v2" class="clip" data-start="20.500" data-duration="3" muted playsinline src="assets/renders/operario.mp4"></video>
+      <video id="c-d1" class="clip" data-start="27.800" data-duration="3" muted playsinline src="assets/renders/baile.mp4"></video>
+      <video id="c-d2" class="clip" data-start="30.800" data-duration="3" muted playsinline src="assets/renders/baile.mp4"></video>
       <div id="c-th" class="c">Gracias por recorrer<br /><b>la planta con nosotros</b></div>
       <div id="c-n" class="c">Matias Buffa<br />Felipe Diaz Aimar<br />Jeremias Micheloud</div>
       <div id="c-rl" class="c">Repositorios</div>
@@ -44,14 +44,14 @@
     (function () {
       const tl = gsap.timeline({ paused: true });
       const rv = (s, at) => tl.fromTo(s, { opacity: 0, x: -50, filter: "blur(14px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power4.out", immediateRender: true }, at);
-      tl.fromTo("#q-t", { opacity: 0, scale: 1.8, filter: "blur(24px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0.1);
-      rv("#q-1", 0.9); rv("#q-2", 3.3); rv("#q-3", 5.9); rv("#q-4", 8.5);
-      const D = 12;
+      tl.fromTo("#q-t", { opacity: 0, scale: 1.8, filter: "blur(24px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "expo.out" }, 0.200);
+      rv("#q-1", 1.800); rv("#q-2", 5.500); rv("#q-3", 9.000); rv("#q-4", 13.900);
+      const D = 17.500;
       tl.set("#q", { opacity: 0 }, D);
       tl.set("#op", { opacity: 1 }, D);
       rv("#c-th", D + 0.5); rv("#c-n", D + 3); rv("#c-rl", D + 6); rv("#c-r", D + 6.2); rv("#c-pie", D + 10);
       // shutter-slam del catálogo hacia el agradecimiento; marker-highlight en cada conclusión
-      ["#q-1","#q-2","#q-3","#q-4"].forEach((s, i) => tl.fromTo(s, { rotationX: -70, transformPerspective: 900, transformOrigin: "50% 100%" }, { rotationX: 0, duration: 0.5, ease: "back.out(1.5)" }, [0.9,3.3,5.9,8.5][i]));
+      ["#q-1","#q-2","#q-3","#q-4"].forEach((s, i) => tl.fromTo(s, { rotationX: -70, transformPerspective: 900, transformOrigin: "50% 100%" }, { rotationX: 0, duration: 0.5, ease: "back.out(1.5)" }, [1.800,5.500,9.000,13.900][i]));
       tl.fromTo("#sh1", { y: 0 }, { y: 540, duration: 0.2, ease: "power4.in" }, D - 0.22);
       tl.fromTo("#sh2", { y: 0 }, { y: -540, duration: 0.2, ease: "power4.in" }, D - 0.22);
       tl.to("#sh1", { y: 0, duration: 0.3, ease: "power3.out" }, D + 0.02);
