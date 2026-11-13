@@ -20,7 +20,7 @@ RAIZ = AQUI.parent                      # video_presentacion/
 FILM = RAIZ / "film"
 COMP = FILM / "compositions"
 
-DUR_VIDEO = 891.889                  # data-duration del root de index.html
+DUR_VIDEO = 860.349                  # data-duration del root de index.html
 S09 = 474.689                        # inicio de s09-acto6 (se corrió 12,42 s al alargar la toma de la web y quitar el negro final)
 
 
@@ -133,10 +133,10 @@ def cues_voz():
         add(fila, "ia", d[a], d[b], g[fila])
 
     # Acto 4 (MCP): la IA recorre las categorías de herramientas a medida que aparecen en pantalla (panel de 285,5 s a 308 s)
-    add("D29 herramientas a", "ia", d[31] + 0.1, d[31] + 3.6, "Setenta y tres herramientas, en ocho categorías.")
-    add("D29 herramientas b", "ia", d[31] + 3.7, d[31] + 9.5, "Catorce son del ciclo de vida y la corrida del modelo, y doce de FlexScript y nodos.")
-    add("D29 herramientas c", "ia", d[31] + 9.7, d[31] + 15.3, "Once para construir el modelo, diez para tablas y experimentos y siete para dashboards y cámara.")
-    add("D29 herramientas d", "ia", d[31] + 15.5, d[31] + 22.0, "Y tres más: ProcessFlow, AGV y fluidos. Con todo eso, la IA crea máquinas, las conecta y corre réplicas sola.")
+    add("D29 herramientas a", "ia", d[31] + 0.1, d[31] + 3.5, "Setenta y tres herramientas, en ocho categorías.")
+    add("D29 herramientas b", "ia", d[31] + 3.6, d[31] + 8.7, "Catorce son del ciclo de vida y la corrida del modelo, y doce de FlexScript y nodos.")
+    add("D29 herramientas c", "ia", d[31] + 8.9, d[31] + 14.2, "Once para construir el modelo, diez para tablas y experimentos y siete para dashboards y cámara.")
+    add("D29 herramientas d", "ia", d[31] + 14.3, d[31] + 22.3, "Y tres más: ProcessFlow, AGV y fluidos. Con todo eso, la IA crea máquinas, las conecta y corre réplicas sola.")
     add("D27 GitHub", "ia", d[29] + 6.0, d[29] + 9.0, "Quedó subido a GitHub.")
 
     # Acto 3: una frase por hoja del tablero (el karaoke de la toma de FlexSim)

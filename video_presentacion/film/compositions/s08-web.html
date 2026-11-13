@@ -125,8 +125,8 @@
         tl.set("#st" + k, { opacity: 0 }, t + d);
       };
       const SUBS = [];
-      const sub = (a, b, txt) => {
-        SUBS.push({ t0: a, t1: b, text: txt });
+      const sub = (a, b, txt, d) => {
+        SUBS.push({ t0: a, t1: b, text: txt, dur: d });
         tl.fromTo("#w8-sub", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, a);
         tl.to("#w8-sub", { opacity: 0, duration: 0.15 }, b);
       };
@@ -139,51 +139,51 @@
       chip("#w8-c-elab",0.393);
       chip("#w8-c-prod",77.545);
       stop(0,77.345,3.460,0.0,0.0,1.000);
-      sub(77.695,80.655,"Esta es la hoja de Producción: qué sale de la planta y a qué ritmo.");
+      sub(77.695,80.655,"Esta es la hoja de Producción: qué sale de la planta y a qué ritmo.",2.61);
       stop(1,80.805,2.590,0.0,0.0,2.200);
-      sub(81.155,83.245,"Cuántos pallets terminados lleva la planta.");
+      sub(81.155,83.245,"Cuántos pallets terminados lleva la planta.",1.99);
       stop(2,83.395,2.970,-717.3,-499.0,2.200);
-      sub(83.745,86.215,"Al lado, la curva acumulada contra la meta del programa.");
+      sub(83.745,86.215,"Al lado, la curva acumulada contra la meta del programa.",2.37);
       stop(3,86.365,3.520,0.0,-920.8,2.200);
-      sub(86.715,89.735,"Y abajo, cada máquina con su estado, sus entradas y sus salidas.");
+      sub(86.715,89.735,"Y abajo, cada máquina con su estado, sus entradas y sus salidas.",2.92);
       chip("#w8-c-par",90.085);
       stop(4,89.885,3.500,0.0,0.0,1.000);
-      sub(90.235,93.235,"Ahora la hoja de Paradas, donde se ve dónde se pierde el tiempo.");
+      sub(90.235,93.235,"Ahora la hoja de Paradas, donde se ve dónde se pierde el tiempo.",2.65);
       stop(5,93.385,3.030,-94.9,-368.0,2.200);
-      sub(93.735,96.265,"El Pareto marca a las formadoras como las que más pierden.");
+      sub(93.735,96.265,"El Pareto marca a las formadoras como las que más pierden.",2.43);
       stop(6,96.415,3.710,-2304.0,-1281.0,2.200);
-      sub(96.765,99.975,"Y pasan treinta coma dos por ciento del tiempo paradas.");
+      sub(96.765,99.975,"Y pasan treinta coma dos por ciento del tiempo paradas.",3.11);
       stop(7,100.125,2.880,-50.7,-39.1,2.200);
-      sub(100.475,102.855,"La simulación reproduce esos paros.");
+      sub(100.475,102.855,"La simulación reproduce esos paros.",2.28);
       chip("#w8-c-vel",103.205);
       stop(12,103.005,2.990,0.0,0.0,1.000);
-      sub(103.355,105.845,"En Velocidad, los kilos por hora de cada línea.");
+      sub(103.355,105.845,"En Velocidad, los kilos por hora de cada línea.",2.14);
       stop(13,105.995,4.110,-1383.3,0.0,2.200);
-      sub(106.345,109.955,"La formadora rinde novecientos ochenta y dos kilos por hora nominales.");
+      sub(106.345,109.955,"La formadora rinde novecientos ochenta y dos kilos por hora nominales.",3.51);
       stop(14,110.105,3.430,-460.8,-40.2,1.500);
-      sub(110.455,113.385,"Contra mil ochocientos cuarenta y tres de estándar.");
+      sub(110.455,113.385,"Contra mil ochocientos cuarenta y tres de estándar.",2.83);
       chip("#w8-c-est",113.735);
       stop(22,113.535,3.210,0.0,0.0,1.000);
-      sub(113.885,116.595,"En Estadística, las pruebas sobre los datos de entrada.");
+      sub(113.885,116.595,"En Estadística, las pruebas sobre los datos de entrada.",2.36);
       stop(23,116.745,4.370,-532.5,-423.4,2.200);
-      sub(117.095,120.965,"En Estadística, los arribos de camiones no son exponenciales.");
+      sub(117.095,120.965,"En Estadística, los arribos de camiones no son exponenciales.",3.77);
       stop(24,121.115,3.350,-1817.7,0.0,2.200);
-      sub(121.465,124.315,"El test de Kolmogorov-Smirnov rechaza la exponencial.");
+      sub(121.465,124.315,"El test de Kolmogorov-Smirnov rechaza la exponencial.",2.75);
       stop(25,124.465,2.720,-157.1,-143.1,2.200);
-      sub(124.815,127.035,"Y la bondad de ajuste lo confirma.");
+      sub(124.815,127.035,"Y la bondad de ajuste lo confirma.",2.12);
       chip("#w8-c-esc",127.385);
       stop(26,127.185,4.760,0.0,0.0,1.000);
-      sub(127.535,131.795,"Y por último los Escenarios, con el cuello de botella de cada caso.");
+      sub(127.535,131.795,"Y por último los Escenarios, con el cuello de botella de cada caso.",3.91);
       stop(27,131.945,2.540,0.0,-229.4,2.200);
-      sub(132.295,134.335,"El caso base produce cuarenta y nueve coma uno pallets por día.");
+      sub(132.295,134.335,"El caso base produce cuarenta y nueve coma uno pallets por día.",1.94);
       stop(28,134.485,3.830,-2304.0,-836.6,2.200);
-      sub(134.835,138.165,"El cuello es el mezclado, ocupado el setenta y cinco por ciento.");
+      sub(134.835,138.165,"El cuello es el mezclado, ocupado el setenta y cinco por ciento.",3.23);
       stop(29,138.315,3.050,-2304.0,-368.0,2.200);
-      sub(138.665,141.215,"Por el lavado de treinta minutos por batch.");
-      sub(0.700,8.000,"Esto es la web del gemelo digital: la planta en 3D con los datos del modelo, en vivo.");
-      sub(14.000,19.800,"Seguimos el recorrido del pallet de materia prima hasta la caja.");
-      sub(32.300,38.000,"En las máquinas clave se abren las gráficas de estados y de producción.");
-      sub(59.900,66.900,"Después, cada apartado de la web muestra datos puntuales.");
+      sub(138.665,141.215,"Por el lavado de treinta minutos por batch.",2.45);
+      sub(0.700,8.000,"Esto es la web del gemelo digital: la planta en 3D con los datos del modelo, en vivo.",6.22);
+      sub(14.000,19.800,"Seguimos el recorrido del pallet de materia prima hasta la caja.",4.36);
+      sub(32.300,38.000,"En las máquinas clave se abren las gráficas de estados y de producción.",4.52);
+      sub(59.900,66.900,"Después, cada apartado de la web muestra datos puntuales.",6.16);
       // screen-flow-carousel (mecánica adaptada): riel horizontal con lanzamiento y asentado, capturas reales; sobre el final de "Seguir un lote"
       {
         const C0 = 70.845, CUE = [72.345, 73.545, 74.745, 75.945], OUT = 77.145;
@@ -223,7 +223,7 @@
             widths = spans.map((sp) => sp.getBoundingClientRect().width + 8);
             total = widths.reduce((a, b) => a + b, 0);
           }
-          const dur = Math.min((s.t1 - s.t0) * 0.9, s.text.length / 14);
+          const dur = s.dur || Math.min((s.t1 - s.t0) * 0.9, s.text.length / 14);
           const target = Math.min(1, (lt - s.t0) / Math.max(dur, 0.5)) * total;
           let acc = 0;
           for (let i = 0; i < spans.length; i++) {

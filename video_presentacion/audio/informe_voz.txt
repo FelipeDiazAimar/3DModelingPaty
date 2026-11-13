@@ -1,9 +1,9 @@
 Informe de voz (real): 60 cues, 0 no entran ni a x1.3. Acortar el texto en guiones/guion_ia.md (y volver a correr cues.py) o alargar la diapositiva.
 
 OK   D2 portada                     inicio     7.5s  voz   2.4s  ventana  10.8s  tempo x1.00  42 caracteres
-OK   Rubro                          inicio    25.8s  voz   4.6s  ventana   4.5s  tempo x1.03  92 caracteres
+OK   Rubro                          inicio    25.8s  voz   4.6s  ventana   4.5s  tempo x1.00  92 caracteres
 OK   D8 sistema                     inicio    30.8s  voz   8.9s  ventana   9.8s  tempo x1.00  161 caracteres
-OK   D7 problema                    inicio    41.1s  voz   4.6s  ventana   4.2s  tempo x1.09  90 caracteres
+OK   D7 problema                    inicio    41.1s  voz   4.6s  ventana   4.2s  tempo x1.00  90 caracteres
 OK   D9 nave                        inicio    45.8s  voz   1.7s  ventana   3.3s  tempo x1.00  30 caracteres
 OK   D10–D12 escala                 inicio    49.5s  voz   7.8s  ventana  10.7s  tempo x1.00  156 caracteres
 OK   Escenario base                 inicio    60.8s  voz   9.4s  ventana   9.5s  tempo x1.00  190 caracteres
@@ -21,42 +21,42 @@ OK   D26 qué es un MCP              inicio   252.8s  voz  12.5s  ventana  14.5s
 OK   D27 no existía                 inicio   267.8s  voz   5.4s  ventana  10.5s  tempo x1.00  82 caracteres
 OK   D27 GitHub                     inicio   273.8s  voz   1.4s  ventana   2.5s  tempo x1.00  22 caracteres
 OK   D28 el puente                  inicio   278.8s  voz  13.9s  ventana  14.5s  tempo x1.00  260 caracteres
-OK   D29 herramientas a             inicio   293.9s  voz   3.0s  ventana   3.0s  tempo x1.00  48 caracteres
-OK   D29 herramientas b             inicio   297.5s  voz   4.8s  ventana   5.3s  tempo x1.00  84 caracteres
-OK   D29 herramientas c             inicio   303.5s  voz   5.0s  ventana   5.1s  tempo x1.00  96 caracteres
-OK   D29 herramientas d             inicio   309.3s  voz   7.1s  ventana   6.0s  tempo x1.19  109 caracteres
+OK   D29 herramientas a             inicio   293.9s  voz   3.0s  ventana   2.9s  tempo x1.00  48 caracteres
+OK   D29 herramientas b             inicio   297.4s  voz   4.8s  ventana   4.6s  tempo x1.00  84 caracteres
+OK   D29 herramientas c             inicio   302.7s  voz   5.0s  ventana   4.8s  tempo x1.00  96 caracteres
+OK   D29 herramientas d             inicio   308.1s  voz   7.1s  ventana   7.5s  tempo x1.00  109 caracteres
 OK   D31 idea de la web             inicio   316.3s  voz  10.1s  ventana  16.5s  tempo x1.00  225 caracteres
-OK   A6 karaoke 01                  inicio   475.1s  voz   5.2s  ventana   4.1s  tempo x1.28  78 caracteres
-OK   A6 karaoke 02                  inicio   480.1s  voz   2.7s  ventana   2.6s  tempo x1.04  48 caracteres
-OK   A6 karaoke 03                  inicio   483.6s  voz   4.1s  ventana   5.1s  tempo x1.00  66 caracteres
-OK   A6 karaoke 04                  inicio   489.6s  voz   4.2s  ventana   4.1s  tempo x1.03  57 caracteres
-OK   A6 karaoke 05                  inicio   495.1s  voz   4.9s  ventana   5.2s  tempo x1.00  97 caracteres
-OK   A6 karaoke 06                  inicio   501.1s  voz   6.5s  ventana   6.8s  tempo x1.00  109 caracteres
-OK   A6 karaoke 07                  inicio   508.8s  voz   3.6s  ventana   3.9s  tempo x1.00  62 caracteres
-OK   A6 karaoke 08                  inicio   513.5s  voz   5.5s  ventana   5.8s  tempo x1.00  98 caracteres
-OK   A6 karaoke 09                  inicio   520.2s  voz   4.3s  ventana   4.6s  tempo x1.00  90 caracteres
-OK   A6 karaoke 10                  inicio   525.6s  voz   3.4s  ventana   3.7s  tempo x1.00  51 caracteres
-OK   A6 karaoke 11                  inicio   530.7s  voz   4.8s  ventana   5.1s  tempo x1.00  103 caracteres
-OK   A6 karaoke 12                  inicio   536.7s  voz   5.8s  ventana   6.1s  tempo x1.00  113 caracteres
-OK   A6 karaoke 13                  inicio   543.6s  voz   4.5s  ventana   4.8s  tempo x1.00  80 caracteres
-OK   A6 karaoke 14                  inicio   549.3s  voz   6.8s  ventana   7.1s  tempo x1.00  135 caracteres
-OK   A6 karaoke 15                  inicio   557.8s  voz   3.4s  ventana   3.7s  tempo x1.00  69 caracteres
-OK   A6 karaoke 16                  inicio   562.3s  voz   7.7s  ventana   8.0s  tempo x1.00  160 caracteres
-OK   A6 karaoke 17                  inicio   571.2s  voz   4.8s  ventana   5.1s  tempo x1.00  87 caracteres
-OK   A6 karaoke 18                  inicio   577.8s  voz   6.7s  ventana  14.3s  tempo x1.00  131 caracteres
-OK   A6 karaoke 19                  inicio   593.0s  voz   6.7s  ventana  11.7s  tempo x1.00  119 caracteres
-OK   A6 video 01                    inicio   605.4s  voz   3.4s  ventana   5.4s  tempo x1.00  57 caracteres
-OK   A6 video 02                    inicio   611.7s  voz   4.3s  ventana   7.0s  tempo x1.00  79 caracteres
-OK   A6 video 03                    inicio   619.6s  voz   3.4s  ventana   7.8s  tempo x1.00  65 caracteres
-OK   A6 video 04                    inicio   628.3s  voz   4.9s  ventana   9.3s  tempo x1.00  85 caracteres
-OK   A6 karaoke 20                  inicio   638.6s  voz   3.7s  ventana   7.2s  tempo x1.00  56 caracteres
-OK   A6 karaoke 21                  inicio   646.7s  voz   6.8s  ventana  11.7s  tempo x1.00  117 caracteres
-OK   A6 karaoke 22                  inicio   659.4s  voz   7.7s  ventana   9.8s  tempo x1.00  148 caracteres
-OK   A6 karaoke 23                  inicio   670.7s  voz   4.2s  ventana   6.2s  tempo x1.00  70 caracteres
-OK   A6 karaoke 24                  inicio   677.9s  voz   4.4s  ventana   6.8s  tempo x1.00  78 caracteres
-OK   A6 video 05                    inicio   685.3s  voz   4.1s  ventana   6.3s  tempo x1.00  58 caracteres
-OK   A6 karaoke 31                  inicio   823.9s  voz   8.8s  ventana   8.5s  tempo x1.04  133 caracteres
-OK   A6 karaoke 32                  inicio   833.9s  voz   4.5s  ventana   4.8s  tempo x1.00  73 caracteres
-OK   A6 karaoke 33                  inicio   839.5s  voz   4.7s  ventana   5.0s  tempo x1.00  80 caracteres
-OK   A6 karaoke 34                  inicio   845.4s  voz   4.3s  ventana   4.6s  tempo x1.00  86 caracteres
-OK   D41 cierre                     inicio   868.6s  voz   7.6s  ventana  15.8s  tempo x1.00  152 caracteres
+OK   A6 karaoke 01                  inicio   475.1s  voz   5.2s  ventana   5.5s  tempo x1.00  78 caracteres
+OK   A6 karaoke 02                  inicio   481.4s  voz   2.7s  ventana   3.0s  tempo x1.00  48 caracteres
+OK   A6 karaoke 03                  inicio   485.3s  voz   4.1s  ventana   4.4s  tempo x1.00  66 caracteres
+OK   A6 karaoke 04                  inicio   490.5s  voz   4.2s  ventana   4.5s  tempo x1.00  57 caracteres
+OK   A6 karaoke 05                  inicio   496.4s  voz   4.9s  ventana   5.2s  tempo x1.00  97 caracteres
+OK   A6 karaoke 06                  inicio   502.5s  voz   6.5s  ventana   6.8s  tempo x1.00  109 caracteres
+OK   A6 karaoke 07                  inicio   510.1s  voz   3.6s  ventana   3.9s  tempo x1.00  62 caracteres
+OK   A6 karaoke 08                  inicio   514.9s  voz   5.5s  ventana   5.8s  tempo x1.00  98 caracteres
+OK   A6 karaoke 09                  inicio   521.5s  voz   4.3s  ventana   4.6s  tempo x1.00  90 caracteres
+OK   A6 karaoke 10                  inicio   527.0s  voz   3.4s  ventana   3.7s  tempo x1.00  51 caracteres
+OK   A6 karaoke 11                  inicio   532.1s  voz   4.8s  ventana   5.1s  tempo x1.00  103 caracteres
+OK   A6 karaoke 12                  inicio   538.0s  voz   5.8s  ventana   6.1s  tempo x1.00  113 caracteres
+OK   A6 karaoke 13                  inicio   545.0s  voz   4.5s  ventana   4.8s  tempo x1.00  80 caracteres
+OK   A6 karaoke 14                  inicio   550.6s  voz   6.8s  ventana   7.1s  tempo x1.00  135 caracteres
+OK   A6 karaoke 15                  inicio   559.1s  voz   3.4s  ventana   3.7s  tempo x1.00  69 caracteres
+OK   A6 karaoke 16                  inicio   563.7s  voz   7.7s  ventana   8.0s  tempo x1.00  160 caracteres
+OK   A6 karaoke 17                  inicio   572.5s  voz   4.8s  ventana   5.1s  tempo x1.00  87 caracteres
+OK   A6 karaoke 18                  inicio   579.0s  voz   6.7s  ventana   7.5s  tempo x1.00  131 caracteres
+OK   A6 karaoke 19                  inicio   587.4s  voz   6.7s  ventana   7.4s  tempo x1.00  119 caracteres
+OK   A6 video 01                    inicio   595.8s  voz   3.4s  ventana   5.4s  tempo x1.00  57 caracteres
+OK   A6 video 02                    inicio   602.1s  voz   4.3s  ventana   7.0s  tempo x1.00  79 caracteres
+OK   A6 video 03                    inicio   610.0s  voz   3.4s  ventana   7.8s  tempo x1.00  65 caracteres
+OK   A6 video 04                    inicio   618.6s  voz   4.9s  ventana   9.3s  tempo x1.00  85 caracteres
+OK   A6 karaoke 20                  inicio   628.9s  voz   3.7s  ventana   4.5s  tempo x1.00  56 caracteres
+OK   A6 karaoke 21                  inicio   634.3s  voz   6.8s  ventana   7.2s  tempo x1.00  117 caracteres
+OK   A6 karaoke 22                  inicio   642.3s  voz   7.7s  ventana   7.8s  tempo x1.00  148 caracteres
+OK   A6 karaoke 23                  inicio   651.5s  voz   4.2s  ventana   4.7s  tempo x1.00  70 caracteres
+OK   A6 karaoke 24                  inicio   657.1s  voz   4.4s  ventana   4.5s  tempo x1.00  78 caracteres
+OK   A6 video 05                    inicio   662.4s  voz   4.1s  ventana   6.3s  tempo x1.00  58 caracteres
+OK   A6 karaoke 31                  inicio   791.9s  voz   8.8s  ventana   9.1s  tempo x1.00  133 caracteres
+OK   A6 karaoke 32                  inicio   802.4s  voz   4.5s  ventana   4.8s  tempo x1.00  73 caracteres
+OK   A6 karaoke 33                  inicio   808.1s  voz   4.7s  ventana   5.0s  tempo x1.00  80 caracteres
+OK   A6 karaoke 34                  inicio   813.9s  voz   4.3s  ventana   4.6s  tempo x1.00  86 caracteres
+OK   D41 cierre                     inicio   837.0s  voz   7.6s  ventana  15.8s  tempo x1.00  152 caracteres

@@ -21,7 +21,7 @@ from scipy import signal
 AQUI = Path(__file__).resolve().parent
 SALIDA = AQUI.parent / "film" / "assets" / "audio"
 SR = 44100
-DUR = 891.889
+DUR = 860.349
 N = int(DUR * SR)
 BPM = 128.0
 BEAT = 60.0 / BPM
@@ -275,8 +275,8 @@ def pista_musica():
     # automatización por acto (en dB), interpolada
     #           t(s)   pad   pulso
     puntos = [(0, -15, -200), (7.4, -15, -200), (7.5, -13, -13), (25.7, -15, -17), (25.8, -20, -200),
-              (474.589, -20, -200), (474.689, -26, -200), (850.989, -26, -200), (851.089, -17, -15),
-              (884.789, -17, -15), (884.889, -13, -13), (DUR - 2.5, -15, -17), (DUR, -60, -60)]
+              (474.589, -20, -200), (474.689, -26, -200), (819.466, -26, -200), (819.549, -17, -15),
+              (853.249, -17, -15), (853.349, -13, -13), (DUR - 2.5, -15, -17), (DUR, -60, -60)]
     tt = np.arange(N) / SR
     g_pad = db(np.interp(tt, [p[0] for p in puntos], [p[1] for p in puntos]))
     g_pul = db(np.interp(tt, [p[0] for p in puntos], [p[2] for p in puntos]))

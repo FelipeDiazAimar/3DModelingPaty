@@ -51,5 +51,5 @@ Cada frase entra entre el inicio de su diapositiva (+0,25 s) y el inicio de la s
 ## Voces del equipo (13/11/2026)
 Los integrantes grabaron su parte (`audio/equipo/*.m4a`: tablero de FlexSim, conclusión de la simulación, web, E3 y E4, conclusiones finales).
 `equipo_clips.json` dice qué tramo de cada audio va en qué segundo del video; `generar_voz.py` los mezcla en `voz.wav` (con filtro pasa-altos y nivel igualado a la voz de la IA) para que el ducking de la música y los efectos también los respete.
-Las diapositivas que dice la IA y las que dice el equipo se definen en `cues.py` (`del_equipo`). **Falta el audio de E2 y del arranque de E3**: mientras tanto habla la IA (`FALTAN` en `cues.py`). Al recibirlo, sacar esos ids de `FALTAN`, agregar los tramos a `equipo_clips.json` y correr el orden de arriba.
-Los tiempos de las diapositivas 26 (conclusión), 34 (web), 36 a 38, 43 y 44 se ajustaron al largo de cada frase (video final de 14:52, máximo 15:00).
+Las diapositivas que dice la IA y las que dice el equipo se definen en `cues.py` (`del_equipo`). Con el audio de E2 y E3 (`escenarios_E2_E3.m4a`) están todas las voces del equipo.
+Los tiempos de las diapositivas 26 (conclusión), 34 (web), 35 a 43 y 44 se ajustaron al largo de cada frase (video final de 14:20, máximo 15:00).

@@ -19,7 +19,7 @@ Simulación de las líneas L7 y L8 de una planta de elaboración de hamburguesas
 | Servidor MCP de FlexSim (repositorio aparte) | https://github.com/FelipeDiazAimar/MCP_Flexsim |
 
 ## No está en el repositorio (GitHub rechaza archivos de más de 100 MB)
-- **`VIDEO SIMULACION.mp4`** (14:52): copiarlo a la carpeta compartida junto con el repositorio.
+- **`VIDEO SIMULACION.mp4`** (14:20): copiarlo a la carpeta compartida junto con el repositorio.
 - Las pistas de audio generadas y las tomas de pantalla (`.mp4`): se regeneran con los scripts de `video_presentacion/audio/` y `video_presentacion/film/`. Ver `video_presentacion/audio/README.md`.
 - Los JSON crudos de la planta (confidenciales, ver `.gitignore`). Los resultados agregados y los CSV de ajuste sí están.
 
@@ -29,7 +29,6 @@ Simulación de las líneas L7 y L8 de una planta de elaboración de hamburguesas
 3. La web se levanta con `iniciar_web.bat` o `cd dashboard/web && npm install && npm run dev`.
 
 ## Pendientes conocidos
-- Falta el audio del equipo para E2 y el arranque de E3 (en el video habla la IA en ese tramo).
 - Los textos de la cinemática de la web (`dashboard/web/lib/cine.ts`, `components/Console.tsx`, `app/masa/page.tsx`, `app/escenarios/page.tsx`, `components/E1.tsx`) conservan referencias al modelo anterior (batch de 1500 kg, pallet de 144 cajas). El detalle está en `entrega/Informe_coincidencias_TP.md`.
 - `PLANTASJ_1.fsm` no se versiona: es una copia de trabajo distinta de `PLANTASJ.fsm`. El modelo de la entrega es `PLANTASJ.fsm`.
 - Enlace de descarga: completar en la sección 5 del documento al subir la carpeta.

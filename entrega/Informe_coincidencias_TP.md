@@ -1,6 +1,6 @@
 # Informe de coincidencias: documento, repositorio y video
 
-Fecha: 13/11/2026. Documento entregado: `Buffa-DiazAimar-Micheloud.docx` y `.pdf` (17 páginas numeradas más la portada). Video: `VIDEO SIMULACION.mp4`, 14:52, con las voces del equipo.
+Fecha: 13/11/2026. Documento entregado: `Buffa-DiazAimar-Micheloud.docx` y `.pdf` (17 páginas numeradas más la portada). Video: `VIDEO SIMULACION.mp4`, 14:20, con las voces del equipo.
 Fuente de verdad usada: el modelo vigente descrito en `SUPUESTOS_v2.md`, `PENDIENTES.md`, `E1_FINAL.md` y `estocastico_camiones/analisis.json` (corridas del 10/11/2026), y los datos de `datos_trazabilidad/fitting_series/`.
 
 ## 1. Qué se corrigió en el documento
@@ -26,7 +26,7 @@ Cifras verificadas contra los datos: n = 49, media 2,617, mediana 1,028, desvío
 
 ## 2. Qué coincide con el video
 
-Las cifras del documento y del video coinciden: 49,1 pallets/día y 42,5 t/día, cuello en mezcladoras (60,5 t/día), E2 +9,3 [+4,5 ; +14,1] (+18,9 %), E3 +3,6 [−0,3 ; +7,5] contra E2, E4 +0,6 [−0,0 ; +1,2], batch de 1.050 kg, 10 réplicas de 24 h, entrada de 8 a 80 batches por día y 73 herramientas del MCP. El video dura 14:52, bajo el máximo de 15 minutos.
+Las cifras del documento y del video coinciden: 49,1 pallets/día y 42,5 t/día, cuello en mezcladoras (60,5 t/día), E2 +9,3 [+4,5 ; +14,1] (+18,9 %), E3 +3,6 [−0,3 ; +7,5] contra E2, E4 +0,6 [−0,0 ; +1,2], batch de 1.050 kg, 10 réplicas de 24 h, entrada de 8 a 80 batches por día y 73 herramientas del MCP. El video dura 14:20, bajo el máximo de 15 minutos.
 
 ## 3. Discrepancias que quedan (no se tocaron)
 
@@ -55,7 +55,7 @@ Las cifras del documento y del video coinciden: 49,1 pallets/día y 42,5 t/día,
 
 ## 5. Estado del video (13/11/2026)
 - Con las voces del equipo: tablero de FlexSim, conclusión de la simulación, web (cinemática y apartados), E3, E4 y conclusiones finales.
-- **Falta el audio de E2 y del arranque de E3** («Ahora lo obvio…», «La propuesta: sumar 1,5 veces la materia prima»). Ahí habla la IA hasta que lo graben. Al recibirlo, agregar los tramos a `video_presentacion/audio/equipo_clips.json` y renderizar.
+- Están todas las voces del equipo (E2 y E3 incluidas). El video se ajusta a la voz: ninguna va acelerada.
 - Los textos de la cinemática de la web grabada (`cine_resumen.mp4`) siguen con «144 cajas», «detector de metales», «control de peso» y «batch de 1500 kg»: hay que corregir `dashboard/web/lib/cine.ts` y volver a grabar.
 
 ## 6. Qué no se pudo verificar

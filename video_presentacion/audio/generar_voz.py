@@ -98,7 +98,7 @@ def main():
     CACHE.mkdir(exist_ok=True)
     SALIDA.mkdir(parents=True, exist_ok=True)
 
-    total = int((891.889 + 1) * SR)
+    total = int((860.349 + 1) * SR)
     pista = np.zeros(total, dtype=np.float32)
     informe = []
     for c in cues:
@@ -106,6 +106,7 @@ def main():
         if a.seco:
             dur = len(c["texto"]) / CPS_SECO
             tempo = max(1.0, dur / ventana)
+            tempo = 1.0 if tempo <= 1.12 else tempo   # hasta +12 %: la voz no se acelera, pisa un instante la pausa
             ok = tempo <= MAX_TEMPO
             informe.append((ok, c["id"], c["inicio"], dur, ventana, tempo, len(c["texto"])))
             continue
@@ -116,6 +117,7 @@ def main():
             fish_tts(c["texto"], clave, voz, modelo, vel, f)
         dur = duracion(f)
         tempo = max(1.0, dur / ventana)
+        tempo = 1.0 if tempo <= 1.12 else tempo   # hasta +12 %: la voz no se acelera, pisa un instante la pausa
         ok = tempo <= MAX_TEMPO
         x = a_pcm(f, min(tempo, MAX_TEMPO))
         i0 = int((c["inicio"] + SANGRIA) * SR)

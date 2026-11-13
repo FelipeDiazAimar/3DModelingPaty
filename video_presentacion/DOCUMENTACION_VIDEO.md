@@ -302,7 +302,7 @@ Todos los `data-start`, `data-duration`, la numeración de diapositivas (`s99-su
 
 ## 13/11/2026 · Audios del equipo y tiempos
 - Se incorporaron las grabaciones del equipo (`audio/equipo/`, ver `audio/README.md`). La IA habla en las diapositivas que no son de las corridas; el equipo, en la toma de FlexSim, la web, E3, E4 y las conclusiones.
-- Duración final: 14:52 (891,9 s). Diapositiva 26 (conclusión de la simulación): 20,3 s, antes 12. Diapositiva 44 (conclusiones): 17,5 s, antes 12.
+- Duración final: 14:20 (860,4 s). El video se ajusta a la voz: cada frase tiene una ventana igual a lo que dura la voz más 0,8 s, el barrido karaoke dura lo que dura la voz y ninguna voz va acelerada. Se ocultó el número de diapositiva. Diapositiva 26 (conclusión de la simulación): 20,3 s, antes 12. Diapositiva 44 (conclusiones): 17,5 s, antes 12.
 - Web (diapositiva 34): la caminata por la planta va a 2,2x y el tramo de gráficos a 1x, para poder leerlos; los apartados duran lo que dura cada frase (60 s, antes 55).
 - Tiempos muertos recortados: diapositivas 36, 37, 38 y 43 ahora duran la voz de cada frase más 0,8 s.
-- Subtítulos de la web y de las corridas E2 a E4 con barrido karaoke. Falta el audio de E2 y del arranque de E3 (habla la IA).
+- Subtítulos de la web y de las corridas E2 a E4 con barrido karaoke. Con el audio de E2 y E3 (`escenarios_E2_E3.m4a`) están todas las voces del equipo.
