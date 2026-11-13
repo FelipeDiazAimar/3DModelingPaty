@@ -1,4 +1,4 @@
-Informe de voz (real): 60 cues, 0 no entran ni a x1.3. Acortar el texto en guiones/guion_ia.md (y volver a correr cues.py) o alargar la diapositiva.
+Informe de voz (real): 48 cues, 0 no entran ni a x1.3. Acortar el texto en guiones/guion_ia.md (y volver a correr cues.py) o alargar la diapositiva.
 
 OK   D2 portada                     inicio     7.5s  voz   2.4s  ventana  10.8s  tempo x1.00  42 caracteres
 OK   Rubro                          inicio    25.8s  voz   4.6s  ventana   4.5s  tempo x1.00  92 caracteres
@@ -43,18 +43,6 @@ OK   A6 karaoke 14                  inicio   550.6s  voz   6.8s  ventana   7.1s 
 OK   A6 karaoke 15                  inicio   559.1s  voz   3.4s  ventana   3.7s  tempo x1.00  69 caracteres
 OK   A6 karaoke 16                  inicio   563.7s  voz   7.7s  ventana   8.0s  tempo x1.00  160 caracteres
 OK   A6 karaoke 17                  inicio   572.5s  voz   4.8s  ventana   5.1s  tempo x1.00  87 caracteres
-OK   A6 karaoke 18                  inicio   579.0s  voz   6.7s  ventana   7.5s  tempo x1.00  131 caracteres
-OK   A6 karaoke 19                  inicio   587.4s  voz   6.7s  ventana   7.4s  tempo x1.00  119 caracteres
-OK   A6 video 01                    inicio   595.8s  voz   3.4s  ventana   5.4s  tempo x1.00  57 caracteres
-OK   A6 video 02                    inicio   602.1s  voz   4.3s  ventana   7.0s  tempo x1.00  79 caracteres
-OK   A6 video 03                    inicio   610.0s  voz   3.4s  ventana   7.8s  tempo x1.00  65 caracteres
-OK   A6 video 04                    inicio   618.6s  voz   4.9s  ventana   9.3s  tempo x1.00  85 caracteres
-OK   A6 karaoke 20                  inicio   628.9s  voz   3.7s  ventana   4.5s  tempo x1.00  56 caracteres
-OK   A6 karaoke 21                  inicio   634.3s  voz   6.8s  ventana   7.2s  tempo x1.00  117 caracteres
-OK   A6 karaoke 22                  inicio   642.3s  voz   7.7s  ventana   7.8s  tempo x1.00  148 caracteres
-OK   A6 karaoke 23                  inicio   651.5s  voz   4.2s  ventana   4.7s  tempo x1.00  70 caracteres
-OK   A6 karaoke 24                  inicio   657.1s  voz   4.4s  ventana   4.5s  tempo x1.00  78 caracteres
-OK   A6 video 05                    inicio   662.4s  voz   4.1s  ventana   6.3s  tempo x1.00  58 caracteres
 OK   A6 karaoke 31                  inicio   791.9s  voz   8.8s  ventana   9.1s  tempo x1.00  133 caracteres
 OK   A6 karaoke 32                  inicio   802.4s  voz   4.5s  ventana   4.8s  tempo x1.00  73 caracteres
 OK   A6 karaoke 33                  inicio   808.1s  voz   4.7s  ventana   5.0s  tempo x1.00  80 caracteres

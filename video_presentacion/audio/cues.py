@@ -170,7 +170,7 @@ def cues_voz():
     # el equipo dice la toma de FlexSim, la web y las diapositivas de las corridas E2 a E4 (diapositivas 39 a 41),
     # y las diapositivas de conclusiones (la de la simulación, 26, y las generales, 44). Desde la 42 vuelve la IA, y después de las conclusiones hace el cierre.
     d39, d42 = d[39], d[42]
-    FALTAN = {f"A6 karaoke {k}" for k in range(18, 25)} | {f"A6 video {k:02d}" for k in range(1, 6)}
+    FALTAN = set()   # ya están todas las voces del equipo
 
     def del_equipo(c):
         i = c["id"]

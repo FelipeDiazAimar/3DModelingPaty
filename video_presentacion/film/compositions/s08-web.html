@@ -186,7 +186,7 @@
       sub(59.900,66.900,"Después, cada apartado de la web muestra datos puntuales.",6.16);
       // screen-flow-carousel (mecánica adaptada): riel horizontal con lanzamiento y asentado, capturas reales; sobre el final de "Seguir un lote"
       {
-        const C0 = 70.845, CUE = [72.345, 73.545, 74.745, 75.945], OUT = 77.145;
+        const C0 = 70.845, CUE = [71.545, 72.745, 73.945, 75.145], OUT = 77.145;
         const sc = Array.from(document.querySelectorAll(".w8-cs")), cc = Array.from(document.querySelectorAll(".w8-cc"));
         const pose = (i, k) => { const d = i - k; return { x: d * 1040, scale: d === 0 ? 1 : 0.7, opacity: Math.abs(d) > 1 ? 0 : d === 0 ? 1 : 0.4 }; };
         tl.fromTo("#w8-cr", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, C0);

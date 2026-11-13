@@ -449,99 +449,99 @@
  },
  {
   "id": "A6 karaoke 18",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 579.039,
   "fin": 587.059,
   "texto": "¿Y si las formadoras fueran más rápidas? Las subimos de novecientos ochenta y dos a mil ochocientos cuarenta y tres kilos por hora.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 karaoke 19",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 587.409,
   "fin": 595.329,
   "texto": "Para comparar bien usamos las mismas diez réplicas, con números aleatorios comunes, y miramos la diferencia de a pares.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 video 01",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 595.812,
   "fin": 601.711,
   "texto": "La propuesta: llevar las formadoras al estándar de línea.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 video 02",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 602.111,
   "fin": 609.584,
   "texto": "Corremos el modelo con ese cambio, veinticuatro horas, con las mismas semillas.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 video 03",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 609.984,
   "fin": 618.244,
   "texto": "El cuello se corre al desencajado, y el mezclado deja de limitar.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 video 04",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 618.644,
   "fin": 628.479,
   "texto": "Resultado: más pallets por día, con un intervalo de confianza que no incluye el cero.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 karaoke 20",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 628.929,
   "fin": 633.949,
   "texto": "Son nueve pallets más por día: un diecinueve por ciento.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 karaoke 21",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 634.299,
   "fin": 641.999,
   "texto": "El intervalo va de cuatro coma cinco a catorce coma uno. No incluye el cero, así que la mejora es real, aunque ancha.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 karaoke 22",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 642.349,
   "fin": 650.629,
   "texto": "Pero el cuello se mueve: ahora manda la primera etapa, donde se abren las cajas de materia prima, con setenta y cuatro coma siete toneladas por día.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 karaoke 23",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 651.529,
   "fin": 656.709,
   "texto": "Ahora lo obvio: si queremos producir más, traigamos más materia prima.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 karaoke 24",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 657.059,
   "fin": 662.019,
   "texto": "Sobre las formadoras rápidas, uno coma cinco veces la materia prima que entra.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 video 05",
-  "grupo": "ia",
+  "grupo": "equipo",
   "inicio": 662.369,
   "fin": 669.169,
   "texto": "La propuesta: sumar uno coma cinco veces la materia prima.",
-  "activo": true
+  "activo": false
  },
  {
   "id": "A6 video 06",
